@@ -87,6 +87,24 @@ class LLMService {
         const data = await res.json();
         return data.data[0].embedding;
     }
+
+    async generateEmbeddings(texts) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.embedApiKey) {
+            headers['Authorization'] = `Bearer ${this.embedApiKey}`;
+        }
+        const res = await fetch(`${this.embedBaseURL}/embeddings`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ model: this.embedModel, input: texts })
+        });
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Error generating embeddings (LLM): ${res.status} - ${errorText}`);
+        }
+        const data = await res.json();
+        return data.data.map(d => d.embedding);
+    }
 }
 
 module.exports = new LLMService();

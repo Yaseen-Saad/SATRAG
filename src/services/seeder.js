@@ -1,4 +1,3 @@
-// This file is made to be runned only one time, but I will leave it afterwards so it counts in hackatime lmao
 const supabase = require('../lib/supabase')
 const llm = require('../lib/llm')
 const { parseSampleEntries } = require('../lib/parser')
@@ -15,19 +14,24 @@ async function seedSampleData() {
     const filePath = path.join(__dirname, '../../data/sample.txt');
     const entries = parseSampleEntries(filePath);
     let seeded = 0;
+    let failed = 0;
     for (const entry of entries) {
         try {
             const embedding = await llm.generateEmbedding(`${entry.word} ${entry.definition} ${entry.example_sentence}`);
             const { error } = await supabase.from('vocab_entries').insert({ ...entry, embedding, validation_passed: true, quality_score: 8.0 });
-            if (!error) seeded++;
-            if (seeded % 20 === 0) {
-                console.log(`Seeded ${seeded} entries.`);
+            if (!error) {
+                seeded++;
+            } else {
+                failed++;
             }
-        } catch (error) {
-            console.error(`Error generating embedding for entry: ${entry.word}`, error);
+            if ((seeded + failed) % 50 === 0) {
+                console.log(`Seeded ${seeded}/${entries.length} entries (${failed} failed).`);
+            }
+        } catch {
+            failed++;
         }
     }
-    console.log("DOOONNEE");
+    console.log(`Seeding complete: ${seeded} seeded, ${failed} failed out of ${entries.length} entries.`);
 }
 
 module.exports = { seedSampleData }

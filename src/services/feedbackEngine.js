@@ -14,6 +14,30 @@ class FeedbackEngine {
             console.error(error)
             return null
         }
+
+        // Also store in rag_feedback_examples for RAG context
+        try {
+            const { data: wordEntry } = await supabase.from('vocab_entries').select('word').eq('id', wordID).single()
+            if (wordEntry) {
+                if (problematicComponents && problematicComponents.length > 0) {
+                    await supabase.from('rag_feedback_examples').insert({
+                        word: wordEntry.word,
+                        type: "negative",
+                        content: `NEGATIVE FEEDBACK FOR ${wordEntry.word}:\nIssues: ${problematicComponents.join(', ')}\nComments: ${comments || ''}`
+                    })
+                }
+                if (satisfaction >= 7) {
+                    await supabase.from('rag_feedback_examples').insert({
+                        word: wordEntry.word,
+                        type: "positive",
+                        content: `POSITIVE FEEDBACK FOR ${wordEntry.word}:\n${satisfaction}/10 Satisfied.\nHelpful: ${(helpfulComponents || []).join(', ')}`
+                    })
+                }
+            }
+        } catch (e) {
+            // non-critical, don't fail the main operation
+        }
+
         return data
     }
     async getWordFeedback(wordID) {

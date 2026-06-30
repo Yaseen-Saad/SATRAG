@@ -53,4 +53,23 @@
     <a href="/vocab/generate/<%= entry.word %>" class="btn-warning">Regenerate</a>
     <a href="/quiz/start?word=<%= entry.word %>" class="btn-secondary">Quiz Me</a>
   </div>
+
+  <% if (typeof isGenerated !== 'undefined' && isGenerated) { %>
+  <div class="entry-section" style="margin-top:1.5rem; background:#f3f4ff; border-left-color:#4caf50;">
+    <div class="section-label">How was this entry?</div>
+    <form action="/feedback/submit" method="POST" style="margin-top:0.5rem;">
+      <input type="hidden" name="wordId" value="<%= entry.id %>">
+      <div style="display:flex; gap:0.25rem; align-items:center; flex-wrap:wrap;">
+        <% for (let i = 1; i <= 10; i++) { %>
+        <label style="cursor:pointer; padding:0.25rem 0.5rem; border:1px solid #ccc; border-radius:4px; font-size:0.85rem;">
+          <input type="radio" name="satisfaction" value="<%= i %>" <%= i === 7 ? 'checked' : '' %> style="margin:0;"> <%= i %>
+        </label>
+        <% } %>
+      </div>
+      <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+        <button type="submit" class="btn-primary" style="font-size:0.85rem;">Submit Rating</button>
+      </div>
+    </form>
+  </div>
+  <% } %>
 </div>

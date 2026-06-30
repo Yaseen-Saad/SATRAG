@@ -15,6 +15,7 @@ const vocabRoutes = require('./routes/vocab');
 const quizRoutes = require('./routes/quiz');
 const feedbackRoutes = require('./routes/feedback');
 const dashboardRoutes = require('./routes/dashboard');
+const apiRoutes = require('./routes/api');
 
 
 const app = express();
@@ -55,6 +56,7 @@ app.use('/vocab', vocabRoutes);
 app.use('/quiz', quizRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/api', apiRoutes);
 // Error Handler
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -81,7 +81,7 @@ class RAGEngine {
             return data;
         } catch (err) {
             console.error("Embedding generation failed, inserting without embedding:", err.message);
-            const { data, error } = await supabase.from('vocab_entries').insert({ ...entry, embedding: [] }).select().single();
+            const { data, error } = await supabase.from('vocab_entries').insert({ ...entry, embedding: null }).select().single();
             if (error) throw error;
             return data;
         }

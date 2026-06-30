@@ -48,14 +48,14 @@ router.post('/generate', optionalAuth, async (req, res) => {
             temperature: 0.8,
         });
 
-        const entry = parseGeneratedEntry(response, word);
+        const entry = parseGeneratedEntry(response.content, word);
         const quality = qualityChecker.assessQuality(entry);
         const evaluationResult = evaluator.evaluateEntry(entry, word);
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult.isValid
         const saved = await rag.addEntry(entry);
 
-        res.render('vocab/word', { user: req.user, entry: saved, error: null })
+        res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true })
     } catch (err) {
         console.error("Generation error", err)
         const recent = await rag.listRecent(10)
@@ -147,7 +147,7 @@ router.post('/regenerate', optionalAuth, async (req, res) => {
             system: systemPrompt,
             temperature: 0.8,
         });
-        const entry = parseGeneratedEntry(response, w);
+        const entry = parseGeneratedEntry(response.content, w);
         const quality = qualityChecker.assessQuality(entry);
         const evalResult = evaluator.evaluateEntry(entry, w);
         entry.quality_score = quality.overall;
