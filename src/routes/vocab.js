@@ -9,11 +9,11 @@ const llm = require('../lib/llm')
 
 const router = Router();
 
-router.get('/', optionalAuth, (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
     const recent = await rag.listRecent(10)
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
-router.post('/generate', optionalAuth, (req, res) => {
+router.post('/generate', optionalAuth, async (req, res) => {
     let { word } = req.body;
     if (!word || word.trim() === '') {
         const recent = await rag.listRecent(10)
@@ -27,7 +27,7 @@ router.post('/generate', optionalAuth, (req, res) => {
         }
         const similar = await rag.retrieveSimilar(word, 3)
         let simmilar = ''
-        if (similar.lengt > 0)
+        if (similar.length > 0)
             simmilar = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture}\n Scentence: ${s.example_sentence}`).join('\n\n')
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
         const userPrompt = `Generate a vocabulary entry for "${word}".

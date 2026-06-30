@@ -7,11 +7,11 @@ class LLMService {
         this.chatModel = config.LLM_MODEL;
         this.embedBaseURL = "https://ollama.com/v1";
         this.embedModel = 'nomic-embed-text'
-        tis.apiKey = config.LLM_API_KEY;
+        this.apiKey = config.LLM_API_KEY;
     }
 
     // Creating a method to generate vocabulary mneomics using the LLM API
-    async generateCompletion({ messages, syste, model, maxTokens = 2048, temperature = 0.7 }) {
+    async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7 }) {
         const body = {
             model: model || this.chatModel,
             messages: system ? [{ role: 'system', content: system }, ...messages] : messages,

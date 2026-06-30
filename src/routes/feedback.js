@@ -10,13 +10,13 @@ router.post('/submit', requireAuth, async (req, res) => {
     try {
         const { wordId, satisfaction, helpfulComponents, problematicComponents, comments } = req.body;
         const result = await feedback.recordFeedback({ userId: req.user.id, wordID: wordId, satisfaction: parseInt(satisfaction), helpfulComponents, problematicComponents, comments })
-        res.json({ sucess: true, data: result })
+        res.json({ success: true, data: result })
     } catch (err) { res.status(500).json({ success: false, error: err.message }) }
 })
-router.get('/:wordId', requiredAuth, async (req, res) => {
+router.get('/:wordId', requireAuth, async (req, res) => {
     try {
         const data = await feedback.getWordFeedback(req.params.wordId)
-        const avg = await feedbac.getAvgSatisfaction(req.params.wordId)
+        const avg = await feedback.getAvgSatisfaction(req.params.wordId)
         res.json({ data, averageSatisfaction: avg })
     } catch (err) { res.status(500).json({ error: err.message }) }
 });

@@ -33,7 +33,7 @@ router.get('/take/:id', requireAuth, async (req, res) => {
         if (!attempt) return res.status(404).send('Quiz not found')
         if (attempt.completed_at) return res.redirect(`/quiz/results/${attempt.id}`)
         const { data: questions } = await supabase
-            .from('quiz_quwestions')
+            .from('quiz_questions')
             .select('*')
             .eq('attempt_id', attempt.id)
         res.render('quiz/take', { user: req.user, attempt, questions, error: null })
@@ -66,7 +66,7 @@ router.post('/complete/:id', requireAuth, async (req, res) => {
 });
 
 
-router.get('/results/:id', requireAuth, (req, res) => {
+router.get('/results/:id', requireAuth, async (req, res) => {
     const { data: attempt } = await supabase.from('quiz_attempts').select('*').eq('id', req.params.id).single()
     if (!attempt) return res.status(404).send('Quiz not found');
     const { data: questions } = await supabase.from('quiz_questions').select("*").eq('attempt_id', attempt.id)

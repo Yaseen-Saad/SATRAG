@@ -12,8 +12,9 @@ class FeedbackEngine {
         }).select().single();
         if (error) {
             console.error(error)
-            return data
+            return null
         }
+        return data
     }
     async getWordFeedback(wordID) {
         const { data, error } = await supabase.from('feedback_events')
@@ -41,4 +42,4 @@ class FeedbackEngine {
 
     }
 }
-module.export = new FeedbackEngine();
+module.exports = new FeedbackEngine();

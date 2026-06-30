@@ -1,4 +1,3 @@
-
 <% title = 'Quiz Results'; %>
 <h1>Results</h1>
 
@@ -11,19 +10,19 @@
 </div>
 
 <% if (typeof questions !== 'undefined' && questions.length > 0) { %>
-  <h2>Review</h2>
-  <% questions.forEach((q, i) => { %>
-    <div style="background:white; border:1px solid #ddd; border-radius:8px; padding:1rem; margin-bottom:1rem;">
-      <p style="font-weight:bold; margin-bottom:0.5rem;">Question <%= i + 1 %></p>
-      <p><%= q.prompt %></p>
-      <p style="color:<%= q.is_correct ? '#2e7d32' : '#c62828' %>; margin-top:0.5rem;">
-        <%= q.is_correct ? '✅ Correct' : '❌ Incorrect' %>
-        <% if (!q.is_correct) { %>
-          — Correct answer: <strong><%= JSON.parse(q.options)[q.correct_index] %></strong>
-        <% } %>
-      </p>
-    </div>
-  <% }) %>
+<h2>Review</h2>
+<% questions.forEach((q, i) => { %>
+<div style="background:white; border:1px solid #ddd; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+  <p style="font-weight:bold; margin-bottom:0.5rem;">Question <%= i + 1 %></p>
+  <p><%= q.prompt %></p>
+  <p style="color:<%= q.is_correct ? '#2e7d32' : '#c62828' %>; margin-top:0.5rem;">
+    <%= q.is_correct ? '✅ Correct' : '❌ Incorrect' %>
+    <% if (!q.is_correct) { %>
+    — Correct answer: <strong><%= JSON.parse(q.options)[q.correct_index] %></strong>
+    <% } %>
+  </p>
+</div>
+<% }) %>
 <% } %>
 
 <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
