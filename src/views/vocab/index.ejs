@@ -1,4 +1,3 @@
-<!-- Some AI Generated Interface -->
 <% title = 'SAT Vocabulary Generator'; %>
 <h1>SAT Study Buddy</h1>
 <p style="color:#666; margin-bottom:2rem;">Enter any word to get a Gulotta-style vocabulary entry, or try a quiz.</p>
@@ -20,7 +19,7 @@
   <a href="/quiz/start" style="flex:1; text-align:center; padding:1rem; background:#16213e; color:white; text-decoration:none; border-radius:8px;">Take a Quiz</a>
 </div>
 
-<% if (typeof recent !== 'undefined' && recent.length > 0) { %>
+<% if (recent && recent.length > 0) { %>
 <h2>Recent Words</h2>
 <div style="display:grid; gap:0.5rem;">
   <% recent.forEach(entry => { %>

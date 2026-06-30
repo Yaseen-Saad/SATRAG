@@ -8,6 +8,14 @@ const expressLayouts = require('express-ejs-layouts');
 const rateLimiter = require('./middleware/rateLimiter');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
+// Route Imports
+const authRoutes = require('./routes/auth');
+const vocabRoutes = require('./routes/vocab');
+const quizRoutes = require('./routes/quiz');
+const feedbackRoutes = require('./routes/feedback');
+const dashboardRoutes = require('./routes/dashboard');
+
+
 const app = express();
 
 
@@ -17,6 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(expressLayouts);
+app.set('layout', 'layouts/main'); 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -40,6 +49,16 @@ app.get('/', async (req, res) => {
   }
 });
 
+app.use('/auth', authRoutes);
+app.use('/vocab', vocabRoutes);
+app.use('/quiz', quizRoutes);
+app.use('/feedback', feedbackRoutes);
+app.use('/dashboard', dashboardRoutes);
 // Error Handler
 app.use(notFoundHandler);
 app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`SAT Study Buddy running on http://localhost:${PORT}`);
+});
