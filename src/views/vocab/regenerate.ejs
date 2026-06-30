@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Regenerate <%= word %> - SAT Study Buddy</title>
+</head>
+
+<body>
+  <h1>Regenerate "<%= word %>"</h1>
+  <p>Help improve the system by telling us what went wrong.</p>
+  <form action="/vocab/regenerate" method="POST">
+    <input type="hidden" name="word" value="<%= word %>">
+    <label>Why are you regenerating?</label>
+    <select name="reason" required>
+      <option value="confusing_mnemonic">Mnemonic was confusing</option>
+      <option value="incorrect_definition">Definition was incorrect</option>
+      <option value="boring_picture">Picture story was boring</option>
+      <option value="poor_example">Example sentence was poor</option>
+      <option value="low_quality">Overall quality was low</option>
+      <option value="other">Other</option>
+    </select>
+    <label>Specific issue</label>
+    <textarea name="specificIssue" rows="3"></textarea>
+    <label>Improvement suggestions</label>
+    <textarea name="improvements" rows="3"></textarea>
+    <label>Part of speech</label>
+    <select name="partOfSpeech">
+      <option value="noun">Noun</option>
+      <option value="verb">Verb</option>
+      <option value="adjective">Adjective</option>
+      <option value="adverb">Adverb</option>
+    </select>
+    <button type="submit">Regenerate</button>
+  </form>
+  <a href="/vocab/<%= word %>">Back to entry</a>
+</body>
+
+</html>

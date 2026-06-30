@@ -45,7 +45,7 @@ router.post('/generate', optionalAuth, async (req, res) => {
         });
 
         const entry = parseGeneratedEntry(response, word);
-        const quality = qualityChecker.asessQuality(entry);
+        const quality = qualityChecker.assessQuality(entry);
         const evaluationResult = evaluator.evaluateEntry(entry, word);
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult.isValid
@@ -83,7 +83,7 @@ function parseGeneratedEntry(text, word) {
         quality_score: 7.0,
     };
     for (const line of lines) {
-        const mainMatch = lines[0]?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
+        const mainMatch = line?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
         if (mainMatch) {
             entry.pronunciation = mainMatch[1];
             entry.part_of_speech = mainMatch[2].replace(/\.$/, '');
@@ -156,7 +156,7 @@ router.post('/regenerate', optionalAuth, async (req, res) => {
             res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true })
 
         }
-    } catch (error) {
+    } catch (err) {
         res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
     }
 })

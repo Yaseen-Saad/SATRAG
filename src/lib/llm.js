@@ -68,7 +68,8 @@ class LLMService {
                 await new Promise(r => setTimeout(r, Math.pow(2, attempt) * 500));
             }
         }
-    } async generateEmbedding(text) {
+    }
+    async generateEmbedding(text) {
         const res = await fetch(`${this.embedBaseURL}/embeddings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

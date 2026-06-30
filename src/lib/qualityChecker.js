@@ -70,7 +70,6 @@ class QualityChecker {
         const issues = [];
         if (scores.authenticity < 6) issues.push("Doesn't match authentic Gulotta style");
         if (scores.creativity < 6) issues.push("Mnemonic or picture story lacks creativity");
-        if (scores.memorability < 6) issues.push("Entry may not be memorable enough");
         if (scores.accuracy < 7) issues.push("Potential accuracy issues");
         if (scores.completeness < 7) issues.push("Missing required components");
         if (!entry.mnemonic_phrase) issues.push("Missing mnemonic device");
@@ -83,7 +82,6 @@ class QualityChecker {
         const strengths = []
         if (scores.authenticity >= 8) strengths.push("Matches authentic Gulotta style");
         if (scores.creativity >= 8) strengths.push("Mnemonic or picture story is creative");
-        if (scores.memorability >= 8) strengths.push("Entry is memorable");
         if (scores.accuracy >= 8) strengths.push("Entry is accurate");
         if (scores.completeness >= 8) strengths.push("Entry has all required components");
         if (entry.mnemonic_phrase) strengths.push("Entry has a mnemonic device");
@@ -92,4 +90,4 @@ class QualityChecker {
     }
 
 }
-model.exports = new QualityChecker()
+module.exports = new QualityChecker()

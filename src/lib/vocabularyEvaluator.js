@@ -134,7 +134,7 @@ class VocabularyEvaluator {
                 score -= 0.4; break
             }
         }
-        return [Mat.max(0, score), issues]
+        return [Math.max(0, score), issues]
     }
     checkSentenceQuality(entry) {
         const s = entry.example_sentence.trim()
@@ -166,4 +166,4 @@ class VocabularyEvaluator {
         return [Math.max(0, score), issues];
     }
 }
-model.exports = new VocabularyEvaluator()
+module.exports = new VocabularyEvaluator()
