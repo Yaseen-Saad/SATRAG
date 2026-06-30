@@ -7,6 +7,7 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const rateLimiter = require('./middleware/rateLimiter');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+const { seedSampleData } = require('./services/seeder');
 
 // Route Imports
 const authRoutes = require('./routes/auth');
@@ -59,6 +60,12 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`SAT Study Buddy running on http://localhost:${PORT}`);
+  try {
+    await seedSampleData();
+    console.log('Sample data seeded successfully');
+  } catch (err) {
+    console.log('Seed skipped or already done:', err.message);
+  }
 });

@@ -1,4 +1,3 @@
-<!-- I will paste an AI Generated interface, then I will fix it later -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,11 +10,13 @@
 
 <body>
   <nav>
-    <a href="/">SAT Study Buddy</a>
-    <div>
+    <a href="/" class="brand">SAT Study Buddy</a>
+    <div class="nav-links">
+      <a href="/vocab">Vocab</a>
+      <a href="/quiz/start">Quiz</a>
       <% if (typeof user !== 'undefined' && user) { %>
       <a href="/dashboard">Dashboard</a>
-      <a href="/auth/logout">Logout</a>
+      <a href="/auth/logout" class="btn-signout">Sign Out</a>
       <% } else { %>
       <a href="/auth/login">Login</a>
       <a href="/auth/signup">Sign Up</a>

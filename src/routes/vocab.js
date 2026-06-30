@@ -12,6 +12,10 @@ const evaluator = require('../lib/vocabularyEvaluator')
 const router = Router();
 
 router.get('/', optionalAuth, async (req, res) => {
+    const { word } = req.query
+    if (word && word.trim()) {
+        return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
+    }
     const recent = await rag.listRecent(10)
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
@@ -153,9 +157,8 @@ router.post('/regenerate', optionalAuth, async (req, res) => {
         if (req.body.satisfaction && parseInt(req.body.satisfaction) >= 7) {
             const positiveContent = `POSITIVE FEEDBACK FOR ${w}:\n${req.body.satisfaction}/10 Satisfied with the regenerated entry.`;
             await supabase.from('rag_feedback_examples').insert({ word: w, type: "positive", content: positiveContent })
-            res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true })
-
         }
+        res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true })
     } catch (err) {
         res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
     }

@@ -46,9 +46,7 @@ class VocabularyEvaluator {
         if (this.containsWordOrSimilar(entry.picture_story, wl)) {
             issues.push(`CRITICAL: Picture uses '${targetWord}' or similar`); score -= 0.2;
         }
-        if (this.containsWordOrSimilar(entry.example_sentence, wl)) {
-            issues.push(`CRITICAL: Example sentence uses '${targetWord}' or similar`); score -= 0.4;
-        }
+        // Example sentence SHOULD contain the word, so skip circular check here
         return [Math.max(0, score), issues];
     }
     containsWordOrSimilar(text, word) {

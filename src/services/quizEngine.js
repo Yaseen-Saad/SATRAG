@@ -53,6 +53,7 @@ class QuizEngine {
         const { data: attempt, error } = await supabase.from('quiz_attempts').insert({
             user_id: userId,
             quiz_type: type,
+            score: 0,
             total_questions: questions.length,
         }).select().single();
 
@@ -80,7 +81,7 @@ class QuizEngine {
     async generateQuestion(entry) {
         const prompt = interpolate(fs.readFileSync(path.join(__dirname, '../prompts/vocab_question_generation.txt'), 'utf8'), { entry });
         const response = await llm.generateCompletion({ messages: [{ role: 'user', content: prompt }], temperature: 0.7, maxTokens: 500 });
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        const jsonMatch = response.content.match(/\{[\s\S]*\}/);
         if (!jsonMatch) throw new Error('Invalid response format');
         const question = JSON.parse(jsonMatch[0]);
         return { wordId: entry.id, type: "vocab", prompt: question.prompt, options: question.options, correctIndex: question.correctIndex };

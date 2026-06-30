@@ -18,7 +18,7 @@ router.post('/create', requireAuth, async (req, res) => {
             count: parseInt(count),
             word: word || null
         })
-        res.redirect(`quiz/take/${result.attempt.id}`)
+        res.redirect(`/quiz/take/${result.attempt.id}`)
     } catch (err) {
         res.render('quiz/start', { user: req.user, word: null, error: err.message })
     }

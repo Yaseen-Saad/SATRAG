@@ -15,8 +15,8 @@ class LLMService {
     constructor() {
         this.chatBaseURL = config.LLM_BASE_URL;
         this.chatModel = config.LLM_MODEL;
-        this.embedBaseURL = "https://ollama.com/v1";
-        this.embedModel = 'nomic-embed-text'
+        this.embedBaseURL = config.EMBEDDING_BASE_URL;
+        this.embedModel = config.EMBEDDING_MODEL
         this.apiKey = config.LLM_API_KEY;
         this.cache = new Map();
         this.cacheSize = 100;

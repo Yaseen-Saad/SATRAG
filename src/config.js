@@ -8,6 +8,8 @@ const envSchema = z.object({
     LLM_API_KEY: z.string().min(1),
     LLM_BASE_URL: z.string().url().default('https://api.zerolimitai.com/v1'),
     LLM_MODEL: z.string().default('gpt-oss-120b'),
+    EMBEDDING_BASE_URL: z.string().url().default('https://api.zerolimitai.com/v1'),
+    EMBEDDING_MODEL: z.string().default('nomic-embed-text'),
     APP_DOMAIN: z.string().default('http://localhost:3000'),
     PORT: z.coerce.number().default(3000),
     SUPABASE_PASSWORD: z.string().min(1),
