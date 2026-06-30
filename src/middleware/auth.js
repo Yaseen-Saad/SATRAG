@@ -2,7 +2,7 @@ const supabase = require('../lib/supabase');
 
 async function requireAuth(req, res, next) {
     try {
-        const token = req.cookies?.sb_access_token || req.headers.authorization?.split('Bearer ', '');
+        const token = req.cookies?.sb_access_token || req.headers.authorization?.split(' ')[1];
         if (!token) {
             if (req.path.startsWith('/api/')) {
                 return res.status(401).json({ error: "Autehntication required" })
