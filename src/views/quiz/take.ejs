@@ -1,0 +1,58 @@
+<% title = 'Quiz'; %>
+<h1>Quiz (<%= attempt.total_questions %> questions)</h1>
+<div id="quiz-container">
+  <% questions.forEach((q, i) => { %>
+    <div class="question-card" id="q-<%= q.id %>" style="background:white; border:1px solid #ddd; border-radius:8px; padding:1.5rem; margin-bottom:1rem; <%= i > 0 ? 'display:none;' : '' %>">
+      <p style="font-weight:bold; margin-bottom:0.5rem;">Question <%= i + 1 %> of <%= questions.length %></p>
+      <p style="font-size:1.1rem; margin-bottom:1rem;"><%= q.prompt %></p>
+      <div class="options">
+        <% JSON.parse(q.options).forEach((opt, j) => { %>
+          <label style="display:block; padding:0.75rem; margin-bottom:0.5rem; background:#f5f5f5; border-radius:4px; cursor:pointer;">
+            <input type="radio" name="q-<%= q.id %>" value="<%= j %>" style="margin-right:0.5rem;">
+            <%= opt %>
+          </label>
+        <% }) %>
+      </div>
+      <button onclick="submitAnswer('<%= q.id %>', <%= i %>)" style="padding:0.5rem 1.5rem; background:#1a1a2e; color:white; border:none; border-radius:4px; cursor:pointer;">Submit & Next</button>
+    </div>
+  <% }) %>
+</div>
+
+<div id="quiz-done" style="display:none; text-align:center; padding:2rem;">
+  <h2>All done!</h2>
+  <button onclick="completeQuiz()" style="padding:0.75rem 2rem; background:#1a1a2e; color:white; border:none; border-radius:4px; cursor:pointer;">See Results</button>
+</div>
+
+<script>
+  let currentQuestion = 0;
+  const totalQuestions = <%= questions.length %>;
+  const attemptId = '<%= attempt.id %>';
+  let answers = {};
+
+  function submitAnswer(questionId, index) {
+    const selected = document.querySelector(`input[name="q-${questionId}"]:checked`);
+    if (!selected) return alert('Please select an answer');
+
+    fetch('/quiz/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ questionId, answerIndex: parseInt(selected.value) }),
+    });
+
+    document.getElementById(`q-${questionId}`).style.display = 'none';
+    currentQuestion++;
+
+    if (currentQuestion < totalQuestions) {
+      const nextQ = document.querySelector(`.question-card:nth-child(${currentQuestion + 1})`);
+      if (nextQ) nextQ.style.display = 'block';
+    } else {
+      document.getElementById('quiz-done').style.display = 'block';
+    }
+  }
+
+  async function completeQuiz() {
+    const res = await fetch(`/quiz/complete/${attemptId}`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) window.location.href = `/quiz/results/${attemptId}`;
+  }
+</script>

@@ -138,7 +138,6 @@ class QuizEngine {
     }
 
     async submitAnswer({ questionId, answerIndex, userId }) {
-        // Get the question
         const { data: question } = await supabase
             .from('quiz_questions')
             .select('*, quiz_attempts!inner(user_id)')
@@ -153,4 +152,23 @@ class QuizEngine {
         }
         return { isCorrect, correctIndex: question.correct_index };
     }
+    async completeQuiz(attemptId, userId) {
+        const { data: questions } = await supabase
+            .from('quiz_questions')
+            .select('*')
+            .eq('attempt_id', attemptId);
+
+        const total = questions.length;
+        const correct = questions.filter(q => q.is_correct).length;
+        const score = Math.round((correct / total) * 100);
+
+        await supabase.from('quiz_attempts').update({
+            score,
+            completed_at: new Date().toISOString(),
+        }).eq('id', attemptId);
+
+        return { score, correct, total, questions };
+    }
 }
+
+module.exports = new QuizEngine()
