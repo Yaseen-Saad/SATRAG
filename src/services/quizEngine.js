@@ -21,7 +21,7 @@ class QuizEngine {
             else throw new Error(`Word "${word}" not found in the database.`)
         } else {
             const { data: dueWords } = await supabase
-                .from('spaced_reptition').select("word_id").eq('user_id', userId)
+                .from('spaced_repetition').select("word_id").eq('user_id', userId)
                 .lte('due_date', new Date().toISOString())
                 .limit(count)
             if (dueWords && dueWords.length > 0) {
@@ -88,7 +88,7 @@ class QuizEngine {
 
 
     async updateSpacedRepetition({ userId, wordId, isCorrect }) {
-        const { data: existing } = await supabase.from('spaced_reptition').select('*').eq('user_id', userId).eq('word_id', wordId).single();
+        const { data: existing } = await supabase.from('spaced_repetition').select('*').eq('user_id', userId).eq('word_id', wordId).single();
         let easeFactor = 2.5;
         let intervalDays = 0;
         if (existing) {

@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
     quiz_type TEXT NOT NULL,
     score INT NOT NULL,
     total_questions INT NOT NULL,
-    attempt_time TIMESTAMP DEFAULT NOW()
+    attempt_time TIMESTAMP DEFAULT NOW(),
+    completed_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Quiz questions
