@@ -58,7 +58,7 @@ router.get('/:word', optionalAuth, async (req, res) => {
     res.render('vocab/word', { user: req.user, entry, error: null })
 });
 function parseGeneratedEntry(text, word) {
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const lines = text.split('\n').map(l => l.trim());
     const entry = {
         word,
         pronunciation: '',
@@ -73,27 +73,38 @@ function parseGeneratedEntry(text, word) {
         validation_passed: true,
         quality_score: 7.0,
     };
-    const mainMatch = lines[0]?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
-    if (mainMatch) {
-        entry.pronunciation = mainMatch[1];
-        entry.part_of_speech = mainMatch[2].replace(/\.$/, '');
-        entry.definition = mainMatch[3];
-    }
+    for (const line of lines) {
+        const mainMatch = lines[0]?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
+        if (mainMatch) {
+            entry.pronunciation = mainMatch[1];
+            entry.part_of_speech = mainMatch[2].replace(/\.$/, '');
+            entry.definition = mainMatch[3];
+            break;
+        }
+    } let currentField = null;
     for (const line of lines) {
         if (line.startsWith('Sounds like:')) {
             entry.mnemonic_type = 'sounds-like';
             entry.mnemonic_phrase = line.replace('Sounds like:', '').trim();
+            currentField = null;
         } else if (line.startsWith('Picture:')) {
             entry.picture_story = line.replace('Picture:', '').trim();
+            currentField = 'picture_story';
         } else if (line.startsWith('Other forms:')) {
             entry.other_forms = line.replace('Other forms:', '').trim();
+            currentField = 'other_forms';
         } else if (line.startsWith('Sentence:')) {
             entry.example_sentence = line.replace('Sentence:', '').trim();
+            currentField = 'example_sentence';
+        } else if (currentField && line && !line.match(/^[A-Z]/)) {
+            // Continuation of multi-line field
+            entry[currentField] += ' ' + line;
         }
     }
+
     if (!entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
         entry.validation_passed = false;
     }
-    return entry
+    return entry;
 }
 module.exports = router;
