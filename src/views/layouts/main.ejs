@@ -1,0 +1,30 @@
+<!-- I will paste an AI Generated interface, then I will fix it later -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'SAT Study Buddy' %></title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+
+<body>
+  <nav>
+    <a href="/">SAT Study Buddy</a>
+    <div>
+      <% if (typeof user !== 'undefined' && user) { %>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/logout">Logout</a>
+      <% } else { %>
+      <a href="/auth/login">Login</a>
+      <a href="/auth/signup">Sign Up</a>
+      <% } %>
+    </div>
+  </nav>
+  <main>
+    <%- body %>
+  </main>
+</body>
+
+</html>
