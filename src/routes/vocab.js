@@ -50,3 +50,50 @@ router.post('/generate', optionalAuth, (req, res) => {
     }
 })
 
+router.get('/:word', optionalAuth, async (req, res) => {
+    const entry = await rag.findByWord(req.params.word.toUpperCase());
+    if (!entry) {
+        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+    }
+    res.render('vocab/word', { user: req.user, entry, error: null })
+});
+function parseGeneratedEntry(text, word) {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const entry = {
+        word,
+        pronunciation: '',
+        part_of_speech: '',
+        definition: '',
+        mnemonic_type: '',
+        mnemonic_phrase: '',
+        picture_story: '',
+        other_forms: '',
+        example_sentence: '',
+        source: 'generated',
+        validation_passed: true,
+        quality_score: 7.0,
+    };
+    const mainMatch = lines[0]?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
+    if (mainMatch) {
+        entry.pronunciation = mainMatch[1];
+        entry.part_of_speech = mainMatch[2].replace(/\.$/, '');
+        entry.definition = mainMatch[3];
+    }
+    for (const line of lines) {
+        if (line.startsWith('Sounds like:')) {
+            entry.mnemonic_type = 'sounds-like';
+            entry.mnemonic_phrase = line.replace('Sounds like:', '').trim();
+        } else if (line.startsWith('Picture:')) {
+            entry.picture_story = line.replace('Picture:', '').trim();
+        } else if (line.startsWith('Other forms:')) {
+            entry.other_forms = line.replace('Other forms:', '').trim();
+        } else if (line.startsWith('Sentence:')) {
+            entry.example_sentence = line.replace('Sentence:', '').trim();
+        }
+    }
+    if (!entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
+        entry.validation_passed = false;
+    }
+    return entry
+}
+module.exports = router;
