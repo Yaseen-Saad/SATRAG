@@ -1,3 +1,6 @@
+-- 0. Make feedback_events.user_id nullable for anonymous feedback
+ALTER TABLE feedback_events ALTER COLUMN user_id DROP NOT NULL;
+
 -- 1. Drop existing match function (may have wrong signature)
 DROP FUNCTION IF EXISTS match_vocab_entries;
 
