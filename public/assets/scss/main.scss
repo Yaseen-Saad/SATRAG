@@ -145,6 +145,240 @@ table {
   }
 }
 
+// Reusable components
+%card-shared {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.card {
+  @extend %card-shared;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+}
+
+.card-link {
+  @extend %card-shared;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-primary {
+  @extend .btn;
+  background: #1a1a2e;
+  color: white;
+
+  &:hover { background: #2a2a4e; }
+}
+
+.btn-secondary {
+  @extend .btn;
+  background: #16213e;
+  color: white;
+
+  &:hover { background: #1e2d5e; }
+}
+
+.btn-warning {
+  @extend .btn;
+  background: #ff8f00;
+  color: white;
+
+  &:hover { background: #e67e00; }
+}
+
+.btn-danger {
+  @extend .btn;
+  background: #d32f2f;
+  color: white;
+
+  &:hover { background: #b71c1c; }
+}
+
+.flash-error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid #ffcdd2;
+}
+
+.flash-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid #c8e6c9;
+}
+
+.flash-info {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border: 1px solid #bbdefb;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #444;
+  }
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #1a1a2e;
+  }
+}
+
+.entry-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  .entry-word {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.25rem;
+  }
+
+  .entry-meta {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-definition {
+    background: #f5f5f5;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+  }
+
+  .entry-section {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid #1a1a2e;
+    background: #f8f9fa;
+    border-radius: 0 6px 6px 0;
+
+    .section-label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  .entry-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .entry-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+}
+
+.word-list-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #333;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: #1a1a2e;
+    box-shadow: 0 2px 6px rgba(26, 26, 46, 0.1);
+  }
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  text-align: center;
+
+  h3 {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+}
+
 @media (max-width: 640px) {
   nav {
     padding: 0 1rem;
