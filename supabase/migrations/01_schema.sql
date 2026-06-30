@@ -34,3 +34,48 @@ CREATE TABLE IF NOT EXISTS user_vocab_progress (
 );
 
 -- Quiz attempts
+CREATE TABLE IF NOT EXISTS quiz_attempts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    quiz_type TEXT NOT NULL,
+    score INT NOT NULL,
+    total_questions INT NOT NULL,
+    attempt_time TIMESTAMP DEFAULT NOW()
+);
+
+-- Quiz questions
+CREATE TABLE IF NOT EXISTS quiz_questions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    attempt_id UUID REFERENCES quiz_attempts ON DELETE CASCADE,
+    question_type TEXT NOT NULL,
+    prompt TEXT,
+    options JSONB,
+    correct_index INT NOT NULL,
+    user_answer INT,
+    is_correct BOOLEAN,
+    explanation TEXT,
+    question_time TIMESTAMP DEFAULT NOW()
+);
+
+-- Feedback events
+CREATE TABLE IF NOT EXISTS feedback_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    word_id UUID REFERENCES vocab_entries NOT NULL,
+    satisfaction_score INT CHECK (satisfaction_score BETWEEN 0 AND 10),
+    helpful_components JSONB,
+    problematic_components JSONB,
+    comments TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Spaced Repetition queue
+CREATE TABLE spaced_repetition (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    word_id UUID REFERENCES vocab_entries NOT NULL,
+    ease_factor NUMERIC(3,2) NOT NULL DEFAULT 2.5,
+    interval_days INT NOT NULL DEFAULT 0,
+    due_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    UNIQUE(user_id, word_id)
+)
