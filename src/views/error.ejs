@@ -1,3 +1,6 @@
-<h1>Error <%= statusCode %></h1>
-<p><%= error %></p>
-<a href="/">Go Home</a>
+<% title = 'Error ' + statusCode; %>
+<div style="text-align:center; padding:3rem;">
+  <h1 style="font-size:3rem; color:#c62828;"><%= statusCode %></h1>
+  <p style="font-size:1.1rem; color:#666; margin-bottom:2rem;"><%= error %></p>
+  <a href="/" class="btn-primary">Go Home</a>
+</div>

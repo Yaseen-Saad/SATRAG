@@ -12,13 +12,13 @@
   <nav>
     <a href="/" class="brand">SAT Study Buddy</a>
     <div class="nav-links">
-      <a href="/vocab">Vocab</a>
+      <a href="/vocab">Words</a>
       <a href="/quiz/start">Quiz</a>
       <% if (typeof user !== 'undefined' && user) { %>
       <a href="/dashboard">Dashboard</a>
       <a href="/auth/logout" class="btn-signout">Sign Out</a>
       <% } else { %>
-      <a href="/auth/login">Login</a>
+      <a href="/auth/login">Log In</a>
       <a href="/auth/signup">Sign Up</a>
       <% } %>
     </div>

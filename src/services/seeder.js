@@ -12,7 +12,7 @@ async function seedSampleData() {
     if (count > 0) {
         return;
     }
-    const filePath = path.join(__dirname, '../data/sample.txt');
+    const filePath = path.join(__dirname, '../../data/sample.txt');
     const entries = parseSampleEntries(filePath);
     let seeded = 0;
     for (const entry of entries) {

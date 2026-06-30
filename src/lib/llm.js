@@ -18,6 +18,7 @@ class LLMService {
         this.embedBaseURL = config.EMBEDDING_BASE_URL;
         this.embedModel = config.EMBEDDING_MODEL
         this.apiKey = config.LLM_API_KEY;
+        this.embedApiKey = config.EMBEDDING_API_KEY || config.LLM_API_KEY;
         this.cache = new Map();
         this.cacheSize = 100;
     }
@@ -70,9 +71,13 @@ class LLMService {
         }
     }
     async generateEmbedding(text) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.embedApiKey) {
+            headers['Authorization'] = `Bearer ${this.embedApiKey}`;
+        }
         const res = await fetch(`${this.embedBaseURL}/embeddings`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify({ model: this.embedModel, input: text })
         });
         if (!res.ok) {

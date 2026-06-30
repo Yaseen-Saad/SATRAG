@@ -1,54 +1,57 @@
+<% title = 'Dashboard'; %>
 <h1>Dashboard</h1>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+<div class="stat-grid">
+  <div class="stat-card">
     <h3>Words Learned</h3>
-    <p style="font-size: 2rem; font-weight: bold; color: #27ae60;"><%= wordsLearned %></p>
+    <div class="stat-value" style="color:#27ae60;"><%= wordsLearned %></div>
   </div>
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <div class="stat-card">
     <h3>Avg Quiz Score</h3>
-    <p style="font-size: 2rem; font-weight: bold; color: #2980b9;"><%= avgScore !== null ? avgScore + '%' : 'N/A' %></p>
+    <div class="stat-value" style="color:#2980b9;"><%= avgScore !== null ? avgScore + '%' : 'N/A' %></div>
   </div>
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <div class="stat-card">
     <h3>Total Entries</h3>
-    <p style="font-size: 2rem; font-weight: bold; color: #8e44ad;"><%= totalEntries %></p>
+    <div class="stat-value" style="color:#8e44ad;"><%= totalEntries %></div>
   </div>
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <div class="stat-card">
     <h3>Avg Quality</h3>
-    <p style="font-size: 2rem; font-weight: bold; color: #d35400;"><%= avgQualityScore !== null ? avgQualityScore + '/10' : 'N/A' %></p>
+    <div class="stat-value" style="color:#d35400;"><%= avgQualityScore !== null ? avgQualityScore + '/10' : 'N/A' %></div>
   </div>
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+  <div class="stat-card">
     <h3>Avg Satisfaction</h3>
-    <p style="font-size: 2rem; font-weight: bold; color: #16a085;"><%= avgSatisfaction !== null ? avgSatisfaction + '/10' : 'N/A' %></p>
+    <div class="stat-value" style="color:#16a085;"><%= avgSatisfaction !== null ? avgSatisfaction + '/10' : 'N/A' %></div>
   </div>
 </div>
 
 <h2>Due for Review</h2>
 <% if (dueReviews.length === 0) { %>
-  <p>No words due for review.</p>
+  <p style="color:#888;">No words due for review.</p>
 <% } else { %>
-  <ul>
+  <div style="display:grid; gap:0.5rem;">
     <% dueReviews.forEach(r => { %>
-      <li><a href="/vocab/<%= r.vocab_entries.word %>"><%= r.vocab_entries.word %></a> — <%= r.vocab_entries.definition %></li>
+      <a href="/vocab/<%= r.vocab_entries.word %>" class="word-list-item">
+        <strong><%= r.vocab_entries.word %></strong> — <%= r.vocab_entries.definition %>
+      </a>
     <% }) %>
-  </ul>
+  </div>
 <% } %>
 
 <h2>Recent Quizzes</h2>
 <% if (quizzes.length === 0) { %>
-  <p>No quizzes taken yet.</p>
+  <p style="color:#888;">No quizzes taken yet.</p>
 <% } else { %>
-  <table style="width: 100%; border-collapse: collapse;">
-    <tr style="background: #ecf0f1;">
-      <th style="padding: 0.5rem; text-align: left;">Date</th>
-      <th style="padding: 0.5rem; text-align: left;">Score</th>
-      <th style="padding: 0.5rem; text-align: left;">Questions</th>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Score</th>
+      <th>Questions</th>
     </tr>
     <% quizzes.forEach(q => { %>
-      <tr style="border-bottom: 1px solid #ddd;">
-        <td style="padding: 0.5rem;"><%= new Date(q.attempt_time).toLocaleDateString() %></td>
-        <td style="padding: 0.5rem; font-weight: bold; color: <%= q.score >= 70 ? '#27ae60' : q.score >= 40 ? '#f39c12' : '#e74c3c' %>;"><%= q.score %>%</td>
-        <td style="padding: 0.5rem;"><%= q.total_questions %></td>
+      <tr>
+        <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
+        <td style="font-weight:bold; color: <%= q.score >= 70 ? '#27ae60' : q.score >= 40 ? '#f39c12' : '#e74c3c' %>;"><%= q.score %>%</td>
+        <td><%= q.total_questions %></td>
       </tr>
     <% }) %>
   </table>
@@ -56,13 +59,13 @@
 
 <h2>Recent Feedback</h2>
 <% if (recentFeedback.length === 0) { %>
-  <p>No feedback yet.</p>
+  <p style="color:#888;">No feedback yet.</p>
 <% } else { %>
   <% recentFeedback.forEach(f => { %>
-    <div style="background: white; padding: 1rem; margin-bottom: 0.5rem; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+    <div class="card" style="margin-bottom:0.5rem;">
       <strong><%= f.word %></strong> — Rating: <%= f.satisfaction_score %>/10
-      <% if (f.comments) { %><p style="margin-top: 0.25rem; color: #666;"><%= f.comments %></p><% } %>
-      <small style="color: #999;"><%= new Date(f.created_at).toLocaleDateString() %></small>
+      <% if (f.comments) { %><p style="margin-top:0.25rem; color:#666;"><%= f.comments %></p><% } %>
+      <small style="color:#999;"><%= new Date(f.created_at).toLocaleDateString() %></small>
     </div>
   <% }) %>
 <% } %>
