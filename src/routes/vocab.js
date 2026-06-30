@@ -6,6 +6,8 @@ const supabase = require('../lib/supabase')
 const config = require('../config')
 const rag = require('../lib/rag')
 const llm = require('../lib/llm')
+const qualityChecker = require('../lib/qualityChecker')
+const evaluator = require('../lib/vocabularyEvaluator')
 
 const router = Router();
 
@@ -41,7 +43,12 @@ router.post('/generate', optionalAuth, async (req, res) => {
         });
 
         const entry = parseGeneratedEntry(response, word);
+        const quality = qualityChecker.asessQuality(entry);
+        const evaluationResult = evaluator.evaluateEntry(entry, word);
+        entry.quality_score = quality.overall
+        entry.validation_passed = evaluationResult.isValid
         const saved = await rag.addEntry(entry);
+
         res.render('vocab/word', { user: req.user, entry: saved, error: null })
     } catch (err) {
         console.error("Generation error", err)
