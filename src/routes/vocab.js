@@ -15,6 +15,8 @@ router.get('/', optionalAuth, async (req, res) => {
     const recent = await rag.listRecent(10)
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
+
+
 router.post('/generate', optionalAuth, async (req, res) => {
     let { word } = req.body;
     if (!word || word.trim() === '') {
@@ -114,4 +116,49 @@ function parseGeneratedEntry(text, word) {
     }
     return entry;
 }
+
+
+router.get('/generate/:word', optionalAuth, async (req, res) => {
+    const word = req.params.word.toUpperCase();
+    const existing = await rag.findByWord(word)
+    if (!existing) {
+        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${word}"` })
+    }
+    res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
+})
+
+router.post('/regenerate', optionalAuth, async (req, res) => {
+    try {
+        const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
+        const w = word.trim().toUpperCase()
+        const negativeContent = `NEGATIVE FEEDBACK FOR ${w}:\nIssue: ${reason} — ${specificIssue}\nAvoid: ${improvements}`
+        await supabase.from('rag_feedback_examples').insert({ word: w, type: "negative", content: negativeContent })
+        const similar = await rag.retrieveSimilar(w, 3);
+        const contextExamples = similar.map(s => `${s.word} — ${s.definition}`).join('\n');
+        const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8');
+        const userPrompt = `Generate a vocabulary entry for "${w}".\nAvoid these issues from previous attempt:\n- ${reason}: ${specificIssue || improvements || 'improve quality'}\n\n${similar.length > 0 ? `Style reference:\n${contextExamples}\n` : ''}\nFollow the format exactly.`;
+
+        const response = await llm.generateCompletion({
+            messages: [{ role: 'user', content: userPrompt }],
+            system: systemPrompt,
+            temperature: 0.8,
+        });
+        const entry = parseGeneratedEntry(response, w);
+        const quality = qualityChecker.assessQuality(entry);
+        const evalResult = evaluator.evaluateEntry(entry, w);
+        entry.quality_score = quality.overall;
+        entry.validation_passed = evalResult.isValid;
+
+        const saved = await rag.addEntry(entry);
+        if (req.body.satisfaction && parseInt(req.body.satisfaction) >= 7) {
+            const positiveContent = `POSITIVE FEEDBACK FOR ${w}:\n${req.body.satisfaction}/10 Satisfied with the regenerated entry.`;
+            await supabase.from('rag_feedback_examples').insert({ word: w, type: "positive", content: positiveContent })
+            res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true })
+
+        }
+    } catch (error) {
+        res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
+    }
+})
+
 module.exports = router;
