@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+const rateLimiter = require('./middleware/rateLimiter');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -26,6 +28,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Rate Limiter
+app.use(rateLimiter());
+
 // Welcome Page
 app.get('/', async (req, res) => {
   try {
@@ -34,3 +39,7 @@ app.get('/', async (req, res) => {
     console.log(error);
   }
 });
+
+// Error Handler
+app.use(notFoundHandler);
+app.use(errorHandler);
