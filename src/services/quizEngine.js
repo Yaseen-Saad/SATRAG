@@ -86,4 +86,71 @@ class QuizEngine {
         return { wordId: entry.id, type: "vocab", prompt: question.prompt, options: question.options, correctIndex: question.correctIndex };
     }
 
+
+    async updateSpacedRepetition({ userId, wordId, isCorrect }) {
+        const { data: existing } = await supabase.from('spaced_reptition').select('*').eq('user_id', userId).eq('word_id', wordId).single();
+        let easeFactor = 2.5;
+        let intervalDays = 0;
+        if (existing) {
+            easeFactor = parseFloat(existing.ease_factor)
+            intervalDays = existing.interval_days
+        }
+        if (isCorrect) {
+            if (intervalDays === 0) intervalDays = 1
+            else if (intervalDays === 1) intervalDays = 6
+            else intervalDays = Math.round(intervalDays * easeFactor)
+            easeFactor = Math.min(3.0, easeFactor + 0.1)
+        } else {
+            intervalDays = 0;
+            easeFactor = Math.max(1.3, easeFactor - 0.2)
+        }
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + intervalDays)
+
+        await supabase.from('spaced_repetition').upsert({
+            user_id: userId,
+            word_id: wordId,
+            ease_factor: easeFactor,
+            interval_days: intervalDays,
+            due_date: dueDate.toISOString(),
+        });
+        const { data: progress } = await supabase.from('user_vocab_progress').select("*").eq('user_id', userId).eq('word_id', wordId).single();
+
+        if (progress) {
+            await supabase.from('user_vocab_progress').update({
+                times_seen: progress.times_seen + 1,
+                times_correct: progress.times_correct + (isCorrect ? 1 : 0),
+                familiarity: Math.min(1.0, (progress.times_correct + (isCorrect ? 1 : 0)) / (progress.times_seen + 1)),
+                last_reviewed: new Date().toISOString(),
+                next_review: dueDate.toISOString(),
+            }).eq('id', progress.id);
+        } else {
+            await supabase.from('user_vocab_progress').insert({
+                user_id: userId,
+                word_id: wordId,
+                times_seen: 1,
+                times_correct: isCorrect ? 1 : 0,
+                familiarity: isCorrect ? 1.0 : 0.0,
+                last_reviewed: new Date().toISOString(),
+                next_review: dueDate.toISOString(),
+            });
+        }
+    }
+
+    async submitAnswer({ questionId, answerIndex, userId }) {
+        // Get the question
+        const { data: question } = await supabase
+            .from('quiz_questions')
+            .select('*, quiz_attempts!inner(user_id)')
+            .eq('id', questionId)
+            .single();
+        if (!question) throw new Error('Question not found');
+        if (question.quiz_attempts.user_id !== userId) throw new Error('Unauthorized');
+        const isCorrect = answerIndex === question.correct_index
+        await supabase.from('quiz_questions').update({ user_answer_index: answerIndex, is_correct: isCorrect }).eq('id', questionId);
+        if (question.word_id) {
+            await this.updateSpacedRepetition({ userId, wordId: question.word_id, isCorrect });
+        }
+        return { isCorrect, correctIndex: question.correct_index };
+    }
 }
