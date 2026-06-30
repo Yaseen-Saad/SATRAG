@@ -1,0 +1,24 @@
+const { Router } = require('express')
+const { requireAuth, optionalAuth } = require('../middleware/auth')
+const feedback = require('../services/feedbackEngine')
+const path = require('path')
+const fs = require('fs')
+
+const router = Router();
+
+router.post('/submit', requireAuth, async (req, res) => {
+    try {
+        const { wordId, satisfaction, helpfulComponents, problematicComponents, comments } = req.body;
+        const result = await feedback.recordFeedback({ userId: req.user.id, wordID: wordId, satisfaction: parseInt(satisfaction), helpfulComponents, problematicComponents, comments })
+        res.json({ sucess: true, data: result })
+    } catch (err) { res.status(500).json({ success: false, error: err.message }) }
+})
+router.get('/:wordId', requiredAuth, async (req, res) => {
+    try {
+        const data = await feedback.getWordFeedback(req.params.wordId)
+        const avg = await feedbac.getAvgSatisfaction(req.params.wordId)
+        res.json({ data, averageSatisfaction: avg })
+    } catch (err) { res.status(500).json({ error: err.message }) }
+});
+
+module.exports = router;
