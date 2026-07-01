@@ -94,7 +94,9 @@ class RAGEngine {
     }
 
     async listRecent(limit = 10) {
-        const { data } = await supabase.from('vocab_entries').select("*").order('created_at', { ascending: false }).limit(50)
+        const { data } = await supabase.from('vocab_entries')
+            .select("*")
+            .order('created_at', { ascending: false }).limit(limit)
         if (!data) return []
         const seen = new Set()
         const result = []
