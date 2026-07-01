@@ -3,7 +3,6 @@ const supabase = require('../lib/supabase')
 class FeedbackEngine {
     async recordFeedback({ userId, wordID, satisfaction_score, helpfulComponents, problematicComponents, comments }) {
         if (!userId) {
-            // Store anonymously without user reference
             const { data, error } = await supabase.from('feedback_events').insert({
                 word_id: wordID,
                 satisfaction_score,
@@ -30,7 +29,6 @@ class FeedbackEngine {
             return null
         }
 
-        // Also store in rag_feedback_examples for RAG context
         try {
             const { data: wordEntry } = await supabase.from('vocab_entries').select('word').eq('id', wordID).single()
             if (wordEntry) {
@@ -50,7 +48,7 @@ class FeedbackEngine {
                 }
             }
         } catch (e) {
-            // non-critical, don't fail the main operation
+            console.error("Error logging feedback to RAG examples:", e)
         }
 
         return data
