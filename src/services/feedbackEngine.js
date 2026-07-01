@@ -1,12 +1,12 @@
 const supabase = require('../lib/supabase')
 
 class FeedbackEngine {
-    async recordFeedback({ userId, wordID, satisfaction, helpfulComponents, problematicComponents, comments }) {
+    async recordFeedback({ userId, wordID, satisfaction_score, helpfulComponents, problematicComponents, comments }) {
         if (!userId) {
             // Store anonymously without user reference
             const { data, error } = await supabase.from('feedback_events').insert({
                 word_id: wordID,
-                satisfaction,
+                satisfaction_score,
                 helpful_components: helpfulComponents || [],
                 problematic_components: problematicComponents || [],
                 comments
@@ -20,7 +20,7 @@ class FeedbackEngine {
         const { data, error } = await supabase.from('feedback_events').insert({
             user_id: userId,
             word_id: wordID,
-            satisfaction,
+            satisfaction_score,
             helpful_components: helpfulComponents || [],
             problematic_components: problematicComponents || [],
             comments
@@ -41,11 +41,11 @@ class FeedbackEngine {
                         content: `NEGATIVE FEEDBACK FOR ${wordEntry.word}:\nIssues: ${problematicComponents.join(', ')}\nComments: ${comments || ''}`
                     })
                 }
-                if (satisfaction >= 7) {
+                if (satisfaction_score >= 7) {
                     await supabase.from('rag_feedback_examples').insert({
                         word: wordEntry.word,
                         type: "positive",
-                        content: `POSITIVE FEEDBACK FOR ${wordEntry.word}:\n${satisfaction}/10 Satisfied.\nHelpful: ${(helpfulComponents || []).join(', ')}`
+                        content: `POSITIVE FEEDBACK FOR ${wordEntry.word}:\n${satisfaction_score}/10 Satisfied.\nHelpful: ${(helpfulComponents || []).join(', ')}`
                     })
                 }
             }
