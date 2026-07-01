@@ -15,11 +15,12 @@ CREATE TABLE IF NOT EXISTS vocab_entries (
     quality_score NUMERIC(3,1),
     validation_passed BOOLEAN DEFAULT false,
     source TEXT DEFAULT 'generated',
-    embedding vector(768),
+    embedding vector(1024),
     created_by UUID REFERENCES auth.users,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
+
 -- User progress tracking (spaced reptition)
 CREATE TABLE IF NOT EXISTS user_vocab_progress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -41,18 +42,19 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
     score INT NOT NULL,
     total_questions INT NOT NULL,
     attempt_time TIMESTAMP DEFAULT NOW(),
-    completed_at TIMESTAMP DEFAULT NOW()
+    completed_at TIMESTAMP DEFAULT NULL
 );
 
 -- Quiz questions
 CREATE TABLE IF NOT EXISTS quiz_questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     attempt_id UUID REFERENCES quiz_attempts ON DELETE CASCADE,
+    word_id UUID REFERENCES vocab_entries NOT NULL,
     question_type TEXT NOT NULL,
     prompt TEXT,
     options JSONB,
     correct_index INT NOT NULL,
-    user_answer INT,
+    user_answer_index INT,
     is_correct BOOLEAN,
     explanation TEXT,
     question_time TIMESTAMP DEFAULT NOW()
