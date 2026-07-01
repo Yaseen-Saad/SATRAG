@@ -9,7 +9,6 @@ const envSchema = z.object({
     LLM_MODEL: z.string(),
     EMBEDDING_BASE_URL: z.string().url(),
     EMBEDDING_MODEL: z.string(),
-    EMBEDDING_API_KEY: z.string(),
     APP_DOMAIN: z.string(),
     PORT: z.coerce.number().default(3000),
     SUPABASE_PASSWORD: z.string(),

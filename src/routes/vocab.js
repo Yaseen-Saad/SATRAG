@@ -11,7 +11,7 @@ const evaluator = require('../lib/vocabularyEvaluator')
 
 const router = Router();
 
-router.get('/', optionalAuth, async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     const { word } = req.query
     if (word && word.trim()) {
         return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
@@ -19,7 +19,6 @@ router.get('/', optionalAuth, async (req, res) => {
     const recent = await rag.listRecent(10)
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
-
 
 router.post('/generate', requireAuth, async (req, res) => {
     let { word } = req.body;
