@@ -68,15 +68,15 @@ class FeedbackEngine {
 
     async getAvgSatisfaction(wordId) {
         const { data } = await supabase.from('feedback_events')
-            .select('satisfaction').eq('word_id', wordId)
+            .select('satisfaction_score').eq('word_id', wordId)
         if (!data || data.length === 0) return null;
-        const avg = data.reduce((sum, entry) => sum + entry.satisfaction, 0) / data.length;
+        const avg = data.reduce((sum, entry) => sum + (entry.satisfaction_score || 0), 0) / data.length;
         return Math.round(avg * 10) / 10;
     }
 
     async getTopRated(limit = 5) {
         const { data } = await supabase.from('feedback_events')
-            .select('word_id, satisfaction').order('satisfaction', { ascending: false }).limit(limit)
+            .select('word_id, satisfaction_score').order('satisfaction_score', { ascending: false }).limit(limit)
         return data || [];
 
     }

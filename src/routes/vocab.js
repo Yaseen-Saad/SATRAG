@@ -42,13 +42,26 @@ router.post('/generate', optionalAuth, async (req, res) => {
                             ${similar.length > 0 ? `Here are similar entries for style reference:\n${simmilar}\n` : ''}
                             Follow the format exactly. Make the mnemonic memorable.`;
 
-        const response = await llm.generateCompletion({
+        let response = await llm.generateCompletion({
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
         });
 
-        const entry = parseGeneratedEntry(response.content, word);
+        let entry = parseGeneratedEntry(response.content, word);
+        if (!entry.definition || !entry.definition.trim()) {
+            console.error('Raw LLM response for', word, ':', response.content)
+            response = await llm.generateCompletion({
+                messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
+                system: systemPrompt,
+                temperature: 0.7,
+            });
+            entry = parseGeneratedEntry(response.content, word);
+        }
+        if (!entry.definition || !entry.definition.trim()) {
+            console.error('Retry also failed for', word, ':', response.content)
+            throw new Error(`LLM returned an unparseable response for "${word}". Try again.`)
+        }
         const quality = qualityChecker.assessQuality(entry);
         const evaluationResult = evaluator.evaluateEntry(entry, word);
         entry.quality_score = quality.overall
@@ -71,7 +84,13 @@ router.get('/:word', optionalAuth, async (req, res) => {
     res.render('vocab/word', { user: req.user, entry, error: null })
 });
 function parseGeneratedEntry(text, word) {
-    const lines = text.split('\n').map(l => l.trim());
+    if (typeof text !== 'string') {
+        text = String(text || '')
+    }
+
+    text = text.replace(/```[\s\S]*?```/g, '')
+
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l)
     const entry = {
         word,
         pronunciation: '',
@@ -85,40 +104,84 @@ function parseGeneratedEntry(text, word) {
         source: 'generated',
         validation_passed: true,
         quality_score: 7.0,
-    };
+    }
+
+    const dashPatterns = [
+        /^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/,
+        /^[\w-]+\s+\(([^)]+)\)\s*—+\s*(.+)/,
+        /^[\w-]+\s+([\w.]+)\s*—+\s*(.+)/,
+        /^[\w-]+\s*—+\s*(.+)/,
+    ]
+
     for (const line of lines) {
-        const mainMatch = line?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/);
-        if (mainMatch) {
-            entry.pronunciation = mainMatch[1];
-            entry.part_of_speech = mainMatch[2].replace(/\.$/, '');
-            entry.definition = mainMatch[3];
-            break;
+        for (const pattern of dashPatterns) {
+            const m = line?.match(pattern)
+            if (m) {
+                if (m[1] && m[2] && m[3]) {
+                    entry.pronunciation = m[1]
+                    entry.part_of_speech = m[2].replace(/\.$/, '')
+                    entry.definition = m[3]
+                } else if (m[1] && m[2]) {
+                    if (m[1].includes('-')) { entry.pronunciation = m[1]; entry.definition = m[2] }
+                    else { entry.part_of_speech = m[1].replace(/\.$/, ''); entry.definition = m[2] }
+                }
+                break
+            }
         }
-    } let currentField = null;
-    for (const line of lines) {
-        if (line.startsWith('Sounds like:')) {
-            entry.mnemonic_type = 'sounds-like';
-            entry.mnemonic_phrase = line.replace('Sounds like:', '').trim();
-            currentField = null;
-        } else if (line.startsWith('Picture:')) {
-            entry.picture_story = line.replace('Picture:', '').trim();
-            currentField = 'picture_story';
-        } else if (line.startsWith('Other forms:')) {
-            entry.other_forms = line.replace('Other forms:', '').trim();
-            currentField = 'other_forms';
-        } else if (line.startsWith('Sentence:')) {
-            entry.example_sentence = line.replace('Sentence:', '').trim();
-            currentField = 'example_sentence';
-        } else if (currentField && line && !line.match(/^[A-Z]/)) {
-            // Continuation of multi-line field
-            entry[currentField] += ' ' + line;
+        if (entry.definition) break
+    }
+
+    if (!entry.definition) {
+        const wl = word.toLowerCase()
+        for (const line of lines) {
+            if (line.toLowerCase().includes(wl) && /\s*—+\s*/.test(line)) {
+                const parts = line.split(/\s*—+\s*/)
+                if (parts.length >= 2) {
+                    entry.definition = parts.slice(1).join(' — ').trim()
+                    break
+                }
+            }
         }
     }
 
-    if (!entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
-        entry.validation_passed = false;
+    if (!entry.definition) {
+        for (const line of lines) {
+            const colonIdx = line.indexOf(':')
+            if (colonIdx > 0 && !/^(sounds?|picture|other|sentence)/i.test(line)) {
+                const after = line.slice(colonIdx + 1).trim()
+                if (after && after.split(' ').length <= 20) {
+                    entry.definition = after
+                    break
+                }
+            }
+        }
     }
-    return entry;
+
+    let currentField = null
+    for (const line of lines) {
+        const fl = line.toLowerCase()
+        if (/^sounds?\s+like:/.test(fl)) {
+            entry.mnemonic_type = 'sounds-like'
+            entry.mnemonic_phrase = line.replace(/^Sounds?\s+like:\s*/i, '').trim()
+            currentField = null
+        } else if (/^picture:/.test(fl)) {
+            entry.picture_story = line.replace(/^Picture:\s*/i, '').trim()
+            currentField = 'picture_story'
+        } else if (/^other\s+forms:/.test(fl)) {
+            entry.other_forms = line.replace(/^Other\s+forms:\s*/i, '').trim()
+            currentField = 'other_forms'
+        } else if (/^sentence:/.test(fl)) {
+            entry.example_sentence = line.replace(/^Sentence:\s*/i, '').trim()
+            currentField = 'example_sentence'
+        } else if (currentField && line && !line.match(/^[A-Z][a-z]/)) {
+            entry[currentField] += ' ' + line
+        }
+    }
+
+    if (entry.example_sentence && !entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
+        entry.validation_passed = false
+    }
+    return entry
 }
 
 
@@ -142,12 +205,23 @@ router.post('/regenerate', optionalAuth, async (req, res) => {
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8');
         const userPrompt = `Generate a vocabulary entry for "${w}".\nAvoid these issues from previous attempt:\n- ${reason}: ${specificIssue || improvements || 'improve quality'}\n\n${similar.length > 0 ? `Style reference:\n${contextExamples}\n` : ''}\nFollow the format exactly.`;
 
-        const response = await llm.generateCompletion({
+        let response = await llm.generateCompletion({
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
         });
-        const entry = parseGeneratedEntry(response.content, w);
+        let entry = parseGeneratedEntry(response.content, w);
+        if (!entry.definition || !entry.definition.trim()) {
+            response = await llm.generateCompletion({
+                messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
+                system: systemPrompt,
+                temperature: 0.7,
+            });
+            entry = parseGeneratedEntry(response.content, w);
+        }
+        if (!entry.definition || !entry.definition.trim()) {
+            throw new Error(`LLM returned an unparseable response for "${w}". Try again.`)
+        }
         const quality = qualityChecker.assessQuality(entry);
         const evalResult = evaluator.evaluateEntry(entry, w);
         entry.quality_score = quality.overall;

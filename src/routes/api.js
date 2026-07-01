@@ -92,42 +92,85 @@ router.post('/batch-generate', optionalAuth, async (req, res) => {
 })
 
 function parseGeneratedEntry(text, word) {
-    const lines = text.split('\n').map(l => l.trim())
+    if (typeof text !== 'string') {
+        text = String(text || '')
+    }
+    text = text.replace(/```[\s\S]*?```/g, '')
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l)
     const entry = {
         word, pronunciation: '', part_of_speech: '', definition: '',
         mnemonic_type: '', mnemonic_phrase: '', picture_story: '',
         other_forms: '', example_sentence: '', source: 'generated',
         validation_passed: true, quality_score: 7.0,
     }
+    const dashPatterns = [
+        /^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/,
+        /^[\w-]+\s+\(([^)]+)\)\s*—+\s*(.+)/,
+        /^[\w-]+\s+([\w.]+)\s*—+\s*(.+)/,
+        /^[\w-]+\s*—+\s*(.+)/,
+    ]
     for (const line of lines) {
-        const mainMatch = line?.match(/^[\w-]+\s+\(([^)]+)\)\s+([\w.]+)\s*—+\s*(.+)/)
-        if (mainMatch) {
-            entry.pronunciation = mainMatch[1]
-            entry.part_of_speech = mainMatch[2].replace(/\.$/, '')
-            entry.definition = mainMatch[3]
-            break
+        for (const pattern of dashPatterns) {
+            const m = line?.match(pattern)
+            if (m) {
+                if (m[1] && m[2] && m[3]) {
+                    entry.pronunciation = m[1]
+                    entry.part_of_speech = m[2].replace(/\.$/, '')
+                    entry.definition = m[3]
+                } else if (m[1] && m[2]) {
+                    if (m[1].includes('-')) { entry.pronunciation = m[1]; entry.definition = m[2] }
+                    else { entry.part_of_speech = m[1].replace(/\.$/, ''); entry.definition = m[2] }
+                }
+                break
+            }
+        }
+        if (entry.definition) break
+    }
+    if (!entry.definition) {
+        const wl = word.toLowerCase()
+        for (const line of lines) {
+            if (line.toLowerCase().includes(wl) && /\s*—+\s*/.test(line)) {
+                const parts = line.split(/\s*—+\s*/)
+                if (parts.length >= 2) {
+                    entry.definition = parts.slice(1).join(' — ').trim()
+                    break
+                }
+            }
+        }
+    }
+    if (!entry.definition) {
+        for (const line of lines) {
+            const colonIdx = line.indexOf(':')
+            if (colonIdx > 0 && !/^(sounds?|picture|other|sentence)/i.test(line)) {
+                const after = line.slice(colonIdx + 1).trim()
+                if (after && after.split(' ').length <= 20) {
+                    entry.definition = after
+                    break
+                }
+            }
         }
     }
     let currentField = null
     for (const line of lines) {
-        if (line.startsWith('Sounds like:')) {
+        const fl = line.toLowerCase()
+        if (/^sounds?\s+like:/.test(fl)) {
             entry.mnemonic_type = 'sounds-like'
-            entry.mnemonic_phrase = line.replace('Sounds like:', '').trim()
+            entry.mnemonic_phrase = line.replace(/^Sounds?\s+like:\s*/i, '').trim()
             currentField = null
-        } else if (line.startsWith('Picture:')) {
-            entry.picture_story = line.replace('Picture:', '').trim()
+        } else if (/^picture:/.test(fl)) {
+            entry.picture_story = line.replace(/^Picture:\s*/i, '').trim()
             currentField = 'picture_story'
-        } else if (line.startsWith('Other forms:')) {
-            entry.other_forms = line.replace('Other forms:', '').trim()
+        } else if (/^other\s+forms:/.test(fl)) {
+            entry.other_forms = line.replace(/^Other\s+forms:\s*/i, '').trim()
             currentField = 'other_forms'
-        } else if (line.startsWith('Sentence:')) {
-            entry.example_sentence = line.replace('Sentence:', '').trim()
+        } else if (/^sentence:/.test(fl)) {
+            entry.example_sentence = line.replace(/^Sentence:\s*/i, '').trim()
             currentField = 'example_sentence'
-        } else if (currentField && line && !line.match(/^[A-Z]/)) {
+        } else if (currentField && line && !line.match(/^[A-Z][a-z]/)) {
             entry[currentField] += ' ' + line
         }
     }
-    if (!entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
+    if (entry.example_sentence && !entry.example_sentence.toLowerCase().includes(word.toLowerCase())) {
         entry.validation_passed = false
     }
     return entry

@@ -94,8 +94,19 @@ class RAGEngine {
     }
 
     async listRecent(limit = 10) {
-        const { data } = await supabase.from('vocab_entries').select("*").order('created_at', { ascending: false }).limit(limit)
-        return data
+        const { data } = await supabase.from('vocab_entries').select("*").order('created_at', { ascending: false }).limit(50)
+        if (!data) return []
+        const seen = new Set()
+        const result = []
+        for (const entry of data) {
+            const w = entry.word?.toUpperCase()
+            if (seen.has(w)) continue
+            if (!entry.definition || !entry.definition.trim()) continue
+            seen.add(w)
+            result.push(entry)
+            if (result.length >= limit) break
+        }
+        return result
     }
 }
 
