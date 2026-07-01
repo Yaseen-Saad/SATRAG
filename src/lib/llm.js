@@ -23,7 +23,6 @@ class LLMService {
         this.cacheSize = 100;
     }
 
-    // Creating a method to generate vocabulary mneomics using the LLM API
     async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2 }) {
         const cacheKey = JSON.stringify({ messages, system, model, maxTokens, temperature });
         if (this.cache.has(cacheKey)) {
@@ -71,33 +70,20 @@ class LLMService {
         }
     }
     async generateEmbedding(text) {
-        const headers = { 'Content-Type': 'application/json' };
-        if (this.embedApiKey) {
-            headers['Authorization'] = `Bearer ${this.embedApiKey}`;
-        }
-        const res = await fetch(`${this.embedBaseURL}/embeddings`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ model: this.embedModel, input: text })
-        });
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(`Error generating embedding (LLM): ${res.status} - ${errorText}`);
-        }
-        const data = await res.json();
-        return data.data[0].embedding;
+        const embeddings = await this.generateEmbeddings([text]);
+        return embeddings[0];
     }
 
     async generateEmbeddings(texts) {
-        const headers = { 'Content-Type': 'application/json' };
+        const headers = { 'Content-Type': 'application/json' }
         if (this.embedApiKey) {
-            headers['Authorization'] = `Bearer ${this.embedApiKey}`;
+            headers['Authorization'] = `Bearer ${this.embedApiKey}`
         }
         const res = await fetch(`${this.embedBaseURL}/embeddings`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ model: this.embedModel, input: texts })
-        });
+        })
         if (!res.ok) {
             const errorText = await res.text();
             throw new Error(`Error generating embeddings (LLM): ${res.status} - ${errorText}`);
