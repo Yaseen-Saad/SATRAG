@@ -5,7 +5,7 @@ async function requireAuth(req, res, next) {
         const token = req.cookies?.sb_access_token || req.headers.authorization?.split(' ')[1];
         if (!token) {
             if (req.path.startsWith('/api/')) {
-                return res.status(401).json({ error: "Autehntication required" })
+                return res.status(401).json({ error: "Authentication required" })
             }
             return res.redirect('/auth/login')
         }

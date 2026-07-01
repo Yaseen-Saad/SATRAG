@@ -11,7 +11,7 @@ const evaluator = require('../lib/vocabularyEvaluator')
 
 const router = Router();
 
-router.get('/', optionalAuth, async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     const { word } = req.query
     if (word && word.trim()) {
         return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
@@ -21,7 +21,7 @@ router.get('/', optionalAuth, async (req, res) => {
 })
 
 
-router.post('/generate', optionalAuth, async (req, res) => {
+router.post('/generate', requireAuth, async (req, res) => {
     let { word } = req.body;
     if (!word || word.trim() === '') {
         const recent = await rag.listRecent(10)
@@ -185,7 +185,7 @@ function parseGeneratedEntry(text, word) {
 }
 
 
-router.get('/generate/:word', optionalAuth, async (req, res) => {
+router.get('/generate/:word', requireAuth, async (req, res) => {
     const word = req.params.word.toUpperCase();
     const existing = await rag.findByWord(word)
     if (!existing) {
@@ -194,7 +194,7 @@ router.get('/generate/:word', optionalAuth, async (req, res) => {
     res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
 })
 
-router.post('/regenerate', optionalAuth, async (req, res) => {
+router.post('/regenerate', requireAuth, async (req, res) => {
     try {
         const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
         const w = word.trim().toUpperCase()

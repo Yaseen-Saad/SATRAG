@@ -2,23 +2,11 @@ const supabase = require('../lib/supabase')
 
 class FeedbackEngine {
     async recordFeedback({ userId, wordID, satisfaction_score, helpfulComponents, problematicComponents, comments }) {
-        if (!userId) {
-            const { data, error } = await supabase.from('feedback_events').insert({
-                word_id: wordID,
-                satisfaction_score,
-                helpful_components: helpfulComponents || [],
-                problematic_components: problematicComponents || [],
-                comments
-            }).select().single();
-            if (error) {
-                console.error(error)
-                return null
-            }
-            return data
-        }
+        if (!userId) return null;
+
         const { data, error } = await supabase.from('feedback_events').insert({
-            user_id: userId,
             word_id: wordID,
+            user_id: userId,
             satisfaction_score,
             helpful_components: helpfulComponents || [],
             problematic_components: problematicComponents || [],

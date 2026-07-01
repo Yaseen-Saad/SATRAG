@@ -10,48 +10,7 @@ const { requireAuth, optionalAuth } = require('../middleware/auth')
 
 const router = Router()
 
-// GET /api/health
-router.get('/health', async (req, res) => {
-    try {
-        const { count } = await supabase.from('vocab_entries').select('*', { count: 'exact', head: true })
-        res.json({ status: 'ok', entries: count, timestamp: new Date().toISOString() })
-    } catch (err) {
-        res.status(503).json({ status: 'error', message: err.message })
-    }
-})
-
-// GET /api/stats
-router.get('/stats', async (req, res) => {
-    try {
-        const { count: totalEntries } = await supabase.from('vocab_entries').select('*', { count: 'exact', head: true })
-        const { data: mnemonicTypes } = await supabase.from('vocab_entries').select('mnemonic_type')
-        const { data: posData } = await supabase.from('vocab_entries').select('part_of_speech')
-        const { data: feedbackData } = await supabase.from('feedback_events').select('satisfaction_score')
-
-        const mnemonicCounts = {}
-        for (const row of mnemonicTypes || []) {
-            const t = row.mnemonic_type || 'unknown'
-            mnemonicCounts[t] = (mnemonicCounts[t] || 0) + 1
-        }
-
-        const posCounts = {}
-        for (const row of posData || []) {
-            const p = row.part_of_speech || 'unknown'
-            posCounts[p] = (posCounts[p] || 0) + 1
-        }
-
-        const avgSatisfaction = (feedbackData || []).length > 0
-            ? (feedbackData.reduce((s, f) => s + (f.satisfaction_score || 0), 0) / feedbackData.length).toFixed(2)
-            : null
-
-        res.json({ totalEntries, mnemonicCounts, posCounts, totalFeedback: (feedbackData || []).length, avgSatisfaction })
-    } catch (err) {
-        res.status(500).json({ error: err.message })
-    }
-})
-
-// POST /api/batch-generate
-router.post('/batch-generate', optionalAuth, async (req, res) => {
+router.post('/batch-generate', requireAuth, async (req, res) => {
     const { words } = req.body
     if (!words || !Array.isArray(words) || words.length === 0) {
         return res.status(400).json({ error: 'Provide an array of words.' })
@@ -176,7 +135,6 @@ function parseGeneratedEntry(text, word) {
     return entry
 }
 
-// POST /api/report
 router.post('/report', requireAuth, async (req, res) => {
     try {
         const { word, issue, details, satisfaction } = req.body
@@ -211,7 +169,6 @@ router.post('/report', requireAuth, async (req, res) => {
     }
 })
 
-// GET /api/analytics
 router.get('/analytics', requireAuth, async (req, res) => {
     try {
         const userId = req.user.id
