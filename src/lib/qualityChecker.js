@@ -17,11 +17,10 @@ class QualityChecker {
             formatcompliance: this.assessFormatCompliance(entry)
         };
         let overall = Object.entries(scores).reduce((acc, [key, value]) => acc + value * this.weights[key], 0);
-        // Heavily penalize entries missing core components
-        if (!entry.definition || !entry.definition.trim()) overall = 0;
-        else if (!entry.mnemonic_phrase || !entry.mnemonic_phrase.trim()) overall *= 0.3;
-        else if (!entry.example_sentence || !entry.example_sentence.trim()) overall *= 0.5;
-        return { overall, scores, issues: this.identifyIssues(entry, scores), strength: this.identifyStrengths(entry, scores) };
+        if (!entry.definition || !entry.definition.trim()) overall = 0
+        else if (!entry.mnemonic_phrase || !entry.mnemonic_phrase.trim()) overall *= 0.4
+        else if (!entry.example_sentence || !entry.example_sentence.trim()) overall *= 0.6
+        return { overall, scores, issues: this.identifyIssues(entry, scores), strength: this.identifyStrengths(entry, scores) }
     }
     assessAuthenticity(entry) {
         let score = 10;
