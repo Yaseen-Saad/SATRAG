@@ -32,4 +32,38 @@ router.get('/logout', (req, res) => {
     res.redirect('/auth/login');
 })
 
+router.get("/forgot-password", (req, res) => {
+    res.render('auth/forgot-password', { error: null, success: null })
+})
+
+router.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.render("auth/forgot-password", { error: "Please provide an email", success: null })
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${config.APP_DOMAIN}/auth/reset-password?email=${email}`,
+    })
+    if (error) return res.render('auth/forgot-password', { error: error.message, success: null })
+    res.render('auth/forgot-password', { error: null, success: "Password reset email sent" })
+})
+
+router.get('/reset-password', (req, res) => {
+    res.render('auth/reset-password', { error: null, success: null })
+})
+
+router.post('/reset-password', async (req, res) => {
+    const { email, newPassword, access_token } = req.body;
+    const token = access_token || req.cookies?.sb_access_token || req.headers.authorization?.split(" ")[1];
+    if (!email || !newPassword) return res.render('auth/reset-password', { email, access_token, error: "Missing required fields", success: null })
+    if (newPassword.length < 6) return res.render('auth/reset-password', { email, access_token, error: "Password must be at least 6 characters long", success: null })
+    if (!token) return res.render('auth/reset-password', { email, token, error: "Invalid access token", success: null })
+
+
+    const { data, error } = await supabase.auth.updateUser({
+        accessToken: token,
+        password: newPassword,
+    })
+    if (error) return res.render('auth/reset-password', { email, token, error: error.message, success: null })
+    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: "Password reset successful! Please log in." })
+})
+
 module.exports = router;

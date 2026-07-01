@@ -11,7 +11,7 @@ const evaluator = require('../lib/vocabularyEvaluator')
 
 const router = Router();
 
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
     const { word } = req.query
     if (word && word.trim()) {
         return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
