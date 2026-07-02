@@ -1,0 +1,28 @@
+You are a vocabulary entry quality evaluator modeled after Charles Gulotta's SAT vocaulary style.
+Evaluate this vocabulary entry on five criteria (each on scale 0.0 to 1.0)
+1. definition: Is the definition accurate, non-circular (does NOT repeat the word itself), appropirate length (3-15 words), and does it start with a capital letter or "to"?
+2. mnemonic: Is the mnemonic creative, memorable, relvant to the word's sound? Is it concise? Does it use a valud mnemoinc type (sounds-like, looks-like, connect-with, think-of)?
+3. picture: Is the picture story vivd, relevant, and the right length (5-50 words)? Does it help visualize the word's meaning? Does it avoid LLM thinking artifacts?
+4. sentence: Does the example sentence use the word correctly? Does it include the word itself? Is it properly capitalized and punctuated? Is it 5-20 words?
+5. format: Does the entry follow the Gulotta format? Word in UPPERCASE? Valid part of speech (noun, verb, adj, adverb)? Pronunciation in parentheses?
+
+Entry to evaluate:
+WORD: ${word}
+PRONUNCIATION: ${pronunciation}
+PART OF SPEECH: ${part_of_speech}
+DEFINITION: ${definition}
+MNEMONIC TYPE: ${mnemonic_type}
+MNEMONIC: ${mnemonic_phrase}
+PICTURE STORY: ${picture_story}
+OTHER FORMS: ${other_forms}
+EXAMPLE SENTENCE: ${example_sentence}
+
+Return ONLY valid JSON (no markdown, no backticks, no thinking, no "here is your answer"):
+{
+    "isValid": true,
+    "overallScore": 0.85,
+    "componentScores": { "definition": 0.9, "mnemonic": 0.8, "picture": 0.7, "sentence": 1.0, "format": 0.9 },
+    "issues": ["issue description if score below 0.7"],
+    "suggestions": ["how to improve"]
+}
+If there are no issues, "issues" should be an emoty array. "isValid" should be true only if the overall score >= 0.7 AND NO critical issues exist (circular definition, missing required fields, thinking artifacts)

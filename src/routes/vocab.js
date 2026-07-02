@@ -74,14 +74,6 @@ router.post('/generate', requireAuth, async (req, res) => {
         res.render('vocab/index', { user: req.user, recent, error: err.message })
     }
 })
-
-router.get('/:word', optionalAuth, async (req, res) => {
-    const entry = await rag.findByWord(req.params.word.toUpperCase());
-    if (!entry) {
-        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
-    }
-    res.render('vocab/word', { user: req.user, entry, error: null })
-});
 function parseGeneratedEntry(text, word) {
     if (typeof text !== 'string') {
         text = String(text || '')
@@ -236,5 +228,13 @@ router.post('/regenerate', requireAuth, async (req, res) => {
         res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
     }
 })
+
+router.get('/:word', optionalAuth, async (req, res) => {
+    const entry = await rag.findByWord(req.params.word.toUpperCase());
+    if (!entry) {
+        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+    }
+    res.render('vocab/word', { user: req.user, entry, error: null })
+});
 
 module.exports = router;

@@ -18,7 +18,6 @@ class LLMService {
         this.embedBaseURL = config.EMBEDDING_BASE_URL;
         this.embedModel = config.EMBEDDING_MODEL
         this.apiKey = config.LLM_API_KEY;
-        this.embedApiKey = config.EMBEDDING_API_KEY || config.LLM_API_KEY;
         this.cache = new Map();
         this.cacheSize = 100;
     }

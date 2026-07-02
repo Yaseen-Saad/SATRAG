@@ -1,6 +1,6 @@
 <% title = 'Error ' + statusCode; %>
-<div style="text-align:center; padding:3rem;">
-  <h1 style="font-size:3rem; color:#c62828;"><%= statusCode %></h1>
-  <p style="font-size:1.1rem; color:#666; margin-bottom:2rem;"><%= error %></p>
-  <a href="/" class="btn-primary">Go Home</a>
+<div class="error-page">
+  <div class="error-code"><%= statusCode %></div>
+  <p><%= error %></p>
+  <a href="/" class="btn-primary btn-lg">Go Home</a>
 </div>

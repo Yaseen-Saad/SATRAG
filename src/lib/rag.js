@@ -41,12 +41,12 @@ class RAGEngine {
             }).filter(e => e.similarity > 0).sort((a, b) => b.similarity - a.similarity).slice(0, topK);
 
             if (scored.length > 0) return scored;
-            const { data: fallback } = await supabase
+            const { data } = await supabase
                 .from('vocab_entries')
                 .select('*')
                 .order('created_at', { ascending: false })
                 .limit(topK);
-            return fallback || [];
+            return data || [];
         } catch {
             const { data } = await supabase.from('vocab_entries')
                 .select('*')

@@ -4,28 +4,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof title !== 'undefined' ? title : 'SAT Study Buddy' %></title>
-  <link rel="stylesheet" href="/assets/scss/main.css">
+  <title><%= title? title : 'SAT Study Buddy' %></title>
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
   <nav>
     <a href="/" class="brand">SAT Study Buddy</a>
-    <div class="nav-links">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <div class="nav-links" id="nav-links">
       <a href="/vocab">Words</a>
       <a href="/quiz/start">Quiz</a>
-      <% if (typeof user !== 'undefined' && user) { %>
+      <% if (typeof user !== "undefined" && user) { %>
       <a href="/dashboard">Dashboard</a>
-      <a href="/auth/logout" class="btn-signout">Sign Out</a>
+      <a href="/auth/logout" class="btn-signout btn-nav">Sign Out</a>
       <% } else { %>
       <a href="/auth/login">Log In</a>
-      <a href="/auth/signup">Sign Up</a>
+      <a href="/auth/signup" class="btn-nav">Sign Up</a>
       <% } %>
     </div>
   </nav>
+  <div class="overlay" id="overlay"></div>
   <main>
     <%- body %>
   </main>
+  <script src="/js/app.js"></script>
 </body>
 
 </html>
