@@ -82,3 +82,59 @@ CREATE TABLE spaced_repetition (
     due_date TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, word_id)
 )
+
+-- SAT Question Bank
+CREATE TABLE IF NOT EXISTS sat_questions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    question_text TEXT NOT NULL,
+    question_type TEXT NOT NULL CHECK (question_type IN ('mcq', 'fill_in_the_blank')),
+    subject TEXT NOT NULL CHECK (subject IN ('math', 'reading')),
+    topic TEXT NOT NULL,
+    subtopic TEXT NOT NULL,
+    difficulty TEXT NOT NULL CHECK (difficulty IN ('easy', 'medium', 'hard')),
+    difficulty_band INT CHECK (difficulty_band BETWEEN 1 AND 8),
+    options JSONB,
+    correct_answer TEXT NOT NULL,
+    explanation TEXT,
+    source TEXT DEFAULT "collegeboard" CHECK (source IN ('collegeboard', 'ai_generated')),
+    tags JSONB DEFAULT '[]',
+    is_active BOOLEAN,
+    created_at TIMESTAMP DEFAULT NOW(),
+);
+
+-- Question state per user
+CREATE TABLE user_question_state (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    question_id UUID REFERENCES sat_questions NOT NULL,
+    status TEXT DEFAULT "unsolved" CHECK (status IN ('unsolved', 'solved_correct', 'solved_incorrect')),
+    marked_for_review BOOLEAN DEFAULT false,
+    last_attempt TIMESTAMP,
+    times_attempted INT DEFAULT 0,
+    times_correct INT DEFAULT 0,
+    first_attempt TIMESTAMP,
+    first_solved TIMESTAMP,
+    best_time_ms INT,
+    UNIQUE(user_id, question_id)
+);
+
+-- Attempts History
+CREATE TABLE user_question_attempts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    question_id UUID REFERENCES sat_questions NOT NULL,
+    selected_answer TEXT,
+    is_correct BOOLEAN,
+    time_taken_ms INT,
+    attempt_number INT DEFAULT 1,
+    attempt_time TIMESTAMP DEFAULT NOW(),
+);
+
+CREATE INDEX idx_practice_subject ON sat_questions(subject);
+CREATE INDEX idx_practice_topic ON sat_questions(topic);
+CREATE INDEX idx_practice_subtopic ON sat_questions(subtopic);
+CREATE INDEX idx_practice_difficulty ON sat_questions(difficulty);
+CREATE INDEX idx_uqs_user_status ON user_question_state(user_id, status);
+CREATE INDEX idx_uqs_user_question ON user_question_state(user_id, question_id);
+CREATE INDEX idx_uqs_question_status ON user_question_state(question_id, status);
+CREATE INDEX idx_uqa_question_time ON user_question_attempts(question_id, attempt_time);

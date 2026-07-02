@@ -62,9 +62,9 @@ router.post('/generate', requireAuth, async (req, res) => {
             throw new Error(`LLM returned an unparseable response for "${word}". Try again.`)
         }
         const quality = qualityChecker.assessQuality(entry);
-        const evaluationResult = evaluator.evaluateEntry(entry, word);
+        const evaluationResult = await evaluator.evaluateEntry(entry, word);
         entry.quality_score = quality.overall
-        entry.validation_passed = evaluationResult.isValid
+        entry.validation_passed = evaluationResult?.isValid ?? false;
         const saved = await rag.addEntry(entry);
 
         res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true })

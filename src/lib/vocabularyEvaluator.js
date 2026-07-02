@@ -32,6 +32,13 @@ class VocabularyEvaluator {
             const jsonMatch = response.content.match(/\{[\s\S]*\}/);
             if (!jsonMatch) throw new Error('No JSON in LLM response');
             const result = JSON.parse(jsonMatch[0]);
+            if (!result || typeof result.isValid !== 'boolean' || typeof result.score !== 'number' || typeof result.feedback !== 'string') {
+                throw new Error('Invalid JSON structure in LLM response');
+            }
+            result.overallScore = result.overallScore ?? 5;
+            result.componentScores = result.componentScores ?? {};
+            result.issues = result.issues ?? [];
+            result.suggestions = result.suggestions ?? [];
             return result;
         } catch (err) {
             console.error('Error evaluating entry:', err);

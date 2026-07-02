@@ -9,23 +9,26 @@
 </head>
 
 <body>
-  <nav>
-    <a href="/" class="brand">SAT Study Buddy</a>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </button>
-    <div class="nav-links" id="nav-links">
-      <a href="/vocab">Words</a>
-      <a href="/quiz/start">Quiz</a>
-      <% if (typeof user !== "undefined" && user) { %>
-      <a href="/dashboard">Dashboard</a>
-      <a href="/auth/logout" class="btn-signout btn-nav">Sign Out</a>
-      <% } else { %>
-      <a href="/auth/login">Log In</a>
-      <a href="/auth/signup" class="btn-nav">Sign Up</a>
-      <% } %>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">SAT Study Buddy</a>
+      <button class="navbar-toggle" id="nav-toggle" aria-label="Menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <button id="theme-toggle" class="nav-link theme-btn">🌙</button>
+      <div class="navbar-links" id="nav-links">
+        <a href="/vocab" class="nav-link">Words</a>
+        <a href="/quiz/start" class="nav-link">Quiz</a>
+        <% if (user) { %>
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/auth/logout" class="nav-link nav-link--signout">Sign Out</a>
+        <% } else { %>
+        <a href="/auth/login" class="nav-link">Log In</a>
+        <a href="/auth/signup" class="btn btn--primary btn--sm">Sign Up</a>
+        <% } %>
+      </div>
     </div>
   </nav>
   <div class="overlay" id="overlay"></div>

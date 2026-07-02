@@ -1,6 +1,7 @@
 const flashes = 4000;
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
+    const html = document.documentElement
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('nav-links');
     const overlay = document.getElementById('overlay');
@@ -19,9 +20,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem("theme") || "dark"
+    html.setAttribute("data-theme", savedTheme);
     if (themeToggle) {
         themeToggle.addEventListener('click', function () {
-            body.classList.toggle('dark-mode');
+            const currentTheme = html.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            html.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
         });
     }
 
