@@ -25,10 +25,14 @@ class PracticeEngine {
                 if (ids.length) query = query.in("id", ids);
                 else return { questions: [], total: 0, page, limit }
             } else if (status === "unsolved") {
-                const { data: all } = await supabase.from('sat_questions').select('id');
-                const solved = new Set([...stateMap].filter(([_, s]) => s.status !== 'unsolved').map(([id]) => id));
-                const ids = (all || []).filter(q => !solved.has(q.id)).map(q => q.id);
-                if (ids.length) query = query.in('id', ids); else return { questions: [], total: 0, page, limit };
+                if (stateMap.size === 0) {
+                    // No state yet → all questions are unsolved, no filter needed
+                } else {
+                    const { data: all } = await supabase.from('sat_questions').select('id');
+                    const solved = new Set([...stateMap].filter(([_, s]) => s.status !== 'unsolved').map(([id]) => id));
+                    const ids = (all || []).filter(q => !solved.has(q.id)).map(q => q.id);
+                    if (ids.length) query = query.in('id', ids); else return { questions: [], total: 0, page, limit };
+                }
             }
             if (marked) {
                 const ids = [...stateMap].filter(([_, s]) => s.marked_for_review).map(([id]) => id)

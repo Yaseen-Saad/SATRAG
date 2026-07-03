@@ -61,7 +61,7 @@ async function seedSATQuestions() {
                 explanation: fq.rationale || null,
                 source: 'collegeboard',
                 tags: JSON.stringify([question.skill_cd, question.primary_class_cd]),
-                is_active: question.is_active,
+                is_active: question.isActive,
             }
             const { error } = await supabase.from('sat_questions').insert(row);
             if (error) console.error(error);
