@@ -66,10 +66,37 @@ class PracticeEngine {
     }
 
     async submitAnswer({ userId, questionId, answer, timeMs }) {
-
+        const { data: question } = await supabase.from('sat_questions').select("correct_answer, question_type, options").eq("id", questionId).single()
+        if (!question) throw new Error("Question not found");
+        const isCorrect = answer.trim().toUpperCase() === question.correct_answer.trim().toUpperCase()
+        const { data: existing } = await supabase.from('user_question_state').select('*').eq('user_id', userId).eq('question_id', questionId).single();
+        const attemptNumber = (existing?.times_attempted || 0) + 1
+        await supabase.from("user_question_attempts").insert({
+            user_id: userId, question_id: questionID, selected_answer: answer, is_correct: isCorrect, attempt_number: attemptNumber,
+            time_taken_ms: timeMs
+        })
+        const nStatus = isCorrect ? "solved_correct" : "solved_incorrect"
+        const newBest = existing?.best_time_ms ? Math.min(existing.best_time_ms, timeMs) : timeMs;
+        await supabase.from('user_question_state').upsert({
+            user_id: userId, question_id: questionId,
+            status: nStatus,
+            times_attempted: attemptNumber,
+            times_correct: (existing?.times_correct || 0) + (isCorrect ? 1 : 0),
+            best_time_ms: newBestTime,
+            last_attempt: new Date().toISOString(),
+            first_attempt: existing?.first_attempt || new Date().toISOString(),
+            first_solved: isCorrect && !existing?.first_solved ? new Date().toISOString() : existing?.first_solved,
+        })
+        const percentile = await this.getSpeedPercentile(questionId, timesMs)
+        return { isCorrect, correctAnswer: question.correct_answer, percentile, attemptNumber }
     }
 
-    async getSpeedPercentile({ questionID, userTimeMs }) { }
+    async getSpeedPercentile({ questionID, userTimeMs }) {
+        const { data } = await supabase.from('user_question_attempts').select('time_taken_ms').eq('question_id', questionId).eq('is_correct', true)
+        if (!data || data.length < 5) return null;
+        const faster = data.filter(a => a.time_taken_ms < userTimeMs).length;
+        return Math.round((faster / data.length) * 100)
+    }
 
     async toggleMarkForReview({ userId, questionId }) { }
 
@@ -77,7 +104,19 @@ class PracticeEngine {
 
     }
 
-    async getTopicTree(subject) { }
+    async getTopicTree(subject) {
+        let query = supabase.from('sat_questions').select('topic', 'subtopic')
+        if (subject) query = quer.eq('subject', subject)
+        const { data } = await query;
+        const tree = {}
+            (data || []).forEach(q => {
+                if (!tree[q.topic]) tree[q.topic] = new Set();
+                if (q.subtopic) tree[q.topic].add(q.subtopic);
+            })
+        return Object.entries(tree).map(([topic, subtopics]) => ({
+            topic, subtopics: [...subtopics].sort()
+        }))
+    }
 
 }
 
