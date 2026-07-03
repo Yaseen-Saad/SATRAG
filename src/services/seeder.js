@@ -2,7 +2,7 @@ const supabase = require('../lib/supabase')
 const llm = require('../lib/llm')
 const { parseSampleEntries } = require('../lib/parser')
 const path = require('path')
-
+const fs = require('fs')
 async function seedSampleData() {
     const { count } = await supabase
         .from('vocab_entries')
@@ -26,4 +26,51 @@ async function seedSampleData() {
     console.log(`Seeding complete: ${seeded} seeded, ${failed} failed out of ${entries.length} entries.`);
 }
 
-module.exports = { seedSampleData }
+async function seedSATQuestions() {
+    const { count } = await supabase.from('sat_questions').select('*', { count: 'exact', head: true });
+    if (count > 0) return
+    const filePath = path.join(__dirname, '../../data/sat_questions_with_active.json');
+    const questions = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const SHIT_TO_ENGLISH = { H: "math", P: "math", Q: "math", S: "math", INI: "reading", CAS: "reading", EOI: "writing", SEC: "writing" }
+    const DIFFICULITY_MAP = { E: 'easy', H: "hard", M: "medium" }
+    let inserted = 0, failed = 0;
+    for (const question of questions) {
+        try {
+            const fq = question.fullQuestion;
+            if (!fq || !fq.type) continue;
+            const subject = SHIT_TO_ENGLISH[question.primary_class_cd]
+            if (!subject) continue;
+            const options = fq.answerOptions ? JSON.stringify(fq.answerOptions.map((o, i) => ({ label: String.fromCharCode(65 + i), content: o.content }))) : null;
+            const correctAnswer = fq.correct_answer?.[0] || fq.keys?.[0] || "";
+            const stemPlain = (fq.stem || '').replace(/<[^>]+>/g, '').trim();
+            const row = {
+                question_text: fq.stem,
+                passage_text: fq.stimulus || null,
+                stem_plain_text: stemPlain,
+                skill_code: question.skill_cd || null,
+                skill_description: question.skill_desc || null,
+                question_type: fq.type,
+                subject,
+                topic: question.primary_class_cd_desc,
+                subtopic: question.skill_desc,
+                difficulty: DIFFICULITY_MAP[question.difficulty] || 'medium',
+                difficulty_band: question.score_band_range_cd || null,
+                options,
+                correct_answer: correctAnswer,
+                explanation: fq.rationale || null,
+                source: 'collegeboard',
+                tags: JSON.stringify([question.skill_cd, question.primary_class_cd]),
+                is_active: question.is_active,
+            }
+            const { error } = await supabase.from('sat_questions').insert(row);
+            if (error) console.error(error);
+            else inserted++;
+            if ((inserted + failed) % 50 === 0) console.log(`Inserted ${inserted} questions, ${failed} failed.`);
+        } catch (err) {
+            failed++;
+            console.error(err);
+        }
+    }
+    console.log(`Seeding complete: ${inserted} inserted, ${failed} failed out of ${questions.length} questions.`);
+}
+module.exports = { seedSampleData, seedSATQuestions }
