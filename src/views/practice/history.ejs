@@ -1,0 +1,31 @@
+<% title = 'Attempt History'; %>
+<h1>Attempt History</h1>
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<a href="/practice/question/<%= questionId %>" class="btn btn--ghost btn--sm" style="margin-bottom:1rem;">← Back to Question</a>
+
+<% if (!attempts || attempts.length === 0) { %>
+<div class="card"><p style="text-align:center; color:var(--text-muted);">No attempts recorded for this question.</p></div>
+<% } else { %>
+<div class="attempts-list">
+  <% attempts.forEach(a => { %>
+  <div class="card" style="margin-bottom:0.5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <strong>Attempt #<%= a.attempt_number %></strong>
+        <small style="color:var(--text-light); margin-left:0.5rem;"><%= new Date(a.attempt_time).toLocaleString() %></small>
+      </div>
+      <span style="font-weight:600; <%= a.is_correct ? 'color:var(--success);' : 'color:var(--error);' %>">
+        <%= a.is_correct ? '✓ Correct' : '✗ Incorrect' %>
+      </span>
+    </div>
+    <p style="margin:0.25rem 0 0; font-size:0.9rem; color:var(--text-muted);">
+      Answer: <%= a.selected_answer %> · Time: <%= Math.round(a.time_taken_ms / 1000) %>s
+    </p>
+  </div>
+  <% }) %>
+</div>
+<% } %>

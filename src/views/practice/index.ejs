@@ -1,0 +1,110 @@
+<% title = 'Practice Bank'; %>
+<h1>SAT Practice Bank</h1>
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<div class="practice-layout">
+  <aside class="practice-filters">
+    <h3>Filters</h3>
+    <form method="GET" action="/practice">
+      <div class="form-group">
+        <label>Subject</label>
+        <select name="subject" onchange="this.form.submit()">
+          <option value="">All</option>
+          <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
+          <option value="reading" <%= filters.subject === 'reading' ? 'selected' : '' %>>Reading</option>
+          <option value="writing" <%= filters.subject === 'writing' ? 'selected' : '' %>>Writing</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Topic</label>
+        <select name="topic" onchange="this.form.submit()">
+          <option value="">All</option>
+          <% (topicTree || []).forEach(t => { %>
+          <option value="<%= t.topic %>" <%= filters.topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Difficulty</label>
+        <select name="difficulty" onchange="this.form.submit()">
+          <option value="">All</option>
+          <option value="easy" <%= filters.difficulty === 'easy' ? 'selected' : '' %>>Easy</option>
+          <option value="medium" <%= filters.difficulty === 'medium' ? 'selected' : '' %>>Medium</option>
+          <option value="hard" <%= filters.difficulty === 'hard' ? 'selected' : '' %>>Hard</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status" onchange="this.form.submit()">
+          <option value="">All</option>
+          <option value="unsolved" <%= filters.status === 'unsolved' ? 'selected' : '' %>>Unsolved</option>
+          <option value="solved" <%= filters.status === 'solved' ? 'selected' : '' %>>Solved</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="marked" value="true" <%= filters.marked === 'true' ? 'checked' : '' %> onchange="this.form.submit()">
+          Marked for Review
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Search</label>
+        <input type="text" name="search" placeholder="Search questions..." value="<%= filters.search || '' %>">
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block">Apply</button>
+      <a href="/practice" class="btn btn--ghost btn--block" style="margin-top:0.5rem;">Clear</a>
+    </form>
+  </aside>
+
+  <main class="practice-list">
+    <p style="color:var(--text-muted); margin-bottom:1rem;">
+      Showing <%= questions.length %> of <%= total %> questions
+    </p>
+
+    <% if (questions.length === 0) { %>
+    <div class="card"><p style="text-align:center; color:var(--text-muted);">No questions match your filters.</p></div>
+    <% } %>
+
+    <div class="practice-questions">
+      <% questions.forEach(q => { %>
+      <a href="/practice/question/<%= q.id %>" class="card card-link practice-item">
+        <div class="practice-item-header">
+          <span class="badge badge--<%= q.subject %>"><%= q.subject %></span>
+          <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
+          <small style="color:var(--text-light);"><%= q.topic %> · <%= q.subtopic %></small>
+        </div>
+        <p class="practice-item-text"><%= q.stem_plain_text?.substring(0, 150) %><%= (q.stem_plain_text?.length || 0) > 150 ? '...' : '' %></p>
+        <div class="practice-item-footer">
+          <% if (q.user_state) { %>
+            <span class="status-<%= q.user_state.status %>">
+              <%= q.user_state.status === 'solved_correct' ? '✓ Solved' : q.user_state.status === 'solved_incorrect' ? '✗ Incorrect' : '○ Attempted' %>
+              <%= q.user_state.best_time_ms ? ` · ${Math.round(q.user_state.best_time_ms / 1000)}s` : '' %>
+            </span>
+            <% if (q.user_state.marked_for_review) { %><span class="status-marked">★ Review</span><% } %>
+          <% } else { %>
+            <span style="color:var(--text-light);">Not attempted</span>
+          <% } %>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+
+    <% if (total > limit) { %>
+    <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center;">
+      <% for (let p = 1; p <= Math.ceil(total / limit); p++) { %>
+        <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %>"
+           class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
+      <% } %>
+    </div>
+    <% } %>
+  </main>
+</div>
