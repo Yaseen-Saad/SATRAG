@@ -97,6 +97,13 @@
     });
     const data = await res.json();
 
+    if (!data.success) {
+      document.getElementById('answer-area').style.display = 'none';
+      const fb = document.getElementById('feedback-area');
+      fb.style.display = 'block';
+      fb.innerHTML = `<div class="card" style="text-align:center; padding:2rem; color:var(--error);"><h2>Error</h2><p>${data.error || 'Something went wrong'}</p><button class="btn btn--primary" onclick="location.reload()">Reload</button></div>`;
+      return;
+    }
     document.getElementById('answer-area').style.display = 'none';
     const fb = document.getElementById('feedback-area');
     fb.style.display = 'block';
@@ -107,10 +114,10 @@
           ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
         </h2>
         <p>Correct answer: <strong>${data.correctAnswer}</strong></p>
-        <p>Time: ${Math.round(timeMs / 1000)}s ${data.percentile !== null ? `· Faster than ${data.percentile}% of users` : ''}</p>
+        <p>Time: ${Math.round(timeMs / 1000)}s ${data.percentile !== null ? '· Faster than ' + data.percentile + '% of users' : ''}</p>
         <p>Attempt #${data.attemptNumber}</p>
         <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
-          <a href="/practice" class="btn btn--primary">Back to Bank</a>
+          ${data.isCorrect ? '<a href="/practice" class="btn btn--primary">Back to Bank</a>' : '<button class="btn btn--primary" id="try-again-btn">Try Again</button>'}
           <button class="btn btn--ghost" onclick="toggleMark()">${'<%= uState?.marked_for_review ? "Unmark" : "Mark for Review" %>'}</button>
         </div>
         ${explanation ? `
@@ -122,6 +129,13 @@
 </div>` : '<p style="margin-top:1rem; color:var(--text-light);">No explanation available.</p>'}
       </div>
     `;
+    if (!data.isCorrect) {
+      document.getElementById('try-again-btn')?.addEventListener('click', () => {
+        answered = false;
+        document.getElementById('answer-area').style.display = '';
+        fb.style.display = 'none';
+      });
+    }
   }
 
   async function toggleMark() {

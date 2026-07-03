@@ -11,7 +11,7 @@
     <form method="GET" action="/practice">
       <div class="form-group">
         <label>Subject</label>
-        <select name="subject">
+        <select name="subject" onchange="this.form.submit()">
           <option value="">All</option>
           <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
           <option value="reading" <%= filters.subject === 'reading' ? 'selected' : '' %>>Reading</option>
@@ -36,7 +36,6 @@
           <% }) %>
         </select>
       </div>
-
       <div class="form-group">
         <label>Difficulty</label>
         <select name="difficulty">
@@ -51,8 +50,10 @@
         <label>Status</label>
         <select name="status">
           <option value="">All</option>
-          <option value="unsolved" <%= filters.status === 'unsolved' ? 'selected' : '' %>>Unsolved</option>
           <option value="solved" <%= filters.status === 'solved' ? 'selected' : '' %>>Solved</option>
+          <option value="correct" <%= filters.status === 'correct' ? 'selected' : '' %>>Correct</option>
+          <option value="incorrect" <%= filters.status === 'incorrect' ? 'selected' : '' %>>Incorrect</option>
+          <option value="unsolved" <%= filters.status === 'unsolved' ? 'selected' : '' %>>Unsolved</option>
         </select>
       </div>
 

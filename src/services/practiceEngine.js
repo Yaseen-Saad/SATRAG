@@ -1,4 +1,4 @@
-const supabase = require('../lib/supabase')
+const { service: supabase } = require('../lib/supabase')
 class PracticeEngine {
     async getQuestions({ subject, topic, subtopic, difficulty, active, difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
@@ -20,11 +20,22 @@ class PracticeEngine {
         if (userId && (status || marked)) {
             const { data: userStates } = await supabase.from('user_question_state').select('question_id, status, marked_for_review').eq('user_id', userId);
             const stateMap = new Map((userStates || []).map(s => [s.question_id, s]));
-            if (status === "solved") {
+            if (status === "correct") {
                 const ids = [...stateMap].filter(([id, state]) => state.status === "solved_correct").map(([id]) => id);
                 if (ids.length) query = query.in("id", ids);
                 else return { questions: [], total: 0, page, limit }
-            } else if (status === "unsolved") {
+            } else if (status === "incorrect") {
+                const ids = [...stateMap].filter(([id, state]) => state.status === "solved_incorrect").map(([id]) => id);
+                if (ids.length) query = query.in("id", ids);
+                else return { questions: [], total: 0, page, limit }
+            }
+            else if (status === "solved") {
+                const ids = [...stateMap].filter(([id, state]) => state.status === "solved_correct" || state.status === "solved_incorrect").map(([id]) => id);
+                if (ids.length) query = query.in("id", ids);
+                else return { questions: [], total: 0, page, limit }
+            }
+            else if (status === "unsolved") {
+
                 if (stateMap.size === 0) {
                     // No state yet → all questions are unsolved, no filter needed
                 } else {
@@ -145,16 +156,16 @@ class PracticeEngine {
     }
 
     async getTopicTree(subject) {
-        let query = supabase.from('sat_questions').select('topic, subtopic')
+        let query = supabase.from('sat_questions').select('topic, subtopic, subject')
         if (subject) query = query.eq('subject', subject)
         const { data } = await query;
         const tree = {};
         (data || []).forEach(q => {
-            if (!tree[q.topic]) tree[q.topic] = new Set();
-            if (q.subtopic) tree[q.topic].add(q.subtopic);
+            if (!tree[q.topic]) tree[q.topic] = { subtopics: new Set(), subject: q.subject };
+            if (q.subtopic) tree[q.topic].subtopics.add(q.subtopic);
         })
-        return Object.entries(tree).map(([topic, subtopics]) => ({
-            topic, subtopics: [...subtopics].sort()
+        return Object.entries(tree).map(([topic, entry]) => ({
+            topic, subtopics: [...entry.subtopics].sort(), subject: entry.subject
         }))
     }
 

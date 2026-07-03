@@ -32,14 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const flashes = document.querySelectorAll('.flash');
-    flashes.forEach(flash => {
+    document.querySelectorAll('.flash').forEach(flash => {
         setTimeout(() => {
             flash.style.cssText = 'opacity: 0; transition: opacity 0.5s ease-out;';
             setTimeout(() => {
                 flash.remove();
             }, 500);
-        }, flashes || 4000);
+        }, 4000);
     });
 
     document.querySelectorAll('.flash .dismiss').forEach(closeBtn => {

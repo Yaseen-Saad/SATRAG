@@ -16,7 +16,6 @@ async function requireAuth(req, res, next) {
             }
             return res.redirect('/auth/login')
         }
-        await supabase.auth.setSession({ access_token: token, refresh_token: req.cookies?.sb_refresh_token || req.headers['x-refresh-token'] });
         req.user = user;
         next();
 

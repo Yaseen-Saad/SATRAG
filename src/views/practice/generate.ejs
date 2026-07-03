@@ -5,14 +5,14 @@
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;">
+<form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;" data-loading>
   <div class="form-group">
     <label>Subject</label>
-    <select name="subject" class="form-input" required>
+    <select name="subject" class="form-input" required onchange="filterTopics()">
       <option value="">— Select —</option>
-      <option value="math">Math</option>
-      <option value="reading">Reading</option>
-      <option value="writing">Writing</option>
+      <option value="math" <%= subject === 'math' ? 'selected' : '' %>>Math</option>
+      <option value="reading" <%= subject === 'reading' ? 'selected' : '' %>>Reading</option>
+      <option value="writing" <%= subject === 'writing' ? 'selected' : '' %>>Writing</option>
     </select>
   </div>
   <div class="form-group">
@@ -20,21 +20,21 @@
     <select name="topic" class="form-input" required>
       <option value="">— Select —</option>
       <% topicTree.forEach(t => { %>
-      <option value="<%= t.topic %>"><%= t.topic %></option>
+      <option value="<%= t.topic %>" data-subject="<%= t.subject || '' %>" <%= topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
       <% }) %>
     </select>
   </div>
   <div class="form-group">
     <label>Difficulty</label>
     <select name="difficulty" class="form-input" required>
-      <option value="easy">Easy</option>
-      <option value="medium" selected>Medium</option>
-      <option value="hard">Hard</option>
+      <option value="easy" <%= difficulty === 'easy' ? 'selected' : '' %>>Easy</option>
+      <option value="medium" <%= difficulty === 'medium' || !difficulty ? 'selected' : '' %>>Medium</option>
+      <option value="hard" <%= difficulty === 'hard' ? 'selected' : '' %>>Hard</option>
     </select>
   </div>
   <div class="form-group">
     <label>Count (1-5)</label>
-    <input type="number" name="count" class="form-input" min="1" max="5" value="1">
+    <input type="number" name="count" class="form-input" min="1" max="5" value="<%= count || 1 %>">
   </div>
   <button type="submit" class="btn btn--primary">Generate</button>
 </form>
@@ -74,6 +74,16 @@
 <% } %>
 
 <script>
+function filterTopics() {
+  const subject = document.querySelector('[name="subject"]').value;
+  document.querySelectorAll('[name="topic"] option').forEach(opt => {
+    if (opt.value === '') return;
+    opt.style.display = subject && opt.dataset.subject === subject ? '' : 'none';
+  });
+  document.querySelector('[name="topic"]').value = '';
+}
+document.addEventListener('DOMContentLoaded', filterTopics);
+
 document.querySelectorAll('.save-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
     const question = JSON.parse(btn.dataset.question);

@@ -1,20 +1,29 @@
 const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
-const supabase = require('../lib/supabase')
+const { service: supabase } = require('../lib/supabase')
 const practice = require('../services/practiceEngine')
 const rag = require('../lib/rag')
 const router = Router()
 
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const { subject, topic, subtopic, active, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
+        let { subject, topic, subtopic, active, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
         const excludeActive = active === 'inactive' ? true : active === 'active' ? false : undefined;
-        const result = await practice.getQuestions({ subject, active: excludeActive, topic, subtopic, difficulty, difficultyBand, status, marked, search, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
         const topicTree = await practice.getTopicTree(subject);
+        const validTopics = topicTree.map(t => t.topic)
+        if (topic && !validTopics.includes(topic)) {
+            topic = undefined; subtopic = undefined;
+        }
+        const selectedTopicEntry = topicTree.find(t => t.topic === topic)
+        const subtopics = selectedTopicEntry ? selectedTopicEntry.subtopics : []
+        if (topic && subtopic && !subtopics.includes(subtopic)) {
+            subtopic = undefined;
+        }
+        const result = await practice.getQuestions({ subject, active: excludeActive, topic, subtopic, difficulty, difficultyBand, status, marked, search, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
         res.render('practice/index', {
             user: req.user, error: null, questions: result.questions, total: result.total,
             page: result.page, limit: result.limit, topicTree, active: active, subject, topic, subtopic, difficulty, difficultyBand, status, marked, search,
-            filters: { subject, topic, subtopic, excludeActive, active, difficulty, difficultyBand, status, marked, search }
+            filters: { subject, topic, subtopic, excludeActive, active, difficulty, difficultyBand, status, marked, search , subtopics }
         })
     } catch (err) {
         res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
@@ -27,6 +36,7 @@ router.get('/generate', requireAuth, async (req, res) => {
         res.render('practice/generate', { user: req.user, error: null, topicTree, generated: null })
     } catch (err) {
         res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
+        console.error(err)
     }
 })
 router.post('/generate', requireAuth, async (req, res) => {
@@ -37,11 +47,13 @@ router.post('/generate', requireAuth, async (req, res) => {
             const generated = await rag.generateSATQuestion({ subject, topic, difficulty })
             if (generated) questions.push(generated)
         }
-        const topicTree = await practice.getTopicTree();
-        res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions })
+        const topicTree = await practice.getTopicTree(subject);
+        res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, difficulty, count })
     } catch (err) {
+        const { subject, topic, difficulty, count } = req.body
         const topicTree = await practice.getTopicTree();
-        res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null })
+        res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null, subject, topic, difficulty, count })
+        console.error(err)
     }
 });
 

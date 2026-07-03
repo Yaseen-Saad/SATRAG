@@ -11,6 +11,7 @@ const envSchema = z.object({
     EMBEDDING_MODEL: z.string(),
     APP_DOMAIN: z.string(),
     PORT: z.coerce.number().default(3000),
+    SUPABASE_SERVICE_KEY: z.string().min(1),
     SUPABASE_PASSWORD: z.string(),
 });
 

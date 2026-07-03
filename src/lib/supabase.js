@@ -1,7 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const config = require('../config');
 
-// Creating a Supabase client using the configuration from config.js
 const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
     auth: {
         autoRefreshToken: true, persistSession: false
@@ -11,5 +10,14 @@ const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
         }
     }
 });
-
+const supabaseService = createClient(config.SUPABASE_URL, config.SUPABASE_SERVICE_KEY, {
+    auth: {
+        autoRefreshToken: false, persistSession: false
+    }, realtime: {
+        params: {
+            eventPerSecond: 10
+        }
+    }
+})
 module.exports = supabase;
+module.exports.service = supabaseService;

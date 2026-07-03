@@ -1,4 +1,4 @@
-const supabase = require('./supabase')
+const { service: supabase } = require('./supabase')
 const llm = require('./llm')
 const fs = require("fs")
 const path = require("path")
@@ -134,9 +134,9 @@ class RAGEngine {
         })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SIGNLE JSON OBJECT` }];
         const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 2000 });
         if (!response.success) throw new Error(response.error)
-        const jsonMatch = response.content.replace(/```json/g, '').replace(/```/g, "").match(/\{[\s\S]*\}/).trim();
-        if (!jsonMatch) throw new Error('No JSON in LLM response');
-        const result = JSON.parse(jsonMatch[0]);
+        const match = response.content.replace(/```json/g, '').replace(/```/g, "").match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('No JSON in LLM response');
+        const result = JSON.parse(match[0].trim());
         return { ...result, options: result.options ? JSON.stringify(result.options) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
     }
     async saveGeneratedQuestion(question) {
