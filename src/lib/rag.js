@@ -15,11 +15,11 @@ class RAGEngine {
             throw new Error('No vector matches found');
         } catch (err) {
             console.error("Embedding search failed, using keyword fallback:", err.message);
-            return this._keywordSearch(word, topK);
+            return this.keywordSearch(word, topK);
         }
     }
 
-    async _keywordSearch(word, topK) {
+    async keywordSearch(word, topK) {
         try {
             const { data: all } = await supabase
                 .from('vocab_entries')
@@ -109,6 +109,18 @@ class RAGEngine {
             if (result.length >= limit) break
         }
         return result
+    }
+    async findSATExamples({ subject, topic, difficulty, count = 5 }) {
+        let query = supabase.from('sat_questions').select('*').eq("source", "collegeboard").limit(count);
+        if (subject) query = query.eq('subject', subject);
+        if (topic) query = query.eq('topic', topic);
+        if (difficulty) query = query.eq('difficulty', difficulty);
+        const { data } = await query;
+        if (!data || !data.length) return []
+        return [...data].sort(_ => Math.random() - 0.5).slice(0, Math.min(count, data.length))
+    }
+    async generateSATQuestion({ subject, topic, difficulty }) {
+
     }
 }
 

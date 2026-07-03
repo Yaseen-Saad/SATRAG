@@ -1,6 +1,7 @@
-const supabase = require('../lib/supabase')
-const llm = require('../lib/llm')
-const { parseSampleEntries } = require('../lib/parser')
+require('dotenv').config();
+const supabase = require('../src/lib/supabase')
+const llm = require('../src/lib/llm')
+const { parseSampleEntries } = require('../src/lib/parser')
 const path = require('path')
 const fs = require('fs')
 async function seedSampleData() {
@@ -27,9 +28,9 @@ async function seedSampleData() {
 }
 
 async function seedSATQuestions() {
-    const { count } = await supabase.from('sat_questions').select('*', { count: 'exact', head: true });
-    if (count > 0) return
-    const filePath = path.join(__dirname, '../../data/sat_questions_with_active.json');
+    const { count, error } = await supabase.from('sat_questions').select('*', { count: 'exact', head: true });
+    if (count > 0) console.log("SAT questions already seeded, skipping."); return;
+    const filePath = path.join(__dirname, '../data/sat_questions_with_active.json');
     const questions = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const SHIT_TO_ENGLISH = { H: "math", P: "math", Q: "math", S: "math", INI: "reading", CAS: "reading", EOI: "writing", SEC: "writing" }
     const DIFFICULITY_MAP = { E: 'easy', H: "hard", M: "medium" }
@@ -73,4 +74,8 @@ async function seedSATQuestions() {
     }
     console.log(`Seeding complete: ${inserted} inserted, ${failed} failed out of ${questions.length} questions.`);
 }
-module.exports = { seedSampleData, seedSATQuestions }
+
+(async function () {
+    await seedSampleData()
+    await seedSATQuestions()
+})()

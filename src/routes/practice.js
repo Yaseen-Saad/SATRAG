@@ -19,7 +19,7 @@ router.get('/', requireAuth, async (req, res) => {
         console.error(err)
     }
 })
-router.get('question/:id', requireAuth, async (req, res) => {
+router.get('/question/:id', requireAuth, async (req, res) => {
     try {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
         if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [] })
@@ -28,10 +28,10 @@ router.get('question/:id', requireAuth, async (req, res) => {
         res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })
     }
 })
-router.post('question/:id/answer', requireAuth, async (req, res) => {
+router.post('/question/:id/answer', requireAuth, async (req, res) => {
     try {
         const { answer, timeMs } = req.body
-        const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timmeMs: parseInt(timeMs) })
+        const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) })
         res.json({ success: true, ...result })
     } catch (err) {
         res.status(500).json({ success: false, error: err.message })
@@ -39,12 +39,13 @@ router.post('question/:id/answer', requireAuth, async (req, res) => {
 })
 
 
-router.get('question/:id/mark', requireAuth, async (req, res) => {
+router.get('/question/:id/mark', requireAuth, async (req, res) => {
     try {
-        const { result } = await practice.togglemMarkforReview(req.user.id, req.params.id)
+        const result = await practice.toggleMarkForReview(req.user.id, req.params.id)
         res.json({ success: true, ...result })
     } catch (err) {
         res.status(500).json({ success: false, error: err.message })
     }
 })
 
+module.exports = router

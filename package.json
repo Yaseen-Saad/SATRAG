@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon ./src/index.js",
     "start": "node ./src/index.js",
-    "build:css": "sass src/public/css/main.scss src/public/css/main.css"
+    "build:css": "sass src/public/css/main.scss src/public/css/main.css",
+    "seed":"node ./scripts/seed.js",
+    "build":"npm run build:css; npm run seed"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

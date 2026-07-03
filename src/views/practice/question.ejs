@@ -26,21 +26,21 @@
 
   <div class="card" id="answer-area">
     <% if (question.question_type === 'mcq' && question.options) { %>
-      <% const opts = typeof question.options === 'string' ? JSON.parse(question.options) : question.options; %>
-      <div class="question-options" id="options">
-        <% opts.forEach((opt, i) => { %>
-        <button class="question-option" data-label="<%= opt.label %>">
-          <span class="option-label"><%= opt.label %></span>
-          <span class="option-content"><%- opt.content %></span>
-        </button>
-        <% }) %>
-      </div>
+    <% const opts = typeof question.options === 'string' ? JSON.parse(question.options) : question.options; %>
+    <div class="question-options" id="options">
+      <% opts.forEach((opt, i) => { %>
+      <button class="question-option" data-label="<%= opt.label %>">
+        <span class="option-label"><%= opt.label %></span>
+        <span class="option-content"><%- opt.content %></span>
+      </button>
+      <% }) %>
+    </div>
     <% } else { %>
-      <div class="form-group" id="spr-input">
-        <label>Your answer:</label>
-        <input type="text" id="spr-answer" placeholder="Enter your answer" style="max-width:200px;">
-        <button class="btn btn--primary" id="spr-submit" style="margin-top:0.5rem;">Submit</button>
-      </div>
+    <div class="form-group" id="spr-input">
+      <label>Your answer:</label>
+      <input type="text" id="spr-answer" placeholder="Enter your answer" style="max-width:200px;">
+      <button class="btn btn--primary" id="spr-submit" style="margin-top:0.5rem;">Submit</button>
+    </div>
     <% } %>
   </div>
 
@@ -51,14 +51,14 @@
     <% if (!attempts || attempts.length === 0) { %>
     <p style="color:var(--text-muted);">No attempts yet.</p>
     <% } else { %>
-      <% attempts.forEach(a => { %>
-      <div class="card" style="margin-bottom:0.5rem; padding:0.75rem;">
-        <small>#<%= a.attempt_number %> · <%= new Date(a.attempt_time).toLocaleString() %></small>
-        <span style="float:right; <%= a.is_correct ? 'color:var(--success);' : 'color:var(--error);' %>">
-          <%= a.is_correct ? '✓ Correct' : '✗ Wrong' %> · <%= Math.round(a.time_taken_ms / 1000) %>s
-        </span>
-      </div>
-      <% }) %>
+    <% attempts.forEach(a => { %>
+    <div class="card" style="margin-bottom:0.5rem; padding:0.75rem;">
+      <small>#<%= a.attempt_number %> · <%= new Date(a.attempt_time).toLocaleString() %></small>
+      <span style="float:right; <%= a.is_correct ? 'color:var(--success);' : 'color:var(--error);' %>">
+        <%= a.is_correct ? '✓ Correct' : '✗ Wrong' %> · <%= Math.round(a.time_taken_ms / 1000) %>s
+      </span>
+    </div>
+    <% }) %>
     <% } %>
   </div>
 </div>
@@ -84,8 +84,13 @@
 
     const res = await fetch(`/practice/question/${questionId}/answer`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answer, timeMs })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        answer,
+        timeMs
+      })
     });
     const data = await res.json();
 
@@ -102,14 +107,14 @@
         <p>Attempt #${data.attemptNumber}</p>
         <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
           <a href="/practice" class="btn btn--primary">Back to Bank</a>
-          <button class="btn btn--ghost" onclick="toggleMark()">${'<%= userState?.marked_for_review ? "Unmark" : "Mark for Review" %>'}</button>
+          <button class="btn btn--ghost" onclick="toggleMark()">${'<%= uState?.marked_for_review ? "Unmark" : "Mark for Review" %>'}</button>
         </div>
       </div>
     `;
   }
 
   async function toggleMark() {
-    await fetch(`/practice/question/${questionId}/mark`, { method: 'POST' });
+    await fetch(`/practice/question/${questionId}/mark`);
     location.reload();
   }
 

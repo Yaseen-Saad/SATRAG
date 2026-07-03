@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS rag_feedback_examples (
     created_at TIMESTAMP DEFAULT NOW()
 );
 CREATE TABLE IF NOT EXISTS rag_feedback_question(
-    id UUID PRIMARY KEY DEFAULT gen_random_uiid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     question_id UUID REFERENCES sat_questions,
     subject TEXT NOT NULL,
     topic TEXT NOT NULL,
