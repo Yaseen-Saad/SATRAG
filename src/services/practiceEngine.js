@@ -36,6 +36,7 @@ class PracticeEngine {
             }
             if (marked) {
                 const ids = [...stateMap].filter(([_, s]) => s.marked_for_review).map(([id]) => id)
+                console.log("Marked param:", marked, 'stateMap Size', stateMap.size, 'found IDs:', ids)
                 if (ids.length) query = query.in('id', ids); else return { questions: [], total: 0, page, limit };
             }
         }
@@ -72,13 +73,14 @@ class PracticeEngine {
         const isCorrect = answer.trim().toUpperCase() === question.correct_answer.trim().toUpperCase()
         const { data: existing } = await supabase.from('user_question_state').select('*').eq('user_id', userId).eq('question_id', questionId).single();
         const attemptNumber = (existing?.times_attempted || 0) + 1
-        await supabase.from("user_question_attempts").insert({
+        const { error: insertErr } = await supabase.from("user_question_attempts").insert({
             user_id: userId, question_id: questionId, selected_answer: answer, is_correct: isCorrect, attempt_number: attemptNumber,
             time_taken_ms: timeMs
         })
+        if (insertErr) throw new Error(`Failed to insert attempt ${insertErr.message}`);
         const nStatus = isCorrect ? "solved_correct" : "solved_incorrect"
         const newBest = existing?.best_time_ms ? Math.min(existing.best_time_ms, timeMs) : timeMs;
-        await supabase.from('user_question_state').upsert({
+        const { error: upsertErr } = await supabase.from('user_question_state').upsert({
             user_id: userId, question_id: questionId,
             status: nStatus,
             times_attempted: attemptNumber,
@@ -88,6 +90,7 @@ class PracticeEngine {
             first_attempt: existing?.first_attempt || new Date().toISOString(),
             first_solved: isCorrect && !existing?.first_solved ? new Date().toISOString() : existing?.first_solved,
         })
+        if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
         const percentile = await this.getSpeedPercentile({ questionId, userTimeMs: timeMs })
         return { isCorrect, correctAnswer: question.correct_answer, percentile, attemptNumber }
     }
@@ -102,17 +105,18 @@ class PracticeEngine {
     async toggleMarkForReview(userId, questionId) {
         const { data: existing } = await supabase
             .from('user_question_state')
-            .select('marked_for_review')
+            .select('marked_for_review, status')
             .eq('user_id', userId)
             .eq('question_id', questionId)
             .single()
 
         const newVal = existing ? !existing.marked_for_review : true
-        await supabase.from('user_question_state').upsert({
+        const { error: upsertErr } = await supabase.from('user_question_state').upsert({
             user_id: userId, question_id: questionId,
             marked_for_review: newVal,
             status: existing?.status || 'unsolved',
         });
+        if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
         return { marked: newVal }
     }
 

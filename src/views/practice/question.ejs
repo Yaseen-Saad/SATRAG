@@ -11,6 +11,9 @@
     <span class="badge badge--<%= question.difficulty %>"><%= question.difficulty %></span>
     <small style="color:var(--text-light);"><%= question.topic %> · <%= question.subtopic %></small>
     <span class="question-timer" id="timer" style="margin-left:auto; font-weight:600; font-size:1.1rem;">⏱ 00:00</span>
+    <button class="btn btn--ghost btn--sm" onclick="toggleMark()" id="mark-btn" style="margin-left:0.5rem;">
+      ★ <%= uState?.marked_for_review ? 'Unmark' : 'Mark for Review' %>
+    </button>
   </div>
 
   <% if (question.passage_text) { %>
@@ -97,6 +100,7 @@
     document.getElementById('answer-area').style.display = 'none';
     const fb = document.getElementById('feedback-area');
     fb.style.display = 'block';
+    const explanation = data.explanation ? data.explanation.replace(/`/g, '\\`') : "No Explanation Available";
     fb.innerHTML = `
       <div class="card" style="text-align:center; padding:2rem;">
         <h2 style="font-size:2rem; margin:0; ${data.isCorrect ? 'color:var(--success);' : 'color:var(--error);'}">
@@ -109,6 +113,13 @@
           <a href="/practice" class="btn btn--primary">Back to Bank</a>
           <button class="btn btn--ghost" onclick="toggleMark()">${'<%= uState?.marked_for_review ? "Unmark" : "Mark for Review" %>'}</button>
         </div>
+        ${explanation ? `
+<div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
+  <details>
+    <summary style="cursor:pointer; font-weight:600; color:var(--text-muted);">Show Explanation</summary>
+    <div style="margin-top:0.5rem; text-align:left; color:var(--text);">${explanation}</div>
+  </details>
+</div>` : '<p style="margin-top:1rem; color:var(--text-light);">No explanation available.</p>'}
       </div>
     `;
   }
