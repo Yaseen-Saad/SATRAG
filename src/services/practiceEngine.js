@@ -1,8 +1,8 @@
 const supabase = require('../lib/supabase')
 class PracticeEngine {
-    async getQuestions({ subject, topic, subtopic, difficulty, excludeActive, difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
+    async getQuestions({ subject, topic, subtopic, difficulty, active, difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
-        if (excludeActive)
+        if (active)
             query = query.eq('is_active', false);
         if (subject)
             query = query.eq('subject', subject);
@@ -140,11 +140,11 @@ class PracticeEngine {
         let query = supabase.from('sat_questions').select('topic, subtopic')
         if (subject) query = query.eq('subject', subject)
         const { data } = await query;
-        const tree = {}
-            (data || []).forEach(q => {
-                if (!tree[q.topic]) tree[q.topic] = new Set();
-                if (q.subtopic) tree[q.topic].add(q.subtopic);
-            })
+        const tree = {};
+        (data || []).forEach(q => {
+            if (!tree[q.topic]) tree[q.topic] = new Set();
+            if (q.subtopic) tree[q.topic].add(q.subtopic);
+        })
         return Object.entries(tree).map(([topic, subtopics]) => ({
             topic, subtopics: [...subtopics].sort()
         }))

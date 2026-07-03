@@ -23,49 +23,89 @@
     <div class="stat-value" style="color:#16a085;"><%= avgSatisfaction !== null ? avgSatisfaction + '/10' : 'N/A' %></div>
   </div>
 </div>
+<h2 style="margin-top:2rem;">Practice Stats</h2>
+<div class="stat-grid">
+  <div class="stat-card">
+    <h3>Questions Attempted</h3>
+    <div class="stat-value" style="color:#4338ca;"><%= practiceAttempted || 0 %></div>
+  </div>
+  <div class="stat-card">
+    <h3>Accuracy</h3>
+    <div class="stat-value" style="color:<%= practiceAccuracy !== null ? (practiceAccuracy >= 70 ? '#27ae60' : practiceAccuracy >= 40 ? '#f39c12' : '#e74c3c') : '#888' %>;">
+      <%= practiceAccuracy !== null ? practiceAccuracy + '%' : 'N/A' %>
+    </div>
+  </div>
+  <div class="stat-card">
+    <h3>Marked for Review</h3>
+    <div class="stat-value" style="color:#d97706;"><%= practiceMarked || 0 %></div>
+  </div>
+</div>
+
+<h2>Recent Practice</h2>
+<% if (recentPractice.length === 0) { %>
+<p style="color:#888;">No practice questions attempted yet. <a href="/practice">Start practicing</a></p>
+<% } else { %>
+<table>
+  <tr>
+    <th>Subject</th>
+    <th>Result</th>
+    <th>Time</th>
+    <th>Date</th>
+  </tr>
+  <% recentPractice.forEach(a => { %>
+  <tr>
+    <td><%= a.sat_questions.subject %> · <%= a.sat_questions.topic %></td>
+    <td style="font-weight:bold; color:<%= a.is_correct ? '#27ae60' : '#e74c3c' %>;"><%= a.is_correct ? '✓ Correct' : '✗ Wrong' %></td>
+    <td><%= Math.round(a.time_taken_ms / 1000) %>s</td>
+    <td><%= new Date(a.attempt_time).toLocaleDateString() %></td>
+  </tr>
+  <% }) %>
+</table>
+<a href="/practice" class="btn btn--primary btn--sm" style="margin-top:0.5rem;">View All Questions</a>
+<% } %>
 
 <h2>Due for Review</h2>
 <% if (dueReviews.length === 0) { %>
-  <p style="color:#888;">No words due for review.</p>
+<p style="color:#888;">No words due for review.</p>
 <% } else { %>
-  <div style="display:grid; gap:0.5rem;">
-    <% dueReviews.forEach(r => { %>
-      <a href="/vocab/<%= r.vocab_entries.word %>" class="word-list-item">
-        <strong><%= r.vocab_entries.word %></strong> — <%= r.vocab_entries.definition %>
-      </a>
-    <% }) %>
-  </div>
+<div style="display:grid; gap:0.5rem;">
+  <% dueReviews.forEach(r => { %>
+  <a href="/vocab/<%= r.vocab_entries.word %>" class="word-list-item">
+    <strong><%= r.vocab_entries.word %></strong> — <%= r.vocab_entries.definition %>
+  </a>
+  <% }) %>
+</div>
 <% } %>
 
 <h2>Recent Quizzes</h2>
 <% if (quizzes.length === 0) { %>
-  <p style="color:#888;">No quizzes taken yet.</p>
+<p style="color:#888;">No quizzes taken yet.</p>
 <% } else { %>
-  <table>
-    <tr>
-      <th>Date</th>
-      <th>Score</th>
-      <th>Questions</th>
-    </tr>
-    <% quizzes.forEach(q => { %>
-      <tr>
-        <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
-        <td style="font-weight:bold; color: <%= q.score >= 70 ? '#27ae60' : q.score >= 40 ? '#f39c12' : '#e74c3c' %>;"><%= q.score %>%</td>
-        <td><%= q.total_questions %></td>
-      </tr>
-    <% }) %>
-  </table>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Score</th>
+    <th>Questions</th>
+  </tr>
+  <% quizzes.forEach(q => { %>
+  <tr>
+    <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
+    <td style="font-weight:bold; color: <%= q.score >= 70 ? '#27ae60' : q.score >= 40 ? '#f39c12' : '#e74c3c' %>;"><%= q.score %>%</td>
+    <td><%= q.total_questions %></td>
+  </tr>
+  <% }) %>
+</table>
 <% } %>
 
 <h2>Recent Feedback</h2>
 <% if (recentFeedback.length === 0) { %>
-  <p style="color:#888;">No feedback yet.</p>
+<p style="color:#888;">No feedback yet.</p>
 <% } else { %>
-  <% recentFeedback.forEach(f => { %>
-    <div class="card" style="margin-bottom:0.5rem;">
-      <strong><%= f.word %></strong> — Rating: <%= f.satisfaction_score %>/10
-      <% if (f.comments) { %><p style="margin-top:0.25rem; color:#666;"><%= f.comments %></p><% } %>
-      <small style="color:#999;"><%= new Date(f.created_at).toLocaleDateString() %></small>
-    </div>
-  <% }) %>
+<% recentFeedback.forEach(f => { %>
+<div class="card" style="margin-bottom:0.5rem;">
+  <strong><%= f.word %></strong> — Rating: <%= f.satisfaction_score %>/10
+  <% if (f.comments) { %><p style="margin-top:0.25rem; color:#666;"><%= f.comments %></p><% } %>
+  <small style="color:#999;"><%= new Date(f.created_at).toLocaleDateString() %></small>
+</div>
+<% }) %>
 <% } %>

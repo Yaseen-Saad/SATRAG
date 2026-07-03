@@ -17,7 +17,11 @@ router.get('/', requireAuth, async (req, res) => {
         supabase.from('feedback_events').select('satisfaction_score, helpful_components, comments, created_at, word_id')
             .order('created_at', { ascending: false }).limit(10),
     ]);
-
+    const [practiceStats, recentAttempts] = await Promise.all([
+        supabase.from('user_question_state').select('status, times_attempted, marked_for_review').eq('user_id', userId),
+        supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)')
+            .eq('user_id', userId).order('attempt_time', { ascending: false }).limit(5),
+    ]);
     const avgScore = allQuizzes.data && allQuizzes.data.length > 0
         ? Math.round(allQuizzes.data.reduce((s, q) => s + q.score, 0) / allQuizzes.data.length)
         : null;
@@ -41,6 +45,13 @@ router.get('/', requireAuth, async (req, res) => {
         const wordMap = Object.fromEntries((words || []).map(w => [w.id, w.word]));
         recentFeedback = feedbackData.data.map(f => ({ ...f, word: wordMap[f.word_id] || 'Unknown' }));
     }
+    const attemptedQuestions = (practiceStats.data || []).filter(s => s.status !== 'unsolved');
+    const correctCount = (practiceStats.data || []).filter(s => s.status === 'solved_correct').length;
+    const markedCount = (practiceStats.data || []).filter(s => s.marked_for_review).length;
+    const practiceAccuracy = attemptedQuestions.length > 0
+        ? Math.round((correctCount / attemptedQuestions.length) * 100)
+        : null;
+
 
     res.render('dashboard/progress', {
         user: req.user,
@@ -52,6 +63,10 @@ router.get('/', requireAuth, async (req, res) => {
         avgQualityScore,
         avgSatisfaction,
         recentFeedback: recentFeedback.slice(0, 10),
+        practiceAttempted: attemptedQuestions.length,
+        practiceAccuracy,
+        practiceMarked: markedCount,
+        recentPractice: recentAttempts.data || [],
     });
 });
 

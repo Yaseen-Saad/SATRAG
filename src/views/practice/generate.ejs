@@ -1,0 +1,97 @@
+<% title = 'Generate Questions'; %>
+<h1>Generate AI Questions</h1>
+
+<% if (error) { %>
+<div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;">
+  <div class="form-group">
+    <label>Subject</label>
+    <select name="subject" class="form-input" required>
+      <option value="">— Select —</option>
+      <option value="math">Math</option>
+      <option value="reading">Reading</option>
+      <option value="writing">Writing</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Topic</label>
+    <select name="topic" class="form-input" required>
+      <option value="">— Select —</option>
+      <% topicTree.forEach(t => { %>
+      <option value="<%= t.topic %>"><%= t.topic %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Difficulty</label>
+    <select name="difficulty" class="form-input" required>
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Count (1-5)</label>
+    <input type="number" name="count" class="form-input" min="1" max="5" value="1">
+  </div>
+  <button type="submit" class="btn btn--primary">Generate</button>
+</form>
+
+<% if (generated && generated.length > 0) { %>
+<h2 style="margin-top:2rem;">Generated Questions</h2>
+<% generated.forEach((q, i) => { %>
+<div class="card" style="margin-bottom:1rem; padding:1.5rem;">
+  <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
+    <span class="badge badge--<%= q.subject %>"><%= q.subject %></span>
+    <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
+    <small style="color:var(--text-light);"><%= q.topic %> · <%= q.subtopic %></small>
+  </div>
+  <% if (q.passage_text) { %>
+  <div class="card passage-box" style="margin-bottom:0.75rem; padding:0.75rem; max-height:200px; overflow-y:auto; background:var(--surface-2);">
+    <small style="font-weight:600;">Passage</small>
+    <div style="margin-top:0.25rem;"><%- q.passage_text %></div>
+  </div>
+  <% } %>
+  <div style="margin-bottom:0.75rem;"><%- q.question_text %></div>
+  <% if (q.options) { %>
+    <% const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; %>
+    <div style="display:grid; gap:0.35rem;">
+      <% opts.forEach(o => { %>
+      <div style="padding:0.4rem 0.75rem; background:var(--surface-2); border-radius:var(--radius-sm); <%= o.label === q.correct_answer ? 'border:2px solid var(--success);' : '' %>">
+        <strong><%= o.label %>.</strong> <%- o.content %>
+      </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p><strong>Answer:</strong> <%= q.correct_answer %></p>
+  <% } %>
+  <p style="margin-top:0.5rem; color:var(--text-muted);"><strong>Explanation:</strong> <%= q.explanation %></p>
+  <button class="btn btn--sm btn--primary save-btn" data-question='<%= JSON.stringify(q).replace(/'/g, "'") %>' style="margin-top:0.5rem;">Add to Bank</button>
+</div>
+<% }) %>
+<% } %>
+
+<script>
+document.querySelectorAll('.save-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const question = JSON.parse(btn.dataset.question);
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+    const res = await fetch('/practice/generate/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(question)
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = '✓ Saved';
+      btn.style.background = 'var(--success)';
+    } else {
+      btn.textContent = 'Error - try again';
+      btn.disabled = false;
+    }
+  });
+});
+</script>

@@ -1,5 +1,7 @@
 const supabase = require('./supabase')
 const llm = require('./llm')
+const fs = require("fs")
+const path = require("path")
 
 class RAGEngine {
     async retrieveSimilar(word, topK = 3) {
@@ -120,7 +122,29 @@ class RAGEngine {
         return [...data].sort(_ => Math.random() - 0.5).slice(0, Math.min(count, data.length))
     }
     async generateSATQuestion({ subject, topic, difficulty }) {
-
+        const examples = await this.findSATExamples({ subject, topic, difficulty, count: 3 });
+        const prompt = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
+        const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => ({
+            role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
+                question_type: ex.question_type, passage_text: ex.passage_text,
+                question_text: ex.question_text, options: ex.options,
+                correct_answer: ex.correct_answer, explanation: ex.explanation,
+                subject: ex.subject, topic: ex.topic, difficulty: ex.difficulty
+            }, null, 2)}`
+        })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SIGNLE JSON OBJECT` }];
+        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 2000 });
+        if (!response.success) throw new Error(response.error)
+        const jsonMatch = response.content.replace(/```json/g, '').replace(/```/g, "").match(/\{[\s\S]*\}/).trim();
+        if (!jsonMatch) throw new Error('No JSON in LLM response');
+        const result = JSON.parse(jsonMatch[0]);
+        return { ...result, options: result.options ? JSON.stringify(result.options) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
+    }
+    async saveGeneratedQuestion(question) {
+        const text = question.stem_plain_text || question.question_text || ""
+        const embedding = text ? await llm.generateEmbedding(text) : null
+        const { data, error } = await supabase.from('sat_questions').insert({ ...question, embedding }).select().single();
+        if (error) throw error;
+        return data;
     }
 }
 
