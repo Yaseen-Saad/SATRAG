@@ -34,7 +34,7 @@ router.post('/generate', requireAuth, async (req, res) => {
         const { subject, topic, difficulty, count = 1 } = req.body
         const questions = []
         for (let i = 0; i < Math.min(parseInt(count), 5); i++) {
-            const generated = await practice.generateQuestion({ subject, topic, difficulty })
+            const generated = await rag.generateSATQuestion({ subject, topic, difficulty })
             if (generated) questions.push(generated)
         }
         const topicTree = await practice.getTopicTree();
