@@ -9,7 +9,7 @@ router.get('/', requireAuth, async (req, res) => {
     try {
         const { subject, topic, subtopic, active, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
         const excludeActive = active === 'inactive' ? true : active === 'active' ? false : undefined;
-        const result = await practice.getQuestions({ subject, excludeActive, topic, subtopic, difficulty, difficultyBand, status, marked, search, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
+        const result = await practice.getQuestions({ subject, active: excludeActive, topic, subtopic, difficulty, difficultyBand, status, marked, search, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
         const topicTree = await practice.getTopicTree(subject);
         res.render('practice/index', {
             user: req.user, error: null, questions: result.questions, total: result.total,

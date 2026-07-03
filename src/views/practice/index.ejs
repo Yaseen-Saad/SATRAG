@@ -11,7 +11,7 @@
     <form method="GET" action="/practice">
       <div class="form-group">
         <label>Subject</label>
-        <select name="subject" onchange="this.form.submit()">
+        <select name="subject">
           <option value="">All</option>
           <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
           <option value="reading" <%= filters.subject === 'reading' ? 'selected' : '' %>>Reading</option>
@@ -20,7 +20,7 @@
       </div>
       <div class="form-group">
         <label>Bluebook Status</label>
-        <select name="active" onchange="this.form.submit()">
+        <select name="active">
           <option value="all" <%= filters.active === 'all' || !filters.active ? 'selected' : '' %>>All Questions</option>
           <option value="inactive" <%= filters.active === 'inactive' ? 'selected' : '' %>>Hide Active Exam Questions</option>
           <option value="active" <%= filters.active === 'active' ? 'selected' : '' %>>Active Exams Only</option>
@@ -29,7 +29,7 @@
 
       <div class="form-group">
         <label>Topic</label>
-        <select name="topic" onchange="this.form.submit()">
+        <select name="topic">
           <option value="">All</option>
           <% (topicTree || []).forEach(t => { %>
           <option value="<%= t.topic %>" <%= filters.topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
@@ -39,7 +39,7 @@
 
       <div class="form-group">
         <label>Difficulty</label>
-        <select name="difficulty" onchange="this.form.submit()">
+        <select name="difficulty">
           <option value="">All</option>
           <option value="easy" <%= filters.difficulty === 'easy' ? 'selected' : '' %>>Easy</option>
           <option value="medium" <%= filters.difficulty === 'medium' ? 'selected' : '' %>>Medium</option>
@@ -49,7 +49,7 @@
 
       <div class="form-group">
         <label>Status</label>
-        <select name="status" onchange="this.form.submit()">
+        <select name="status">
           <option value="">All</option>
           <option value="unsolved" <%= filters.status === 'unsolved' ? 'selected' : '' %>>Unsolved</option>
           <option value="solved" <%= filters.status === 'solved' ? 'selected' : '' %>>Solved</option>
@@ -58,7 +58,7 @@
 
       <div class="form-group">
         <label>
-          <input type="checkbox" name="marked" value="true" <%= filters.marked === 'true' ? 'checked' : '' %> onchange="this.form.submit()">
+          <input type="checkbox" name="marked" value="true" <%= filters.marked === 'true' ? 'checked' : '' %>>
           Marked for Review
         </label>
       </div>
@@ -111,7 +111,7 @@
     <% if (total > limit) { %>
     <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center;">
       <% for (let p = 1; p <= Math.ceil(total / limit); p++) { %>
-      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
+      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + filters.topic : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%= filters.search ? '&search=' + filters.search : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
       <% } %>
     </div>
     <% } %>
