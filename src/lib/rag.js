@@ -127,17 +127,25 @@ class RAGEngine {
         const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => ({
             role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
                 question_type: ex.question_type, passage_text: ex.passage_text,
-                question_text: ex.question_text, options: ex.options,
+                question_text: ex.question_text, options: typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options,
                 correct_answer: ex.correct_answer, explanation: ex.explanation,
                 subject: ex.subject, topic: ex.topic, difficulty: ex.difficulty
             }, null, 2)}`
-        })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SIGNLE JSON OBJECT` }];
-        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 2000 });
+        })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SINGLE JSON OBJECT` }];
+        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 8192 });
         if (!response.success) throw new Error(response.error)
-        const match = response.content.replace(/```json/g, '').replace(/```/g, "").match(/\{[\s\S]*\}/);
-        if (!match) throw new Error('No JSON in LLM response');
+        const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) {
+            console.error('LLM raw response:', raw.slice(0, 500))
+            throw new Error('No JSON in LLM response');
+        }
         const result = JSON.parse(match[0].trim());
-        return { ...result, options: result.options ? JSON.stringify(result.options) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
+        let opts = result.options;
+        if (opts && typeof opts === 'object' && !Array.isArray(opts)) {
+            opts = Object.entries(opts).map(([label, content]) => ({ label, content }));
+        }
+        return { ...result, options: opts ? JSON.stringify(opts) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
     }
     async saveGeneratedQuestion(question) {
         const text = question.stem_plain_text || question.question_text || ""
