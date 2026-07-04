@@ -23,7 +23,7 @@ router.get('/', requireAuth, async (req, res) => {
         res.render('practice/index', {
             user: req.user, error: null, questions: result.questions, total: result.total,
             page: result.page, limit: result.limit, topicTree, active: active, subject, topic, subtopic, difficulty, difficultyBand, status, marked, search,
-            filters: { subject, topic, subtopic, excludeActive, active, difficulty, difficultyBand, status, marked, search , subtopics }
+            filters: { subject, topic, subtopic, excludeActive, active, difficulty, difficultyBand, status, marked, search, subtopics }
         })
     } catch (err) {
         res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
@@ -33,7 +33,7 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/generate', requireAuth, async (req, res) => {
     try {
         const topicTree = await practice.getTopicTree();
-        res.render('practice/generate', { user: req.user, error: null, topicTree, generated: null })
+        res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
     } catch (err) {
         res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
         console.error(err)

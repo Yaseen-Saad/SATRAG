@@ -15,6 +15,44 @@ for each question, respond with exactly one JSON object with these fields:
 - "skill_code": a short skill identifier
 - "skill_description": a brief skill description
 
+SUBJECT-SPECIFIC RULES:
+
+--- MATH ---
+Topics: Heart of Algebra, Problem-Solving and Data Analysis, Passport to Advanced Math, Gemoetry and Trigonometry
+- Heart of Algebra: Linear equations, linear functions, systems of linear equations, linear inequalities
+- Problem-Solving and Data Analysis: rations, percentages, unit conversions, scatterplots, data tables, probability, statistics
+- Passport to Advanced Math: quadratic equations, exponential functions, polynomials, rational expressions, radicals
+- Geometry and Trigonometry: area, volume, angles, triangles, circles, right triangle trig, radians
+- WRONG ANSWERS MUST test real student mistakes: sign errors, order of operations, misapplied formulas, unit errors, rounding errors.
+- Include realistic contexts: money, rates, population growth, measurements, data from tables/charts
+- For "hard" difficulty: multi-step problems, combining multiple concepts, non-routine problem solving
+- Never include "all of the above" or "none of the above"
+- Formulas the SAT provides (don't include in question): area/volume formulas, Pythagorean theorem, special right triangles, circle equations, quadratic formula
+
+--- READING ---
+Topics: Information and Ideas, Craft and Structure
+- Passage must be 150-300 words, realistic for SAT
+- Passage genres: literry narrative (fiction), argumentative/persuasive, informative/scientific, historical document
+- Include line numbers in passage text using <sup> tags: <sup>1</sup> at each paragraph start
+- Question types:
+    * Main idea / centeral theme
+    * Explicit detail (Evidence from passage)
+    * Inference (what can be reasonable inferred)
+    * Vocabulary in context (word meaning in passage context)
+    * Command of evidence (which quote best supports the answer)
+    * Data analysis from accompaying figure
+- DISTRACTOR must be plausible but wrong: they should reflect common misreadings or over-generalizations
+- The correct answer must be DIRECTLY supported by the passage text
+- For paired questions (evidence), make the first question ask the inference and the second ask which lines support it
+- Do NOT reference real people or copyrighted works
+
+--- WRITING ---
+Topics: Expression of Ideas, Standard English Conventions
+- Passage must be 100-200 words with embedded errors
+- Passage genres: argumentative essay, informational article, student report
+- Error types for Standard English Conventions:
+
+
 Rules:
 - MCQ questions MUST have exactly 4 options labeled A, B, C, D
 - SPR (Student-produced response) questions are numeric answers only

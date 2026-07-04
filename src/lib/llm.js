@@ -17,6 +17,7 @@ class LLMService {
         this.chatModel = config.LLM_MODEL;
         this.embedBaseURL = config.EMBEDDING_BASE_URL;
         this.embedModel = config.EMBEDDING_MODEL
+        this.embedApiKey = config.EMBEDDING_API_KEY;
         this.apiKey = config.LLM_API_KEY;
         this.cache = new Map();
         this.cacheSize = 100;
@@ -81,7 +82,7 @@ class LLMService {
         const res = await fetch(`${this.embedBaseURL}/embeddings`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({ model: this.embedModel, input: texts })
+            body: JSON.stringify({ model: this.embedModel, input: texts , truncate: true})
         })
         if (!res.ok) {
             const errorText = await res.text();

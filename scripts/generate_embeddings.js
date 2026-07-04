@@ -8,7 +8,7 @@ async function generateEmbeddings() {
 
     let done = 0;
     let failed = 0;
-    const batchSize = 50;
+    const batchSize = 5;
 
     while (true) {
         const { data: questions, error } = await supabase
