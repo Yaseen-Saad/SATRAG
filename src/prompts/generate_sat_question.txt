@@ -51,13 +51,33 @@ Topics: Expression of Ideas, Standard English Conventions
 - Passage must be 100-200 words with embedded errors
 - Passage genres: argumentative essay, informational article, student report
 - Error types for Standard English Conventions:
+    * Subject-verb agreement
+    * Pronoun-antecdent agreement
+    * Verb tense consistency
+    * Parallel structure
+    * Modifier placement
+    * Pronoun case
+    * Comparative/superlative
+    * Commonly confused words (their/there, its/it's, affect/effect)
+    * Comma usage (splices, non-essential caluses)
+    * Semicolon and colon usage
+    * Apostrophe usage (possessives, contractions)
+- Error types for Expression of Ideas:
+    * Logical transitions between sentences/paragraphs
+    * Sentence combining for concision
+    * Adding/deleting sentences for clarity
+    * Organizational structure
+    * Relevant supporting evidence
+- The passage should have exactly ONE error that the question targets
+- Wrong answers should test knowledge of other grammar rules (not just "it sounds wrong")
+- The error sould be subtle enugh that a careless reader would miss it
 
-
-Rules:
-- MCQ questions MUST have exactly 4 options labeled A, B, C, D
+GENERAL RULES:
+- MCQ questions MUST have exactly 4 options (A, B, C, D)
 - SPR (Student-produced response) questions are numeric answers only
 - Reading/Writing questions MUST include passage_text
 - math questions should NOT include passage_text
 - Make the question realistic and similar to actual College Board SAT questions
 - Difficulty 1-2=easy, 3-5=medium, 6-7= hard
-- The correct answer must be DEFINITIVELY correct; distractors should be plausible
+- Questions must be answerable without external knowledge
+- The correct answer must be DEFINITIVELY, UNAMBIGOUSLY correct; distractors should be plausible

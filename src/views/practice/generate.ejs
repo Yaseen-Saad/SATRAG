@@ -56,16 +56,16 @@
   <% } %>
   <div style="margin-bottom:0.75rem;"><%- q.question_text %></div>
   <% if (q.options) { %>
-    <% const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; %>
-    <div style="display:grid; gap:0.35rem;">
-      <% opts.forEach(o => { %>
-      <div style="padding:0.4rem 0.75rem; background:var(--surface-2); border-radius:var(--radius-sm); <%= o.label === q.correct_answer ? 'border:2px solid var(--success);' : '' %>">
-        <strong><%= o.label %>.</strong> <%- o.content %>
-      </div>
-      <% }) %>
+  <% const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; %>
+  <div style="display:grid; gap:0.35rem;">
+    <% opts.forEach(o => { %>
+    <div style="padding:0.4rem 0.75rem; background:var(--surface-2); border-radius:var(--radius-sm); <%= o.label === q.correct_answer ? 'border:2px solid var(--success);' : '' %>">
+      <strong><%= o.label %>.</strong> <%- o.content %>
     </div>
+    <% }) %>
+  </div>
   <% } else { %>
-    <p><strong>Answer:</strong> <%= q.correct_answer %></p>
+  <p><strong>Answer:</strong> <%= q.correct_answer %></p>
   <% } %>
   <p style="margin-top:0.5rem; color:var(--text-muted);"><strong>Explanation:</strong> <%= q.explanation %></p>
   <button class="btn btn--sm btn--primary save-btn" data-question='<%= JSON.stringify(q).replace(/'/g, "'") %>' style="margin-top:0.5rem;">Add to Bank</button>
@@ -74,34 +74,36 @@
 <% } %>
 
 <script>
-function filterTopics() {
-  const subject = document.querySelector('[name="subject"]').value;
-  document.querySelectorAll('[name="topic"] option').forEach(opt => {
-    if (opt.value === '') return;
-    opt.style.display = subject && opt.dataset.subject === subject ? '' : 'none';
-  });
-  document.querySelector('[name="topic"]').value = '';
-}
-document.addEventListener('DOMContentLoaded', filterTopics);
-
-document.querySelectorAll('.save-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const question = JSON.parse(btn.dataset.question);
-    btn.textContent = 'Saving...';
-    btn.disabled = true;
-    const res = await fetch('/practice/generate/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(question)
+  function filterTopics() {
+    const subject = document.querySelector('[name="subject"]').value;
+    document.querySelectorAll('[name="topic"] option').forEach(opt => {
+      if (opt.value === '') return;
+      opt.style.display = !subject || opt.dataset.subject === subject ? '' : 'none';
     });
-    const data = await res.json();
-    if (data.success) {
-      btn.textContent = '✓ Saved';
-      btn.style.background = 'var(--success)';
-    } else {
-      btn.textContent = 'Error - try again';
-      btn.disabled = false;
-    }
+    document.querySelector('[name="topic"]').value = '';
+  }
+  document.addEventListener('DOMContentLoaded', filterTopics);
+
+  document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const question = JSON.parse(btn.dataset.question);
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+      const res = await fetch('/practice/generate/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(question)
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.textContent = '✓ Saved';
+        btn.style.background = 'var(--success)';
+      } else {
+        btn.textContent = 'Error - try again';
+        btn.disabled = false;
+      }
+    });
   });
-});
 </script>

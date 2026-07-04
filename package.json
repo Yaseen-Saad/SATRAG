@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon ./src/index.js",
     "start": "node ./src/index.js",
-    "build:css": "sass src/public/css/main.scss src/public/css/main.css",
+    "build:css": "sass src/public/css/main.scss src/public/css/main.css && sass src/public/css/bluebook.scss src/public/css/bluebook.css",
     "seed":"node ./scripts/seed.js",
     "build":"npm run build:css; npm run seed"
   },

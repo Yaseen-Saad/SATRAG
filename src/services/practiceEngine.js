@@ -1,6 +1,6 @@
 const { service: supabase } = require('../lib/supabase')
 class PracticeEngine {
-    async getQuestions({ subject, topic, subtopic, difficulty, active, difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
+    async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
         if (active)
             query = query.eq('is_active', false);
@@ -14,6 +14,8 @@ class PracticeEngine {
             query = query.eq('difficulty', difficulty);
         if (difficultyBand)
             query = query.eq('difficulty_band', difficultyBand);
+        if (source)
+            query = query.eq('source', source);
         if (search)
             query = query.ilike('stem_plain_text', `%${search}%`);
 
@@ -100,7 +102,7 @@ class PracticeEngine {
             last_attempt: new Date().toISOString(),
             first_attempt: existing?.first_attempt || new Date().toISOString(),
             first_solved: isCorrect && !existing?.first_solved ? new Date().toISOString() : existing?.first_solved,
-        })
+        }, { onConflict: 'user_id, question_id' })
         if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
         const percentile = await this.getSpeedPercentile({ questionId, userTimeMs: timeMs })
         return { isCorrect, correctAnswer: question.correct_answer, percentile, attemptNumber }
@@ -167,6 +169,17 @@ class PracticeEngine {
         return Object.entries(tree).map(([topic, entry]) => ({
             topic, subtopics: [...entry.subtopics].sort(), subject: entry.subject
         }))
+    }
+    async getAdjacentQuestions({ questionId, subject, topic, userId }) {
+        const { data: current } = await supabase.from('sat_questions').select('id, created_at').eq('id', questionId).single()
+        if (!current) return { prevId: null, nextId: null }
+        let base = supabase.from('sat_questions').select('id').neq('id', questionId)
+        if (subject) base = base.eq('subject', subject)
+        if (topic) base = base.eq('topic', topic)
+        const [prev, next] = await Promise.all([
+            base.lt('created_at', current.created_at).order('created_at', { ascending: false }).limit(1),
+            base.gt('created_at', current.created_at).order('created_at', { ascending: true }).limit(1)])
+        return { prevId: prev.data?.[0]?.id || null, nextId: next.data?.[0]?.id || null }
     }
 
 }

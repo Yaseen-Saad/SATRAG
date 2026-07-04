@@ -3,154 +3,104 @@
 <div class="flash flash-error"><%= error || 'Question not found' %></div>
 <a href="/practice" class="btn btn--primary">Back to Bank</a>
 <% } else { %>
-<div class="question-page">
-  <a href="/practice" class="btn btn--ghost btn--sm" style="margin-bottom:1rem;">← Back to Bank</a>
+<% const opts = question.options ? (typeof question.options === 'string' ? JSON.parse(question.options) : question.options) : []; %>
+<% const hasPassage = !!question.passage_text; %>
 
-  <div class="question-meta" style="display:flex; gap:0.5rem; align-items:center; margin-bottom:1rem;">
-    <span class="badge badge--<%= question.subject %>"><%= question.subject %></span>
-    <span class="badge badge--<%= question.difficulty %>"><%= question.difficulty %></span>
-    <small style="color:var(--text-light);"><%= question.topic %> · <%= question.subtopic %></small>
-    <span class="question-timer" id="timer" style="margin-left:auto; font-weight:600; font-size:1.1rem;">⏱ 00:00</span>
-    <button class="btn btn--ghost btn--sm" onclick="toggleMark()" id="mark-btn" style="margin-left:0.5rem;">
-      ★ <%= uState?.marked_for_review ? 'Unmark' : 'Mark for Review' %>
-    </button>
-  </div>
+<div class="bluebook">
+  <div id="question-data" data-id="<%= question.id %>"></div>
 
-  <% if (question.passage_text) { %>
-  <div class="card passage-box" style="margin-bottom:1rem; max-height:300px; overflow-y:auto;">
-    <small style="font-weight:600; text-transform:uppercase; color:var(--text-muted);">Passage</small>
-    <div style="margin-top:0.5rem;"><%- question.passage_text %></div>
-  </div>
-  <% } %>
-
-  <div class="card question-box" style="margin-bottom:1rem;">
-    <div><%- question.question_text %></div>
-  </div>
-
-  <div class="card" id="answer-area">
-    <% if (question.question_type === 'mcq' && question.options) { %>
-    <% const opts = typeof question.options === 'string' ? JSON.parse(question.options) : question.options; %>
-    <div class="question-options" id="options">
-      <% opts.forEach((opt, i) => { %>
-      <button class="question-option" data-label="<%= opt.label %>">
-        <span class="option-label"><%= opt.label %></span>
-        <span class="option-content"><%- opt.content %></span>
+  <!-- TOP BAR -->
+  <header class="bb-topbar">
+    <div class="bb-topbar-left">
+      <a href="/practice" class="bb-back-link">← Back to Bank</a>
+      <span style="opacity:0.4; font-size:0.8rem;"><%= question.subject %> · <%= question.difficulty %></span>
+    </div>
+    <div class="bb-topbar-center">
+      <span class="bb-question-label">Question <span id="q-num">1</span></span>
+    </div>
+    <div class="bb-topbar-right">
+      <button class="bb-mark-btn <%= uState?.marked_for_review ? 'marked' : '' %>" id="mark-btn" onclick="toggleMarkBtn()">
+        <%= uState?.marked_for_review ? '★ Marked' : '☆ Mark for Review' %>
       </button>
-      <% }) %>
+      <span class="bb-timer" id="timer">00:00</span>
     </div>
-    <% } else { %>
-    <div class="form-group" id="spr-input">
-      <label>Your answer:</label>
-      <input type="text" id="spr-answer" placeholder="Enter your answer" style="max-width:200px;">
-      <button class="btn btn--primary" id="spr-submit" style="margin-top:0.5rem;">Submit</button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="bb-main <%= hasPassage ? '' : 'single-panel' %>">
+    <% if (hasPassage) { %>
+    <div class="bb-panel bb-panel-passage">
+      <div class="bb-passage-content">
+        <% 
+          let lineNum = 1;
+          const lines = (question.passage_text || '').split('\n');
+          lines.forEach(line => {
+            if (line.trim()) {
+              const words = line.trim();
+        %>
+        <p><span class="line-num"><%= lineNum %></span><%- words %></p>
+        <% lineNum++; } }); %>
+      </div>
     </div>
     <% } %>
-  </div>
 
-  <div id="feedback-area" style="display:none;"></div>
+    <div class="bb-panel bb-panel-question">
+      <div class="bb-stem"><%- question.question_text %></div>
 
-  <div class="question-attempts" style="margin-top:1.5rem;">
-    <h3>Your Attempts</h3>
-    <% if (!attempts || attempts.length === 0) { %>
-    <p style="color:var(--text-muted);">No attempts yet.</p>
-    <% } else { %>
-    <% attempts.forEach(a => { %>
-    <div class="card" style="margin-bottom:0.5rem; padding:0.75rem;">
-      <small>#<%= a.attempt_number %> · <%= new Date(a.attempt_time).toLocaleString() %></small>
-      <span style="float:right; <%= a.is_correct ? 'color:var(--success);' : 'color:var(--error);' %>">
-        <%= a.is_correct ? '✓ Correct' : '✗ Wrong' %> · <%= Math.round(a.time_taken_ms / 1000) %>s
-      </span>
+      <% if (question.question_type === 'mcq' && opts.length) { %>
+      <div class="bb-options">
+        <% opts.forEach(opt => { %>
+        <button class="bb-option" data-label="<%= opt.label %>" onclick="window.selectOption('<%= opt.label %>')">
+          <span class="bb-option-bubble"><%= opt.label %></span>
+          <span class="bb-option-text"><%- opt.content %></span>
+          <span class="bb-eliminate-btn">−</span>
+        </button>
+        <% }) %>
+      </div>
+      <button class="bb-fb-btn primary" id="submit-btn" onclick="window.submitAnswer()" style="margin-top:1rem; padding:0.65rem 2rem; font-size:1rem;" disabled>Check Answer</button>
+      <% } else { %>
+      <div class="bb-spr-input">
+        <input type="text" id="spr-answer" placeholder="Enter your answer" autocomplete="off">
+        <button onclick="submitAnswer(document.getElementById('spr-answer').value.trim())">Submit</button>
+      </div>
+      <% } %>
     </div>
-    <% }) %>
-    <% } %>
   </div>
+
+  <!-- BOTTOM BAR -->
+  <footer class="bb-bottombar">
+    <div class="bb-bottombar-left">
+      <a href="/practice" class="bb-nav-btn">◀ Back</a>
+    </div>
+    <div class="bb-bottombar-center">
+      <button class="bb-palette-toggle" onclick="openPalette()">☰ Questions</button>
+    </div>
+    <div class="bb-bottombar-right">
+      <a href="/practice" class="bb-nav-btn">Next ▶</a>
+    </div>
+  </footer>
 </div>
 
-<script>
-  const questionId = '<%= question.id %>';
-  let startTime = Date.now();
-  let answered = false;
+<!-- FEEDBACK OVERLAY -->
+<div class="bb-feedback-overlay" id="feedback-overlay">
+  <div class="bb-feedback"></div>
+</div>
 
-  const timerEl = document.getElementById('timer');
-  setInterval(() => {
-    if (answered) return;
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
-    const s = String(elapsed % 60).padStart(2, '0');
-    timerEl.textContent = `⏱ ${m}:${s}`;
-  }, 1000);
-
-  async function submitAnswer(answer) {
-    if (answered) return;
-    answered = true;
-    const timeMs = Date.now() - startTime;
-
-    const res = await fetch(`/practice/question/${questionId}/answer`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        answer,
-        timeMs
-      })
-    });
-    const data = await res.json();
-
-    if (!data.success) {
-      document.getElementById('answer-area').style.display = 'none';
-      const fb = document.getElementById('feedback-area');
-      fb.style.display = 'block';
-      fb.innerHTML = `<div class="card" style="text-align:center; padding:2rem; color:var(--error);"><h2>Error</h2><p>${data.error || 'Something went wrong'}</p><button class="btn btn--primary" onclick="location.reload()">Reload</button></div>`;
-      return;
-    }
-    document.getElementById('answer-area').style.display = 'none';
-    const fb = document.getElementById('feedback-area');
-    fb.style.display = 'block';
-    const explanation = data.explanation ? data.explanation.replace(/`/g, '\\`') : "No Explanation Available";
-    fb.innerHTML = `
-      <div class="card" style="text-align:center; padding:2rem;">
-        <h2 style="font-size:2rem; margin:0; ${data.isCorrect ? 'color:var(--success);' : 'color:var(--error);'}">
-          ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
-        </h2>
-        <p>Correct answer: <strong>${data.correctAnswer}</strong></p>
-        <p>Time: ${Math.round(timeMs / 1000)}s ${data.percentile !== null ? '· Faster than ' + data.percentile + '% of users' : ''}</p>
-        <p>Attempt #${data.attemptNumber}</p>
-        <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:center;">
-          ${data.isCorrect ? '<a href="/practice" class="btn btn--primary">Back to Bank</a>' : '<button class="btn btn--primary" id="try-again-btn">Try Again</button>'}
-          <button class="btn btn--ghost" onclick="toggleMark()">${'<%= uState?.marked_for_review ? "Unmark" : "Mark for Review" %>'}</button>
-        </div>
-        ${explanation ? `
-<div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
-  <details>
-    <summary style="cursor:pointer; font-weight:600; color:var(--text-muted);">Show Explanation</summary>
-    <div style="margin-top:0.5rem; text-align:left; color:var(--text);">${explanation}</div>
-  </details>
-</div>` : '<p style="margin-top:1rem; color:var(--text-light);">No explanation available.</p>'}
-      </div>
-    `;
-    if (!data.isCorrect) {
-      document.getElementById('try-again-btn')?.addEventListener('click', () => {
-        answered = false;
-        document.getElementById('answer-area').style.display = '';
-        fb.style.display = 'none';
-      });
-    }
-  }
-
-  async function toggleMark() {
-    await fetch(`/practice/question/${questionId}/mark`);
-    location.reload();
-  }
-
-  document.getElementById('options')?.addEventListener('click', e => {
-    const btn = e.target.closest('.question-option');
-    if (btn) submitAnswer(btn.dataset.label);
-  });
-
-  document.getElementById('spr-submit')?.addEventListener('click', () => {
-    const val = document.getElementById('spr-answer').value.trim();
-    if (val) submitAnswer(val);
-  });
-</script>
+<!-- QUESTION PALETTE OVERLAY -->
+<div class="bb-palette-overlay" id="palette-overlay">
+  <div class="bb-palette">
+    <div class="bb-palette-header">
+      <h3>Questions</h3>
+      <button onclick="closePalette()">✕</button>
+    </div>
+    <div class="bb-palette-grid">
+      <div class="bb-palette-item current">1</div>
+    </div>
+    <div class="bb-palette-legend">
+      <span><span class="legend-dot answered"></span> Answered</span>
+      <span><span class="legend-dot marked"></span> Marked</span>
+      <span><span class="legend-dot unanswered"></span> Unanswered</span>
+    </div>
+  </div>
+</div>
 <% } %>

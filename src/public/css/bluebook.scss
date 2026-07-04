@@ -1,0 +1,701 @@
+/* === BLUEBOOK DIGITAL SAT INTERFACE === */
+.bluebook {
+    --bb-bg: #f5f7fa;
+    --bb-surface: #ffffff;
+    --bb-border: #d1d5db;
+    --bb-text: #1a1a1a;
+    --bb-text-muted: #6b7280;
+    --bb-primary: #0a2b5e;
+    --bb-primary-light: #1e4d8c;
+    --bb-accent: #2860b0;
+    --bb-correct: #16a34a;
+    --bb-incorrect: #dc2626;
+    --bb-marked: #d97706;
+    --bb-nav-height: 56px;
+    --bb-bot-height: 52px;
+
+    font-family: 'Georgia', 'Times New Roman', serif;
+    height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bb-bg);
+    margin: -2rem -1.5rem;
+}
+
+/* ========== TOP BAR ========== */
+.bb-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--bb-nav-height);
+    padding: 0 1.25rem;
+    background: var(--bb-primary);
+    color: white;
+    flex-shrink: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.bb-topbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bb-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bb-back-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.bb-back-link:hover {
+    color: white;
+}
+
+.bb-question-label {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.bb-mark-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-mark-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.bb-mark-btn.marked {
+    background: var(--bb-marked);
+    border-color: var(--bb-marked);
+    color: white;
+}
+
+.bb-timer {
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Courier New', monospace;
+    min-width: 70px;
+    text-align: right;
+}
+
+/* ========== MAIN CONTENT (split pane) ========== */
+.bb-main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.bb-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.bb-panel-passage {
+    background: var(--bb-surface);
+    border-right: 1px solid var(--bb-border);
+    max-width: 50%;
+    min-width: 380px;
+    flex: 1 1 50%;
+}
+
+.bb-panel-question {
+    background: white;
+    flex: 1 1 50%;
+    padding: 2rem;
+}
+
+/* Passage text */
+.bb-passage-content {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #2d2d2d;
+}
+
+.bb-passage-content p {
+    margin-bottom: 0.75rem;
+    color: #2d2d2d;
+    font-size: 1rem;
+    line-height: 1.7;
+    position: relative;
+    padding-left: 2.5rem;
+    text-indent: -1.5rem;
+}
+
+.bb-passage-content .line-num {
+    color: var(--bb-text-muted);
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin-right: 0.5rem;
+    user-select: none;
+    font-family: system-ui, -apple-system, sans-serif;
+    display: inline-block;
+    width: 1.5rem;
+    text-align: right;
+}
+
+/* ========== QUESTION PANEL ========== */
+.bb-stem {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+}
+
+.bb-stem p {
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+    color: #1a1a1a;
+}
+
+.bb-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.bb-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--bb-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    text-align: left;
+    font-size: 0.95rem;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.bb-option:hover {
+    border-color: var(--bb-accent);
+    background: #f0f5ff;
+}
+
+.bb-option.selected {
+    border-color: var(--bb-primary-light);
+    background: #e8f0fe;
+}
+
+.bb-option.correct {
+    border-color: var(--bb-correct);
+    background: #f0fdf4;
+}
+
+.bb-option.incorrect {
+    border-color: var(--bb-incorrect);
+    background: #fef2f2;
+}
+
+.bb-option.eliminated {
+    opacity: 0.35;
+    text-decoration: line-through;
+    pointer-events: none;
+}
+
+.bb-option-bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--bb-border);
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--bb-text-muted);
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.bb-option:hover .bb-option-bubble {
+    border-color: var(--bb-accent);
+    color: var(--bb-accent);
+}
+
+.bb-option.selected .bb-option-bubble {
+    background: var(--bb-primary-light);
+    border-color: var(--bb-primary-light);
+    color: white;
+}
+
+.bb-option.correct .bb-option-bubble {
+    background: var(--bb-correct);
+    border-color: var(--bb-correct);
+    color: white;
+}
+
+.bb-option.incorrect .bb-option-bubble {
+    background: var(--bb-incorrect);
+    border-color: var(--bb-incorrect);
+    color: white;
+}
+
+.bb-option-text {
+    flex: 1;
+    padding-top: 0.15rem;
+}
+
+/* Eliminate button (strikethrough toggle) */
+.bb-eliminate-btn {
+    background: none;
+    border: none;
+    color: var(--bb-text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0.25rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-option:hover .bb-eliminate-btn {
+    opacity: 0.5;
+}
+
+.bb-eliminate-btn:hover {
+    opacity: 1 !important;
+    color: var(--bb-incorrect);
+}
+
+/* ========== BOTTOM NAV BAR ========== */
+.bb-bottombar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--bb-bot-height);
+    padding: 0 1.25rem;
+    background: var(--bb-primary);
+    color: white;
+    flex-shrink: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-nav-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.45rem 1.25rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.bb-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.bb-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.bb-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.bb-dot:hover {
+    border-color: white;
+    color: white;
+}
+
+.bb-dot.current {
+    border-color: white;
+    background: white;
+    color: var(--bb-primary);
+}
+
+.bb-dot.answered {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: transparent;
+}
+
+.bb-dot.marked {
+    border-color: var(--bb-marked);
+    color: var(--bb-marked);
+}
+
+.bb-dot.current.marked {
+    background: var(--bb-marked);
+    color: white;
+    border-color: var(--bb-marked);
+}
+
+.bb-palette-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-palette-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* ========== QUESTION PALETTE OVERLAY ========== */
+.bb-palette-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+}
+
+.bb-palette-overlay.open {
+    display: flex;
+}
+
+.bb-palette {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 440px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.bb-palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-palette-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.bb-palette-header button {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--bb-text-muted);
+}
+
+.bb-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.bb-palette-item {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 2px solid var(--bb-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-palette-item.current {
+    border-color: var(--bb-primary-light);
+    background: #e8f0fe;
+}
+
+.bb-palette-item.answered {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.bb-palette-item.marked {
+    border-color: var(--bb-marked);
+}
+
+.bb-palette-item.correct {
+    background: #f0fdf4;
+    border-color: var(--bb-correct);
+}
+
+.bb-palette-item.incorrect {
+    background: #fef2f2;
+    border-color: var(--bb-incorrect);
+}
+
+.bb-palette-item:hover {
+    border-color: var(--bb-accent);
+}
+
+.bb-palette-legend {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.8rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--bb-text-muted);
+    flex-wrap: wrap;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.legend-dot.answered {
+    background: #dbeafe;
+}
+
+.legend-dot.marked {
+    background: var(--bb-marked);
+}
+
+.legend-dot.unanswered {
+    background: white;
+    border: 2px solid var(--bb-border);
+}
+
+.legend-dot.correct {
+    background: var(--bb-correct);
+}
+
+.legend-dot.incorrect {
+    background: var(--bb-incorrect);
+}
+
+/* ========== FEEDBACK OVERLAY ========== */
+.bb-feedback-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+}
+
+.bb-feedback-overlay.open {
+    display: flex;
+}
+
+.bb-feedback {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-feedback h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.bb-feedback .correct-text {
+    color: var(--bb-correct);
+}
+
+.bb-feedback .incorrect-text {
+    color: var(--bb-incorrect);
+}
+
+.bb-feedback .bb-fb-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.bb-fb-btn {
+    padding: 0.55rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.bb-fb-btn.primary {
+    background: var(--bb-primary-light);
+    color: white;
+}
+
+.bb-fb-btn.primary:hover {
+    background: var(--bb-accent);
+}
+
+.bb-fb-btn.ghost {
+    background: transparent;
+    border: 2px solid var(--bb-border);
+    color: var(--bb-text);
+}
+
+.bb-fb-btn.ghost:hover {
+    border-color: var(--bb-accent);
+}
+
+.bb-fb-btn.success {
+    background: var(--bb-correct);
+    color: white;
+}
+
+.bb-fb-btn.success:hover {
+    opacity: 0.9;
+}
+
+.bb-explanation {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bb-border);
+    text-align: left;
+}
+
+.bb-explanation summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--bb-text-muted);
+}
+
+.bb-explanation div {
+    margin-top: 0.5rem;
+    color: var(--bb-text);
+    line-height: 1.6;
+}
+
+/* ========== SPR (student-produced response) ========== */
+.bb-spr-input {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.bb-spr-input input {
+    width: 180px;
+    padding: 0.65rem 0.85rem;
+    border: 2px solid var(--bb-border);
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+.bb-spr-input input:focus {
+    border-color: var(--bb-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(40, 96, 176, 0.15);
+}
+
+.bb-spr-input button {
+    padding: 0.65rem 1.5rem;
+    background: var(--bb-primary-light);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .bb-main {
+        flex-direction: column;
+    }
+
+    .bb-panel-passage {
+        max-width: 100%;
+        min-width: 0;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid var(--bb-border);
+    }
+
+    .bb-topbar-center {
+        position: static;
+        transform: none;
+    }
+
+    .bb-dots {
+        display: none;
+    }
+
+    .bb-palette-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ========== NO PASSAGE (math standalone) ========== */
+.bb-main.single-panel .bb-panel-passage {
+    display: none;
+}
+
+.bb-main.single-panel .bb-panel-question {
+    max-width: 720px;
+    margin: 0 auto;
+}
