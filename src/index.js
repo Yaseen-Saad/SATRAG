@@ -16,9 +16,7 @@ const feedbackRoutes = require('./routes/feedback');
 const dashboardRoutes = require('./routes/dashboard');
 const practiceRoutes = require('./routes/practice');
 
-
 const app = express();
-
 
 // Middleware Setup
 app.use(cookieParser());

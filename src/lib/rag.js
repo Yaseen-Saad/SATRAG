@@ -141,6 +141,9 @@ class RAGEngine {
             throw new Error('No JSON in LLM response');
         }
         const result = JSON.parse(match[0].trim());
+        if (result.question_text) {
+            result.question_text = result.question_text.replace(/_{2,}blank/gi, '<span style="border-bottom:2px solid; display:inline-block; min-width:80px;">&nbsp;</span>').replace(/_{4,}/g, '<span style="border-bottom:2px solid; display:inline-block; min-width:80px;">&nbsp;</span>');
+        }
         let opts = result.options;
         if (opts && typeof opts === 'object' && !Array.isArray(opts)) {
             opts = Object.entries(opts).map(([label, content]) => ({ label, content }));
