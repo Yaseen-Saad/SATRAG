@@ -2,8 +2,8 @@ const supabase = require('../lib/supabase')
 
 async function requireProfileComplete(req, res, next) {
     try {
-        const { data: profile, error } = await supabase.from('public_profiles').select('first_name, last_name, birthdate, grade, school').eq('id', req.user.id).single();
-        if (error || !profile.first_name || !profile.last_name || !profile.birthdate || !profile.grade || !profile.school) {
+        const { data: profile, error } = await supabase.from('public_profiles').select('first_name, last_name, school').eq('id', req.user.id).single();
+        if (error || !profile || !profile.first_name || !profile.last_name || !profile.school) {
             if (req.path.startsWith('/api/')) {
                 return res.status(400).json({ error: 'Profile incomplete. Please complete your profile.' });
             }

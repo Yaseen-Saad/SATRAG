@@ -48,8 +48,9 @@ app.use('/auth', authRoutes);
 app.use((req, res, next) => {
   const skip = ['/auth', '/settings', '/css', '/js', '/']
   if (skip.some(path => req.path.startsWith(path))) {
-    return requireProfileComplete(req, res, next);
+    return next();
   }
+  requireProfileComplete(req, res, next);
 });
 
 app.use('/vocab', vocabRoutes);

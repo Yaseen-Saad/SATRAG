@@ -10,9 +10,9 @@
 <% if (typeof success !== 'undefined' && success){ %>
   <div class="flash flash-success"><%=success%><button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
   <% } %>
-  <% if (prompt === "complete_profile"){ %>
+  <% if (typeof prompt !== 'undefined' && prompt === "complete-profile"){ %>
   <div class="flash flash-warning">Please complete your profile to access all features.<button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
-  <% }else if(prompt==="api_keys"){ %>
+  <% }else if(typeof prompt !== 'undefined' && prompt==="complete-apikeys"){ %>
   <div class="flash flash-info">Set your LLM and Embeddings API Keys to unlock AI generation features.<button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
   <% } %>
 
@@ -23,8 +23,8 @@
     </div>
     <div class="dash-card-body">
       <form action="/settings/changeFName" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;margin-bottom:1rem">
-        <div class="form-group" style="flex:1;margin:0"><label for="firstName">First Name</label><input type="text" value="<%=user?.user_metadata.first_name || ""%>" name="firstName" required></div>
-        <div class="form-group" style="flex:1;margin:0"><label for="lastName">last Name</label><input type="text" value="<%=user?.user_metadata.last_name || ""%>" name="lastName" required></div>
+        <div class="form-group" style="flex:1;margin:0"><label for="firstName">First Name</label><input type="text" value="<%= (profile && profile.first_name) || '' %>" name="firstName" required></div>
+        <div class="form-group" style="flex:1;margin:0"><label for="lastName">last Name</label><input type="text" value="<%= (profile && profile.last_name) || '' %>" name="lastName" required></div>
         <button type="submit" class="btn btn-primary">Update Name</button>
       </form>
     </div>
@@ -39,8 +39,9 @@
         <div class="form-group" style="flex:1; margin:0;">
           <select name="grade" required>
             <% const grades = ['9','10','11','12','Gap Year','Other','I am not a student']; %>
+            <% const currentGrade = (profile && profile.grade) || ''; %>
             <% grades.forEach(function(g) { %>
-            <option value="<%= g %>" <%= (user?.user_metadata?.grade === g) ? 'selected' : '' %>><%= g %></option>
+            <option value="<%= g %>" <%= (currentGrade === g) ? 'selected' : '' %>><%= g %></option>
             <% }) %>
           </select>
         </div>
@@ -61,13 +62,6 @@
         </div>
         <button type="submit" class="btn-primary btn-sm">Save</button>
       </form>
-      <form action="/settings/changeEmbeddingKey" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="embeddingkey">Embeddings API Key</label>
-          <input type="password" name="embeddingkey" placeholder="sk-..." required>
-        </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
     </div>
   </div>
 
@@ -82,16 +76,10 @@
         <div class="form-group" style="flex:1; margin:0;">
           <label for="leaderboardstatus">Leaderboard Status</label>
           <select name="leaderboardstatus" required>
-            <option value="enabled" <%= (user?.user_metadata?.leaderboardStatus === 'enabled') ? 'selected' : '' %>>Enabled</option>
-            <option value="disabled" <%= (user?.user_metadata?.leaderboardStatus === 'disabled') ? 'selected' : '' %>>Disabled</option>
+            <% const lbEnabled = profile && profile.participate_in_leaderboard; %>
+            <option value="enabled" <%= lbEnabled ? 'selected' : '' %>>Enabled</option>
+            <option value="disabled" <%= !lbEnabled ? 'selected' : '' %>>Disabled</option>
           </select>
-        </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
-      <form action="/settings/changeEmbeddingKey" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="embeddingkey">Embeddings API Key</label>
-          <input type="password" name="embeddingkey" placeholder="sk-..." required>
         </div>
         <button type="submit" class="btn-primary btn-sm">Save</button>
       </form>

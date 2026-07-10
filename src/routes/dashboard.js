@@ -45,7 +45,7 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/leaderboard', optionalAuth, (req, res) => {
+router.get('/leaderboard', optionalAuth, async (req, res) => {
   try {
 
     const { page = 1, limit = 50 } = req.query;

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
     const html = document.documentElement
-    const hamburger = document.getElementById('hamburger');
+    const hamburger = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
     const overlay = document.getElementById('overlay');
     if (hamburger && navLinks) {

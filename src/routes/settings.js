@@ -1,11 +1,13 @@
 const { Router } = require('express');
 const { requireAuth } = require('../middleware/auth');
 const settingsEngine = require('../services/settingsEngine');
+const supabase = require('../lib/supabase');
 
 const router = Router()
 
 router.get('/', requireAuth, async (req, res) => {
-    res.render('settings/index', { user: req.user, error: null, success: null })
+    const { data: profile } = await supabase.from('public_profiles').select('*').eq('id', req.user.id).single();
+    res.render('settings/index', { user: req.user, profile, error: null, success: null, prompt: req.query.prompt })
 })
 
 router.post('/changeFName', requireAuth, async (req, res) => {
@@ -29,7 +31,8 @@ router.post('/changeEmbeddingkey', requireAuth, async (req, res) => {
     res.redirect('/settings')
 })
 router.post('/changeLeaderboardStatus', requireAuth, async (req, res) => {
-    await settingsEngine.toggleParticipateInLeaderboard(req.user, req.body.leaderboardStatus)
+    const enabled = req.body.leaderboardstatus === 'enabled';
+    await settingsEngine.toggleParticipateInLeaderboard(req.user, enabled)
     res.redirect('/settings')
 })
 
