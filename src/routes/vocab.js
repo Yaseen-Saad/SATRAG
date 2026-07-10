@@ -8,6 +8,7 @@ const rag = require('../lib/rag')
 const llm = require('../lib/llm')
 const qualityChecker = require('../lib/qualityChecker')
 const evaluator = require('../lib/vocabularyEvaluator')
+const { requireAPIKeys } = require('../middleware/apikeys')
 
 const router = Router();
 
@@ -20,7 +21,7 @@ router.get('/', requireAuth, async (req, res) => {
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
 
-router.post('/generate', requireAuth, async (req, res) => {
+router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
     let { word } = req.body;
     if (!word || word.trim() === '') {
         const recent = await rag.listRecent(10)
@@ -185,7 +186,7 @@ router.get('/generate/:word', requireAuth, async (req, res) => {
     res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
 })
 
-router.post('/regenerate', requireAuth, async (req, res) => {
+router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
     try {
         const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
         const w = word.trim().toUpperCase()

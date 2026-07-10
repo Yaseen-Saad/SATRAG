@@ -7,7 +7,7 @@ const router = Router();
 router.post('/submit', requireAuth, async (req, res) => {
     try {
         const { wordId, satisfaction, helpfulComponents, problematicComponents, comments } = req.body;
-        const result = await feedback.recordFeedback({ userId: req.user.id, wordID: wordId, satisfaction: parseInt(satisfaction), helpfulComponents, problematicComponents, comments })
+        const result = await feedback.recordFeedback({ userId: req.user.id, wordID: wordId, satisfaction_score: parseInt(satisfaction), helpfulComponents, problematicComponents, comments })
         if (req.headers['content-type']?.includes('json')) {
             return res.json({ success: true, data: result })
         }

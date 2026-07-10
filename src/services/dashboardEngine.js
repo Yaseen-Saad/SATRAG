@@ -3,41 +3,28 @@ const supabase = require('../lib/supabase');
 class DashboardEngine {
     async getUserDashboardData(userId) {
         try {
-            // Fetch user data from Supabase
-            const { wordsLearned, allQuizzes, avgQuality, feedbackData, practiceStates, recentAttempts } = await Promise.all([
-                supabase
-                    .from('user_vocab_progress')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', userId)
-                    .gte('familiarity', 0.7),
-                supabase
-                    .from('quiz_attempts')
-                    .select('score, total_questions, attempt_time')
-                    .eq('user_id', userId).not('score', 'is', null),
-                supabase
-                    .from('vocab_entries')
-                    .select('*', { count: 'exact', head: true }),
-                supabase
-                    .from('vocab_entries')
-                    .select('quality_score'),
-                supabase.from("feedback_events").select("satisfaction_score, helpful_components, comments, created_at, word_id").order("created_at", { ascending: false }).limit(10),
-                supabase.from('user_question_state').select('status, times_attempt, question_id, marked_for_review').eq('user_id', userId),
+            const [quizzesResult, vocabCountResult, qualityResult, feedbackData, practiceStates, recentAttempts] = await Promise.all([
+                supabase.from('quiz_attempts').select('score, total_questions, attempt_time').eq('user_id', userId).not('score', 'is', null),
+                supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),
+                supabase.from('vocab_entries').select('quality_score').not('quality_score', 'is', null),
+                supabase.from("feedback_events").select("satisfaction_score, helpful_components, comments, created_at, word_id").eq('user_id', userId).order("created_at", { ascending: false }).limit(10),
+                supabase.from('user_question_state').select('status, times_attempted, question_id, marked_for_review').eq('user_id', userId),
                 supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', userId).order('attempt_time', { ascending: false }).limit(10)
-            ]);
+            ])
 
-            const avgScore = allQuizzes.data?.length ? Math.round(allQuizzes.data.reduce((acc, quiz) => acc + quiz.score, 0) / (allQuizzes.data.length)) : null;
-            const validScores = (avgQuality.data || []).filter(e => e.quality_score != null).map(e => e.quality_score);
+            const allQuizzes = quizzesResult?.data || [];
+            const avgQuality = qualityResult?.data || [];
+            const avgScore = allQuizzes.length ? Math.round(allQuizzes.reduce((acc, quiz) => acc + quiz.score, 0) / (allQuizzes.length)) : null;
+            const validScores = (avgQuality || []).filter(e => e.quality_score != null).map(e => e.quality_score);
             const avgQualityScore = validScores.length ? Math.round(validScores.reduce((acc, score) => acc + score, 0) / validScores.length) : null;
-            const ratings = feedbackData.data?.filter(feedback => feedback.satisfaction_score !== null);
+            const ratings = feedbackData?.filter(feedback => feedback.satisfaction_score !== null);
             const avgSatisfaction = ratings?.length ? Math.round(ratings.reduce((acc, feedback) => acc + feedback.satisfaction_score, 0) / ratings.length) : null;
             return {
-                wordsLearned: wordsLearned.count || 0,
                 avgScore,
                 avgQualityScore,
                 avgSatisfaction,
-                totalEntries: totalEntries.count || 0,
-                practiceStates: practiceStates.data || [],
-                recentAttempts: recentAttempts.data || []
+                practiceStates: practiceStates || [],
+                recentAttempts: recentAttempts || []
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -49,10 +36,10 @@ class DashboardEngine {
         try {
             const { data: practiceStates, error } = await supabase
                 .from('user_question_state')
-                .select('status, times_attempt, question_id, marked_for_review')
+                .select('status, times_attempted, question_id, marked_for_review')
                 .eq('user_id', userId);
             if (error) throw error;
-            const data = practiceStates.data || [];
+            const data = practiceStates || [];
             const attempted = data.filter(state => state.status !== 'unsolved');
             const correct = data.filter(state => state.status === 'solved_correct');
             const markedForReview = data.filter(state => state.marked_for_review);
@@ -78,13 +65,154 @@ class DashboardEngine {
         for (const attempt of attempts) {
             const key = `${attempt.sat_questions.subject}-${attempt.sat_questions.topic}`;
             if (!breakdown[key]) {
-                breakdown[key] = { subject: attempt.sat_questions.subject, topic: attempt.sat_questions.topic, correct: 0, incorrect: 0 };
+                breakdown[key] = { subject: attempt.sat_questions.subject, topic: attempt.sat_questions.topic, correct: 0, incorrect: 0, total: 0 };
             }
             breakdown[key].total++
             if (attempt.is_correct) breakdown[key].correct++
         }
-        return Object.entries(breakdown).map(g => ({ ...g, accuracy: g.correct / g.total * 100 })).sort((a, b) => a.accuracy - b.accuracy);
+        return Object.entries(breakdown).map(([, g]) => ({ ...g, accuracy: g.correct / g.total * 100 })).sort((a, b) => a.accuracy - b.accuracy);
+    }
+    async getLeaderboard({ limit = 50, offset = 0, userId }) {
+        const { data: profiles } = await supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard')
+        if (!profiles || !profiles.length) return { entries: [], totalCount: 0, userRank: null }
+        const userIds = profiles.map(p => p.id)
+        const { data: attempts } = await supabase.from('user_question_attempts').select('user_id, is_correct').in('user_id', userIds);
+        const { data: quizData } = await supabase.from('quiz_attempts').select('user_id, score').in('user_id', userIds).not('score', 'is', null)
+
+        const stats = {}
+        const quizStats = {}
+        for (const q of quizData || []) {
+            if (!quizStats[q.user_id]) quizStats[q.user_id] = { quizScore: 0, quizCount: 0 }
+            quizStats[q.user_id].quizScore += q.score;
+            quizStats[q.user_id].quizCount++;
+        }
+        for (const a of attempts || []) {
+            if (!stats[a.user_id]) stats[a.user_id] = { correct: 0, total: 0 }
+            stats[a.user_id].total++;
+            if (a.is_correct) stats[a.user_id].correct++;
+        }
+        const entries = profiles.map(p => {
+            const s = stats[p.id] || { correct: 0, total: 0 }
+            const qs = quizStats[p.id] || { quizScore: 0, quizCount: 0 }
+            const accuracy = s.total ? Math.round((s.correct / s.total) * 100) : 0;
+            const avgQuiz = qs.quizCount ? Math.round((qs.quizScore / qs.quizCount) * 100) : 0;
+            const score = s.correct + (qs.quizCount ? Math.round(qs.quizScore) : 0)
+            return {
+                userId: p.id,
+                name: [p.first_name, p.last_name].filter(Boolean).join(" ") || 'Anonymous',
+                grade: p.grade || '',
+                correct: s.correct,
+                total: s.total,
+                quizzes: qs.quizCount,
+                score,
+                accuracy,
+                avgQuiz
+            }
+        }).sort((a, b) => b.score - a.score || b.accuracy - a.accuracy).map((entry, i) => ({ rank: i + 1, ...entry }))
+
+        const userRank = userId ? entries.find(e => e.userId === userId)?.rank || null : null
+        return {
+            entries: entries.slice(offset, offset + limit),
+            totalCount: entries.length,
+            userRank
+        }
     }
 
+    async getWeeklyActivity(userId) {
 
+        const days = 7
+        const since = new Date()
+        since.setDate(since.getDate() - days)
+        since.setHours(0, 0, 0, 0)
+        const { data } = await supabase.from('user_question_attempts').select('attempt_time').eq('user_id', userId).gte('attempt_time', since.toISOString())
+        const dayMap = {}
+        for (let i = 0; i < days; i++) {
+            const date = new Date()
+            date.setDate(date.getDate() - i)
+            const key = date.toISOString().split('T').slice(0, 10)
+            dayMap[key] = { date: key, count: 0 }
+        }
+        if (data) {
+            for (const attempt of data) {
+                const key = attempt.attempt_time.split('T').slice(0, 10)
+                if (dayMap[key]) {
+                    dayMap[key].count++
+                }
+            }
+        }
+        return Object.values(dayMap).reverse()
+    }
+    async getStreak(userId) {
+        const { data, error } = await supabase
+            .from('user_question_attempts')
+            .select('attempt_date:attempt_time::date')
+            .eq('user_id', userId)
+            .order('attempt_time', { ascending: false });
+        if (error || !data?.length) return { currentStreak: 0, longestStreak: 0 };
+
+        const uniqueDays = [...new Set(data.map(d => d.attempt_date))].sort();
+
+        let currentStreak = 0;
+        let longestStreak = 0;
+        let tempStreak = 0;
+        const todayStr = new Date().toISOString().split('T')[0]
+        const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+        const hasActivityRecently = uniqueDays[0] === todayStr || uniqueDays[0] === yesterdayStr
+
+        for (let i = 0; i < uniqueDays.length; i++) {
+            if (i === 0) {
+                tempStreak = 1;
+            } else {
+                const currentDay = new Date(uniqueDays[i]);
+                const previousDay = new Date(uniqueDays[i - 1]);
+                const diffTime = Math.abs(previousDay - currentDay);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    tempStreak++;
+                } else {
+                    longestStreak = Math.max(longestStreak, tempStreak);
+                    tempStreak = 1;
+                }
+            }
+        }
+
+        longestStreak = Math.max(longestStreak, tempStreak);
+        currentStreak = hasActivityRecently ? tempStreak : 0;
+        if (hasActivityRecently && uniqueDays[0] === todayStr && tempStreak === uniqueDays.length) {
+            currentStreak = tempStreak;
+        }
+
+        return { currentStreak, longestStreak };
+    }
+    async getRecentFeedback(userId) {
+        const { data: feedback, error } = await supabase
+            .from('feedback_events')
+            .select('satisfaction_score, helpful_components, comments, created_at, word_id')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(10);
+        if (error) throw error;
+        if (!feedback.length) return [];
+        const wordIDs = [...new Set(feedback.map(f => f.word_id))];
+        const { data: words, error: wordError } = wordIDs.length ? await supabase
+            .from('vocab_entries')
+            .select('id, word')
+            .in('id', wordIDs) : { data: [], error: null };
+        if (wordError) throw wordError;
+        const wordsMap = Object.fromEntries(words.map(w => [w.id, w.word]));
+        return feedback.map(f => ({ ...f, word: wordsMap[f.word_id] || 'Unknown' }));
+    }
+    async getRecentQuizzes(userId) {
+        const { data: quizzes, error } = await supabase
+            .from('quiz_attempts')
+            .select('*')
+            .eq('user_id', userId)
+            .not('score', 'is', null)
+            .order('attempt_time', { ascending: false })
+            .limit(10);
+        if (error) throw error;
+        return quizzes || [];
+    }
 }
+module.exports = new DashboardEngine();

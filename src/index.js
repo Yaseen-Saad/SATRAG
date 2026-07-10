@@ -6,15 +6,17 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const rateLimiter = require('./middleware/rateLimiter');
+
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 // Route Imports
 const authRoutes = require('./routes/auth');
 const vocabRoutes = require('./routes/vocab');
-const quizRoutes = require('./routes/quiz');
 const feedbackRoutes = require('./routes/feedback');
 const dashboardRoutes = require('./routes/dashboard');
 const practiceRoutes = require('./routes/practice');
+const settingsRoutes = require('./routes/settings');
+const { requireProfileComplete } = require('./middleware/profile');
 
 const app = express();
 
@@ -22,19 +24,12 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// CORS Configuration
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', process.env.APP_DOMAIN);
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 
 // Rate Limiter
 app.use(rateLimiter());
@@ -49,11 +44,19 @@ app.get('/', async (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+
+app.use((req, res, next) => {
+  const skip = ['/auth', '/settings', '/css', '/js', '/']
+  if (skip.some(path => req.path.startsWith(path))) {
+    return requireProfileComplete(req, res, next);
+  }
+});
+
 app.use('/vocab', vocabRoutes);
-app.use('/quiz', quizRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/practice', practiceRoutes);
+app.use('/settings', settingsRoutes);
 
 // Error Handler
 app.use(notFoundHandler);

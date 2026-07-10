@@ -1,4 +1,3 @@
-const flashes = 4000;
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
     const html = document.documentElement
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    document.querySelectorAll('a[href^="$#"]').forEach(link => {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href').substring(1);
             const targetElement = document.getElementById(targetId);

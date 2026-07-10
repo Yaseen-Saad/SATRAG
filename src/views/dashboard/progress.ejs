@@ -1,111 +1,191 @@
 <% title = 'Dashboard'; %>
-<h1>Dashboard</h1>
 
-<div class="stat-grid">
-  <div class="stat-card">
-    <h3>Words Learned</h3>
-    <div class="stat-value" style="color:#27ae60;"><%= wordsLearned %></div>
-  </div>
-  <div class="stat-card">
-    <h3>Avg Quiz Score</h3>
-    <div class="stat-value" style="color:#2980b9;"><%= avgScore !== null ? avgScore + '%' : 'N/A' %></div>
-  </div>
-  <div class="stat-card">
-    <h3>Total Entries</h3>
-    <div class="stat-value" style="color:#8e44ad;"><%= totalEntries %></div>
-  </div>
-  <div class="stat-card">
-    <h3>Avg Quality</h3>
-    <div class="stat-value" style="color:#d35400;"><%= avgQualityScore !== null ? avgQualityScore + '/10' : 'N/A' %></div>
-  </div>
-  <div class="stat-card">
-    <h3>Avg Satisfaction</h3>
-    <div class="stat-value" style="color:#16a085;"><%= avgSatisfaction !== null ? avgSatisfaction + '/10' : 'N/A' %></div>
-  </div>
-</div>
-<h2 style="margin-top:2rem;">Practice Stats</h2>
-<div class="stat-grid">
-  <div class="stat-card">
-    <h3>Questions Attempted</h3>
-    <div class="stat-value" style="color:#4338ca;"><%= practiceAttempted || 0 %></div>
-  </div>
-  <div class="stat-card">
-    <h3>Accuracy</h3>
-    <div class="stat-value" style="color:<%= practiceAccuracy !== null ? (practiceAccuracy >= 70 ? '#27ae60' : practiceAccuracy >= 40 ? '#f39c12' : '#e74c3c') : '#888' %>;">
-      <%= practiceAccuracy !== null ? practiceAccuracy + '%' : 'N/A' %>
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="dash-subtitle">
+        <%= streak.currentStreak %>-day study streak ·
+        <%= practiceStats.attempted || 0 %> questions answered
+      </p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/practice" class="btn btn-primary btn-sm">Practice</a>
+      <a href="/quiz/start" class="btn btn-outline btn-sm">Take Quiz</a>
     </div>
   </div>
-  <div class="stat-card">
-    <h3>Marked for Review</h3>
-    <div class="stat-value" style="color:#d97706;"><%= practiceMarked || 0 %></div>
+
+  <!-- Overview Stats -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--teal)">
+        <%= avgScore !== null ? avgScore + '%' : '—' %>
+      </div>
+      <div class="stat-label">Avg Quiz Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:#d35400">
+        <%= avgQualityScore !== null ? avgQualityScore : '—' %>
+      </div>
+      <div class="stat-label">Avg Quality</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--success)">
+        <%= avgSatisfaction !== null ? avgSatisfaction : '—'  %>
+      </div>
+      <div class="stat-label">Satisfaction</div>
+    </div>
   </div>
+
+  <!-- Practice & Streak Row -->
+  <div class="dash-row">
+    <!-- Practice Stats -->
+    <div class="dash-card dash-card--grow">
+      <div class="dash-card-header">
+        <h2>Practice Overview</h2>
+        <a href="/practice" class="btn btn-ghost btn-sm">View All</a>
+      </div>
+      <div class="dash-card-body">
+        <div class="mini-stat-grid">
+          <div class="mini-stat">
+            <div class="mini-stat-value"><%= practiceStats.attempted || 0 %></div>
+            <div class="mini-stat-label">Attempted</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value" style="color:var(--success)">
+              <%= practiceStats.correct || 0 %>
+            </div>
+            <div class="mini-stat-label">Correct</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value" style="color:<%= practiceStats.accuracy !== null ? (practiceStats.accuracy >= 70 ? 'var(--success)' : practiceStats.accuracy >= 40 ? 'var(--warning)' : 'var(--error)') : '#888' %>;">
+              <%= practiceStats.accuracy !== null ? practiceStats.accuracy + '%' : '—' %>
+            </div>
+            <div class="mini-stat-label">Accuracy</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value" style="color:var(--warning)"><%= practiceStats.markedForReview || 0 %></div>
+            <div class="mini-stat-label">Marked for Review</div>
+          </div>
+        </div>
+        <!-- Accuracy progress bar -->
+        <% if (practiceStats.accuracy !== null) { %>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:<%= practiceStats.accuracy %>%"></div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Streak Card -->
+    <div class="dash-card dash-card--compact">
+      <div class="dash-card-header">
+        <h2>Streak</h2>
+      </div>
+      <div class="streak-display">
+        <div class="streak-number"><%= streak.currentStreak %></div>
+        <div class="streak-label">day streak</div>
+        <div class="streak-longest">Best: <%= streak.longestStreak %> days</div>
+      </div>
+      <!-- Weekly mini-calendar -->
+      <div class="week-grid">
+        <% weeklyActivity.forEach(function(day) { %>
+        <div class="week-cell" title="<%= day.date %>: <%= day.count %> questions" style="--intensity: <%= Math.min(1, day.count / 5) %>;">
+          <span class="week-cell-label"><%= day.date.slice(5) %></span>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Topic Weak Spots -->
+  <% if (topicBreakdown.length > 0) { %>
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Weakest Topics</h2>
+      <a href="/practice" class="btn btn-ghost btn-sm">Practice These</a>
+    </div>
+    <div class="dash-card-body">
+      <% weakestTopics.forEach(function(t) { %>
+      <div class="topic-row">
+        <div class="topic-info">
+          <span class="topic-subject"><%= t.subject %></span>
+          <span class="topic-name"><%= t.topic %></span>
+        </div>
+        <div class="topic-right">
+          <span class="topic-accuracy" style="color:<%= t.accuracy < 50 ? 'var(--error)' : t.accuracy < 75 ? 'var(--warning)' : 'var(--success)' %>;">
+            <%= t.accuracy %>%
+          </span>
+          <div class="topic-bar">
+            <div class="topic-bar-fill" style="width:<%= t.accuracy %>%"></div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <!-- Two-column bottom section -->
+  <div class="dash-row">
+    <!-- Recent Quizzes -->
+    <div class="dash-card dash-card--grow">
+      <div class="dash-card-header">
+        <h2>Recent Quizzes</h2>
+        <a href="/quiz/start" class="btn btn-ghost btn-sm">New Quiz</a>
+      </div>
+      <div class="dash-card-body">
+        <% if (recentQuizzes.length === 0) { %>
+        <p class="empty-state">No quizzes taken yet. <a href="/quiz/start">Start one</a></p>
+        <% } else { %>
+        <table>
+          <tr>
+            <th>Date</th>
+            <th>Score</th>
+            <th>Q's</th>
+          </tr>
+          <% recentQuizzes.forEach(function(q) { %>
+          <tr>
+            <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
+            <td style="font-weight:bold; color:<%= q.score >= 70 ? 'var(--success)' : q.score >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
+              <%= q.score %>%
+            </td>
+            <td><%= q.total_questions %></td>
+          </tr>
+          <% }) %>
+        </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Feedback -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Recent Feedback</h2>
+    </div>
+    <div class="dash-card-body">
+      <% if (recentFeedback.length === 0) { %>
+      <p class="empty-state">No feedback yet.</p>
+      <% } else { %>
+      <% recentFeedback.forEach(function(f) { %>
+      <div class="feedback-row">
+        <div class="feedback-left">
+          <strong><%= f.word %></strong>
+          <span class="feedback-rating" style="color:<%= f.satisfaction_score >= 7 ? 'var(--success)' : f.satisfaction_score >= 4 ? 'var(--warning)' : 'var(--error)' %>;">
+            <%= f.satisfaction_score %>/10
+          </span>
+        </div>
+        <% if (f.comments) { %>
+        <div class="feedback-comment"><%= f.comments %></div>
+        <% } %>
+        <div class="feedback-date"><%= new Date(f.created_at).toLocaleDateString() %></div>
+      </div>
+      <% }) %>
+      <% } %>
+    </div>
+  </div>
+
 </div>
-
-<h2>Recent Practice</h2>
-<% if (recentPractice.length === 0) { %>
-<p style="color:#888;">No practice questions attempted yet. <a href="/practice">Start practicing</a></p>
-<% } else { %>
-<table>
-  <tr>
-    <th>Subject</th>
-    <th>Result</th>
-    <th>Time</th>
-    <th>Date</th>
-  </tr>
-  <% recentPractice.forEach(a => { %>
-  <tr>
-    <td><%= a.sat_questions.subject %> · <%= a.sat_questions.topic %></td>
-    <td style="font-weight:bold; color:<%= a.is_correct ? '#27ae60' : '#e74c3c' %>;"><%= a.is_correct ? '✓ Correct' : '✗ Wrong' %></td>
-    <td><%= Math.round(a.time_taken_ms / 1000) %>s</td>
-    <td><%= new Date(a.attempt_time).toLocaleDateString() %></td>
-  </tr>
-  <% }) %>
-</table>
-<a href="/practice" class="btn btn--primary btn--sm" style="margin-top:0.5rem;">View All Questions</a>
-<% } %>
-
-<h2>Due for Review</h2>
-<% if (dueReviews.length === 0) { %>
-<p style="color:#888;">No words due for review.</p>
-<% } else { %>
-<div style="display:grid; gap:0.5rem;">
-  <% dueReviews.forEach(r => { %>
-  <a href="/vocab/<%= r.vocab_entries.word %>" class="word-list-item">
-    <strong><%= r.vocab_entries.word %></strong> — <%= r.vocab_entries.definition %>
-  </a>
-  <% }) %>
-</div>
-<% } %>
-
-<h2>Recent Quizzes</h2>
-<% if (quizzes.length === 0) { %>
-<p style="color:#888;">No quizzes taken yet.</p>
-<% } else { %>
-<table>
-  <tr>
-    <th>Date</th>
-    <th>Score</th>
-    <th>Questions</th>
-  </tr>
-  <% quizzes.forEach(q => { %>
-  <tr>
-    <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
-    <td style="font-weight:bold; color: <%= q.score >= 70 ? '#27ae60' : q.score >= 40 ? '#f39c12' : '#e74c3c' %>;"><%= q.score %>%</td>
-    <td><%= q.total_questions %></td>
-  </tr>
-  <% }) %>
-</table>
-<% } %>
-
-<h2>Recent Feedback</h2>
-<% if (recentFeedback.length === 0) { %>
-<p style="color:#888;">No feedback yet.</p>
-<% } else { %>
-<% recentFeedback.forEach(f => { %>
-<div class="card" style="margin-bottom:0.5rem;">
-  <strong><%= f.word %></strong> — Rating: <%= f.satisfaction_score %>/10
-  <% if (f.comments) { %><p style="margin-top:0.25rem; color:#666;"><%= f.comments %></p><% } %>
-  <small style="color:#999;"><%= new Date(f.created_at).toLocaleDateString() %></small>
-</div>
-<% }) %>
-<% } %>

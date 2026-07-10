@@ -113,15 +113,42 @@
         attempt_time TIMESTAMP DEFAULT NOW()
     );
 
+    -- Public Profiles
+    CREATE TABLE IF NOT EXISTS public_profiles (
+        id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        school TEXT NOT NULL,
+        email TEXT NOT NULL, 
+        birthdate TEXT NOT NULL,
+        participate_in_leaderboard BOOLEAN DEFAULT true,
+        gender TEXT NOT NULL (CHECK gender IN ('male', 'female')),
+        referal TEXT NOT NULL (CHECK referal IN ('friend', 'socialmedia', 'school', 'teacher', 'other')),
+        llm_apikey TEXT,
+        embedding_apikey TEXT,
+        first_login TIMESTAMP DEFAULT NOW(),
+        last_login TIMESTAMP DEFAULT NOW(),
+    );
+    
     -- RLS
     ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
     CREATE POLICY IF NOT EXISTS "Enable all on sat_questions" ON sat_questions
         FOR ALL USING (true) WITH CHECK (true);
 
+    
     -- RLS: user_question_state (users own their rows)
     ALTER TABLE user_question_state ENABLE ROW LEVEL SECURITY;
     CREATE POLICY IF NOT EXISTS "Enable own user_question_state" ON user_question_state
         FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+    -- RLS: public_profiles (view everyone)
+    ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
+    CREATE POLICY IF NOT EXISTS "Public Profiles are viewable by everyone" ON public_profiles
+        FOR SELECT USING (true);
+
+    -- RLS: public_profiles (edit your own)
+    CREATE POLICY IF NOT EXISTS "Users can update their own public profile only" ON public_profiles
+        FOR UPDATE USING (auth.uid()=id) ;
 
     -- RLS: user_question_attempts (users own their rows)
     ALTER TABLE user_question_attempts ENABLE ROW LEVEL SECURITY;

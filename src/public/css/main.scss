@@ -325,8 +325,31 @@ main {
 .form-group {
   margin-bottom: 1.25rem;
 
+  >:first-child {
+    >span {
+      color: red;
+    }
+
+    &#form-group-title {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+
+    }
+
+  }
+
+  .form-radio-holder {
+    display: grid;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
+    grid-template-columns: 20px 1fr 20px 1fr;
+  }
+
   label {
-    display: block;
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--text);

@@ -122,3 +122,20 @@ BEGIN
     LIMIT match_count;
 END;
 $$;
+
+
+
+
+CREATE OR REPLACE FUNCTION public_profile_new_users()
+RETURNS TRIGGER AS $$
+BEGIN 
+    INSERT INTO public_profiles(id, first_name, last_name, school, email, birthdate, participate_in_leaderboard, gender, referal, first_login, last_login, embedding_apikey, llm_apikey)
+    VALUES(new.id, new.first_name, new.last_name, new.school, new.email, new.birthdate, new.participate_in_leaderboard, new.gender, new.referal, new.first_login, new.last_login, new.embedding_apikey, new.llm_apikey);
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUITE PROCEDURE public_profile_new_users()

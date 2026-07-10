@@ -96,5 +96,8 @@ router.get('/question/:id/mark', requireAuth, async (req, res) => {
         res.status(500).json({ success: false, error: err.message })
     }
 })
-
+router.get('/history', requireAuth, async (req, res) => {
+    const { data: attempts } = await supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', req.user.id).order('created_at', { ascending: false }).limit(req.query.limit || 20)
+    res.render('practice/history', { user: req.user, error: null, attempts: attempts || [] })
+})
 module.exports = router

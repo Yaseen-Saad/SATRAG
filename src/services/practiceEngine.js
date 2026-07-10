@@ -134,12 +134,12 @@ class PracticeEngine {
     }
 
     async getUserStats(userId) {
-        const [totalQuestions, totalAnaswers, bySubject] = await Promise.all([
+        const [totalQuestions, totalAttempts, bySubject] = await Promise.all([
             supabase.from("sat_questions").select("*", { count: 'exact', head: true }),
-            supabase.from("user_question_attempts").select("*", { count: 'exact', head: true }).eq("user_id", userId),
-            supabase.from("user_question_state").select("*", { count: 'exact', head: true }).eq("user_id", userId),
+            supabase.from("user_question_attempts").select("is_correct").eq("user_id", userId),
+            supabase.from("user_question_state").select("status, question_id").eq("user_id", userId),
         ])
-        const correctAnswers = totalAnaswers.data.map(a => a.is_correct).filter(Boolean)
+        const correctAnswers = totalAttempts?.data.filter(a => a.is_correct)
         const bySubj = { math: 0, reading: 0, writing: 0 }
         if (bySubject.data) {
             const ids = bySubject.data.filter(subj => subj.status === "solved_correct").map(subj => subj.question_id)
@@ -151,7 +151,7 @@ class PracticeEngine {
         }
         return {
             totalQuestions: totalQuestions.count || 0,
-            totalAttempts: totalAnaswers.count || 0,
+            totalAttempts: totalAttempts?.count || 0,
             correctAttempts: correctAnswers.length || 0,
             solvedBySubject: bySubj
         }

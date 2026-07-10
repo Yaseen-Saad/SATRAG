@@ -15,16 +15,27 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return res.render('auth/login', { error: error.message })
+    else await supabase.from('public_profiles').update({ last_login: Date.now() }).eq('id', data.user.id);
     res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
     res.redirect('/')
 })
 
 
 router.post('/signup', async (req, res) => {
-    const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { email, password, gender, hearfrom, firstName, lastName } = req.body;
+    const { data, error } = await supabase.auth.signUp({
+        email, password, options: {
+            data: {
+                email, gender, referal: hearfrom, first_name: firstName, last_name: lastName,
+            }
+        }
+    })
     if (error) return res.render('auth/signup', { error: error.message })
-    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: "Signup successful! Please log in." })
+    if (data.session) {
+        res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+        return res.redirect('/')
+    }
+    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: "Signup successful! Check your email to confirm, then log in." })
 })
 
 router.get('/logout', (req, res) => {

@@ -151,7 +151,9 @@
   font-size: 0.8rem;
   font-weight: 400;
   margin-right: 0.5rem;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   font-family: system-ui, -apple-system, sans-serif;
   display: inline-block;
   width: 1.5rem;
@@ -692,6 +694,4 @@
 .bb-main.single-panel .bb-panel-question {
   max-width: 720px;
   margin: 0 auto;
-}
-
-/*# sourceMappingURL=bluebook.css.map */
+}/*# sourceMappingURL=bluebook.css.map */

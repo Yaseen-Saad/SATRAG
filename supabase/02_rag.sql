@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS rag_feedback_question(
     subtopic TEXT NOT NULL,
     difficulty TEXT NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('positive', 'negative')),
-    cotnent TEXT NOT NULL,
-    create_at TIMESTAMP DEFAULT NOW()
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_rag_feedback_word ON rag_feedback_examples(word);

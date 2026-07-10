@@ -1,0 +1,61 @@
+<% title = 'Leaderboard'; %>
+
+<div class="dashboard">
+  <div class="dash-header">
+    <div>
+      <h1>Leaderboard</h1>
+      <p class="dash-subtitle">
+        <%= totalCount %> participants
+        <% if (userRank) { %> · You are #<%= userRank %><% } %>
+      </p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/dashboard" class="btn btn-outline btn-sm">Dashboard</a>
+      <a href="/practice" class="btn btn-primary btn-sm">Practice</a>
+    </div>
+  </div>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+  <div class="flash flash-error"><%= error %></div>
+  <% } %>
+
+  <% if (entries.length === 0) { %>
+  <div class="card" style="text-align:center; padding:3rem;">
+    <p style="font-size:1.2rem; color:var(--text-muted);">No one has joined the leaderboard yet.</p>
+    <a href="/settings" class="btn btn-outline btn-sm" style="margin-top:1rem;">Enable in Settings</a>
+  </div>
+  <% } else { %>
+  <div class="dash-card">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50px;">Rank</th>
+          <th>Name</th>
+          <th>Grade</th>
+          <th style="text-align:center;">Correct</th>
+          <th style="text-align:center;">Accuracy</th>
+          <th style="text-align:center;">Quiz Avg</th>
+          <th style="text-align:center;">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% entries.forEach(function(e) { %>
+        <tr style="<%= (user && e.userId === user.id) ? 'background:rgba(99,102,241,0.08); font-weight:600;' : '' %>">
+          <td style="text-align:center;">
+            <% if (e.rank === 1) { %>🥇<% } else if (e.rank === 2) { %>🥈<% } else if (e.rank === 3) { %>🥉<% } else { %><%= e.rank %><% } %>
+          </td>
+          <td><%= e.name %></td>
+          <td><%= e.grade %></td>
+          <td style="text-align:center;"><%= e.correct %>/<%= e.total %></td>
+          <td style="text-align:center; color:<%= e.accuracy >= 70 ? 'var(--success)' : e.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
+            <%= e.accuracy %>%
+          </td>
+          <td style="text-align:center;"><%= e.quizzes > 0 ? e.avgQuiz + '%' : '—' %></td>
+          <td style="text-align:center; font-weight:700; color:var(--indigo);"><%= e.score %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
