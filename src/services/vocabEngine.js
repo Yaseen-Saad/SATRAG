@@ -48,42 +48,78 @@ class VocabEngine {
         return false;
     }
 
-
-
-    
-    async createLists(userId, name, description) {
-        const { data, error } = await supabase.from('user_word_lists')
-            .insert({ user_id: userID, name: name.trim(), description }).select().single();
-        if (error) throw error
-        return data
+    async getlist(listId, userId) {
+        const { data: list } = await supabase.from('word_lists').select('*').eq('id', listId).single();
+        if (!list) return { list: null, words: [] }
+        if (list.visibility === 'private' && list.created_by !== userId) {
+            const can = await this.canAccess(listId, userId)
+            if (!can) return { list: null, words: [] }
+        }
+        const { data: words } = await supabase.from('word_list_entries').select('*, vocab_entries(*)').eq('list_id', listId).order('sort_order', { ascending: true });
+        const words = (items || []).map(item => item.vocab_entries).filter(Boolean);
+        const { count } = await supabase.from('word_list_entries').select('*', { count: 'exact', head: true }).eq('list_id', listId);
+        return { list: { ...list, word_count: count || 0 }, words }
     }
-
-    async getListWords(userId, name, listId) {
-        const { data, error } = await supabase.from('user_word_list_items')
-            .select('*, vocab_entries(*)')
-            .eq('list_id', listId)
-            .order('sort_order', { ascending: true });
-        if (error) throw error
-        return data?.map(item => item.vocab_entries) || [];
-
-    }
-    async addWordToList(userId, listId, wordId) {
-        // Edit to make te user who created the list is the only one able to edit it, and also edit to make the option to make your list public or private.
-        const { data: last, error: err } = await supabase.from('user_word_list_items')
-            .select("sort_order").eq('list_id', listId).eq("user_id", userId).order('sort_order', { ascending: false }).limit(1).single();
+    // Make sure the only one who can edit the list is its owner lol
+    async addWordToList(listId, wordId, userId) {
+        const { data: last, error: err } = await supabase.from('word_list_entries')
+            .select("sort_order").eq('list_id', listId).eq("created_by", userId).order('sort_order', { ascending: false }).limit(1).single();
         if (err) throw err;
         const sortOrder = (last?.[0].sort_order ?? -1) + 1
-        const { error } = await supabase.from('user_word_list_items')
+        const { error } = await supabase.from('word_list_entries')
             .insert({ list_id: listId, word_id: wordId, sort_order: sortOrder })
         if (error && error.code === "23505") throw new Error("Word already in this list")
         if (error) throw error;
+        await supabase.from('word_lists').update({ word_count: supabase.raw('word_count + 1'), updated_at: new Date().toISOString() }).eq('id', listId)
     }
-    async removeWordFromList(userId, listId, wordId) {
-        const { error } = await supabase.from('user_word_list_items')
-            .delete()
+
+    async removeWordFromList(listId, wordId, userId) {
+        const { error } = await supabase.from('word_list_entries')
+            .delete().eq("created_by", userId)
             .eq('list_id', listId)
             .eq('word_id', wordId)
         if (error) throw error;
+        const { error2 } = await supabase.from('word_lists').update({
+            word_count: supabase.raw('word_count - 1'), updated_at: new Date().toISOString()
+        }).eq('id', listId)
+        if (error2) throw error2;
+    }
+
+    async cloneList(userId, listId,) {
+        const { list, words } = await this.getList(listId, userId)
+        if (!list) throw new Error("List not found")
+        if (!this.canAccess(listId, userId)) throw new Error("Access denied")
+        const { data: copy, error } = await supabase.from('word_lists')
+            .insert({ name: `${list.name.trim()} (clone)`, description: list.description, visibility: 'private', created_by: userId, cloned_from: listId, source_book: list.source_book }).select().single();
+        if (error) throw error
+        for (const word of words) {
+            const { error: err } = await supabase.from('word_list_entries').insert({ list_id: copy.id, word_id: word.id, sort_order: word.sort_order || 0 })
+            if (err && err.code !== "23505") throw err;
+        }
+        return copy;
+    }
+
+    async shareList(listId, ownerId, email) {
+        const { data: list, error: err } = await supabase.from('word_lists').select('created_by').eq('id', listId).single();
+        if (err || !list || list.created_by !== ownerId) throw new Error(err || "You do not own this list");
+        const { data: user, error: err2 } = await supabase.from('public_profiles').select('id').eq('email', email).single();
+        if (err2 || !user) throw new Error(err2 || "User not found");
+        const { error } = await supabase.from('list_shares').insert({ list_id: listId, shared_with_user_id: user.id, shared_by_user_id: ownerId })
+        if (error && error.code === "23505") throw new Error("List already shared with this user")
+        if (error) throw error;
+        const { error: err4 } = await supabase.from('word_lists').update({ visibility: 'shared' }).eq('id', listId);
+        if (err4) throw err4
+        return { success: true }
+    }
+
+    async unshareList(listId, ownerId, email) {
+        const { data: list, error: err } = await supabase.from('list_shares').delete().eq('shared_with_user_id', userId).eq('list_id', listId).single(); const { error } = await supabase.from('list_shares').delete().eq('list_id', listId).eq('shared_with_user_id', user.id).eq('shared_by_user_id', ownerId);
+        if (error) throw error;
+        return { success: true }
+    }
+
+    async changeVisibility(listId, userId, visibility) {
+        await supabase.from('word_lists').update({ visibility }).eq('id', listId).eq('created_by', userId)
     }
 
     async getDailyWord() {

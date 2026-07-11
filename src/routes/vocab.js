@@ -242,60 +242,85 @@ router.get('/:word', optionalAuth, async (req, res) => {
     if (req.user) {
         lists = await vocabEngine.getLists(req.user.id);
     }
-    res.render('vocab/word', { user: req.user, entry, error: null })
+    res.render('vocab/word', { user: req.user, entry, lists, error: null })
 });
 
 router.get('/lists', requireAuth, async (req, res) => {
-    const lists = await vocabEngine.getLists(req.user.id);
-    res.render('vocab/lists', { user: req.user, lists, error: null })
+    const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
+    res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: query.tab || 'mine' })
 })
 
 router.post('/lists', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.createLists(req.user.id, req.body.name, req.body.description)
+        await vocabEngine.createList(req.user.id, req.body.name, req.body.description, req.body.visibility || "private")
         res.redirect('/vocab/lists', { success: true, message: "List created successfully" })
     } catch (error) {
-        const lists = await vocabEngine.getLists(req.user.id);
-        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
+        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
     }
 })
 
 router.post('/lists/:id/delete', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.deleteLists(req.user.id, req.body.name, req.params.id, req.body.description)
+        await vocabEngine.deleteList(req.user.id, req.params.id)
         res.redirect('/vocab/lists', { success: true, message: "List deleted successfully" })
     } catch (error) {
-        const lists = await vocabEngine.getLists(req.user.id);
-        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
+        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
     }
 })
-
 router.get('/lists/:id', optionalAuth, async (req, res) => {
     try {
-        const { list, words } = await vocabEngine.getListWords(req.user.id, req.params.id)
-        if (!lists) return res.redirect('/vocab/lists')
-        res.render('/vocab/lists', { user: req.user, list, words, error: null })
-    } catch (error) {
-        const lists = await vocabEngine.getLists(req.user.id);
-        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+        const { list, words } = await vocabEngine.getList(req.params.id, req.user?.id);
+        if (!list) return res.redirect('/vocab/lists');
+        const isOwner = req.user && list.created_by === req.user.id;
+        res.render('vocab/list', { user: req.user, list, words, isOwner, error: null });
+    } catch (err) {
+        res.redirect('/vocab/lists?error=' + encodeURIComponent(err.message));
     }
 })
 
 router.post('/lists/:id/add', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.addWordToList(req.params.id, req.body.wordId)
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: "Word added successfully" })
-    } catch (error) {
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: error })
+        await vocabEngine.addWordToList(req.params.id, req.body.wordId);
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
     }
 })
 
 router.post('/lists/:id/remove/:wordId', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.removeWordFromList(req.params.id, req.params.wordId)
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: "Word removed successfully" })
-    } catch (error) {
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: error })
+        await vocabEngine.removeWordFromList(req.params.id, req.params.wordId);
+        res.redirect(`/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
+    }
+})
+
+router.post('/lists/:id/visibility', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.changeVisibility(req.params.id, req.user.id, req.body.visibility);
+        res.redirect(`/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
+    }
+})
+
+router.post('/lists/:id/clone', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.cloneList(req.user.id, req.params.id);
+        res.redirect(`/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
+    }
+})
+router.post('/lists/:id/share', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.sareList(req.params.id, req.user.id, req.body.email);
+        res.redirect(`/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
     }
 })
 
