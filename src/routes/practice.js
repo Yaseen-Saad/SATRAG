@@ -2,6 +2,7 @@ const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
 const { service: supabase } = require('../lib/supabase')
 const practice = require('../services/practiceEngine')
+const { requireAPIKeys } = require('../middleware/apikeys')
 const rag = require('../lib/rag')
 const router = Router()
 
@@ -30,7 +31,7 @@ router.get('/', requireAuth, async (req, res) => {
         console.error(err)
     }
 })
-router.get('/generate', requireAuth, async (req, res) => {
+router.get('/generate', requireAuth,  async (req, res) => {
     try {
         const topicTree = await practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
@@ -39,7 +40,7 @@ router.get('/generate', requireAuth, async (req, res) => {
         console.error(err)
     }
 })
-router.post('/generate', requireAuth, async (req, res) => {
+router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
     try {
         const { subject, topic, difficulty, count = 1 } = req.body
         const questions = []

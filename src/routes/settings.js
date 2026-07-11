@@ -1,4 +1,5 @@
 const { Router } = require('express');
+
 const { requireAuth } = require('../middleware/auth');
 const settingsEngine = require('../services/settingsEngine');
 const supabase = require('../lib/supabase');
@@ -31,6 +32,17 @@ router.post('/changeEmbeddingkey', requireAuth, async (req, res) => {
     res.redirect('/settings')
 })
 router.post('/changeLeaderboardStatus', requireAuth, async (req, res) => {
+    const enabled = req.body.leaderboardstatus === 'enabled';
+    await settingsEngine.toggleParticipateInLeaderboard(req.user, enabled)
+    res.redirect('/settings')
+})
+
+router.get('/avatar/:user', async (req, res) => {
+    const enabled = req.body.leaderboardstatus === 'enabled';
+    await settingsEngine.toggleParticipateInLeaderboard(req.user, enabled)
+    res.redirect('/settings')
+})
+router.post('/avatar', requireAuth, async (req, res) => {
     const enabled = req.body.leaderboardstatus === 'enabled';
     await settingsEngine.toggleParticipateInLeaderboard(req.user, enabled)
     res.redirect('/settings')
