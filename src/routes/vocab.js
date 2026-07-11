@@ -8,6 +8,7 @@ const rag = require('../lib/rag')
 const llm = require('../lib/llm')
 const qualityChecker = require('../lib/qualityChecker')
 const evaluator = require('../lib/vocabularyEvaluator')
+const vocabEngine = require('../services/vocabEngine')
 const { requireAPIKeys } = require('../middleware/apikeys')
 
 const router = Router();
@@ -237,5 +238,60 @@ router.get('/:word', optionalAuth, async (req, res) => {
     }
     res.render('vocab/word', { user: req.user, entry, error: null })
 });
+
+router.get('/lists', requireAuth, async (req, res) => {
+    const lists = await vocabEngine.getLists(req.user.id);
+    res.render('vocab/lists', { user: req.user, lists, error: null })
+})
+
+router.post('/lists', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.createLists(req.user.id, req.body.name, req.body.description)
+        res.redirect('/vocab/lists', { success: true, message: "List created successfully" })
+    } catch (error) {
+        const lists = await vocabEngine.getLists(req.user.id);
+        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+    }
+})
+
+router.post('/lists/:id/delete', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.deleteLists(req.user.id, req.body.name, req.params.id, req.body.description)
+        res.redirect('/vocab/lists', { success: true, message: "List deleted successfully" })
+    } catch (error) {
+        const lists = await vocabEngine.getLists(req.user.id);
+        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+    }
+})
+
+router.get('/lists/:id', optionalAuth, async (req, res) => {
+    try {
+        const { list, words } = await vocabEngine.getListWords(req.user.id, req.params.id)
+        if (!lists) return res.redirect('/vocab/lists')
+        res.render('/vocab/lists', { user: req.user, list, words, error: null })
+    } catch (error) {
+        const lists = await vocabEngine.getLists(req.user.id);
+        res.render('vocab/lists', { user: req.user, lists, error: error.message })
+    }
+})
+
+router.post('/lists/:id/add', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.addWordToList(req.params.id, req.body.wordId)
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: "Word added successfully" })
+    } catch (error) {
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: error })
+    }
+})
+
+router.post('/lists/:id/remove/:wordId', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.removeWordFromList(req.params.id, req.params.wordId)
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: "Word removed successfully" })
+    } catch (error) {
+        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`, { success: true, message: error })
+    }
+})
+
 
 module.exports = router;

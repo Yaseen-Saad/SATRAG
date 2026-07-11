@@ -34,6 +34,17 @@ class VocabEngine {
         return data?.map(item => item.vocab_entries) || [];
 
     }
+    async addWordToList(userId, listId, wordId) {
+        const { data: last, error: err } = await supabase.from('user_word_list_items')
+            .select("sort_order").eq('list_id', listId).order('sort_order', { ascending: false }).limit(1).single();
+        if (err) throw err;
+        const sortOrder = (last?.[0].sort_order ?? -1) + 1
+        const { error } = await supabase.from('user_word_list_items')
+            .insert({ list_id: listId, word_id: wordId, sort_order: sortOrder })
+        if (error && error.code === "23505") throw new Error("Word already in this list")
+        if (error) throw error;
+    }
+
 }
 
 module.exports = new VocabEngine()
