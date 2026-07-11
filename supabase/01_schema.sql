@@ -125,11 +125,46 @@ CREATE TABLE IF NOT EXISTS word_lists (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+
+
+-- General Words Lists
+CREATE TABLE IF NOT EXISTS word_lists (
+    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL DEFAULT '',
+    visibility TEXT NOT NULL CHECK (visibility IN ('public', 'private')) DEFAULT 'private',
+    created_by UUID REFERENCES auth.users NOT NULL DEFAULT auth.uid(),
+    cloned_from UUID REFERENCES word_lists ON DELETE SET NULL,
+    source_book TEXT,
+    word_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(name)
+);
+
+CREATE TABLE IF NOT EXISTS word_list_ENTRIES (
+    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    list_id UUID REFERENCES word_lists ON DELETE CASCADE NOT NULL,
+    word_id UUID REFERENCES vocab_entries ON DELETE CASCADE NOT NULL,
+    sort_order INT DEFAULT 0,
+    added_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(list_id, word_id)
+);
+
+-- Shared lists
+CREATE TABLE IF NOT EXISTS list_shares (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    list_id UUID REFERENCES word_lists ON DELETE CASCADE NOT NULL,
+    shared_with_user_id UUID REFERENCES auth.users NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE()
+)
+
 -- User Custom Words Lists
 CREATE TABLE IF NOT EXISTS user_word_lists (
     id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
     user_id UUID REFERENCES auth.users NOT NULL DEFAULT auth.uid(),
-    display_name TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),

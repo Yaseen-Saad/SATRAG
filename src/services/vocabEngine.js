@@ -1,11 +1,56 @@
 const supabase = require('../lib/supabase').service
 
 class VocabEngine {
-    async getLists(userId) {
+    async getMyLists(userId) {
         const { data } = await supabase.from('user_word_lists').select('*, word_count:user_word_list_items(count)').eq('user_id', userId).order('created_at', { ascending: false });
-        return data?.map(list => ({ ...list, word_count: list.word_count?.[0]?.count || 0 })) || [];
+        return data || [];
+    }
+    async getSystemlists() {
+        const { data } = await supabase.from('word_lists').select('*').eq('visibility', 'system').order('name');
+        return data || [];
     }
 
+    async getPublicLists(userId) {
+        const { data } = await supabase.from('word_lists')
+            .select("*").eq('visibility', 'public').neq('created_by', userId).order('name');
+        return data || []
+    }
+
+    async getSharedWithMe(userId) {
+        const { data } = await supabase.from('list_shares')
+            .select('word_lists(*)').eq('shared_with_user_id', userId).order('created_at', { ascending: false });
+        return (data || []).map(share => share.word_lists).filter(Boolean);
+    }
+
+    async searchLists(query) {
+        const { data } = await supabase.from('word_lists').select('*').in('visibility', ['system', 'public']).or(`name.ilike.%${query}%, description.ilike.%${query}%`).order('name');
+        return data || [];
+    }
+
+    async deleteList(userId, listId) {
+        const { error } = await supabase.from('word_lists')
+            .delete()
+            .eq('created_by', userId)
+            .eq('list_id', listId)
+        if (error) throw error
+        return { success: true }
+    }
+
+    async canAccess(listId, userId) {
+        const { data } = await supabase.from('word_lists').select('visibility, created_by').eq('id', listId).single();
+        if (!data) return false;
+        if (data.visibility === 'public' || data.visibility === 'system') return true;
+        if (data.created_by === userId) return true;
+        if (data.visibility === 'shared') {
+            const { count } = await supabase.from('list_shares').select('*', { count: 'exact', head: true }).eq('list_id', listId).eq('shared_with_user_id', userId);
+            return count > 0;
+        }
+        return false;
+    }
+
+
+
+    
     async createLists(userId, name, description) {
         const { data, error } = await supabase.from('user_word_lists')
             .insert({ user_id: userID, name: name.trim(), description }).select().single();
@@ -13,18 +58,6 @@ class VocabEngine {
         return data
     }
 
-    async deleteLists(userId, name, listId, description) {
-        const { data, error } = await supabase.from('user_word_lists')
-            .delete()
-            .eq('user_id', userId)
-            .eq('list_id', listId)
-            .eq('name', name.trim())
-            .eq('description', description)
-            .select()
-            .single();
-        if (error) throw error
-        return { success: true }
-    }
     async getListWords(userId, name, listId) {
         const { data, error } = await supabase.from('user_word_list_items')
             .select('*, vocab_entries(*)')

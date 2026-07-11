@@ -13,29 +13,6 @@
     </div>
     <div class="dash-header-actions">
       <a href="/practice" class="btn btn-primary btn-sm">Practice</a>
-      <a href="/quiz/start" class="btn btn-outline btn-sm">Take Quiz</a>
-    </div>
-  </div>
-
-  <!-- Overview Stats -->
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-value" style="color:var(--teal)">
-        <%= avgScore !== null ? avgScore + '%' : '—' %>
-      </div>
-      <div class="stat-label">Avg Quiz Score</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" style="color:#d35400">
-        <%= avgQualityScore !== null ? avgQualityScore : '—' %>
-      </div>
-      <div class="stat-label">Avg Quality</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" style="color:var(--success)">
-        <%= avgSatisfaction !== null ? avgSatisfaction : '—'  %>
-      </div>
-      <div class="stat-label">Satisfaction</div>
     </div>
   </div>
 
@@ -188,38 +165,6 @@
         </div>
       </div>
 
-      <!-- Two-column bottom section -->
-      <div class="dash-row">
-        <!-- Recent Quizzes -->
-        <div class="dash-card dash-card--grow">
-          <div class="dash-card-header">
-            <h2>Recent Quizzes</h2>
-            <a href="/quiz/start" class="btn btn-ghost btn-sm">New Quiz</a>
-          </div>
-          <div class="dash-card-body">
-            <% if (recentQuizzes.length === 0) { %>
-            <p class="empty-state">No quizzes taken yet. <a href="/quiz/start">Start one</a></p>
-            <% } else { %>
-            <table>
-              <tr>
-                <th>Date</th>
-                <th>Score</th>
-                <th>Q's</th>
-              </tr>
-              <% recentQuizzes.forEach(function(q) { %>
-              <tr>
-                <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
-                <td style="font-weight:bold; color:<%= q.score >= 70 ? 'var(--success)' : q.score >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
-                  <%= q.score %>%
-                </td>
-                <td><%= q.total_questions %></td>
-              </tr>
-              <% }) %>
-            </table>
-            <% } %>
-          </div>
-        </div>
-      </div>
 
       <!-- Recent Feedback -->
       <div class="dash-card">
