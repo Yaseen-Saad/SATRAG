@@ -122,7 +122,28 @@ CREATE TABLE IF NOT EXISTS word_lists (
     display_name TEXT NOT NULL,
     author TEXT,
     word_count INT NOT NULL DEFAULT 0,
-    create_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- User Custom Words Lists
+CREATE TABLE IF NOT EXISTS user_word_lists (
+    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL DEFAULT auth.uid(),
+    display_name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, display_name)
+);
+
+-- User Custom Words List
+CREATE TABLE IF NOT EXISTS user_word_list_items (
+    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    list_id UUID REFERENCES user_word_lists NOT NULL,
+    word_id UUID REFERENCES vocab_entries NOT NULL,
+    sort_order INT DEFAULT 0,
+    added_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(list_id, word_id)
 );
 
 -- Flashcards Progress
@@ -166,11 +187,21 @@ INSERT INTO storage.buckets (id, name, owner, public, file_size_limit, allowed_m
 ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY IF NOT EXISTS "Enable all on sat_questions" ON sat_questions
     FOR ALL USING (true) WITH CHECK (true);
-    
+
 -- RLS: user_question_state (users own their rows)
 ALTER TABLE user_question_state ENABLE ROW LEVEL SECURITY;
 CREATE POLICY IF NOT EXISTS "Enable own user_question_state" ON user_question_state
     FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- RLS:
+ALTER TABLE user_words_lists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "Enable own user_words_lists" ON user_words_lists
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- RLS:
+ALTER TABLE user_words_list_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "Enable own user_words_list_items" ON user_words_list_items
+    FOR ALL USING (EXISTS (SELECT 1 FROM user_words_lists WHERE id = list_id AND user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM user_words_lists WHERE id = list_id AND user_id = auth.uid()));
 
 -- RLS: public_profiles (view everyone)
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
