@@ -1,0 +1,61 @@
+<% title = 'My Word Lists'; %>
+<div class="dashboard">
+  <div class="dash-header">
+    <h1>My Word Lists</h1>
+    <p class="dash-subtitle">Create custom lists to organize your vocavulary</p>
+  </div>
+  <% if (typeof error !== 'undefined' && error) { %>
+  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <% } %>
+  <div class="dash-card" style="margin-bottom:1.5rem">
+    <div class="dash-card-header">
+      <h2>Create New List</h2>
+    </div>
+    <div class="dash-card-body">
+      <form action="/vocab/lists" method="POST" style="display:flex; gap:0.5rem; align-items:end;">
+        <div class="form-group" style="flex:1; margin:0;">
+          <input type="text" name="name" placeholder="List name (e.g. Week 1 Words)" required style="width:100%">
+        </div>
+        <button type="submit" class="btn-primary btn-sm">Create</button>
+      </form>
+    </div>
+  </div>
+
+
+  <% if (lists?.length === 0){ %>
+  <div class="card" style="text-align:center;padding:3rem">
+    <p style="color:var(--text-muted);">You haven't created any lists yet.</p>
+    <p style="color:var(--text-muted);font-size:0.9rem;">Go to any word page and click "Add to List" to get started.</p>
+  </div>
+  <% }else{ %>
+  <div class="dash-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Words</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% lists.forEach(list=>{ %>
+        <tr>
+          <td>
+            <a href="/vocab/lists/<%= list.id%>" style="font-weight: bold;"><%= list.name%></a>
+          </td>
+          <td><%= list.wordCount %></td>
+          <td><%= new Date(list.createdAt).toLocaleDateString() %></td>
+          <td>
+            <form action="/vocab/lists/<%=list.id%>/delete" style="display:inline;" onsubmit="return confirm('Delete this list?')">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<a href="/vocab" class="btn btn-outline" style="margin-top:1rem">Back to Vocabulary</a>
+  <% } %>
+</div>

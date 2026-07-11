@@ -1,0 +1,37 @@
+<% title = list.name%>
+<div class="dashboard">
+  <div class="dash-header">
+    <h1><%= list.name %></h1>
+    <p class="dash-subtitle"><strong><%= list.wordCount %></strong> words.</p>
+    <p class="dash-subtitle"><a href="/vocab/lists">All lists</a></p>
+  </div>
+  <% if (typeof error !== 'undefined' && error) { %>
+  <div class="flash flash-error"><%= error %></div>
+  <% } %>
+  <% if (words.length ===0){%>
+  <div class="card">
+    <p>This list is empty.</p>
+    <a href="/vocab">Find words to add</a>
+  </div>
+  <% } else{ %>
+  <div class="dash-card">
+    <div style="display:grid; gap:0.5rem;">
+      <%words.forEach(w=>{%>
+      <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; border:1px solid var(--border)">
+        <div style="flex:1">
+          <a href="/vocab/<%=w.word %>" style="font-weight:bold; font-size:1.1rem;"><%= w.word%></a>
+          <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%=w.part_of_speech%></span>
+          <p style="margin:0.25rem 0 0; color:var(--text); font-size:0.9rem;"><%= w.definition %></p>
+        </div>
+        <form action="/vocab/lists/<%=list.id%>/remove/<%=w.id%>" method="POST" onsubmit="return confirm('Remove this word?')">
+          <button type="submit" class="btn-danger btn-sm">Remove</button>
+        </form>
+      </div>
+      <%})%>
+    </div>
+  </div>
+  <% } %>
+
+  <a href="/vocab/lists" class="btn btn-outline" style="margin-top:1rem;">← Back to Lists</a>
+
+</div>

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const dashboardEngine = require('../services/dashboardEngine');
-
+const vocabEngine = require('../services/vocabEngine')
 const router = Router();
 
 router.get('/', requireAuth, async (req, res) => {
@@ -16,6 +16,7 @@ router.get('/', requireAuth, async (req, res) => {
       streak,
       recentFeedback,
       recentQuizzes,
+      dailyWord, vocabStats
     ] = await Promise.all([
       dashboardEngine.getUserDashboardData(userId),
       dashboardEngine.getPracticeStats(userId),
@@ -24,6 +25,8 @@ router.get('/', requireAuth, async (req, res) => {
       dashboardEngine.getStreak(userId),
       dashboardEngine.getRecentFeedback(userId),
       dashboardEngine.getRecentQuizzes(userId),
+      vocabEngine.getDailyWord(),
+      vocabEngine.getVocabStats(userId)
     ]);
 
     const weakestTopics = topicBreakdown.slice(0, 5);
@@ -38,6 +41,7 @@ router.get('/', requireAuth, async (req, res) => {
       streak,
       recentFeedback,
       recentQuizzes,
+      dailyWord, vocabStats
     });
   } catch (err) {
     console.error('Dashboard error:', err);

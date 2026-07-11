@@ -127,65 +127,125 @@
     </div>
   </div>
   <% } %>
-
-  <!-- Two-column bottom section -->
-  <div class="dash-row">
-    <!-- Recent Quizzes -->
-    <div class="dash-card dash-card--grow">
-      <div class="dash-card-header">
-        <h2>Recent Quizzes</h2>
-        <a href="/quiz/start" class="btn btn-ghost btn-sm">New Quiz</a>
-      </div>
-      <div class="dash-card-body">
-        <% if (recentQuizzes.length === 0) { %>
-        <p class="empty-state">No quizzes taken yet. <a href="/quiz/start">Start one</a></p>
-        <% } else { %>
-        <table>
-          <tr>
-            <th>Date</th>
-            <th>Score</th>
-            <th>Q's</th>
-          </tr>
-          <% recentQuizzes.forEach(function(q) { %>
-          <tr>
-            <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
-            <td style="font-weight:bold; color:<%= q.score >= 70 ? 'var(--success)' : q.score >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
-              <%= q.score %>%
-            </td>
-            <td><%= q.total_questions %></td>
-          </tr>
-          <% }) %>
-        </table>
-        <% } %>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Feedback -->
-  <div class="dash-card">
+  <% if (dailyWord) {%>
+  <div class="dash-card" style="margin-top:1rem;">
     <div class="dash-card-header">
-      <h2>Recent Feedback</h2>
+      <h2>Word of the Day</h2>
+      <a href="/vocab/<%=dailyWord.word%>" class="btn btn-ghost btn-sm">View Full Entry</a>
     </div>
     <div class="dash-card-body">
-      <% if (recentFeedback.length === 0) { %>
-      <p class="empty-state">No feedback yet.</p>
-      <% } else { %>
-      <% recentFeedback.forEach(function(f) { %>
-      <div class="feedback-row">
-        <div class="feedback-left">
-          <strong><%= f.word %></strong>
-          <span class="feedback-rating" style="color:<%= f.satisfaction_score >= 7 ? 'var(--success)' : f.satisfaction_score >= 4 ? 'var(--warning)' : 'var(--error)' %>;">
-            <%= f.satisfaction_score %>/10
-          </span>
-        </div>
-        <% if (f.comments) { %>
-        <div class="feedback-comment"><%= f.comments %></div>
-        <% } %>
-        <div class="feedback-date"><%= new Date(f.created_at).toLocaleDateString() %></div>
-      </div>
-      <% }) %>
-      <% } %>
+      <div style="display:flex; align-items:center; gap:1rem" class="word-of-the-day">
+        <div class="word"><%= dailyWord.word %></div>
+        <div class="part-of-speech"><strong><%= dailyWord.part_of_speech %></strong></div>
+        <div class="definition"><%= dailyWord.definition %></div>
+        <% if (dailyWord.pronunciation){%>
+        <div class="pronunciation"><%= dailyWord.pronunciation %></div>
+        <%}%>
+        <% if (dailyWord.mnemonic_phrase){%>
+        <div class="mnemonic-phrase"><%= dailyWord.mnemonic_phrase %></div>
+        <%}%>
+        <% if (dailyWord.example_scentence){%>
+        <div class="example-scentence"><%= dailyWord.example_scentence %></div>
+        <%}%>
     </div>
   </div>
+<%}%>
 
-</div>
+
+        <div class="dash-card" style="margin-top:1rem;">
+          <div class="dash-card-header">
+            <h2>Vocabulary Progress</h2>
+            <a href="/vocab" class="btn btn-ghost btn-sm">View All</a>
+          </div>
+          <div class="dash-card-body">
+            <div class="mini-stat-grid">
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%=vocabStats.totalWords%></div>
+                <div class="mini-stat-label">Total Words</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%=vocabStats.listCount%></div>
+                <div class="mini-stat-label">Custom Lists</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%=Object.keys(vocabStats.wordsBySource).length%></div>
+                <div class="mini-stat-label">Word Sources</div>
+              </div>
+            </div>
+            <%if (vocabStats.recentWords.length >0){%>
+            <p>Recently added:</p>
+            <div style="display:flex; flex-wrap:wrap; gap:0.25rem;">
+              <% vocabStats.recentWords.forEach(w=>{ %>
+              <a href="/vocab/<%=w.word%>" class="btn btn-ghost btn-sm"><%=w.word%></a>
+              <% })%>
+            </div>
+            <%}%>
+            <div>
+              <% Object.entries(vocabStats.wordsBySource).forEach(([source, count])=>{ %>
+            <span style="margin-right: 1rem;"><strong><%=source%>:</strong> <%=count%> words</span>
+            <% })%>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column bottom section -->
+      <div class="dash-row">
+        <!-- Recent Quizzes -->
+        <div class="dash-card dash-card--grow">
+          <div class="dash-card-header">
+            <h2>Recent Quizzes</h2>
+            <a href="/quiz/start" class="btn btn-ghost btn-sm">New Quiz</a>
+          </div>
+          <div class="dash-card-body">
+            <% if (recentQuizzes.length === 0) { %>
+            <p class="empty-state">No quizzes taken yet. <a href="/quiz/start">Start one</a></p>
+            <% } else { %>
+            <table>
+              <tr>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Q's</th>
+              </tr>
+              <% recentQuizzes.forEach(function(q) { %>
+              <tr>
+                <td><%= new Date(q.attempt_time).toLocaleDateString() %></td>
+                <td style="font-weight:bold; color:<%= q.score >= 70 ? 'var(--success)' : q.score >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
+                  <%= q.score %>%
+                </td>
+                <td><%= q.total_questions %></td>
+              </tr>
+              <% }) %>
+            </table>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Feedback -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <h2>Recent Feedback</h2>
+        </div>
+        <div class="dash-card-body">
+          <% if (recentFeedback.length === 0) { %>
+          <p class="empty-state">No feedback yet.</p>
+          <% } else { %>
+          <% recentFeedback.forEach(function(f) { %>
+          <div class="feedback-row">
+            <div class="feedback-left">
+              <strong><%= f.word %></strong>
+              <span class="feedback-rating" style="color:<%= f.satisfaction_score >= 7 ? 'var(--success)' : f.satisfaction_score >= 4 ? 'var(--warning)' : 'var(--error)' %>;">
+                <%= f.satisfaction_score %>/10
+              </span>
+            </div>
+            <% if (f.comments) { %>
+            <div class="feedback-comment"><%= f.comments %></div>
+            <% } %>
+            <div class="feedback-date"><%= new Date(f.created_at).toLocaleDateString() %></div>
+          </div>
+          <% }) %>
+          <% } %>
+        </div>
+      </div>
+
+    </div>

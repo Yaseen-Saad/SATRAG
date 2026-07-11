@@ -68,8 +68,9 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult?.isValid ?? false;
         const saved = await rag.addEntry(entry);
+        const lists = await vocabEngine.getLists(req.user.id);
 
-        res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true })
+        res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true, lists })
     } catch (err) {
         console.error("Generation error", err)
         const recent = await rag.listRecent(10)
@@ -225,7 +226,8 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
             const positiveContent = `POSITIVE FEEDBACK FOR ${w}:\n${req.body.satisfaction}/10 Satisfied with the regenerated entry.`;
             await supabase.from('rag_feedback_examples').insert({ word: w, type: "positive", content: positiveContent })
         }
-        res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true })
+        const lists = await vocabEngine.getLists(req.user.id);
+        res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true, lists })
     } catch (err) {
         res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
     }
@@ -235,6 +237,10 @@ router.get('/:word', optionalAuth, async (req, res) => {
     const entry = await rag.findByWord(req.params.word.toUpperCase());
     if (!entry) {
         return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+    }
+    let lists = [];
+    if (req.user) {
+        lists = await vocabEngine.getLists(req.user.id);
     }
     res.render('vocab/word', { user: req.user, entry, error: null })
 });
