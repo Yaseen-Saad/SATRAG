@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { requireAuth, optionalAuth } = require('../middleware/auth');
 const dashboardEngine = require('../services/dashboardEngine');
 const vocabEngine = require('../services/vocabEngine')
+const flashcardEngine = require('../services/flashcardsEngine')
 const router = Router();
 
 router.get('/', requireAuth, async (req, res) => {
@@ -15,8 +16,8 @@ router.get('/', requireAuth, async (req, res) => {
       weeklyActivity,
       streak,
       recentFeedback,
-      recentQuizzes,
-      dailyWord, vocabStats
+      dailyWord, vocabStats,
+      flashcardStats
     ] = await Promise.all([
       dashboardEngine.getUserDashboardData(userId),
       dashboardEngine.getPracticeStats(userId),
@@ -24,9 +25,9 @@ router.get('/', requireAuth, async (req, res) => {
       dashboardEngine.getWeeklyActivity(userId),
       dashboardEngine.getStreak(userId),
       dashboardEngine.getRecentFeedback(userId),
-      dashboardEngine.getRecentQuizzes(userId),
       vocabEngine.getDailyWord(),
-      vocabEngine.getVocabStats(userId)
+      vocabEngine.getVocabStats(userId),
+      flashcardEngine.getStats(userId)
     ]);
 
     const weakestTopics = topicBreakdown.slice(0, 5);
@@ -40,9 +41,9 @@ router.get('/', requireAuth, async (req, res) => {
       weeklyActivity,
       streak,
       recentFeedback,
-      recentQuizzes,
       dailyWord,
-      vocabStats
+      vocabStats,
+      flashcardStats
     });
   } catch (err) {
     console.error('Dashboard error:', err);
@@ -58,9 +59,9 @@ router.get('/leaderboard', optionalAuth, async (req, res) => {
       limit: parseInt(limit), offset: (parseInt(page) - 1) * parseInt(limit),
       userId: req.user?.id
     })
-    res.render('dashboard/leaderboard', { user: req.user, entries: result.entries, totalCount: result.totalCount, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), error: null });
+    res.render('dashboard/leaderboard', { user: req.user, entries: result.entries || [], totalCount: result.totalCount || 0, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), error: null });
   } catch (Err) {
-    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, error: Err })
+    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, error: Err.message })
   }
 })
 

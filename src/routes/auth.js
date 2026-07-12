@@ -5,10 +5,10 @@ const config = require('../config')
 const router = Router();
 
 router.get('/login', (req, res) => {
-    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: null })
+    res.render('auth/login', { error: null })
 })
 router.get('/signup', (req, res) => {
-    res.render('auth/signup', { appDomain: config.APP_DOMAIN, error: null })
+    res.render('auth/signup', { error: null })
 })
 
 router.post('/login', async (req, res) => {
@@ -38,7 +38,7 @@ router.post('/signup', async (req, res) => {
         res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
         return res.redirect('/settings')
     }
-    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: "Signup successful! Check your email to confirm, then log in." })
+    res.render('auth/login', { error: "Signup successful! Check your email to confirm, then log in." })
 })
 
 router.get('/logout', (req, res) => {
@@ -77,7 +77,7 @@ router.post('/reset-password', async (req, res) => {
         password: newPassword,
     })
     if (error) return res.render('auth/reset-password', { email, token, error: error.message, success: null })
-    res.render('auth/login', { appDomain: config.APP_DOMAIN, error: "Password reset successful! Please log in." })
+    res.render('auth/login', { error: "Password reset successful! Please log in." })
 })
 
 module.exports = router;

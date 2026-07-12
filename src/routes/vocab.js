@@ -35,12 +35,12 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
             return res.render('vocab/word', { user: req.user, entry: existing, error: null })
         }
         const similar = await rag.retrieveSimilar(word, 3)
-        let simmilar = ''
+        let similarText = ''
         if (similar.length > 0)
-            simmilar = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Scentence: ${s.example_sentence}`).join('\n\n')
+            similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Scentence: ${s.example_sentence}`).join('\n\n')
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
         const userPrompt = `Generate a vocabulary entry for "${word}".
-                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${simmilar}\n` : ''}
+                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}
                             Follow the format exactly. Make the mnemonic memorable.`;
 
         let response = await llm.generateCompletion({
@@ -330,6 +330,15 @@ router.post('/lists/:id/share-link', requireAuth, async (req, res) => {
         res.json({ url: shareUrl, token });
     } catch (err) {
         res.status(400).json({ error: err.message });
+    }
+})
+
+router.post('/lists/:id/share', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.shareList(req.params.id, req.user.id, req.body.email);
+        res.redirect(`/vocab/lists/${req.params.id}`);
+    } catch (err) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=${encodeURIComponent(err.message)}`);
     }
 })
 

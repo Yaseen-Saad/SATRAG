@@ -27,8 +27,8 @@ router.get('/', requireAuth, async (req, res) => {
             filters: { subject, topic, subtopic, source, activeFilter, active, difficulty, difficultyBand, status, marked, search, subtopics }
         })
     } catch (err) {
-        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
         console.error(err)
+        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
     }
 })
 router.get('/generate', requireAuth,  async (req, res) => {
@@ -36,8 +36,8 @@ router.get('/generate', requireAuth,  async (req, res) => {
         const topicTree = await practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
     } catch (err) {
-        res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
         console.error(err)
+        res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
     }
 })
 router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
@@ -51,10 +51,10 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
         const topicTree = await practice.getTopicTree(subject);
         res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, difficulty, count })
     } catch (err) {
+        console.error(err)
         const { subject, topic, difficulty, count } = req.body
         const topicTree = await practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null, subject, topic, difficulty, count })
-        console.error(err)
     }
 });
 
@@ -73,8 +73,8 @@ router.get('/question/:id', requireAuth, async (req, res) => {
         const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, userId: req.user.id })
         res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId })
     } catch (err) {
-        res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })
         console.error(err)
+        res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })
     }
 })
 router.post('/question/:id/answer', requireAuth, async (req, res) => {

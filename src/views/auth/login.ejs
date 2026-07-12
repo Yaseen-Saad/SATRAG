@@ -3,7 +3,7 @@
   <div class="auth-card">
     <h1>Welcome Back</h1>
     <% if (typeof error !== 'undefined' && error){ %>
-    <div class="flash flash-error"><%= error %><button class="dismiss">Dismiss Icon</button></div>
+    <div class="flash flash-error"><%= error %><button class="dismiss">&times;</button></div>
     <% } %>
     <form method="POST" action="/auth/login" data-loading>
       <div class="form-group">

@@ -2,7 +2,7 @@ const rateLimitState = new Map()
 
 function rateLimiter({ requests = 150, windowSeconds = 1800 } = {}) {
     return (req, res, next) => {
-        const limitedPaths = ['/vocab/generate', '/vocab/regenerate']
+        const limitedPaths = ['/vocab/generate', '/vocab/regenerate', '/practice/generate']
         const shouldLimit = limitedPaths.some(path => req.path.includes(path))
         if (!shouldLimit) {
             return next()

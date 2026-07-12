@@ -70,13 +70,13 @@
   <!-- BOTTOM BAR -->
   <footer class="bb-bottombar">
     <div class="bb-bottombar-left">
-      <a href="/practice" class="bb-nav-btn">◀ Back</a>
+      <% if (prevId) { %><a href="/practice/question/<%= prevId %>" class="bb-nav-btn">◀ Previous</a><% } else { %><a href="/practice" class="bb-nav-btn">◀ Back</a><% } %>
     </div>
     <div class="bb-bottombar-center">
       <button class="bb-palette-toggle" onclick="openPalette()">☰ Questions</button>
     </div>
     <div class="bb-bottombar-right">
-      <a href="/practice" class="bb-nav-btn">Next ▶</a>
+      <% if (nextId) { %><a href="/practice/question/<%= nextId %>" class="bb-nav-btn">Next ▶</a><% } else { %><a href="/practice" class="bb-nav-btn">Done</a><% } %>
     </div>
   </footer>
 </div>

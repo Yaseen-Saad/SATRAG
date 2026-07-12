@@ -5,8 +5,9 @@
     let answered = false;
     let selectedAnswer = null;
     const timer = document.getElementById('timer');
+    let timerInterval = null;
     if (timer)
-        setInterval(_ => {
+        timerInterval = setInterval(_ => {
             if (answered) return;
             const elapsed = Math.floor((Date.now() - startTime) / 1000)
             const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
@@ -93,6 +94,12 @@
         document.getElementById('feedback-overlay').classList.remove('open')
         startTime = Date.now()
     }
+
+    const origSubmit = window.submitAnswer;
+    window.submitAnswer = function(label) {
+        if (timerInterval) clearInterval(timerInterval);
+        origSubmit(label);
+    };
     window.toggleMarkBtn = async () => {
         await fetch(`/practice/question/${questionId}/mark`);
         const btn = document.getElementById('mark-btn');

@@ -29,13 +29,24 @@
 
       <div class="form-group">
         <label>Topic</label>
-        <select name="topic">
+        <select name="topic" onchange="this.form.submit()">
           <option value="">All</option>
           <% (topicTree || []).forEach(t => { %>
           <option value="<%= t.topic %>" <%= filters.topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
           <% }) %>
         </select>
       </div>
+      <% if (filters.subtopics && filters.subtopics.length > 0) { %>
+      <div class="form-group">
+        <label>Subtopic</label>
+        <select name="subtopic">
+          <option value="">All</option>
+          <% filters.subtopics.forEach(function(s) { %>
+          <option value="<%= s %>" <%= filters.subtopic === s ? 'selected' : '' %>><%= s %></option>
+          <% }) %>
+        </select>
+      </div>
+      <% } %>
       <div class="form-group">
         <label>Difficulty</label>
         <select name="difficulty">

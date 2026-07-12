@@ -62,10 +62,34 @@
         </div>
         <button type="submit" class="btn-primary btn-sm">Save</button>
       </form>
+      <form action="/settings/changeEmbeddingkey" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end; margin-top:0.75rem;">
+        <div class="form-group" style="flex:1; margin:0;">
+          <label for="embeddingKey">Embedding API Key</label>
+          <input type="password" name="embeddingKey" placeholder="sk-..." required>
+        </div>
+        <button type="submit" class="btn-primary btn-sm">Save</button>
+      </form>
     </div>
   </div>
 
 
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Avatar</h2>
+    </div>
+    <div class="dash-card-body">
+      <% if (profile && profile.avatar_url) { %>
+      <img src="<%= profile.avatar_url %>" alt="Avatar" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:0.75rem;">
+      <% } %>
+      <form action="/settings/avatar" method="POST" style="display:flex; gap:0.5rem; align-items:end;">
+        <div class="form-group" style="flex:1; margin:0;">
+          <label for="avatarUrl">Avatar Image URL</label>
+          <input type="url" name="avatarUrl" placeholder="https://example.com/avatar.jpg">
+        </div>
+        <button type="submit" class="btn-primary btn-sm">Save</button>
+      </form>
+    </div>
+  </div>
 
   <div class="dash-card">
     <div class="dash-card-header">

@@ -17,6 +17,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const practiceRoutes = require('./routes/practice');
 const settingsRoutes = require('./routes/settings');
 const flashcardsRoutes = require('./routes/flashcards');
+const { requireAuth, optionalAuth } = require('./middleware/auth');
 const { requireProfileComplete } = require('./middleware/profile');
 
 const app = express();
@@ -36,9 +37,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(rateLimiter());
 
 // Welcome Page
-app.get('/', async (req, res) => {
+app.get('/', optionalAuth, async (req, res) => {
   try {
-    res.render("index")
+    res.render("index", { user: req.user || null })
   } catch (error) {
     console.log(error);
   }
