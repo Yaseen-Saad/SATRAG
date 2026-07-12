@@ -57,7 +57,7 @@ class VocabEngine {
         const { count } = await supabase.from('word_list_entries').select('*', { count: 'exact', head: true }).eq('list_id', listId);
         return { list: { ...list, word_count: count || 0 }, words }
     }
-    // Make sure the only one who can edit the list is its owner lol
+
     async addWordToList(listId, wordId) {
         const { data: last } = await supabase.from('word_list_entries')
             .select("sort_order").eq('list_id', listId).order('sort_order', { ascending: false }).limit(1);
@@ -122,6 +122,7 @@ class VocabEngine {
         const dayOfYear = Math.floor(diff / 86400000)
         return data[dayOfYear % count]
     }
+
     async getVocabStats(userId) {
         const [totalResult, listResult, sourcesResult, recentResult] = await Promise.all([
             supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),
@@ -144,6 +145,7 @@ class VocabEngine {
     async getLists(userId) {
         return this.getMyLists(userId);
     }
+
     async createList(userId, name, description, visibility = 'private') {
         const { data, error } = await supabase.from('word_lists')
             .insert({ name, description, visibility, created_by: userId }).select().single();
@@ -152,11 +154,36 @@ class VocabEngine {
     }
 
     async generateShareLink(listId, userId) {
-
+        const { data: list } = await supabase.from('word_lists')
+            .select('created_by').eq('id', listId).single();
+        if (!list || list.created_by !== userId) throw new Error("Not your list");
+        if (!list.share_token) {
+            await supabase.from('word_lists')
+                .update({ share_token: crypto.randomUUID(), share_token_enabled: true })
+                .eq('id', listId);
+        } else {
+            await supabase.from('word_lists')
+                .update({ share_token_enabled: true }).eq('id', listId);
+        }
+        const { data: updated } = await supabase.from('word_lists')
+            .select('share_token').eq('id', listId).single();
+        return updated.share_token;
     }
 
     async getListByShareToken(token) {
+        const { data: list } = await supabase.from('word_lists').select("*").eq('share_token', token).eq('share_token_enabled', true).single();
+        if (!list) return null;
+        const { data: items } = await supabase.from('word_list_entries').select('*, vocab_entries(*)').eq('list_id', list.id).order('sort_order', { ascending: true });
+        const words = (items || []).map(item => item.vocab_entries).filter(Boolean);
+        return { list, words };
+    }
 
+    async toggleShareToken(listId, userId, enable) {
+        const { data: list } = await supabase.from('word_lists').select('created_by, share_token').eq('id', listId).single();
+        if (!list || list.created_by !== userId) throw new Error("Not your list");
+        const update = { share_token_enabled: enable };
+        if (enable && !list.share_token) update.share_token = crypto.randomUUID();
+        await supabase.from('word_lists').update(update).eq('id', listId);
     }
 }
 

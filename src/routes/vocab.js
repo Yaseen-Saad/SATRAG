@@ -315,14 +315,43 @@ router.post('/lists/:id/clone', requireAuth, async (req, res) => {
         res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
     }
 })
-router.post('/lists/:id/share', requireAuth, async (req, res) => {
+
+
+router.get('/shared/:token', async (req, res) => {
     try {
-        await vocabEngine.shareList(req.params.id, req.user.id, req.body.email);
-        res.redirect(`/vocab/lists/${req.params.id}`);
+        const result = await vocabEngine.getListByShareToken(req.params.token);
+        if (!result) return res.status(404).render('error', { message: 'Invalid or expired share link' });
+        res.render('vocab/list', {
+            user: req.user || null,
+            list: result.list,
+            words: result.words,
+            isOwner: req.user && result.list.created_by === req.user.id,
+            error: null,
+            sharedView: true
+        })
     } catch (err) {
-        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
+        res.status(500).render('error', { message: err.message })
     }
 })
 
+
+router.post('/lists/:id/share-link', requireAuth, async (req, res) => {
+    try {
+        const token = await vocabEngine.generateShareLink(req.params.id, req.user.id);
+        const shareUrl = `${req.protocol}://${req.get('host')}/vocab/shared/${token}`;
+        res.json({ url: shareUrl, token });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+})
+
+router.post('/lists/:id/share-link/toggle', requireAuth, async (req, res) => {
+    try {
+        await vocabEngine.toggleShareToken(req.params.id, req.user.id, req.body.enabled === true);
+        res.redirect(`/vocab/lists/${req.params.id}`)
+    } catch (errr) {
+        res.redirect(`/vocab/lists/${req.params.id}?error=${encodeURIComponent(errr.message)}`)
+    }
+})
 
 module.exports = router;

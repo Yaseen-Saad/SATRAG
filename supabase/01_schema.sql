@@ -138,6 +138,7 @@ CREATE TABLE IF NOT EXISTS word_lists (
     source_book TEXT,
     word_count INT NOT NULL DEFAULT 0,
     share_token UUID DEFAULT NULL UNIQUE,
+    share_token_enabled BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(name)
@@ -158,8 +159,8 @@ CREATE TABLE IF NOT EXISTS list_shares (
     list_id UUID REFERENCES word_lists ON DELETE CASCADE NOT NULL,
     shared_with_user_id UUID REFERENCES auth.users NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE()
-)
+    UNIQUE(list_id, shared_with_user_id)
+);
 
 -- User Custom Words Lists
 CREATE TABLE IF NOT EXISTS user_word_lists (
@@ -169,7 +170,7 @@ CREATE TABLE IF NOT EXISTS user_word_lists (
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(user_id, display_name)
+    UNIQUE(user_id, name)
 );
 
 -- User Custom Words List
@@ -209,7 +210,7 @@ CREATE TABLE IF NOT EXISTS public_profiles (
     birthdate TEXT NOT NULL,
     participate_in_leaderboard BOOLEAN DEFAULT true,
     gender TEXT NOT NULL (CHECK gender IN ('male', 'female')),
-    referal TEXT NOT NULL (CHECK referal IN ('friend', 'socialmedia', 'school', 'teacher', 'other')),
+    referral TEXT NOT NULL (CHECK referral IN ('friend', 'socialmedia', 'school', 'teacher', 'other')),
     llm_apikey TEXT,
     embedding_apikey TEXT,
     first_login TIMESTAMP DEFAULT NOW(),
