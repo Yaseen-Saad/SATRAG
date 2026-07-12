@@ -54,15 +54,15 @@
     <a href="/vocab/lists" class="btn-secondary">My Lists</a>
   </div>
   <div style="margin-top:1rem; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
-    <form method="POST" action="/vocab/lists/<%= lists && lists.length > 0 ? lists[0].id : 'new' %>/add" style="display:flex; gap:0.5rem; align-items:center;">
+    <form method="POST" action="/vocab/lists/new/add" style="display:flex; gap:0.5rem; align-items:center;">
       <input type="hidden" name="wordId" value="<%= entry.id %>">
       <select name="listId" style="flex:1; padding:0.4rem; border:1px solid var(--border); border-radius:4px;">
         <option value="new">Add to List...</option>
         <% if (typeof lists !== 'undefined' && lists) {lists.forEach(l=>{ %>
-        <option value="<%= l.id %>"><%= l.name %> (<%= l.wordCount %>)</option>
+        <option value="<%= l.id %>"><%= l.name %> (<%= l.word_count?.[0]?.count ?? l.word_count ?? 0 %>)</option>
         <% })}%>
       </select>
-      <button type="submit" class="btn-primary" onclick="this.form.action = '/vocab/lists/'+this.form.listId.value+'/add'">Add</button>
+      <button type="submit" class="btn-primary" onclick="const sel=this.form.listId; if(sel.value==='new'||!sel.value){window.location='/vocab/lists';return false;} this.form.action='/vocab/lists/'+sel.value+'/add'">Add</button>
       <a href="/vocab/lists" style="font-size:0.85rem" class="btn-secondary">New List</a>
     </form>
   </div>

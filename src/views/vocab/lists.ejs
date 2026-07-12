@@ -1,61 +1,81 @@
-<% title = 'My Word Lists'; %>
+<% title = 'Word Lists'; %>
 <div class="dashboard">
   <div class="dash-header">
-    <h1>My Word Lists</h1>
-    <p class="dash-subtitle">Create custom lists to organize your vocavulary</p>
+    <h1>Word Lists</h1>
+    <p class="dash-subtitle">Browse system lists or create your own</p>
   </div>
   <% if (typeof error !== 'undefined' && error) { %>
   <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
   <% } %>
+
   <div class="dash-card" style="margin-bottom:1.5rem">
-    <div class="dash-card-header">
-      <h2>Create New List</h2>
-    </div>
+    <div class="dash-card-header"><h2>Create New List</h2></div>
     <div class="dash-card-body">
-      <form action="/vocab/lists" method="POST" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <input type="text" name="name" placeholder="List name (e.g. Week 1 Words)" required style="width:100%">
+      <form method="POST" action="/vocab/lists" style="display:flex; gap:0.5rem; align-items:end; flex-wrap:wrap;">
+        <div class="form-group" style="flex:2;min-width:200px;margin:0;"><input type="text" name="name" placeholder="List name" required style="width:100%"></div>
+        <div class="form-group" style="flex:2;min-width:200px;margin:0;"><input type="text" name="description" placeholder="Description" style="width:100%"></div>
+        <div class="form-group" style="flex:1;min-width:120px;margin:0;">
+          <select name="visibility">
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
         </div>
         <button type="submit" class="btn-primary btn-sm">Create</button>
       </form>
     </div>
   </div>
 
-
-  <% if (lists?.length === 0){ %>
-  <div class="card" style="text-align:center;padding:3rem">
-    <p style="color:var(--text-muted);">You haven't created any lists yet.</p>
-    <p style="color:var(--text-muted);font-size:0.9rem;">Go to any word page and click "Add to List" to get started.</p>
+  <!-- Tabs -->
+  <div style="display:flex; gap:0; margin-bottom:1rem; border-bottom:2px solid var(--border);">
+    <% ['mine','system','public','shared'].forEach(function(t) { %>
+    <a href="/vocab/lists?tab=<%= t %>" style="padding:0.5rem 1rem; text-decoration:none; border-bottom:2px solid <%= tab === t ? 'var(--primary)' : 'transparent' %>; color:<%= tab === t ? 'var(--primary)' : 'var(--text-muted)' %>; font-weight:<%= tab === t ? 'bold' : 'normal' %>; margin-bottom:-2px;">
+      <%= {mine:'My Lists', system:'System', public:'Public', shared:'Shared With Me'}[t] %>
+    </a>
+    <% }) %>
   </div>
-  <% }else{ %>
+
+  <%
+    let currentLists = [];
+    let emptyMsg = '';
+    if (tab === 'mine') { currentLists = myLists || []; emptyMsg = 'You haven\'t created any lists yet.'; }
+    else if (tab === 'system') { currentLists = systemLists || []; emptyMsg = 'No system lists available.'; }
+    else if (tab === 'public') { currentLists = publicLists || []; emptyMsg = 'No public lists yet.'; }
+    else if (tab === 'shared') { currentLists = sharedLists || []; emptyMsg = 'No lists shared with you yet.'; }
+  %>
+
+  <% if (currentLists.length === 0) { %>
+  <div class="card" style="text-align:center;padding:3rem">
+    <p style="color:var(--text-muted);"><%= emptyMsg %></p>
+    <% if (tab === 'mine') { %><p style="font-size:0.9rem;color:var(--text-muted);">Go to any word page to start building.</p><% } %>
+  </div>
+  <% } else { %>
   <div class="dash-card">
     <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Words</th>
-          <th>Created</th>
-          <th></th>
-        </tr>
-      </thead>
+      <thead><tr><th>Name</th><th>Words</th><th>Visibility</th><th>By</th><th></th></tr></thead>
       <tbody>
-        <% lists.forEach(list=>{ %>
+        <% currentLists.forEach(function(l) { %>
         <tr>
+          <td><a href="/vocab/lists/<%= l.id %>" style="font-weight:bold;"><%= l.name %></a></td>
+          <td><%= l.word_count?.[0]?.count ?? l.word_count ?? 0 %></td>
+          <td><%= l.visibility %><%= l.cloned_from ? ' (clone)' : '' %></td>
+          <td><%= l.created_by ? (l.created_by === (typeof user !== 'undefined' && user ? user.id : '') ? 'me' : l.created_by.slice(0,8)) : 'system' %></td>
           <td>
-            <a href="/vocab/lists/<%= list.id%>" style="font-weight: bold;"><%= list.name%></a>
-          </td>
-          <td><%= list.wordCount %></td>
-          <td><%= new Date(list.createdAt).toLocaleDateString() %></td>
-          <td>
-            <form action="/vocab/lists/<%=list.id%>/delete" style="display:inline;" onsubmit="return confirm('Delete this list?')">
-              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            <% if (tab !== 'mine') { %>
+            <form method="POST" action="/vocab/lists/<%= l.id %>/clone" style="display:inline;">
+              <button type="submit" class="btn-outline btn-sm">Clone</button>
             </form>
+            <% } %>
+            <% if (typeof user !== 'undefined' && user && l.created_by === user.id) { %>
+            <form method="POST" action="/vocab/lists/<%= l.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this list?')">
+              <button type="submit" class="btn-danger btn-sm">Delete</button>
+            </form>
+            <% } %>
           </td>
         </tr>
         <% }) %>
       </tbody>
     </table>
   </div>
-<a href="/vocab" class="btn btn-outline" style="margin-top:1rem">Back to Vocabulary</a>
   <% } %>
+  <a href="/vocab" class="btn btn-outline" style="margin-top:1rem;">← Back to Vocabulary</a>
 </div>

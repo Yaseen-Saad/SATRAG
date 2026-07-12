@@ -1,37 +1,75 @@
-<% title = list.name%>
+<% title = list.name; %>
 <div class="dashboard">
   <div class="dash-header">
-    <h1><%= list.name %></h1>
-    <p class="dash-subtitle"><strong><%= list.wordCount %></strong> words.</p>
-    <p class="dash-subtitle"><a href="/vocab/lists">All lists</a></p>
+    <div>
+      <h1><%= list.name %></h1>
+      <p class="dash-subtitle">
+        <%= list.word_count || words.length %> words ·
+        <%= list.visibility %> list
+        <% if (list.cloned_from) { %> · cloned from another list<% } %>
+        <% if (list.source_book) { %> · <%= list.source_book %><% } %>
+      </p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/vocab/lists" class="btn btn-outline btn-sm">All Lists</a>
+      <% if (typeof user !== 'undefined' && user) { %>
+      <form method="POST" action="/vocab/lists/<%= list.id %>/clone" style="display:inline;">
+        <button type="submit" class="btn btn-outline btn-sm">Clone</button>
+      </form>
+      <% } %>
+    </div>
   </div>
+
   <% if (typeof error !== 'undefined' && error) { %>
   <div class="flash flash-error"><%= error %></div>
   <% } %>
-  <% if (words.length ===0){%>
-  <div class="card">
-    <p>This list is empty.</p>
-    <a href="/vocab">Find words to add</a>
-  </div>
-  <% } else{ %>
-  <div class="dash-card">
-    <div style="display:grid; gap:0.5rem;">
-      <%words.forEach(w=>{%>
-      <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; border:1px solid var(--border)">
-        <div style="flex:1">
-          <a href="/vocab/<%=w.word %>" style="font-weight:bold; font-size:1.1rem;"><%= w.word%></a>
-          <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%=w.part_of_speech%></span>
-          <p style="margin:0.25rem 0 0; color:var(--text); font-size:0.9rem;"><%= w.definition %></p>
-        </div>
-        <form action="/vocab/lists/<%=list.id%>/remove/<%=w.id%>" method="POST" onsubmit="return confirm('Remove this word?')">
-          <button type="submit" class="btn-danger btn-sm">Remove</button>
-        </form>
+
+  <% if (isOwner) { %>
+  <div style="display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; align-items:end;">
+    <form method="POST" action="/vocab/lists/<%= list.id %>/visibility" style="display:flex; gap:0.5rem; align-items:end;">
+      <div class="form-group" style="margin:0;">
+        <label style="font-size:0.85rem;">Visibility</label>
+        <select name="visibility">
+          <option value="private" <%= list.visibility === 'private' ? 'selected' : '' %>>Private</option>
+          <option value="public" <%= list.visibility === 'public' ? 'selected' : '' %>>Public</option>
+          <option value="shared" <%= list.visibility === 'shared' ? 'selected' : '' %>>Shared</option>
+        </select>
       </div>
-      <%})%>
-    </div>
+      <button type="submit" class="btn-sm btn-primary">Update</button>
+    </form>
+    <form method="POST" action="/vocab/lists/<%= list.id %>/share" style="display:flex; gap:0.5rem; align-items:end;">
+      <div class="form-group" style="margin:0;">
+        <label style="font-size:0.85rem;">Share with email</label>
+        <input type="email" name="email" placeholder="user@email.com" required style="padding:0.4rem;">
+      </div>
+      <button type="submit" class="btn-sm btn-primary">Share</button>
+    </form>
   </div>
   <% } %>
 
-  <a href="/vocab/lists" class="btn btn-outline" style="margin-top:1rem;">← Back to Lists</a>
-
+  <% if (words.length === 0) { %>
+  <div class="card" style="text-align:center;padding:3rem;">
+    <p style="color:var(--text-muted);">This list is empty.</p>
+    <a href="/vocab" class="btn btn-outline btn-sm">Find words to add</a>
+  </div>
+  <% } else { %>
+  <div class="dash-card">
+    <div style="display:grid; gap:0.5rem;">
+      <% words.forEach(function(w) { %>
+      <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+        <div style="flex:1;">
+          <a href="/vocab/<%= w.word %>" style="font-weight:bold;font-size:1.1rem;"><%= w.word %></a>
+          <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%= w.part_of_speech %></span>
+          <p style="margin:0.25rem 0 0;font-size:0.9rem;"><%= w.definition %></p>
+        </div>
+        <% if (isOwner) { %>
+        <form method="POST" action="/vocab/lists/<%= list.id %>/remove/<%= w.id %>" onsubmit="return confirm('Remove this word?')">
+          <button type="submit" class="btn-danger btn-sm">Remove</button>
+        </form>
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
 </div>

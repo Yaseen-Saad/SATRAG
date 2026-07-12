@@ -2,10 +2,10 @@ const supabase = require('../lib/supabase').service
 
 class VocabEngine {
     async getMyLists(userId) {
-        const { data } = await supabase.from('user_word_lists').select('*, word_count:user_word_list_items(count)').eq('user_id', userId).order('created_at', { ascending: false });
+        const { data } = await supabase.from('word_lists').select('*, word_count:word_list_entries(count)').eq('created_by', userId).order('created_at', { ascending: false });
         return data || [];
     }
-    async getSystemlists() {
+    async getSystemLists() {
         const { data } = await supabase.from('word_lists').select('*').eq('visibility', 'system').order('name');
         return data || [];
     }
@@ -23,17 +23,14 @@ class VocabEngine {
     }
 
     async searchLists(query) {
-        const { data } = await supabase.from('word_lists').select('*').in('visibility', ['system', 'public']).or(`name.ilike.%${query}%, description.ilike.%${query}%`).order('name');
+        const { data } = await supabase.from('word_lists').select('*').in('visibility', ['system', 'public']).or(`name.ilike.%${query}%,description.ilike.%${query}%`).order('name');
         return data || [];
     }
 
     async deleteList(userId, listId) {
         const { error } = await supabase.from('word_lists')
-            .delete()
-            .eq('created_by', userId)
-            .eq('list_id', listId)
+            .delete().eq('id', listId).eq('created_by', userId)
         if (error) throw error
-        return { success: true }
     }
 
     async canAccess(listId, userId) {
@@ -48,44 +45,38 @@ class VocabEngine {
         return false;
     }
 
-    async getlist(listId, userId) {
+    async getList(listId, userId) {
         const { data: list } = await supabase.from('word_lists').select('*').eq('id', listId).single();
         if (!list) return { list: null, words: [] }
         if (list.visibility === 'private' && list.created_by !== userId) {
             const can = await this.canAccess(listId, userId)
             if (!can) return { list: null, words: [] }
         }
-        const { data: words } = await supabase.from('word_list_entries').select('*, vocab_entries(*)').eq('list_id', listId).order('sort_order', { ascending: true });
+        const { data: items } = await supabase.from('word_list_entries').select('*, vocab_entries(*)').eq('list_id', listId).order('sort_order', { ascending: true });
         const words = (items || []).map(item => item.vocab_entries).filter(Boolean);
         const { count } = await supabase.from('word_list_entries').select('*', { count: 'exact', head: true }).eq('list_id', listId);
         return { list: { ...list, word_count: count || 0 }, words }
     }
     // Make sure the only one who can edit the list is its owner lol
-    async addWordToList(listId, wordId, userId) {
-        const { data: last, error: err } = await supabase.from('word_list_entries')
-            .select("sort_order").eq('list_id', listId).eq("created_by", userId).order('sort_order', { ascending: false }).limit(1).single();
-        if (err) throw err;
-        const sortOrder = (last?.[0].sort_order ?? -1) + 1
+    async addWordToList(listId, wordId) {
+        const { data: last } = await supabase.from('word_list_entries')
+            .select("sort_order").eq('list_id', listId).order('sort_order', { ascending: false }).limit(1);
+        const sortOrder = ((last?.[0]?.sort_order) ?? -1) + 1
         const { error } = await supabase.from('word_list_entries')
             .insert({ list_id: listId, word_id: wordId, sort_order: sortOrder })
         if (error && error.code === "23505") throw new Error("Word already in this list")
         if (error) throw error;
-        await supabase.from('word_lists').update({ word_count: supabase.raw('word_count + 1'), updated_at: new Date().toISOString() }).eq('id', listId)
+        await supabase.from('word_lists').update({ updated_at: new Date().toISOString() }).eq('id', listId)
     }
 
-    async removeWordFromList(listId, wordId, userId) {
+    async removeWordFromList(listId, wordId) {
         const { error } = await supabase.from('word_list_entries')
-            .delete().eq("created_by", userId)
-            .eq('list_id', listId)
-            .eq('word_id', wordId)
+            .delete().eq('list_id', listId).eq('word_id', wordId)
         if (error) throw error;
-        const { error2 } = await supabase.from('word_lists').update({
-            word_count: supabase.raw('word_count - 1'), updated_at: new Date().toISOString()
-        }).eq('id', listId)
-        if (error2) throw error2;
+        await supabase.from('word_lists').update({ updated_at: new Date().toISOString() }).eq('id', listId)
     }
 
-    async cloneList(userId, listId,) {
+    async cloneList(userId, listId) {
         const { list, words } = await this.getList(listId, userId)
         if (!list) throw new Error("List not found")
         if (!this.canAccess(listId, userId)) throw new Error("Access denied")
@@ -113,9 +104,10 @@ class VocabEngine {
     }
 
     async unshareList(listId, ownerId, email) {
-        const { data: list, error: err } = await supabase.from('list_shares').delete().eq('shared_with_user_id', userId).eq('list_id', listId).single(); const { error } = await supabase.from('list_shares').delete().eq('list_id', listId).eq('shared_with_user_id', user.id).eq('shared_by_user_id', ownerId);
+        const { data: user } = await supabase.from('public_profiles').select('id').eq('email', email).single();
+        if (!user) throw new Error("User not found");
+        const { error } = await supabase.from('list_shares').delete().eq('list_id', listId).eq('shared_with_user_id', user.id);
         if (error) throw error;
-        return { success: true }
     }
 
     async changeVisibility(listId, userId, visibility) {
@@ -123,8 +115,8 @@ class VocabEngine {
     }
 
     async getDailyWord() {
-        const { data, count } = await supabase.from('vocab_entries').select('id, word, definition, part_of_speech, example_sentence, pronunciation, mnemonic_phrase', { count: 'exact' }).limit(1).single();
-        if (!count || count === 0) return null
+        const { data, count } = await supabase.from('vocab_entries').select('id, word, definition, part_of_speech, example_sentence, pronunciation, mnemonic_phrase', { count: 'exact' });
+        if (!count || count === 0) return null;
         const start = new Date(new Date().getFullYear(), 0, 0);
         const diff = Date.now() - start
         const dayOfYear = Math.floor(diff / 86400000)
@@ -133,7 +125,7 @@ class VocabEngine {
     async getVocabStats(userId) {
         const [totalResult, listResult, sourcesResult, recentResult] = await Promise.all([
             supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),
-            supabase.from('user_word_lists').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+            supabase.from('word_lists').select('id', { count: 'exact', head: true }).eq('created_by', userId),
             supabase.from('vocab_entries').select('source'),
             supabase.from('vocab_entries').select('word, created_at').order('created_at', { ascending: false }).limit(10),
         ])
@@ -147,6 +139,24 @@ class VocabEngine {
             wordsBySource: sources,
             recentWords: recentResult.data || []
         }
+    }
+
+    async getLists(userId) {
+        return this.getMyLists(userId);
+    }
+    async createList(userId, name, description, visibility = 'private') {
+        const { data, error } = await supabase.from('word_lists')
+            .insert({ name, description, visibility, created_by: userId }).select().single();
+        if (error) throw error;
+        return data;
+    }
+
+    async generateShareLink(listId, userId) {
+
+    }
+
+    async getListByShareToken(token) {
+
     }
 }
 

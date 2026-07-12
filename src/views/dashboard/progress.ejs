@@ -129,6 +129,49 @@
 <%}%>
 
 
+        <% if (dailyWord) { %>
+        <div class="dash-card" style="margin-top:1rem;">
+          <div class="dash-card-header">
+            <h2>Word of the Day</h2>
+            <a href="/vocab/<%= dailyWord.word %>" class="btn btn-ghost btn-sm">View</a>
+          </div>
+          <div class="dash-card-body">
+            <div style="font-size:1.5rem;font-weight:bold;color:var(--primary);"><%= dailyWord.word %> <span style="font-size:0.9rem;font-weight:normal;color:var(--text-muted);"><%= dailyWord.part_of_speech %></span></div>
+            <p style="margin:0.5rem 0 0;"><%= dailyWord.definition %></p>
+            <% if (dailyWord.example_sentence) { %><p style="margin:0.5rem 0 0;font-style:italic;font-size:0.9rem;color:var(--text-muted);"><%= dailyWord.example_sentence %></p><% } %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="dash-card" style="margin-top:1rem;">
+          <div class="dash-card-header">
+            <h2>Vocabulary Progress</h2>
+            <a href="/vocab" class="btn btn-ghost btn-sm">Vocab</a>
+          </div>
+          <div class="dash-card-body">
+            <div class="mini-stat-grid">
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= vocabStats.totalWords %></div>
+                <div class="mini-stat-label">Total Words</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= vocabStats.listCount %></div>
+                <div class="mini-stat-label">Your Lists</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= Object.keys(vocabStats.wordsBySource).length %></div>
+                <div class="mini-stat-label">Sources</div>
+              </div>
+            </div>
+            <% if (vocabStats.recentWords.length > 0) { %>
+            <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.25rem;">
+              <% vocabStats.recentWords.forEach(function(w) { %>
+              <a href="/vocab/<%= w.word %>" class="btn-outline btn-sm"><%= w.word %></a>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+        </div>
         <div class="dash-card" style="margin-top:1rem;">
           <div class="dash-card-header">
             <h2>Vocabulary Progress</h2>

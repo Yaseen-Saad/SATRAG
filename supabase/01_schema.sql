@@ -137,12 +137,13 @@ CREATE TABLE IF NOT EXISTS word_lists (
     cloned_from UUID REFERENCES word_lists ON DELETE SET NULL,
     source_book TEXT,
     word_count INT NOT NULL DEFAULT 0,
+    share_token UUID DEFAULT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(name)
 );
 
-CREATE TABLE IF NOT EXISTS word_list_ENTRIES (
+CREATE TABLE IF NOT EXISTS word_list_entries (
     id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
     list_id UUID REFERENCES word_lists ON DELETE CASCADE NOT NULL,
     word_id UUID REFERENCES vocab_entries ON DELETE CASCADE NOT NULL,
@@ -265,3 +266,4 @@ CREATE INDEX IF NOT EXISTS idx_uqs_user_status ON user_question_state(user_id, s
 CREATE INDEX IF NOT EXISTS idx_uqs_user_question ON user_question_state(user_id, question_id);
 CREATE INDEX IF NOT EXISTS idx_uqs_question_status ON user_question_state(question_id, status);
 CREATE INDEX IF NOT EXISTS idx_uqa_question_time ON user_question_attempts(question_id, attempt_time);
+CREATE INDEX IF NOT EXISTS idx_word_lists_share_token ON word_lists(share_token);

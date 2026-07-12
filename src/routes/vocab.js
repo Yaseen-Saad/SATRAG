@@ -68,7 +68,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult?.isValid ?? false;
         const saved = await rag.addEntry(entry);
-        const lists = await vocabEngine.getLists(req.user.id);
+        const lists = await vocabEngine.getMyLists(req.user.id);
 
         res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true, lists })
     } catch (err) {
@@ -226,7 +226,7 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
             const positiveContent = `POSITIVE FEEDBACK FOR ${w}:\n${req.body.satisfaction}/10 Satisfied with the regenerated entry.`;
             await supabase.from('rag_feedback_examples').insert({ word: w, type: "positive", content: positiveContent })
         }
-        const lists = await vocabEngine.getLists(req.user.id);
+        const lists = await vocabEngine.getMyLists(req.user.id);
         res.render('vocab/word', { user: req.user, entry: saved, error: null, isRegenerated: true, lists })
     } catch (err) {
         res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: err.message })
@@ -240,22 +240,22 @@ router.get('/:word', optionalAuth, async (req, res) => {
     }
     let lists = [];
     if (req.user) {
-        lists = await vocabEngine.getLists(req.user.id);
+        lists = await vocabEngine.getMyLists(req.user.id);
     }
     res.render('vocab/word', { user: req.user, entry, lists, error: null })
 });
 
 router.get('/lists', requireAuth, async (req, res) => {
-    const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
-    res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: query.tab || 'mine' })
+    const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
+    res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: req.query.tab || 'mine' })
 })
 
 router.post('/lists', requireAuth, async (req, res) => {
     try {
         await vocabEngine.createList(req.user.id, req.body.name, req.body.description, req.body.visibility || "private")
-        res.redirect('/vocab/lists', { success: true, message: "List created successfully" })
+        res.redirect('/vocab/lists')
     } catch (error) {
-        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
+        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
         res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
     }
 })
@@ -263,9 +263,9 @@ router.post('/lists', requireAuth, async (req, res) => {
 router.post('/lists/:id/delete', requireAuth, async (req, res) => {
     try {
         await vocabEngine.deleteList(req.user.id, req.params.id)
-        res.redirect('/vocab/lists', { success: true, message: "List deleted successfully" })
+        res.redirect('/vocab/lists')
     } catch (error) {
-        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(), vocabEngine.getSharedWithMe(req.user.id)])
+        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
         res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
     }
 })
@@ -317,7 +317,7 @@ router.post('/lists/:id/clone', requireAuth, async (req, res) => {
 })
 router.post('/lists/:id/share', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.sareList(req.params.id, req.user.id, req.body.email);
+        await vocabEngine.shareList(req.params.id, req.user.id, req.body.email);
         res.redirect(`/vocab/lists/${req.params.id}`);
     } catch (err) {
         res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
