@@ -65,4 +65,16 @@ router.get('/leaderboard', optionalAuth, async (req, res) => {
   }
 })
 
+router.get('/analytics', requireAuth, async (req, res) => {
+  try {
+    const [sessions, trend, timeANalytics] = await Promise.all([
+      dashboardEngine.getSessionAnalytics(req.user.id),
+      dashboardEngine.getPerformanceTrend(req.user.id),
+      dashboardEngine.getTimeAnalytics(req.user.id)
+    ])
+    res.render('dashboard/analytics', { user: req.user, sessions, trend, timeAnalytics: timeANalytics, error: null });
+  } catch (error) {
+    res.render('dashboard/analytics', { user: req.user, sessions: [], trend: [], timeAnalytics: [], error: error.message });
+  }
+})
 module.exports = router;

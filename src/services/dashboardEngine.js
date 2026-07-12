@@ -1,6 +1,7 @@
 const supabase = require('../lib/supabase');
 
 class DashboardEngine {
+
     async getUserDashboardData(userId) {
         try {
             const [quizzesResult, vocabCountResult, qualityResult, feedbackData, practiceStates, recentAttempts] = await Promise.all([
@@ -32,7 +33,6 @@ class DashboardEngine {
         }
     }
 
-
     async getPracticeStats(userId) {
         try {
             const { data: practiceStates, error } = await supabase
@@ -56,6 +56,7 @@ class DashboardEngine {
             return { attempted: 0, markedForReview: 0, accuracy: 0, correct: 0 };
         }
     }
+
     async getTopicBreakdown(userId) {
         const { data: attempts, error } = await supabase
             .from('user_question_attempts')
@@ -74,6 +75,7 @@ class DashboardEngine {
         }
         return Object.entries(breakdown).map(([, g]) => ({ ...g, accuracy: g.correct / g.total * 100 })).sort((a, b) => a.accuracy - b.accuracy);
     }
+
     async getLeaderboard({ limit = 50, offset = 0, userId }) {
         const { data: profiles } = await supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard', true)
         if (!profiles || !profiles.length) return { entries: [], totalCount: 0, userRank: null }
@@ -144,6 +146,35 @@ class DashboardEngine {
         }
         return Object.values(dayMap).reverse()
     }
+
+    async getSessionAnalytics(userId) {
+        const { data: attempts } = await supabase.from('user_question_attempts').select('*, sat_questions!inner(subject,topic)').eq('user_id', userId).order('attempt_time', { ascending: true })
+        if (!attempts || !attempts?.length) return []
+        const sessions = []
+        let current = { date: null, total: 0, correct: 0, timeMs: 0, questions: [] }
+        for (const att of attempts) {
+            const day = att.attempt.time.split("T")[0]
+            if (current.date !== day) {
+                if (current.date) sessions.push(current)
+                current = { date: day, total: 0, correct: 0, timeMs: 0, questions: [] }
+            }
+            current.total++
+            if (att.is_correct) current.correct++
+            current.timeMs += a.time_taken_ms || 0
+            current.questions.push(
+                {
+                    id: att.question_id,
+                    subject: att.sat_questions.subject,
+                    topic: att.sat_questions.topic,
+                    correct: att.is_correct
+                }
+            )
+
+        }
+        if (current.date) sessions.push(current)
+        return sessions.slice(-30).map(session => ({ ...session, timeSec: Math.round(session.timeMs / 1000), accuracy: session.total ? Math.round(session.correct / session.total * 100) : 0 }))
+    }
+
     async getStreak(userId) {
         const { data, error } = await supabase
             .from('user_question_attempts')
@@ -187,6 +218,27 @@ class DashboardEngine {
 
         return { currentStreak, longestStreak };
     }
+
+    async getPerformanceTrend(userId) {
+        const sessions = await this.getSessionAnalytics(userId)
+        return sessions.map(session => ({
+            date: session.date, accuracy: session.accuracy, total: session.total, correct: session.correct
+        }))
+    }
+
+    async getTimeAnalytics(userId) {
+        const { data: attempts } = await supabase.from('user_question_attempts').select('time_taken_ms, is_correct').eq('user_id', userId)
+        if (!attempts || !attempts.length) return { totalTimeSec: 0, avgTimeSec: 0, totalQuestions: 0, fastestTimeSec: 0, slowestTimeSec: 0 }
+        const times = attempts.map(att => att.time_taken_ms || 0).filter(t => t > 0)
+        return {
+            totalTimeSec: Math.round(times.reduce((acc, t) => acc + t, 0) / 1000),
+            avgTimeSec: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length / 1000) : 0,
+            totalQuestions: attempts.length,
+            fastestTimeSec: times.length ? Math.round(Math.min(...times) / 1000) : 0,
+            slowestTimeSec: times.length ? Math.round(Math.max(...times) / 1000) : 0
+        }
+    }
+
     async getRecentFeedback(userId) {
         const { data: feedback, error } = await supabase
             .from('feedback_events')
@@ -205,6 +257,7 @@ class DashboardEngine {
         const wordsMap = Object.fromEntries(words.map(w => [w.id, w.word]));
         return feedback.map(f => ({ ...f, word: wordsMap[f.word_id] || 'Unknown' }));
     }
+
     async getRecentQuizzes(userId) {
         const { data: quizzes, error } = await supabase
             .from('quiz_attempts')

@@ -1,0 +1,85 @@
+<% title = 'Analytics'; %>
+<div class="dashboard">
+  <div class="dash-header">
+    <div>
+      <h1>Analytics</h1>
+      <p class="dash-subtitle">Session history and performance trends</p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/dashboard" class="btn btn-outline btn-sm">Dashboard</a>
+      <a href="/practice" class="btn btn-primary btn-sm">Practice</a>
+    </div>
+  </div>
+  <% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+  <% } %>
+  <!-- Time Overview -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Time Summary</h2>
+    </div>
+    <div class="dash-card-body">
+      <div class="mini-stat-grid">
+        <div class="mini-stat">
+          <div class="mini-stat-value"><%= Math.floor(timeAnalytics.totalTimeSec / 60) %>m <%= timeAnalytics.totalTimeSec % 60 %>s</div>
+          <div class="mini-stat-label">Total Study Time</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-value"><%= timeAnalytics.avgTimeSec %>s</div>
+          <div class="mini-stat-label">Avg per Question</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-value"><%= timeAnalytics.totalQuestions %></div>
+          <div class="mini-stat-label">Total Questions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Trend Chart -->
+  <% if (trend.length >= 2) { %>
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Accuracy Trend (Last <%= trend.length %> sessions)</h2>
+    </div>
+    <div class="dash-card-body" style="padding:1rem;">
+      <% var maxVal = Math.max(...trend.map(t => t.accuracy), 100); %>
+      <svg viewBox="0 0 <%= trend.length * 60 + 60 %> 220" style="width:100%;height:220px;">
+        <text x="0" y="20" font-size="12" fill="var(--text-muted)">100%</text>
+        <text x="0" y="120" font-size="12" fill="var(--text-muted)">50%</text>
+        <text x="0" y="210" font-size="12" fill="var(--text-muted)">0%</text>
+        <% trend.forEach(function(t, i) { %>
+        <% var x = 50 + i * 60; var h = (t.accuracy / maxVal) * 180; %>
+        <rect x="<%= x - 10 %>" y="<%= 200 - h %>" width="20" height="<%= h %>" rx="3" fill="<%= t.accuracy >= 70 ? 'var(--success)' : t.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>" opacity="0.8">
+          <title><%= t.date %>: <%= t.accuracy %>% (<%= t.correct %>/<%= t.total %>)</title>
+        </rect>
+        <text x="<%= x %>" y="215" text-anchor="middle" font-size="10" fill="var(--text-muted)"><%= t.date.slice(5) %></text>
+        <% }) %>
+      </svg>
+    </div>
+  </div>
+  <% } %>
+  <!-- Session List -->
+  <div class="dash-card">
+    <div class="dash-card-header">
+      <h2>Sessions (<%= sessions.length %>)</h2>
+    </div>
+    <div class="dash-card-body">
+      <% if (sessions.length === 0) { %>
+      <p class="empty-state">No sessions yet. Start practicing to see data here.</p>
+      <% } else { %>
+      <% sessions.slice().reverse().forEach(function(s) { %>
+      <div class="topic-row" style="cursor:default;">
+        <div class="topic-info">
+          <span class="topic-subject"><%= s.date %></span>
+          <span class="topic-name"><%= s.correct %>/<%= s.total %> correct</span>
+        </div>
+        <div class="topic-right">
+          <span class="topic-accuracy" style="color:<%= s.accuracy >= 70 ? 'var(--success)' : s.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>;"><%= s.accuracy %>%</span>
+          <span style="font-size:0.85rem;color:var(--text-muted);margin-left:0.75rem;"><%= Math.floor(s.timeSec / 60) %>m <%= s.timeSec % 60 %>s</span>
+        </div>
+      </div>
+      <% }) %>
+      <% } %>
+    </div>
+  </div>
+</div>
