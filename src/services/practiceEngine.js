@@ -3,9 +3,9 @@ class PracticeEngine {
     async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
         if (active === true)
-            query = query.eq('is_active', false);
-        else if (active === false)
             query = query.eq('is_active', true);
+        else if (active === false)
+            query = query.eq('is_active', false);
         if (subject)
             query = query.eq('subject', subject);
         if (topic)
@@ -147,7 +147,7 @@ class PracticeEngine {
             const ids = bySubject.data.filter(subj => subj.status === "solved_correct").map(subj => subj.question_id)
             if (ids.length) {
                 const { data: qs } = await supabase.from('sat_questions').select('id, subject').in('id', ids);
-                qs?.forEach(q => { bySubj[q.subject] ? bySubj[q.subject]++ : bySubj[q.subject] = 1 })
+                qs?.forEach(q => { if (bySubj[q.subject] == null) bySubj[q.subject] = 0; bySubj[q.subject]++ })
 
             }
         }

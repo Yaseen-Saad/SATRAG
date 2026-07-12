@@ -93,8 +93,6 @@
   const backEl = document.getElementById('card-back');
   const progressFill = document.getElementById('progress-fill');
   const progressText = document.getElementById('progress-text');
-  const ratingsEl = document.getElementById('ratings');
-  const completeEl = document.getElementById('fc-complete');
   const completeStats = document.getElementById('complete-stats');
 
   function flipCard(e) {
@@ -137,7 +135,7 @@
         </button>
       </div>
     `;
-    ratingsEl = document.getElementById('ratings');
+    const ratingsEl = document.getElementById('ratings');
     cardEl.classList.remove('flipped');
     flipped = false;
     reviewing = false;

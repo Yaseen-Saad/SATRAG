@@ -45,7 +45,7 @@ class settingsEngine {
     }
     async toggleParticipateInLeaderboard(user, enabled) {
         try {
-            await supabase.from('public_profiles').update({ participate_in_leaderboard: enabled }).eq('id', user.id);
+            await this.supabase.from('public_profiles').update({ participate_in_leaderboard: enabled }).eq('id', user.id);
         } catch (err) { return err }
     }
 

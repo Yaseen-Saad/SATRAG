@@ -15,7 +15,7 @@ router.get('/', requireAuth, async (req, res) => {
         res.render('flashcards/index', { user: req.user, stats, listDueCounts: dueCounts, lists, error: null })
     } catch (error) {
         console.error('Flashcards overview error:', error)
-        res.render('flashcards/index', { user: req.user, stats: { totalCards: 0, dueCards: 0 }, listDueCounts: {}, lists: [], error: 'Error loading flashcards overview' })
+        res.render('flashcards/index', { user: req.user, stats: { totalCards: 0, dueToday: 0, mastered: 0, totalLists: 0 }, listDueCounts: [], lists: [], error: 'Error loading flashcards overview' })
     }
 })
 
@@ -40,7 +40,7 @@ router.get('/session', requireAuth, async (req, res) => {
 router.post('/review', requireAuth, async (req, res) => {
     try {
         const { wordId, quality } = req.body
-        if (!wordId || quality == null) return res.status(400).json({ errpr: "Missing wordId or quality" })
+        if (!wordId || quality == null) return res.status(400).json({ error: "Missing wordId or quality" })
         const q = parseInt(quality, 10)
         if (![0, 2, 3, 5].includes(q)) return res.status(400).json({ error: "Invalid quality value" })
         await flashcardsEngine.submitReview(req.user.id, wordId, q)
