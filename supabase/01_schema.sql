@@ -115,21 +115,10 @@ CREATE TABLE IF NOT EXISTS user_question_attempts (
 );
 
 
--- Words Lists
-CREATE TABLE IF NOT EXISTS word_lists (
-    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
-    name TEXT NOT NULL UNIQUE,
-    display_name TEXT NOT NULL,
-    author TEXT,
-    word_count INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
-
 
 -- General Words Lists
 CREATE TABLE IF NOT EXISTS word_lists (
-    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     visibility TEXT NOT NULL CHECK (visibility IN ('public', 'private')) DEFAULT 'private',
@@ -145,7 +134,7 @@ CREATE TABLE IF NOT EXISTS word_lists (
 );
 
 CREATE TABLE IF NOT EXISTS word_list_entries (
-    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     list_id UUID REFERENCES word_lists ON DELETE CASCADE NOT NULL,
     word_id UUID REFERENCES vocab_entries ON DELETE CASCADE NOT NULL,
     sort_order INT DEFAULT 0,
@@ -164,7 +153,7 @@ CREATE TABLE IF NOT EXISTS list_shares (
 
 -- User Custom Words Lists
 CREATE TABLE IF NOT EXISTS user_word_lists (
-    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users NOT NULL DEFAULT auth.uid(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
@@ -175,7 +164,7 @@ CREATE TABLE IF NOT EXISTS user_word_lists (
 
 -- User Custom Words List
 CREATE TABLE IF NOT EXISTS user_word_list_items (
-    id UUID NOT NULL PRIMARY KEY gen_random_uuid(),
+    id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
     list_id UUID REFERENCES user_word_lists NOT NULL,
     word_id UUID REFERENCES vocab_entries NOT NULL,
     sort_order INT DEFAULT 0,

@@ -233,18 +233,6 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
     }
 })
 
-router.get('/:word', optionalAuth, async (req, res) => {
-    const entry = await rag.findByWord(req.params.word.toUpperCase());
-    if (!entry) {
-        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
-    }
-    let lists = [];
-    if (req.user) {
-        lists = await vocabEngine.getMyLists(req.user.id);
-    }
-    res.render('vocab/word', { user: req.user, entry, lists, error: null })
-});
-
 router.get('/lists', requireAuth, async (req, res) => {
     const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
     res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: req.query.tab || 'mine' })
@@ -353,5 +341,18 @@ router.post('/lists/:id/share-link/toggle', requireAuth, async (req, res) => {
         res.redirect(`/vocab/lists/${req.params.id}?error=${encodeURIComponent(errr.message)}`)
     }
 })
+
+router.get('/:word', optionalAuth, async (req, res) => {
+    const entry = await rag.findByWord(req.params.word.toUpperCase());
+    if (!entry) {
+        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+    }
+    let lists = [];
+    if (req.user) {
+        lists = await vocabEngine.getMyLists(req.user.id);
+    }
+    res.render('vocab/word', { user: req.user, entry, lists, error: null })
+});
+
 
 module.exports = router;
