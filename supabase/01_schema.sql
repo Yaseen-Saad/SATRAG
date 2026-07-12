@@ -193,50 +193,56 @@ VALUES
    NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- RLS
+-- RLS: sat_questions (anyone can CRUD)
 ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Enable all on sat_questions" ON sat_questions;
-CREATE POLICY "Enable all on sat_questions" ON sat_questions
-    FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "sat_questions select" ON sat_questions FOR SELECT USING (true);
+CREATE POLICY "sat_questions insert" ON sat_questions FOR INSERT WITH CHECK (true);
+CREATE POLICY "sat_questions update" ON sat_questions FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "sat_questions delete" ON sat_questions FOR DELETE USING (true);
 
 -- RLS: user_question_state (users own their rows)
 ALTER TABLE user_question_state ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Enable own user_question_state" ON user_question_state;
-CREATE POLICY "Enable own user_question_state" ON user_question_state
-    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
-
--- RLS:
-ALTER TABLE word_lists ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Enable own word_lists" ON word_lists;
-CREATE POLICY "Enable own word_lists" ON word_lists
-    FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
-
--- RLS:
-ALTER TABLE word_list_entries ENABLE ROW LEVEL SECURITY;
-
--- RLS: public_profiles (view everyone)
-ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Public Profiles are viewable by everyone" ON public_profiles;
-CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles
-    FOR SELECT USING (true);
-
--- RLS: public_profiles (edit your own)
-DROP POLICY IF EXISTS "Users can update their own public profile only" ON public_profiles;
-CREATE POLICY "Users can update their own public profile only" ON public_profiles
-    FOR UPDATE USING (auth.uid()=id) ;
+CREATE POLICY "user_question_state select" ON user_question_state FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "user_question_state insert" ON user_question_state FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "user_question_state update" ON user_question_state FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "user_question_state delete" ON user_question_state FOR DELETE USING (auth.uid() = user_id);
 
 -- RLS: user_question_attempts (users own their rows)
 ALTER TABLE user_question_attempts ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Enable own user_question_attempts" ON user_question_attempts;
-CREATE POLICY "Enable own user_question_attempts" ON user_question_attempts
-    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "user_question_attempts select" ON user_question_attempts FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "user_question_attempts insert" ON user_question_attempts FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "user_question_attempts delete" ON user_question_attempts FOR DELETE USING (auth.uid() = user_id);
+
+-- RLS: word_lists (owners only)
+ALTER TABLE word_lists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "word_lists owner all" ON word_lists
+    FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+
+-- RLS: word_list_entries (owners of parent list)
+ALTER TABLE word_list_entries ENABLE ROW LEVEL SECURITY;
+
+-- RLS: public_profiles (view everyone, edit your own)
+ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update their own public profile only" ON public_profiles FOR UPDATE USING (auth.uid() = id);
+
 -- Avatars Policies
-DROP POLICY IF EXISTS "Public read access to avatars" ON storage.objects;
-CREATE POLICY "Public read access to avatars" ON storage.objects
-    FOR SELECT USING (bucket_id = 'avatars' AND public = true);
+DROP POLICY IF EXISTS "Avatars select if bucket is public" ON storage.objects;
+CREATE POLICY "Avatars select if bucket is public"
+ON storage.objects FOR SELECT TO public
+USING (
+  bucket_id = 'avatars'
+  AND (SELECT b.public FROM storage.buckets b WHERE b.id = bucket_id) = true
+);
+
 DROP POLICY IF EXISTS "Allow uploads to avatars" ON storage.objects;
 CREATE POLICY "Allow uploads to avatars" ON storage.objects
-    FOR INSERT USING (bucket_id = 'avatars' AND auth.role() = 'authenticated' AND (storage.foldername(name))[1] = auth.uid()::text);
+  FOR INSERT
+  WITH CHECK (
+    bucket_id = 'avatars'
+    AND auth.role() = 'authenticated'
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
 
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
