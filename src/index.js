@@ -16,6 +16,7 @@ const feedbackRoutes = require('./routes/feedback');
 const dashboardRoutes = require('./routes/dashboard');
 const practiceRoutes = require('./routes/practice');
 const settingsRoutes = require('./routes/settings');
+const flashcardsEngine = require('./services/flashcardsEngine');
 const { requireProfileComplete } = require('./middleware/profile');
 
 const app = express();
@@ -57,6 +58,7 @@ app.use('/vocab', vocabRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/practice', practiceRoutes);
+app.use('/flashcards', flashcardsEngine)
 app.use('/settings', settingsRoutes);
 
 // Error Handler

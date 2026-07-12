@@ -154,7 +154,28 @@
         </div>
       </div>
 
-
+ <div class="dash-card" style="margin-top:1rem;">
+          <div class="dash-card-header">
+            <h2>Flashcard Progress</h2>
+            <a href="/flashcards" class="btn btn-ghost btn-sm">Practice</a>
+          </div>
+          <div class="dash-card-body">
+            <div class="mini-stat-grid">
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= flashcardStats?.dueToday || 0 %></div>
+                <div class="mini-stat-label">Due Today</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= flashcardStats?.mastered || 0 %></div>
+                <div class="mini-stat-label">Mastered</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-value"><%= flashcardStats?.totalCards || 0 %></div>
+                <div class="mini-stat-label">Total Cards</div>
+              </div>
+            </div>
+          </div>
+        </div>
       <!-- Recent Feedback -->
       <div class="dash-card">
         <div class="dash-card-header">

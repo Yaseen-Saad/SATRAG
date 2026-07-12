@@ -1,0 +1,91 @@
+const { service: supabase } = require('../lib/supabase')
+
+class FlashcardsEngine {
+
+    async getStats(userId) {
+        const now = new Date().toISOString()
+        const [total, due, masteredd] = await Promise.all([
+            supabase.from('user_flashcards_progress').select('id', { count: 'exact', head: true }).eq('created_by', userId),
+            supabase.from('user_flashcards_progress').select('id', { count: 'exact', head: true }).eq('created_by', userId).lte('next_review', now),
+            supabase.from('user_flashcards_progress').select('id', { count: 'exact', head: true }).eq('created_by', userId).gte('next_review', now)
+        ])
+
+        const { count: listCount } = await supabase.from('word_lists').select('id', { count: 'exact', head: true }).eq('created_by', userId).neq('visibility', 'system')
+        return {
+            totalCards: total.count || 0,
+            dueToday: due.count || 0,
+            mastered: masteredd.count || 0,
+            totalLists: listCount || 0
+        }
+    }
+
+    async getListDueCounts(userId) {
+        const { data: lists } = await supabase.from('word_lists').select('id, name, word_count').eq('created_by', userId).neq('visibility', 'system')
+        if (!lists || lists.length === 0) return []
+        const { data: progress } = await supabase
+            .from('user_flashcards_progress').select('word_id').eq('user_id', userId).lte('next_review', new Date().toISOString())
+
+        const dueIds = new Set((progress || []).map(prog => prog.word_id))
+
+        const { data: entries } = await supabase.from('word_list_entries').select('list_id, word_id')
+
+        return lists.map(list => ({
+            ...list, dueCount: (entries || []).filter(entry => entry.list_id === list.id && dueIds.has(entry.word_id)).length
+        }))
+    }
+
+    async getSessionCards(userId, { listId, wordId }) {
+        if (wordId) {
+            await this.ensureWordInitialized(userId, wordId)
+            const { data } = await supabase.from('user_flashcards_progress').select('*, vocab_entries(*)').eq('user_id', userId).eq('word_id', wordId).single()
+            return data ? [data] : []
+        }
+        if (listId) {
+            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId)
+            if (!entries || entries.length === 0) return []
+            const wordIds = (entries || []).map(entry => entry.word_id)
+            await Promise.all(wordIds.map(wordId => this.ensureWordInitialized(userId, wordId)))
+            const { data } = await supabase.from('user_flashcards_progress').select('*, vocab_entries(*)').eq('user_id', userId).in('word_id', wordIds).order('next_review', { ascending: true })
+            return data || []
+        }
+    }
+
+    async ensureWordInitialized(userId, wordId) {
+        const { data: existing } = await supabase
+            .from('user_flashcards_progress').select('id').eq('user_id', userId).eq('word_id', wordId).maybeSingle()
+        if (existing) return
+        const now = new Date().toISOString()
+        await supabase.from('user_flashcards_progress').insert({ user_id: userId, word_id: wordId, stage: 0, ease_factor: 2.5, next_review: now, created_at: now, updated_at: now, interval_days: 0, review_count: 0, correct_count: 0, incorrect_count: 0 })
+    }
+
+    async submitReview(userId, wordId, quality) {
+        const { data: card } = await supabase.from('user_flashcards_progress').select('*').eq('user_id', userId).eq('word_id', wordId).single()
+        if (!card) throw new Error('Card not found')
+        const updates = this.applySM2(card, quality)
+        const { error } = await supabase.from('user_flashcards_progress').update(updates).eq('id', card.id)
+        if (error) throw error
+        return { success: true }
+    }
+
+    async applySM2(card, quality) {
+        let { stage, ease_factor, interval_days: interval } = card
+        if (quality < 3) {
+            stage = 0
+            interval = 0
+        } else {
+            if (stage === 0) { stage = 1; interval = 1 }
+            else if (stage === 1) { stage = 2; interval = 6 }
+            else { stage += 1; interval = Math.round(interval * ease_factor) }
+        }
+        ease_factor = Math.max(1.3, ease_factor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)))
+        const now = new Date()
+        const next_review = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000).toISOString()
+        return { stage, ease_factor, interval_days: interval, next_review, last_reviewed: now.toISOString(), review_count: card.review_count + 1, correct_count: card.correct_count + (quality >= 3 ? 1 : 0), incorrect_count: card.incorrect_count + (quality < 3 ? 1 : 0) }
+    }
+
+    async removeWord(userId, wordId) {
+        await supabase.from('user_flashcards_progress').delete().eq('user_id', userId).eq('word_id', wordId)
+    }
+}
+
+module.exports = new FlashcardsEngine();

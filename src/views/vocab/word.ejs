@@ -52,6 +52,20 @@
     <a href="/vocab" class="btn-primary">New Word</a>
     <a href="/vocab/generate/<%= entry.word %>" class="btn-warning">Regenerate</a>
     <a href="/vocab/lists" class="btn-secondary">My Lists</a>
+ <form method="POST" action="/flashcards/word/<%= entry.id %>/add" style="display:inline;" class="flashcard-add-form">
+  <button type="submit" class="btn btn-outline btn-sm">Add to Flashcards</button>
+</form>
+<script>
+  document.querySelector('.flashcard-add-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = this.querySelector('button');
+    btn.textContent = 'Adding...';
+    fetch(this.action, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) { btn.textContent = d.success ? 'Added!' : 'Error'; })
+      .catch(function() { btn.textContent = 'Error'; });
+  });
+</script>
   </div>
   <div style="margin-top:1rem; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
     <form method="POST" action="/vocab/lists/new/add" style="display:flex; gap:0.5rem; align-items:center;">

@@ -41,7 +41,8 @@ router.get('/', requireAuth, async (req, res) => {
       streak,
       recentFeedback,
       recentQuizzes,
-      dailyWord, vocabStats
+      dailyWord,
+      vocabStats
     });
   } catch (err) {
     console.error('Dashboard error:', err);

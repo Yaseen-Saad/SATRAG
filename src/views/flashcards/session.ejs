@@ -1,0 +1,205 @@
+<% title = 'Flashcards' %>
+<div class="fc-page">
+  <div class="fc-header">
+    <h1><%= listName %></h1>
+    <a href="/flashcards" class="btn btn-ghost btn-sm">Exit</a>
+  </div>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <% if (!cards || cards.length === 0) { %>
+  <div class="fc-empty">
+    <p>No cards to review right now. All caught up!</p>
+    <a href="/flashcards" class="btn btn-primary" style="margin-top:1rem;">Back to Overview</a>
+  </div>
+  <% } else { %>
+  <div class="fc-progress-bar">
+    <div class="fc-progress-fill" id="progress-fill" style="width:<%= Math.round(100 / cards.length) %>%"></div>
+  </div>
+  <div class="fc-progress-text" id="progress-text">1 of <%= cards.length %></div>
+
+  <div class="fc-session">
+    <div class="fc-card" id="fc-card" onclick="flipCard(event)">
+      <div class="fc-card-inner">
+        <div class="fc-card-front" id="card-front">
+          <div class="fc-card-word"><%= cards[0].vocab_entries.word %></div>
+          <% if (cards[0].vocab_entries.pronunciation) { %>
+          <div class="fc-card-pronunciation"><%= cards[0].vocab_entries.pronunciation %></div>
+          <% } %>
+          <% if (cards[0].vocab_entries.part_of_speech) { %>
+          <div class="fc-card-pos"><%= cards[0].vocab_entries.part_of_speech %></div>
+          <% } %>
+          <div class="fc-card-hint">Tap to reveal</div>
+        </div>
+        <div class="fc-card-back" id="card-back">
+          <div class="fc-card-definition"><%= cards[0].vocab_entries.definition %></div>
+          <% if (cards[0].vocab_entries.example_sentence) { %>
+          <div class="fc-card-example">"<%= cards[0].vocab_entries.example_sentence %>"</div>
+          <% } %>
+          <% if (cards[0].vocab_entries.mnemonic_phrase) { %>
+          <div class="fc-card-mnemonic"><%= cards[0].vocab_entries.mnemonic_phrase %></div>
+          <% } %>
+          <div class="fc-ratings" id="ratings">
+            <button class="fc-rating-btn again" onclick="rateCard(0, event)" data-shortcut="1">
+              <span class="rating-label">Again</span>
+              <span class="rating-shortcut">1</span>
+            </button>
+            <button class="fc-rating-btn hard" onclick="rateCard(2, event)" data-shortcut="2">
+              <span class="rating-label">Hard</span>
+              <span class="rating-shortcut">2</span>
+            </button>
+            <button class="fc-rating-btn good" onclick="rateCard(3, event)" data-shortcut="3">
+              <span class="rating-label">Good</span>
+              <span class="rating-shortcut">3</span>
+            </button>
+            <button class="fc-rating-btn easy" onclick="rateCard(5, event)" data-shortcut="4">
+              <span class="rating-label">Easy</span>
+              <span class="rating-shortcut">4</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-complete" id="fc-complete" style="display:none;">
+    <div class="fc-complete-icon">🎉</div>
+    <h2>Session Complete!</h2>
+    <div class="fc-complete-stats" id="complete-stats"></div>
+    <div class="fc-complete-actions">
+      <a href="/flashcards" class="btn btn-primary">Back to Overview</a>
+      <% if (listId) { %>
+      <form method="POST" action="/flashcards/list/<%= listId %>/start" style="display:inline;">
+        <button type="submit" class="btn btn-outline">Study Again</button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<% if (cards && cards.length > 0) { %>
+<script>
+  const cards = <%- JSON.stringify(cards) %>;
+  let currentIndex = 0;
+  let flipped = false;
+  let reviewing = false;
+  const results = [];
+
+  const cardEl = document.getElementById('fc-card');
+  const frontEl = document.getElementById('card-front');
+  const backEl = document.getElementById('card-back');
+  const progressFill = document.getElementById('progress-fill');
+  const progressText = document.getElementById('progress-text');
+  const ratingsEl = document.getElementById('ratings');
+  const completeEl = document.getElementById('fc-complete');
+  const completeStats = document.getElementById('complete-stats');
+
+  function flipCard(e) {
+    if (e.target.closest('.fc-ratings')) return;
+    if (reviewing) return;
+    cardEl.classList.toggle('flipped');
+    flipped = !flipped;
+  }
+
+  function renderCard(index) {
+    const card = cards[index];
+    if (!card) return showComplete();
+    const v = card.vocab_entries;
+    frontEl.innerHTML = `
+      <div class="fc-card-word">${v.word}</div>
+      ${v.pronunciation ? `<div class="fc-card-pronunciation">${v.pronunciation}</div>` : ''}
+      ${v.part_of_speech ? `<div class="fc-card-pos">${v.part_of_speech}</div>` : ''}
+      <div class="fc-card-hint">Tap to reveal</div>
+    `;
+    backEl.innerHTML = `
+      <div class="fc-card-definition">${v.definition}</div>
+      ${v.example_sentence ? `<div class="fc-card-example">“${v.example_sentence}”</div>` : ''}
+      ${v.mnemonic_phrase ? `<div class="fc-card-mnemonic">${v.mnemonic_phrase}</div>` : ''}
+      <div class="fc-ratings" id="ratings">
+        <button class="fc-rating-btn again" onclick="rateCard(0, event)" data-shortcut="1">
+          <span class="rating-label">Again</span>
+          <span class="rating-shortcut">1</span>
+        </button>
+        <button class="fc-rating-btn hard" onclick="rateCard(2, event)" data-shortcut="2">
+          <span class="rating-label">Hard</span>
+          <span class="rating-shortcut">2</span>
+        </button>
+        <button class="fc-rating-btn good" onclick="rateCard(3, event)" data-shortcut="3">
+          <span class="rating-label">Good</span>
+          <span class="rating-shortcut">3</span>
+        </button>
+        <button class="fc-rating-btn easy" onclick="rateCard(5, event)" data-shortcut="4">
+          <span class="rating-label">Easy</span>
+          <span class="rating-shortcut">4</span>
+        </button>
+      </div>
+    `;
+    ratingsEl = document.getElementById('ratings');
+    cardEl.classList.remove('flipped');
+    flipped = false;
+    reviewing = false;
+    const pct = ((index + 1) / cards.length * 100).toFixed(1);
+    progressFill.style.width = pct + '%';
+    progressText.textContent = (index + 1) + ' of ' + cards.length + '  (' + v.word + ')';
+  }
+
+  function rateCard(quality, e) {
+    if (e) e.stopPropagation();
+    if (reviewing) return;
+    reviewing = true;
+    const card = cards[currentIndex];
+    results.push({
+      word: card.vocab_entries.word,
+      quality
+    });
+    fetch('/flashcards/review', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        wordId: card.word_id,
+        quality
+      })
+    }).then(r => r.json()).then(data => {
+      currentIndex++;
+      if (currentIndex < cards.length) renderCard(currentIndex);
+      else showComplete();
+    }).catch(err => {
+      console.error('Review failed:', err);
+      reviewing = false;
+    });
+  }
+
+  function showComplete() {
+    document.querySelector('.fc-session').style.display = 'none';
+    document.querySelector('.fc-card').style.display = 'none';
+    document.getElementById('fc-complete').style.display = 'block';
+    const again = results.filter(r => r.quality < 3).length;
+    const good = results.filter(r => r.quality >= 3).length;
+    const pct = cards.length ? Math.round(good / cards.length * 100) : 0;
+    completeStats.innerHTML = `
+      <div class="fc-complete-stat"><div class="value">${cards.length}</div><div class="label">Cards Reviewed</div></div>
+      <div class="fc-complete-stat"><div class="value">${good}</div><div class="label">Correct (${pct}%)</div></div>
+      <div class="fc-complete-stat"><div class="value">${again}</div><div class="label">Need Review</div></div>
+    `;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      flipCard(e);
+      return;
+    }
+    if (!flipped) return;
+    var key = parseInt(e.key, 10);
+    if (key === 1) rateCard(0, e);
+    else if (key === 2) rateCard(2, e);
+    else if (key === 3) rateCard(3, e);
+    else if (key === 4) rateCard(5, e);
+  });
+</script>
+<% } %>
