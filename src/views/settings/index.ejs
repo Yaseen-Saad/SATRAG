@@ -5,107 +5,132 @@
     <p class="dash-subtitle">Manage your account and preferences</p>
   </div>
   <% if (typeof error !== 'undefined' && error){ %>
-  <div class="flash flash-error"><%=error%><button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
+  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
   <%}%>
-<% if (typeof success !== 'undefined' && success){ %>
-  <div class="flash flash-success"><%=success%><button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
+  <% if (typeof success !== 'undefined' && success){ %>
+  <div class="flash flash-success"><%= success %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
   <% } %>
   <% if (typeof prompt !== 'undefined' && prompt === "complete-profile"){ %>
-  <div class="flash flash-warning">Please complete your profile to access all features.<button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
+  <div class="flash flash-warning">Please complete your profile to access all features.<button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
   <% }else if(typeof prompt !== 'undefined' && prompt==="complete-apikeys"){ %>
-  <div class="flash flash-info">Set your LLM and Embeddings API Keys to unlock AI generation features.<button class="dismiss" onclick="this.parentElement.remove()">Dismiss</button></div>
+  <div class="flash flash-info">Set your LLM and Embeddings API Keys to unlock AI generation features.<button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
   <% } %>
 
-
-  <div class="dash-card">
-    <div class="dash-card-header">
-      <h2>Profile</h2>
-    </div>
-    <div class="dash-card-body">
-      <form action="/settings/changeFName" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;margin-bottom:1rem">
-        <div class="form-group" style="flex:1;margin:0"><label for="firstName">First Name</label><input type="text" value="<%= (profile && profile.first_name) || '' %>" name="firstName" required></div>
-        <div class="form-group" style="flex:1;margin:0"><label for="lastName">last Name</label><input type="text" value="<%= (profile && profile.last_name) || '' %>" name="lastName" required></div>
-        <button type="submit" class="btn btn-primary">Update Name</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="dash-card">
-    <div class="dash-card-header">
-      <h2>Grade Level</h2>
-    </div>
-    <div class="dash-card-body">
-      <form method="POST" action="/settings/changeGrade" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <select name="grade" required>
-            <% const grades = ['9','10','11','12','Gap Year','Other','I am not a student']; %>
-            <% const currentGrade = (profile && profile.grade) || ''; %>
-            <% grades.forEach(function(g) { %>
-            <option value="<%= g %>" <%= (currentGrade === g) ? 'selected' : '' %>><%= g %></option>
-            <% }) %>
-          </select>
+  <form action="/settings/update-all" method="POST" data-loading>
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <h2>Profile</h2>
+      </div>
+      <div class="dash-card-body">
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" value="<%= (profile && profile.first_name) || '' %>" required maxlength="100">
+          </div>
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" value="<%= (profile && profile.last_name) || '' %>" required maxlength="100">
+          </div>
         </div>
-        <button type="submit" class="btn-primary btn-sm">Update</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="dash-card">
-    <div class="dash-card-header">
-      <h2>API Keys</h2>
-    </div>
-    <div class="dash-card-body">
-      <form action="/settings/changeLLMkey" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="llmkey">LLM API Key</label>
-          <input type="password" name="llmkey" placeholder="sk-..." required>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.75rem;">
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<%= (profile && profile.email) || '' %>" readonly style="background:var(--surface-2);cursor:not-allowed;">
+          </div>
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="school">School</label>
+            <input type="text" id="school" name="school" value="<%= (profile && profile.school) || '' %>" required maxlength="200">
+          </div>
         </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
-      <form action="/settings/changeEmbeddingkey" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end; margin-top:0.75rem;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="embeddingKey">Embedding API Key</label>
-          <input type="password" name="embeddingKey" placeholder="sk-..." required>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.75rem;">
+          <div class="form-group" style="flex:1;min-width:150px;">
+            <label for="grade">Grade Level</label>
+            <select id="grade" name="grade">
+              <option value="">— Select —</option>
+              <% ['9','10','11','12','Gap Year','Other','I am not a student'].forEach(function(g) { %>
+              <option value="<%= g %>" <%= (profile && profile.grade === g) ? 'selected' : '' %>><%= g %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;min-width:150px;">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">— Select —</option>
+              <option value="male" <%= (profile && profile.gender === 'male') ? 'selected' : '' %>>Male</option>
+              <option value="female" <%= (profile && profile.gender === 'female') ? 'selected' : '' %>>Female</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;min-width:150px;">
+            <label for="birthdate">Birthdate</label>
+            <input type="date" id="birthdate" name="birthdate" value="<%= (profile && profile.birthdate) || '' %>">
+          </div>
         </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
+      </div>
     </div>
-  </div>
 
-
-  <div class="dash-card">
-    <div class="dash-card-header">
-      <h2>Avatar</h2>
-    </div>
-    <div class="dash-card-body">
-      <% if (profile && profile.avatar_url) { %>
-      <img src="<%= profile.avatar_url %>" alt="Avatar" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:0.75rem;">
-      <% } %>
-      <form action="/settings/avatar" method="POST" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="avatarUrl">Avatar Image URL</label>
-          <input type="url" name="avatarUrl" placeholder="https://example.com/avatar.jpg">
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <h2>API Keys</h2>
+      </div>
+      <div class="dash-card-body">
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <div class="form-group" style="flex:1;min-width:250px;">
+            <label for="llmKey">LLM API Key</label>
+            <input type="password" id="llmKey" name="llmKey" placeholder="sk-..." value="<%= (profile && profile.llm_apikey) || '' %>">
+          </div>
+          <div class="form-group" style="flex:1;min-width:250px;">
+            <label for="embeddingKey">Embedding API Key</label>
+            <input type="password" id="embeddingKey" name="embeddingKey" placeholder="sk-..." value="<%= (profile && profile.embedding_apikey) || '' %>">
+          </div>
         </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
+      </div>
     </div>
-  </div>
 
-  <div class="dash-card">
-    <div class="dash-card-header">
-      <h2>Preferences</h2>
-    </div>
-    <div class="dash-card-body">
-      <form action="/settings/changeLeaderboardStatus" method="POST" class="flex gap-1" style="display:flex; gap:0.5rem; align-items:end;">
-        <div class="form-group" style="flex:1; margin:0;">
-          <label for="leaderboardstatus">Leaderboard Status</label>
-          <select name="leaderboardstatus" required>
-            <% const lbEnabled = profile && profile.participate_in_leaderboard; %>
-            <option value="enabled" <%= lbEnabled ? 'selected' : '' %>>Enabled</option>
-            <option value="disabled" <%= !lbEnabled ? 'selected' : '' %>>Disabled</option>
-          </select>
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <h2>Avatar</h2>
+      </div>
+      <div class="dash-card-body">
+        <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+          <% if (profile && profile.avatar_url) { %>
+          <img src="<%= profile.avatar_url %>" alt="Avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">
+          <% } %>
+          <div class="form-group" style="flex:1;min-width:250px;margin:0;">
+            <label for="avatarUrl">Avatar Image URL</label>
+            <input type="url" id="avatarUrl" name="avatarUrl" placeholder="https://example.com/avatar.jpg" value="<%= (profile && profile.avatar_url) || '' %>">
+          </div>
         </div>
-        <button type="submit" class="btn-primary btn-sm">Save</button>
-      </form>
+      </div>
     </div>
-  </div>
+
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <h2>Preferences</h2>
+      </div>
+      <div class="dash-card-body">
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:end;">
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="referral">How did you hear about us?</label>
+            <select id="referral" name="referral">
+              <option value="">— Select —</option>
+              <% ['friend','socialmedia','school','teacher','other'].forEach(function(r) { %>
+              <option value="<%= r %>" <%= (profile && profile.referral === r) ? 'selected' : '' %>><%= r.charAt(0).toUpperCase() + r.slice(1) %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;min-width:200px;">
+            <label for="leaderboardstatus">Leaderboard</label>
+            <select id="leaderboardstatus" name="leaderboardstatus">
+              <option value="enabled" <%= (!profile || profile.participate_in_leaderboard !== false) ? 'selected' : '' %>>Enabled</option>
+              <option value="disabled" <%= (profile && profile.participate_in_leaderboard === false) ? 'selected' : '' %>>Disabled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem; text-align:right;">
+      <button type="submit" class="btn-primary btn-lg">Save All Settings</button>
+    </div>
+  </form>
+</div>
