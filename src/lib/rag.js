@@ -119,7 +119,7 @@ class RAGEngine {
         if (difficulty) query = query.eq('difficulty', difficulty);
         const { data } = await query;
         if (!data || !data.length) return []
-        return [...data].sort(_ => Math.random() - 0.5).slice(0, Math.min(count, data.length))
+        return [...data].sort(() => Math.random() - 0.5).slice(0, Math.min(count, data.length))
     }
     async generateSATQuestion({ subject, topic, difficulty }) {
         const examples = await this.findSATExamples({ subject, topic, difficulty, count: 3 });

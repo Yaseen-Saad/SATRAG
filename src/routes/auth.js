@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return res.render('auth/login', { error: error.message })
-    else await supabase.from('public_profiles').update({ last_login: Date.now() }).eq('id', data.user.id);
+    else await supabase.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).then(r => { if (r.error) console.error('last_login update failed:', r.error) });
     res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
     res.redirect('/')
 })

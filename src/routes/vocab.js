@@ -217,9 +217,9 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
             throw new Error(`LLM returned an unparseable response for "${w}". Try again.`)
         }
         const quality = qualityChecker.assessQuality(entry);
-        const evalResult = evaluator.evaluateEntry(entry, w);
+        const evalResult = await evaluator.evaluateEntry(entry, w);
         entry.quality_score = quality.overall;
-        entry.validation_passed = evalResult.isValid;
+        entry.validation_passed = evalResult?.isValid ?? false;
 
         const saved = await rag.addEntry(entry);
         if (req.body.satisfaction && parseInt(req.body.satisfaction) >= 7) {
@@ -308,7 +308,7 @@ router.post('/lists/:id/clone', requireAuth, async (req, res) => {
 router.get('/shared/:token', async (req, res) => {
     try {
         const result = await vocabEngine.getListByShareToken(req.params.token);
-        if (!result) return res.status(404).render('error', { message: 'Invalid or expired share link' });
+        if (!result) return res.status(404).render('error', { error: 'Invalid or expired share link', statusCode: 404 });
         res.render('vocab/list', {
             user: req.user || null,
             list: result.list,
@@ -318,7 +318,7 @@ router.get('/shared/:token', async (req, res) => {
             sharedView: true
         })
     } catch (err) {
-        res.status(500).render('error', { message: err.message })
+        res.status(500).render('error', { error: err.message, statusCode: 500 })
     }
 })
 

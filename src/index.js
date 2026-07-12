@@ -46,7 +46,7 @@ app.get('/', async (req, res) => {
 app.use('/auth', authRoutes);
 
 app.use((req, res, next) => {
-  const skip = ['/auth', '/settings', '/css', '/js', '/']
+  const skip = ['/auth', '/settings', '/css', '/js']
   if (skip.some(path => req.path.startsWith(path))) {
     return next();
   }

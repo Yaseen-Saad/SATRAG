@@ -28,6 +28,7 @@ class DashboardEngine {
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
+            return { avgScore: null, avgQualityScore: null, avgSatisfaction: null, practiceStates: [], recentAttempts: [] };
         }
     }
 
@@ -52,6 +53,7 @@ class DashboardEngine {
             };
         } catch (error) {
             console.error('Error fetching practice stats:', error);
+            return { attempted: 0, markedForReview: 0, accuracy: 0, correct: 0 };
         }
     }
     async getTopicBreakdown(userId) {
@@ -73,7 +75,7 @@ class DashboardEngine {
         return Object.entries(breakdown).map(([, g]) => ({ ...g, accuracy: g.correct / g.total * 100 })).sort((a, b) => a.accuracy - b.accuracy);
     }
     async getLeaderboard({ limit = 50, offset = 0, userId }) {
-        const { data: profiles } = await supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard')
+        const { data: profiles } = await supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard', true)
         if (!profiles || !profiles.length) return { entries: [], totalCount: 0, userRank: null }
         const userIds = profiles.map(p => p.id)
         const { data: attempts } = await supabase.from('user_question_attempts').select('user_id, is_correct').in('user_id', userIds);
@@ -129,12 +131,12 @@ class DashboardEngine {
         for (let i = 0; i < days; i++) {
             const date = new Date()
             date.setDate(date.getDate() - i)
-            const key = date.toISOString().split('T').slice(0, 10)
+            const key = date.toISOString().split('T')[0]
             dayMap[key] = { date: key, count: 0 }
         }
         if (data) {
             for (const attempt of data) {
-                const key = attempt.attempt_time.split('T').slice(0, 10)
+                const key = attempt.attempt_time.split('T')[0]
                 if (dayMap[key]) {
                     dayMap[key].count++
                 }
@@ -193,7 +195,7 @@ class DashboardEngine {
             .order('created_at', { ascending: false })
             .limit(10);
         if (error) throw error;
-        if (!feedback.length) return [];
+        if (!feedback?.length) return [];
         const wordIDs = [...new Set(feedback.map(f => f.word_id))];
         const { data: words, error: wordError } = wordIDs.length ? await supabase
             .from('vocab_entries')

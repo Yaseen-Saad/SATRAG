@@ -2,8 +2,10 @@ const { service: supabase } = require('../lib/supabase')
 class PracticeEngine {
     async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
-        if (active)
+        if (active === true)
             query = query.eq('is_active', false);
+        else if (active === false)
+            query = query.eq('is_active', true);
         if (subject)
             query = query.eq('subject', subject);
         if (topic)
@@ -128,7 +130,7 @@ class PracticeEngine {
             user_id: userId, question_id: questionId,
             marked_for_review: newVal,
             status: existing?.status || 'unsolved',
-        });
+        }, { onConflict: 'user_id, question_id' });
         if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
         return { marked: newVal }
     }
@@ -139,7 +141,7 @@ class PracticeEngine {
             supabase.from("user_question_attempts").select("is_correct").eq("user_id", userId),
             supabase.from("user_question_state").select("status, question_id").eq("user_id", userId),
         ])
-        const correctAnswers = totalAttempts?.data.filter(a => a.is_correct)
+        const correctAnswers = totalAttempts?.data?.filter(a => a.is_correct) || []
         const bySubj = { math: 0, reading: 0, writing: 0 }
         if (bySubject.data) {
             const ids = bySubject.data.filter(subj => subj.status === "solved_correct").map(subj => subj.question_id)
@@ -152,7 +154,7 @@ class PracticeEngine {
         return {
             totalQuestions: totalQuestions.count || 0,
             totalAttempts: totalAttempts?.count || 0,
-            correctAttempts: correctAnswers.length || 0,
+            correctAttempts: correctAnswers?.length || 0,
             solvedBySubject: bySubj
         }
     }

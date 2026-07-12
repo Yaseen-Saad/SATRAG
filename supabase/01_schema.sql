@@ -244,7 +244,6 @@ CREATE POLICY "Allow uploads to avatars" ON storage.objects
     AND (storage.foldername(name))[1] = auth.uid()::text
   );
 
-
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);
 CREATE INDEX IF NOT EXISTS idx_practice_subtopic ON sat_questions(subtopic);

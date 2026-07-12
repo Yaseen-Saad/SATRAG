@@ -98,7 +98,12 @@ router.get('/question/:id/mark', requireAuth, async (req, res) => {
     }
 })
 router.get('/history', requireAuth, async (req, res) => {
-    const { data: attempts } = await supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', req.user.id).order('attempt_time', { ascending: false }).limit(req.query.limit || 20)
-    res.render('practice/history', { user: req.user, error: null, attempts: attempts || [] })
+    try {
+        const { data: attempts } = await supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', req.user.id).order('attempt_time', { ascending: false }).limit(req.query.limit || 20)
+        res.render('practice/history', { user: req.user, error: null, attempts: attempts || [], questionId: req.query.questionId || null })
+    } catch (err) {
+        console.error('History error:', err);
+        res.render('practice/history', { user: req.user, error: 'Error loading history', attempts: [], questionId: null })
+    }
 })
 module.exports = router

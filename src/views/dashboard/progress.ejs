@@ -104,32 +104,7 @@
     </div>
   </div>
   <% } %>
-  <% if (dailyWord) {%>
-  <div class="dash-card" style="margin-top:1rem;">
-    <div class="dash-card-header">
-      <h2>Word of the Day</h2>
-      <a href="/vocab/<%=dailyWord.word%>" class="btn btn-ghost btn-sm">View Full Entry</a>
-    </div>
-    <div class="dash-card-body">
-      <div style="display:flex; align-items:center; gap:1rem" class="word-of-the-day">
-        <div class="word"><%= dailyWord.word %></div>
-        <div class="part-of-speech"><strong><%= dailyWord.part_of_speech %></strong></div>
-        <div class="definition"><%= dailyWord.definition %></div>
-        <% if (dailyWord.pronunciation){%>
-        <div class="pronunciation"><%= dailyWord.pronunciation %></div>
-        <%}%>
-        <% if (dailyWord.mnemonic_phrase){%>
-        <div class="mnemonic-phrase"><%= dailyWord.mnemonic_phrase %></div>
-        <%}%>
-        <% if (dailyWord.example_scentence){%>
-        <div class="example-scentence"><%= dailyWord.example_scentence %></div>
-        <%}%>
-    </div>
-  </div>
-<%}%>
-
-
-        <% if (dailyWord) { %>
+  <% if (dailyWord) { %>
         <div class="dash-card" style="margin-top:1rem;">
           <div class="dash-card-header">
             <h2>Word of the Day</h2>
@@ -143,35 +118,6 @@
         </div>
         <% } %>
 
-        <div class="dash-card" style="margin-top:1rem;">
-          <div class="dash-card-header">
-            <h2>Vocabulary Progress</h2>
-            <a href="/vocab" class="btn btn-ghost btn-sm">Vocab</a>
-          </div>
-          <div class="dash-card-body">
-            <div class="mini-stat-grid">
-              <div class="mini-stat">
-                <div class="mini-stat-value"><%= vocabStats.totalWords %></div>
-                <div class="mini-stat-label">Total Words</div>
-              </div>
-              <div class="mini-stat">
-                <div class="mini-stat-value"><%= vocabStats.listCount %></div>
-                <div class="mini-stat-label">Your Lists</div>
-              </div>
-              <div class="mini-stat">
-                <div class="mini-stat-value"><%= Object.keys(vocabStats.wordsBySource).length %></div>
-                <div class="mini-stat-label">Sources</div>
-              </div>
-            </div>
-            <% if (vocabStats.recentWords.length > 0) { %>
-            <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.25rem;">
-              <% vocabStats.recentWords.forEach(function(w) { %>
-              <a href="/vocab/<%= w.word %>" class="btn-outline btn-sm"><%= w.word %></a>
-              <% }) %>
-            </div>
-            <% } %>
-          </div>
-        </div>
         <div class="dash-card" style="margin-top:1rem;">
           <div class="dash-card-header">
             <h2>Vocabulary Progress</h2>

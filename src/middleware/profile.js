@@ -2,6 +2,7 @@ const supabase = require('../lib/supabase')
 
 async function requireProfileComplete(req, res, next) {
     try {
+        if (!req.user) return next();
         const { data: profile, error } = await supabase.from('public_profiles').select('first_name, last_name, school').eq('id', req.user.id).single();
         if (error || !profile || !profile.first_name || !profile.last_name || !profile.school) {
             if (req.path.startsWith('/api/')) {

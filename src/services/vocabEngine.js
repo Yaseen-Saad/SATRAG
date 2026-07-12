@@ -79,7 +79,7 @@ class VocabEngine {
     async cloneList(userId, listId) {
         const { list, words } = await this.getList(listId, userId)
         if (!list) throw new Error("List not found")
-        if (!this.canAccess(listId, userId)) throw new Error("Access denied")
+        if (!(await this.canAccess(listId, userId))) throw new Error("Access denied")
         const { data: copy, error } = await supabase.from('word_lists')
             .insert({ name: `${list.name.trim()} (clone)`, description: list.description, visibility: 'private', created_by: userId, cloned_from: listId, source_book: list.source_book }).select().single();
         if (error) throw error
