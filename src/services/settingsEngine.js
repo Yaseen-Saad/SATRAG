@@ -6,6 +6,5 @@ class settingsEngine {
         if (error) throw error;
         return { success: true };
     }
-
 }
 module.exports = new settingsEngine()

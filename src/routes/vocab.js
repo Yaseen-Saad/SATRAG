@@ -9,8 +9,7 @@ const llm = require('../lib/llm')
 const qualityChecker = require('../lib/qualityChecker')
 const evaluator = require('../lib/vocabularyEvaluator')
 const vocabEngine = require('../services/vocabEngine')
-const { requireAPIKeys } = require('../middleware/apikeys')
-
+const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const router = Router();
 
 router.get('/', requireAuth, async (req, res) => {
@@ -22,7 +21,7 @@ router.get('/', requireAuth, async (req, res) => {
     res.render('vocab/index', { user: req.user, recent, error: null })
 })
 
-router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
+router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     let { word } = req.body;
     if (!word || word.trim() === '') {
         const recent = await rag.listRecent(10)
@@ -47,7 +46,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
-            apiKey: req.user.llm_apikey
+            apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey
         });
 
         let entry = parseGeneratedEntry(response.content, word);
@@ -57,7 +56,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
-                apiKey: req.user.llm_apikey
+                apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey
             });
             entry = parseGeneratedEntry(response.content, word);
         }
@@ -70,6 +69,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult?.isValid ?? false;
         const saved = await rag.addEntry(entry);
+        await incrementGenCount(req.user)
         const lists = await vocabEngine.getMyLists(req.user.id);
 
         res.render('vocab/word', { user: req.user, entry: saved, error: null, isGenerated: true, lists })
@@ -190,7 +190,7 @@ router.get('/generate/:word', requireAuth, async (req, res) => {
     res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
 })
 
-router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
+router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
         const w = word.trim().toUpperCase()
@@ -205,13 +205,16 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
+            apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey
         });
+
         let entry = parseGeneratedEntry(response.content, w);
         if (!entry.definition || !entry.definition.trim()) {
             response = await llm.generateCompletion({
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
+                apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey
             });
             entry = parseGeneratedEntry(response.content, w);
         }
@@ -224,6 +227,7 @@ router.post('/regenerate', requireAuth, requireAPIKeys, async (req, res) => {
         entry.validation_passed = evalResult?.isValid ?? false;
 
         const saved = await rag.addEntry(entry);
+        await incrementGenCount(req.user)
         if (req.body.satisfaction && parseInt(req.body.satisfaction) >= 7) {
             const positiveContent = `POSITIVE FEEDBACK FOR ${w}:\n${req.body.satisfaction}/10 Satisfied with the regenerated entry.`;
             await supabase.from('rag_feedback_examples').insert({ word: w, type: "positive", content: positiveContent })

@@ -172,6 +172,8 @@ CREATE TABLE IF NOT EXISTS public_profiles (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     school TEXT NOT NULL,
+    monthly_gen_count INT DEFAULT 0,
+    monthly_gen_month TEXT,
     avatar_url TEXT NOT NULL,
     email TEXT NOT NULL, 
     birthdate TEXT NOT NULL,

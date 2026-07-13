@@ -3,6 +3,7 @@ const multer = require('multer');
 const path = require('path');
 
 const { requireAuth } = require('../middleware/auth');
+const { sanitize } = require('../lib/utils')
 const settingsEngine = require('../services/settingsEngine');
 const supabase = require('../lib/supabase');
 
@@ -18,10 +19,6 @@ const upload = multer({
 
 const router = Router()
 
-function sanitize(str) {
-    if (typeof str !== 'string') return '';
-    return str.replace(/[<>]/g, "").trim();
-}
 const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "Other", "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
 const ALLOWED_REFERALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other'])

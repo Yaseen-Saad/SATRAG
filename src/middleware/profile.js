@@ -5,7 +5,7 @@ async function requireProfileComplete(req, res, next) {
         if (!req.user) return next();
         const { data: profile, error } = await supabase.from('public_profiles').select('first_name, last_name, school').eq('id', req.user.id).single();
         if (error || !profile || !profile.first_name || !profile.last_name || !profile.school) {
-            if (req.path.startsWith('/api/')) {
+            if (!req.accepts('html')) {
                 return res.status(400).json({ error: 'Profile incomplete. Please complete your profile.' });
             }
             return res.redirect('/settings?prompt=complete-profile');

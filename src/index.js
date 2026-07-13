@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -9,7 +10,6 @@ const rateLimiter = require('./middleware/rateLimiter');
 
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
-// Route Imports
 const authRoutes = require('./routes/auth');
 const vocabRoutes = require('./routes/vocab');
 const feedbackRoutes = require('./routes/feedback');
@@ -22,21 +22,25 @@ const { requireProfileComplete } = require('./middleware/profile');
 
 const app = express();
 
-// Middleware Setup
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rate Limiter
 app.use(rateLimiter());
 
-// Welcome Page
 app.get('/', optionalAuth, async (req, res) => {
   try {
     res.render("index", { user: req.user || null })
@@ -62,7 +66,6 @@ app.use('/practice', practiceRoutes);
 app.use('/flashcards', flashcardsRoutes)
 app.use('/settings', settingsRoutes);
 
-// Error Handler
 app.use(notFoundHandler);
 app.use(errorHandler);
 

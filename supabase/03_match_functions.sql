@@ -129,8 +129,8 @@ $$;
 CREATE OR REPLACE FUNCTION public_profile_new_users()
 RETURNS TRIGGER AS $$
 BEGIN 
-    INSERT INTO public_profiles(id, first_name, last_name, school, email, birthdate, participate_in_leaderboard, gender, referal, first_login, last_login, embedding_apikey, llm_apikey)
-    VALUES(new.id, new.first_name, new.last_name, new.school, new.email, new.birthdate, new.participate_in_leaderboard, new.gender, new.referal, new.first_login, new.last_login, new.embedding_apikey, new.llm_apikey);
+    INSERT INTO public_profiles(id, first_name, last_name, school, email, birthdate, participate_in_leaderboard, gender, referral, first_login, last_login, embedding_apikey, llm_apikey)
+    VALUES(new.id, new.first_name, new.last_name, new.school, new.email, new.birthdate, new.participate_in_leaderboard, new.gender, new.referral, new.first_login, new.last_login, new.embedding_apikey, new.llm_apikey);
     RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

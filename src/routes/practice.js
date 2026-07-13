@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
 const { service: supabase } = require('../lib/supabase')
 const practice = require('../services/practiceEngine')
-const { requireAPIKeys } = require('../middleware/apikeys')
+const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const rag = require('../lib/rag')
 const router = Router()
 
@@ -41,13 +41,16 @@ router.get('/generate', requireAuth, async (req, res) => {
         res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
     }
 })
-router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
+router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { subject, topic, difficulty, count = 1 } = req.body
         const questions = []
         for (let i = 0; i < Math.min(parseInt(count), 5); i++) {
             const generated = await rag.generateSATQuestion({ subject, topic, difficulty })
-            if (generated) questions.push(generated)
+            if (generated) {
+                questions.push(generated)
+                await incrementGenCount(req.user)
+            }
         }
         const topicTree = await practice.getTopicTree(subject);
         res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, difficulty, count })
