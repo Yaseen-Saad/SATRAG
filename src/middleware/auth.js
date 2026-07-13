@@ -1,4 +1,5 @@
 const supabase = require('../lib/supabase');
+const config = require('../config');
 
 async function requireAuth(req, res, next) {
     try {
@@ -16,6 +17,8 @@ async function requireAuth(req, res, next) {
             }
             return res.redirect('/auth/login')
         }
+        const rememberMe = req.body.remember == '1';
+        res.cookie('sb_access_token', token || data.session.access_token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: rememberMe ? 2 * 60 * 60 * 1000 : undefined, secure: config.NODE_ENV === 'production' });
         req.user = user;
         next();
 

@@ -25,13 +25,14 @@ router.get('/', requireAuth, async (req, res) => {
             user: req.user, error: null, questions: result.questions, total: result.total,
             page: result.page, limit: result.limit, topicTree, active, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search,
             filters: { subject, topic, subtopic, source, activeFilter, active, difficulty, difficultyBand, status, marked, search, subtopics }
+            , currentlUrl: req.originalUrl
         })
     } catch (err) {
         console.error(err)
         res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
     }
 })
-router.get('/generate', requireAuth,  async (req, res) => {
+router.get('/generate', requireAuth, async (req, res) => {
     try {
         const topicTree = await practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
@@ -71,7 +72,8 @@ router.get('/question/:id', requireAuth, async (req, res) => {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
         if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [] })
         const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, userId: req.user.id })
-        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId })
+        const returnTo = req.query.from || '/practice'
+        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, returnTo })
     } catch (err) {
         console.error(err)
         res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })

@@ -50,6 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 500);
         });
     })
+    window.togglePassword = function (btn) {
+        const input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+        if (!input) return
+        const isPassword = input.type === 'password'
+        input.type = isPassword ? 'text' : 'password'
+        btn.textContent = isPassword ? 'Hide' : 'Show';
+    }
 
     document.querySelectorAll('.rating-group').forEach(group => {
         group.addEventListener('click', e => {

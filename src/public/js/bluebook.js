@@ -1,9 +1,22 @@
 (function () {
     'use strict';
-    let questionId = document.getElementById('question-data')?.dataset?.id;
+    let questionData = document.getElementById('question-data')?.dataset;
+    let questionId = questionData?.id;
+    let restoredAttempts = []
+    try { restoredAttempts = JSON.parse(questionData?.attempts || '[]') } catch (error) { console.log(error) }
+    let alreadyAnswered = questionData?.answered === 'true';
+    let wasCorrect = questionData?.correct === 'true';
     let startTime = Date.now();
     let answered = false;
     let selectedAnswer = null;
+    if (alreadyAnswered) {
+        answered = true
+        const lastAttempt = restoredAttempts[restoredAttempts.length - 1]
+        document.querySelectorAll('.bb-option').forEach(opt => {
+            if (opt.dataset.label === lastAttempt.selected_answer) opt.classList.add('selected')
+            if (opt.dataset.label === lastAttempt.answer) opt.classList.add(lastAttempt.isCorrect ? 'correct' : 'incorrect')
+        })
+    }
     const timer = document.getElementById('timer');
     let timerInterval = null;
     if (timer)
@@ -63,7 +76,7 @@
         <h2 style="color:var(--bb-incorrect);">Error</h2>
         <p>${errorMsg || 'Something went wrong'}</p>
         <div class="bb-fb-actions">
-          <button class="bb-fb-btn primary" onclick="window.location='/practice'">Back to Bank</button>
+          <button class="bb-fb-btn primary" onclick="window.location=document.getElementById('return-to')?.dataset?.url || '/practice'">Back to Bank</button>
           <button class="bb-fb-btn ghost" onclick="tryAgain()">Try Again</button>
         </div>`;
             overlay.classList.add('open');
@@ -96,7 +109,7 @@
     }
 
     const origSubmit = window.submitAnswer;
-    window.submitAnswer = function(label) {
+    window.submitAnswer = function (label) {
         if (timerInterval) clearInterval(timerInterval);
         origSubmit(label);
     };
@@ -127,15 +140,25 @@
     document.getElementById('feedback-overlay')?.addEventListener('click', () => document.getElementById('feedback-overlay')?.classList.remove('open'))
 
     document.addEventListener('keydown', function (e) {
+        if (!document.getElementById('.question-data')) return;
         if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('.bb-feedback-overlay.open')) return;
-        const keyMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D' };
-        if (keyMap[e.key] && !e.ctrlKey && !e.metaKey) {
-            e.preventDefault();
-            window.selectOption(keyMap[e.key]);
-        }
-        if (e.key === 'Enter' && selectedAnswer) {
-            e.preventDefault();
-            window.submitAnswer();
+        const isSpr = !!document.querySelector('.bb-spr-input')
+        if (!isSpr) {
+            const keyMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D' };
+            if (keyMap[e.key] && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                window.selectOption(keyMap[e.key]);
+            }
+            if (e.key === 'Enter' && selectedAnswer) {
+                e.preventDefault();
+                window.submitAnswer();
+            }
+        } else {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const sprtInput = document.getElementById('sprt-answer');
+                if (sprtInput && sprtInput.value.trim()) window.submitAnswer(sprtInput.value.trim());
+            }
         }
     });
 })()
