@@ -3,9 +3,23 @@
   <div class="fc-header">
     <h1>Flashcards</h1>
   </div>
-
+  <div class="fc-header-actions" style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+    <a href="/flashcards/export/anki" class="btn btn-outline btn-sm">Export to Anki</a>
+    <details style="display:inline-block;position:relative;">
+      <summary class="btn btn-outline btn-sm" style="cursor:pointer;">Import from Anki</summary>
+      <div style="position:absolute;right:0;top:100%;z-index:10;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:0.5rem;width:360px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+        <form method="POST" action="/flashcards/import/anki">
+          <p style="font-size:0.85rem;margin:0 0 0.5rem;">Paste word per line or CSV (Word,Definition,Example):</p>
+          <textarea name="text" rows="6" style="width:100%;padding:0.5rem;font-size:0.85rem;font-family:monospace;" placeholder="perspicacious
+ephemeral
+ubiquitous"></textarea>
+          <button type="submit" class="btn-primary btn-sm" style="margin-top:0.5rem;width:100%;">Import</button>
+        </form>
+      </div>
+    </details>
+  </div>
   <% if (typeof error !== 'undefined' && error) { %>
-    <div class="alert alert-error"><%= error %></div>
+  <div class="alert alert-error"><%= error %></div>
   <% } %>
 
   <div class="fc-stats">
@@ -30,30 +44,30 @@
   <h2 style="margin-top:1.5rem;">Your Lists</h2>
 
   <% if (!lists || lists.length === 0) { %>
-    <div class="fc-empty">
-      <p>No word lists yet. Create a list from the <a href="/vocab">vocab page</a> to get started.</p>
-    </div>
+  <div class="fc-empty">
+    <p>No word lists yet. Create a list from the <a href="/vocab">vocab page</a> to get started.</p>
+  </div>
   <% } else { %>
-    <div class="fc-list-grid">
-      <% var listDueMap = {}; listDueCounts.forEach(function(ld) { listDueMap[ld.id] = ld.dueCount; }); %>
-      <% lists.forEach(function(list) { %>
-        <div class="fc-list-row">
-          <div class="fc-list-row-info">
-            <a href="/vocab/lists/<%= list.id %>" class="fc-list-row-name"><%= list.name %></a>
-            <div class="fc-list-row-meta">
-              <%= list.word_count || 0 %> words ·
-              <%= listDueMap[list.id] || 0 %> due
-            </div>
-          </div>
-          <div class="fc-list-row-action">
-            <form method="POST" action="/flashcards/list/<%= list.id %>/start" style="display:inline;">
-              <button type="submit" class="btn btn-primary btn-sm">
-                <% if ((listDueMap[list.id] || 0) > 0) { %>Study<% } else { %>Review All<% } %>
-              </button>
-            </form>
-          </div>
+  <div class="fc-list-grid">
+    <% var listDueMap = {}; listDueCounts.forEach(function(ld) { listDueMap[ld.id] = ld.dueCount; }); %>
+    <% lists.forEach(function(list) { %>
+    <div class="fc-list-row">
+      <div class="fc-list-row-info">
+        <a href="/vocab/lists/<%= list.id %>" class="fc-list-row-name"><%= list.name %></a>
+        <div class="fc-list-row-meta">
+          <%= list.word_count || 0 %> words ·
+          <%= listDueMap[list.id] || 0 %> due
         </div>
-      <% }); %>
+      </div>
+      <div class="fc-list-row-action">
+        <form method="POST" action="/flashcards/list/<%= list.id %>/start" style="display:inline;">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <% if ((listDueMap[list.id] || 0) > 0) { %>Study<% } else { %>Review All<% } %>
+          </button>
+        </form>
+      </div>
     </div>
+    <% }); %>
+  </div>
   <% } %>
 </div>

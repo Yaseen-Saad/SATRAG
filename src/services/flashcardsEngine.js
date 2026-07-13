@@ -1,6 +1,44 @@
+const { ca } = require('zod/v4/locales');
 const { service: supabase } = require('../lib/supabase')
 
 class FlashcardsEngine {
+    async exportAnki(userId) {
+        const { data: cards } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId)
+        if (!cards || !cards.length) return []
+        return cards.map(card => ({
+            Word: card.vocab_entries?.word || '',
+            Pronunciation: card.vocab_entries?.pronunciation || '',
+            'Part of Speech': card.vocab_entries?.part_of_speech || '',
+            Definition: card.vocab_entries?.definition || '',
+            Example: card.vocab_entries?.example_sentence || '',
+            Stage: card.stage,
+            "Ease Factor": card.ease_factor.toFixed(2),
+            Interval: card.interval_days + 'd',
+            Mnemonic: card.vocab_entries?.mnemonic_phrase || '',
+            definition: card.vocab_entries?.definition || ''
+        }))
+    }
+    async importAnki(userId, cards) {
+        const rag = require('../lib/rag');
+        const created = []
+        for (const card of cards) {
+            const word = (card.word || card.Word || card['Word'] || '').trim().toUpperCase()
+            if (!word) continue;
+            const existing = await rag.findByWord(word)
+            if (existing) { created.push(existing); continue; }
+            const saved = await rag.addEntry({
+                word, pronunciation: card.pronunciation || card.Pronunciation || card['Pronunciation'] || '',
+                part_of_speech: card.part_of_speech || card['Part of Speech'] || card['Part of Speech'] || '',
+                definition: card.definition || card.Definition || card['Definition'] || '',
+                example_sentence: card.example_sentence || card.Example || card['Example'] || '',
+                mnemonic_phrase: card.mnemonic_phrase || card.Mnemonic || card['Mnemonic'] || '',
+                source: 'imported', validation_passed: true, quality_score: 5.0
+            })
+            await this.ensureWordInitialized(userId, saved.id)
+            created.push(saved)
+        }
+        return created
+    }
 
     async getStats(userId) {
         const now = new Date().toISOString()

@@ -82,4 +82,48 @@ router.post('/word/:id/remove', requireAuth, async function (req, res) {
     }
 })
 
+router.get('/export/anki', requireAuth, async (req, res) => {
+    try {
+        const data = await flashcardsEngine.exportAnki(req.user.id)
+        if (!data.length) return res.redirect('/flashcards?error=No flashcards available for export')
+        const headers = Object.keys(data[0])
+        const csv = [headers.join(',')].concat(data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','))).join('\n');
+        data.forEach(row => {
+            csv.push(headers.map(h => {
+                const val = (row[h] || "").toString().replace(/"/g, '""');
+                return val.includes(",") || val.includes('"') ? '"' + val + '"' : val;
+            }).join(","))
+        })
+        res.setHeader("Content-Type", 'text/csv');
+        res.setHeader("Content-Disposition", "attachment; filename=flashcards.csv");
+        res.send(csv.join("\n"));
+    } catch (error) {
+        console.error('Export Anki error:', error)
+        res.status(500).json({ error: error.message })
+    }
+})
+router.post('/import/anki', requireAuth, async (req, res) => {
+    try {
+        const { text } = req.body
+        if (!text || !text.trim()) return res.redirect('/flashcards?error=Paste some words or CSV data')
+        const lines = text.trim().split('\n').filter(Boolean)
+        const firstLine = lines[0].toLowerCase()
+        let entries;
+        if (firstLine.includes('word') || firstLine.includes('definition') || firstLine.includes(',')) {
+            const headers = lines[0].split(',').map(h => h.trim());
+            entries = lines.slice(1).map(line => {
+                const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''))
+                const obj = {}
+                headers.forEach((h, i) => obj[h] = vals[i] || '')
+                return obj;
+            });
+        } else {
+            entries = lines.map(w => ({ word: w.trim() }));
+        }
+        const created = await flashcardsEngine.importAnki(req.user.id, entries);
+        res.redirect('/flashcards?success=Imported ' + created.length + ' words into flashcards');
+    } catch (err) {
+        res.redirect('/flashcards?error=' + encodeURIComponent(err.message));
+    }
+});
 module.exports = router
