@@ -9,6 +9,8 @@ async function requireAPIKeys(req, res, next) {
             }
             return res.redirect('/settings?prompt=complete-apikeys');
         }
+        req.user.llm_apikey = profile.llm_apikey;
+        req.user.embedding_apikey = profile.embedding_apikey;
         next();
     }
     catch (error) {

@@ -47,6 +47,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
+            apiKey: req.user.llm_apikey
         });
 
         let entry = parseGeneratedEntry(response.content, word);
@@ -56,6 +57,7 @@ router.post('/generate', requireAuth, requireAPIKeys, async (req, res) => {
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
+                apiKey: req.user.llm_apikey
             });
             entry = parseGeneratedEntry(response.content, word);
         }

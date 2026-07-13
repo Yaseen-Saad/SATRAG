@@ -10,7 +10,6 @@ class LLMResponse {
         this.finishReason = finishReason || '';
     }
 }
-// Create LLMService class to handle LLM API interactions
 class LLMService {
     constructor() {
         this.chatBaseURL = config.LLM_BASE_URL;
@@ -19,11 +18,13 @@ class LLMService {
         this.embedModel = config.EMBEDDING_MODEL
         this.embedApiKey = config.EMBEDDING_API_KEY;
         this.apiKey = config.LLM_API_KEY;
+        this.userApiKey = null;
+        this.userEmbedApiKey = null;
         this.cache = new Map();
         this.cacheSize = 100;
     }
 
-    async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2 }) {
+    async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2, apiKey, embedApiKey }) {
         const cacheKey = JSON.stringify({ messages, system, model, maxTokens, temperature });
         if (this.cache.has(cacheKey)) {
             return this.cache.get(cacheKey);
@@ -40,7 +41,7 @@ class LLMService {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.apiKey}`
+                        'Authorization': `Bearer ${apiKey || this.userApiKey}`
                     },
                     body: JSON.stringify(body)
                 });
@@ -69,20 +70,34 @@ class LLMService {
             }
         }
     }
-    async generateEmbedding(text) {
-        const embeddings = await this.generateEmbeddings([text]);
+    setUserKeys(apiKey, embedApiKey) {
+        this.userApiKey = apiKey || this.apiKey;
+        this.userEmbedApiKey = embedApiKey || this.embedApiKey;
+    }
+    clearUserKeys() {
+        this.userApiKey = null;
+        this.userEmbedApiKey = null;
+    }
+    async generateEmbedding(text, { apiKey, embedApiKey } = {}) {
+        const headers = { 'Content-Type': 'application/json' }
+        const key = embedApiKey || this.userEmbedApiKey;
+        if (key) {
+            headers['Authorization'] = `Bearer ${key}`
+        }
+        const embeddings = await this.generateEmbeddings([text], { apiKey, embedApiKey });
         return embeddings[0];
     }
 
-    async generateEmbeddings(texts) {
+    async generateEmbeddings(texts, { apiKey, embedApiKey } = {}) {
         const headers = { 'Content-Type': 'application/json' }
-        if (this.embedApiKey) {
-            headers['Authorization'] = `Bearer ${this.embedApiKey}`
+        const key = embedApiKey || this.userEmbedApiKey;
+        if (key) {
+            headers['Authorization'] = `Bearer ${key}`
         }
         const res = await fetch(`${this.embedBaseURL}/embeddings`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({ model: this.embedModel, input: texts , truncate: true})
+            body: JSON.stringify({ model: this.embedModel, input: texts, truncate: true })
         })
         if (!res.ok) {
             const errorText = await res.text();
