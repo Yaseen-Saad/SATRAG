@@ -20,15 +20,15 @@
       </button>
       <button id="theme-toggle" class="nav-link theme-btn">🌙</button>
       <div class="navbar-links" id="nav-links">
-        <a href="/vocab" class="nav-link">Words</a>
-        <a href="/practice" class="nav-link">Practice</a>
-        <a href="/flashcards" class="nav-link">Flashcards</a>
+        <a href="/vocab" class="nav-link" data-key="1">Words <span class="nav-shortcut-hint">1</span></a>
+        <a href="/practice" class="nav-link" data-key="2">Practice <span class="nav-shortcut-hint">2</span></a>
+        <a href="/flashcards" class="nav-link" data-key="3">Flashcards <span class="nav-shortcut-hint">3</span></a>
         <% if (typeof user !== 'undefined' && user) { %>
-        <a href="/dashboard" class="nav-link">Dashboard</a>
-        <a href="/dashboard/analytics" class="nav-link">Analytics</a>
-        <a href="/auth/logout" class="nav-link nav-link--signout">Sign Out</a>
+        <a href="/dashboard" class="nav-link" data-key="4">Dashboard <span class="nav-shortcut-hint">4</span></a>
+        <a href="/dashboard/analytics" class="nav-link" data-key="5">Analytics <span class="nav-shortcut-hint">5</span></a>
+        <a href="/auth/logout" class="nav-link nav-link--signout" data-key="l">Sign Out <span class="nav-shortcut-hint">L</span></a>
         <% } else { %>
-        <a href="/auth/login" class="nav-link">Log In</a>
+        <a href="/auth/login" class="nav-link" data-key="l">Log In <span class="nav-shortcut-hint">L</span></a>
         <a href="/auth/signup" class="btn btn--primary btn--sm">Sign Up</a>
         <% } %>
       </div>

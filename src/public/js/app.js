@@ -82,6 +82,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    document.addEventListener('keydown', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === 't' || e.key === 'T') {
+            e.preventDefault();
+            const toggle = document.getElementById('theme-toggle');
+            if (toggle) toggle.click();
+            return;
+        }
+        const navLink = document.querySelector(`.nav-link[data-key="${e.key}"]`);
+        if (navLink) { e.preventDefault(); navLink.click(); }
+    });
+
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href').substring(1);
