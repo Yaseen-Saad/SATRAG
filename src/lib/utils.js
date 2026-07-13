@@ -9,4 +9,8 @@ function normalizeEmail(email) {
     return `${local}@${domain}`;
 }
 
-module.exports = { normalizeEmail };
+function sanitize(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[<>]/g, '').trim();
+}
+module.exports = { normalizeEmail, sanitize }
