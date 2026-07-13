@@ -13,7 +13,7 @@
   <!-- TOP BAR -->
   <header class="bb-topbar">
     <div class="bb-topbar-left">
-      <a href="<%=req.query.from || '/practice'%>" class="bb-back-link">← Back to Bank</a>
+      <a href="<%=returnTo || '/practice'%>" class="bb-back-link">← Back to Bank</a>
       <span style="opacity:0.4; font-size:0.8rem;"><%= question.subject %> · <%= question.difficulty %></span>
     </div>
     <div class="bb-topbar-center">

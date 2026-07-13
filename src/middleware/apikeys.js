@@ -1,4 +1,5 @@
 const supabase = require('../lib/supabase')
+const llm = require('../lib/llm')
 
 async function requireAPIKeys(req, res, next) {
     try {
@@ -11,6 +12,8 @@ async function requireAPIKeys(req, res, next) {
         }
         req.user.llm_apikey = profile.llm_apikey;
         req.user.embedding_apikey = profile.embedding_apikey;
+        llm.setUserKeys(profile.llm_apikey, profile.embedding_apikey);
+        res.on('finish', () => llm.clearUserKeys());
         next();
     }
     catch (error) {

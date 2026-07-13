@@ -9,12 +9,12 @@
     let startTime = Date.now();
     let answered = false;
     let selectedAnswer = null;
-    if (alreadyAnswered) {
+    if (alreadyAnswered && restoredAttempts.length) {
         answered = true
         const lastAttempt = restoredAttempts[restoredAttempts.length - 1]
         document.querySelectorAll('.bb-option').forEach(opt => {
             if (opt.dataset.label === lastAttempt.selected_answer) opt.classList.add('selected')
-            if (opt.dataset.label === lastAttempt.answer) opt.classList.add(lastAttempt.isCorrect ? 'correct' : 'incorrect')
+            if (opt.dataset.label === lastAttempt.selected_answer) opt.classList.add(wasCorrect ? 'correct' : 'incorrect')
         })
     }
     const timer = document.getElementById('timer');
@@ -91,7 +91,7 @@
         <p>Time: ${Math.round((Date.now() - startTime) / 1000)}s${pct != null && pct !== undefined ? ' · Faster than ' + pct + '% of users' : ''}</p>
         ${data.attemptNumber ? '<p>Attempt #' + data.attemptNumber + '</p>' : ''}
         <div class="bb-fb-actions">
-          ${data.isCorrect ? '<button class="bb-fb-btn primary" onclick="window.location=\'/practice\'">Back to Bank</button>' : '<button class="bb-fb-btn success" onclick="tryAgain()">Try Again</button>'}
+          ${data.isCorrect ? '<button class="bb-fb-btn primary" onclick="window.location=document.getElementById(\'return-to\')?.dataset?.url || \'/practice\'">Back to Bank</button>' : '<button class="bb-fb-btn success" onclick="tryAgain()">Try Again</button>'}
           <button class="bb-fb-btn ghost" onclick="toggleMarkBtn()">★ Mark for Review</button>
         </div>`;
         overlay.classList.add('open');
@@ -156,8 +156,8 @@
         } else {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const sprtInput = document.getElementById('sprt-answer');
-                if (sprtInput && sprtInput.value.trim()) window.submitAnswer(sprtInput.value.trim());
+                const sprInput = document.getElementById('spr-answer');
+                if (sprInput && sprInput.value.trim()) window.submitAnswer(sprInput.value.trim());
             }
         }
     });

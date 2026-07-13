@@ -25,7 +25,7 @@ router.get('/', requireAuth, async (req, res) => {
             user: req.user, error: null, questions: result.questions, total: result.total,
             page: result.page, limit: result.limit, topicTree, active, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search,
             filters: { subject, topic, subtopic, source, activeFilter, active, difficulty, difficultyBand, status, marked, search, subtopics }
-            , currentlUrl: req.originalUrl
+            , currentUrl: req.originalUrl
         })
     } catch (err) {
         console.error(err)

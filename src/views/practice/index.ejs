@@ -106,7 +106,7 @@
 
     <div class="practice-questions">
       <% questions.forEach(q => { %>
-      <a href="/practice/question/<%= q.id %>?form=<%= encodeURIComponent(currentUrl)%>" class="card card-link practice-item">
+      <a href="/practice/question/<%= q.id %>?from=<%= encodeURIComponent(currentUrl)%>" class="card card-link practice-item">
         <div class="practice-item-header">
           <span class="badge badge--<%= q.subject %>"><%= q.subject %></span>
           <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>

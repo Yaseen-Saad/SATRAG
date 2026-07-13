@@ -18,10 +18,10 @@ class LLMService {
         this.embedModel = config.EMBEDDING_MODEL
         this.embedApiKey = config.EMBEDDING_API_KEY;
         this.apiKey = config.LLM_API_KEY;
-        this.userApiKey = null;
-        this.userEmbedApiKey = null;
         this.cache = new Map();
         this.cacheSize = 100;
+        this.userApiKey = null;
+        this.userEmbedApiKey = null;
     }
 
     async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2, apiKey, embedApiKey }) {
@@ -41,7 +41,7 @@ class LLMService {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey || this.userApiKey}`
+                        'Authorization': `Bearer ${this.userApiKey || this.apiKey}`
                     },
                     body: JSON.stringify(body)
                 });
