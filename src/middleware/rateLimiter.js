@@ -4,14 +4,14 @@ const BURST_BLOCK_MS = 15 * 60 * 1000;
 const CLEANUP_INTERVAL = 60 * 1000;
 
 const ROUTE_LIMITS = [
-    { test: p => p === '/auth/login',               requests: 5,  windowSeconds: 60 },
-    { test: p => p === '/auth/signup',               requests: 3,  windowSeconds: 60 },
-    { test: p => p === '/auth/forgot-password',      requests: 3,  windowSeconds: 300 },
-    { test: p => p.startsWith('/auth/'),             requests: 10, windowSeconds: 60 },
-    { test: p => p.includes('/vocab/generate'),      requests: 10, windowSeconds: 60 },
-    { test: p => p.includes('/vocab/regenerate'),    requests: 10, windowSeconds: 60 },
-    { test: p => p.includes('/practice/generate'),   requests: 10, windowSeconds: 60 },
-    { test: p => true,                                requests: 150,windowSeconds: 1800 },
+    { test: p => p === '/auth/login', requests: 5, windowSeconds: 60 },
+    { test: p => p === '/auth/signup', requests: 3, windowSeconds: 60 },
+    { test: p => p === '/auth/forgot-password', requests: 3, windowSeconds: 300 },
+    { test: p => p.startsWith('/auth/'), requests: 10, windowSeconds: 60 },
+    { test: p => p.includes('/vocab/generate'), requests: 10, windowSeconds: 60 },
+    { test: p => p.includes('/vocab/regenerate'), requests: 10, windowSeconds: 60 },
+    { test: p => p.includes('/practice/generate'), requests: 10, windowSeconds: 60 },
+    { test: p => true, requests: 150, windowSeconds: 1800 },
 ];
 
 const store = new Map();
@@ -82,7 +82,7 @@ function sendLimit(res, req, retrySeconds) {
     if (!req.accepts('html')) {
         return res.status(429).json({ error: msg, retryAfterSeconds: retrySeconds });
     }
-    res.status(429).render('error', { error: { status: 429, message: msg } });
+    res.status(429).render('error', { error: msg, statusCode: 429 });
 }
 
 module.exports = rateLimiter;

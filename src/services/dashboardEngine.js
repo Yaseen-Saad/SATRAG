@@ -153,14 +153,14 @@ class DashboardEngine {
         const sessions = []
         let current = { date: null, total: 0, correct: 0, timeMs: 0, questions: [] }
         for (const att of attempts) {
-            const day = att.attempt.time.split("T")[0]
+            const day = att.attempt_time.split("T")[0]
             if (current.date !== day) {
                 if (current.date) sessions.push(current)
                 current = { date: day, total: 0, correct: 0, timeMs: 0, questions: [] }
             }
             current.total++
             if (att.is_correct) current.correct++
-            current.timeMs += a.time_taken_ms || 0
+            current.timeMs += att.time_taken_ms || 0
             current.questions.push(
                 {
                     id: att.question_id,

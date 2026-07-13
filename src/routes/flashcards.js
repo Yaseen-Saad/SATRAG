@@ -89,10 +89,15 @@ router.get('/export/anki', requireAuth, async (req, res) => {
         const headers = Object.keys(data[0])
         const csv = [headers.join(',')].concat(data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','))).join('\n');
         data.forEach(row => {
-            csv.push(headers.map(h => {
+            const formattedRow = headers.map(h => {
                 const val = (row[h] || "").toString().replace(/"/g, '""');
-                return val.includes(",") || val.includes('"') ? '"' + val + '"' : val;
-            }).join(","))
+                if (val.includes(",") || val.includes('"') || val.includes('\n') || val.includes('\r')) {
+                    return `"${val}"`;
+                }
+                return val;
+            }).join(",");
+
+            csvRows.push(formattedRow);
         })
         res.setHeader("Content-Type", 'text/csv');
         res.setHeader("Content-Disposition", "attachment; filename=flashcards.csv");
@@ -102,6 +107,7 @@ router.get('/export/anki', requireAuth, async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 })
+
 router.post('/import/anki', requireAuth, async (req, res) => {
     try {
         const { text } = req.body
@@ -126,4 +132,5 @@ router.post('/import/anki', requireAuth, async (req, res) => {
         res.redirect('/flashcards?error=' + encodeURIComponent(err.message));
     }
 });
+
 module.exports = router

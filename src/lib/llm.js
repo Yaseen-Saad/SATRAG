@@ -90,7 +90,7 @@ class LLMService {
 
     async generateEmbeddings(texts, { apiKey, embedApiKey } = {}) {
         const headers = { 'Content-Type': 'application/json' }
-        const key = embedApiKey || this.userEmbedApiKey;
+        const key = embedApiKey || this.userEmbedApiKey || this.embedApiKey;
         if (key) {
             headers['Authorization'] = `Bearer ${key}`
         }

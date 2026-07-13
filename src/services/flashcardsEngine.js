@@ -1,4 +1,3 @@
-const { ca } = require('zod/v4/locales');
 const { service: supabase } = require('../lib/supabase')
 
 class FlashcardsEngine {
@@ -12,7 +11,7 @@ class FlashcardsEngine {
             Definition: card.vocab_entries?.definition || '',
             Example: card.vocab_entries?.example_sentence || '',
             Stage: card.stage,
-            "Ease Factor": card.ease_factor.toFixed(2),
+            "Ease Factor": card?.ease_factor?.toFixed(2) || 2.5,
             Interval: card.interval_days + 'd',
             Mnemonic: card.vocab_entries?.mnemonic_phrase || '',
             definition: card.vocab_entries?.definition || ''
