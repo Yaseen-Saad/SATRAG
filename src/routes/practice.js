@@ -44,8 +44,12 @@ router.get('/generate', requireAuth, async (req, res) => {
 router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { subject, topic, difficulty, count = 1 } = req.body
+        let maxIter = Math.min(parseInt(count), 5);
+        if (req.user.useFreeModels) {
+            maxIter = Math.min(maxIter, 5 - req.user.genCount);
+        }
         const questions = []
-        for (let i = 0; i < Math.min(parseInt(count), 5); i++) {
+        for (let i = 0; i < maxIter; i++) {
             const generated = await rag.generateSATQuestion({ subject, topic, difficulty })
             if (generated) {
                 questions.push(generated)

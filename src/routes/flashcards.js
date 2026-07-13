@@ -87,7 +87,7 @@ router.get('/export/anki', requireAuth, async (req, res) => {
         const data = await flashcardsEngine.exportAnki(req.user.id)
         if (!data.length) return res.redirect('/flashcards?error=No flashcards available for export')
         const headers = Object.keys(data[0])
-        const csv = [headers.join(',')].concat(data.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','))).join('\n');
+        const csvRows = [headers.join(',')]
         data.forEach(row => {
             const formattedRow = headers.map(h => {
                 const val = (row[h] || "").toString().replace(/"/g, '""');
@@ -96,12 +96,11 @@ router.get('/export/anki', requireAuth, async (req, res) => {
                 }
                 return val;
             }).join(",");
-
             csvRows.push(formattedRow);
         })
         res.setHeader("Content-Type", 'text/csv');
         res.setHeader("Content-Disposition", "attachment; filename=flashcards.csv");
-        res.send(csv.join("\n"));
+        res.send(csvRows.join("\n"));
     } catch (error) {
         console.error('Export Anki error:', error)
         res.status(500).json({ error: error.message })
