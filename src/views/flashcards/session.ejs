@@ -84,6 +84,7 @@
 <script>
   const cards = <%- JSON.stringify(cards) %>;
   let currentIndex = 0;
+  const sessionKey = 'fc-session' + cards[0]?.word_id
   let flipped = false;
   let reviewing = false;
   const results = [];
@@ -95,6 +96,14 @@
   const progressText = document.getElementById('progress-text');
   const completeStats = document.getElementById('complete-stats');
 
+  if (sessionStorage.getItem(sessionKey)) {
+    const savedIndex = parseInt(sessionStorage.getItem(sessionKey), 10);
+    if (!isNaN(savedIndex) && savedIndex >= 0 && savedIndex < cards.length) {
+      currentIndex = savedIndex;
+      renderCard(currentIndex);
+    }
+  }
+
   function flipCard(e) {
     if (e.target.closest('.fc-ratings')) return;
     if (reviewing) return;
@@ -104,6 +113,7 @@
 
   function renderCard(index) {
     const card = cards[index];
+    sessionStorage.setItem(sessionKey, index);
     if (!card) return showComplete();
     const v = card.vocab_entries;
     frontEl.innerHTML = `
@@ -176,6 +186,7 @@
     document.querySelector('.fc-session').style.display = 'none';
     document.querySelector('.fc-card').style.display = 'none';
     document.getElementById('fc-complete').style.display = 'block';
+    sessionStorage.removeItem(sessionKey);
     const again = results.filter(r => r.quality < 3).length;
     const good = results.filter(r => r.quality >= 3).length;
     const pct = cards.length ? Math.round(good / cards.length * 100) : 0;
