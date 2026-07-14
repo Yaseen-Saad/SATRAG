@@ -251,7 +251,7 @@ router.post('/lists', requireAuth, async (req, res) => {
         res.redirect('/vocab/lists')
     } catch (error) {
         const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
-        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
+        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message, tab: 'mine' })
     }
 })
 
@@ -261,7 +261,7 @@ router.post('/lists/:id/delete', requireAuth, async (req, res) => {
         res.redirect('/vocab/lists')
     } catch (error) {
         const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
-        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message })
+        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: error.message, tab: 'mine' })
     }
 })
 router.get('/lists/:id', optionalAuth, async (req, res) => {
@@ -380,7 +380,7 @@ router.get('/lists/:id/export', requireAuth, async (req, res) => {
             res.setHeader('Content-Disposition', `attachment; filename="${list.name.replace(/[^a-z0-9]/gi, '_')}.csv"`)
             return res.send(csv)
         }
-        res.render('vocab/print', { user: req.user, list, words })
+        res.render('vocab/print', { layout:false, user: req.user, list, words })
     } catch (error) {
         console.error('Export error:', error)
         res.redirect('/vocab/lists')

@@ -76,20 +76,15 @@ class DashboardEngine {
         return Object.entries(breakdown).map(([, g]) => ({ ...g, accuracy: g.correct / g.total * 100 })).sort((a, b) => a.accuracy - b.accuracy);
     }
 
-    async getLeaderboard({ limit = 50, offset = 0, userId }) {
-        const { data: profiles } = await supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard', true)
+    async getLeaderboard({ limit = 50, offset = 0, userId, sortBy = 'score', sortDir = 'desc', gradeFilter = '' }) {
+        let query = supabase.from('public_profiles').select("id, first_name, last_name, grade").eq('participate_in_leaderboard', true)
+        if (gradeFilter) query = query.eq('grade', gradeFilter)
+        const { data: profiles } = await query
         if (!profiles || !profiles.length) return { entries: [], totalCount: 0, userRank: null }
         const userIds = profiles.map(p => p.id)
         const { data: attempts } = await supabase.from('user_question_attempts').select('user_id, is_correct').in('user_id', userIds);
-        const { data: quizData } = await supabase.from('quiz_attempts').select('user_id, score').in('user_id', userIds).not('score', 'is', null)
 
         const stats = {}
-        const quizStats = {}
-        for (const q of quizData || []) {
-            if (!quizStats[q.user_id]) quizStats[q.user_id] = { quizScore: 0, quizCount: 0 }
-            quizStats[q.user_id].quizScore += q.score;
-            quizStats[q.user_id].quizCount++;
-        }
         for (const a of attempts || []) {
             if (!stats[a.user_id]) stats[a.user_id] = { correct: 0, total: 0 }
             stats[a.user_id].total++;
@@ -97,22 +92,21 @@ class DashboardEngine {
         }
         const entries = profiles.map(p => {
             const s = stats[p.id] || { correct: 0, total: 0 }
-            const qs = quizStats[p.id] || { quizScore: 0, quizCount: 0 }
             const accuracy = s.total ? Math.round((s.correct / s.total) * 100) : 0;
-            const avgQuiz = qs.quizCount ? Math.round((qs.quizScore / qs.quizCount) * 100) : 0;
-            const score = s.correct + (qs.quizCount ? Math.round(qs.quizScore) : 0)
             return {
                 userId: p.id,
                 name: [p.first_name, p.last_name].filter(Boolean).join(" ") || 'Anonymous',
                 grade: p.grade || '',
                 correct: s.correct,
                 total: s.total,
-                quizzes: qs.quizCount,
-                score,
-                accuracy,
-                avgQuiz
+                score: s.correct,
+                accuracy
             }
-        }).sort((a, b) => b.score - a.score || b.accuracy - a.accuracy).map((entry, i) => ({ rank: i + 1, ...entry }))
+        })
+
+        const sortKey = sortBy === 'accuracy' ? 'accuracy' : sortBy === 'correct' ? 'correct' : 'score'
+        entries.sort((a, b) => sortDir === 'asc' ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey])
+        entries.forEach((e, i) => e.rank = i + 1)
 
         const userRank = userId ? entries.find(e => e.userId === userId)?.rank || null : null
         return {

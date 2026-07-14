@@ -4,7 +4,7 @@ const rag = require('../lib/rag')
 class VocabEngine {
     async getMyLists(userId) {
         const { data } = await supabase.from('word_lists').select('*, word_count:word_list_entries(count)').eq('created_by', userId).order('created_at', { ascending: false });
-        return data || [];
+        return (data || []).map(l => ({ ...l, word_count: Array.isArray(l.word_count) ? (l.word_count[0]?.count ?? 0) : (l.word_count ?? 0) }));
     }
     async getSystemLists() {
         const { data } = await supabase.from('word_lists').select('*').eq('visibility', 'system').order('name');

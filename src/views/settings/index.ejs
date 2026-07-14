@@ -47,7 +47,7 @@
             <label for="grade">Grade Level</label>
             <select id="grade" name="grade">
               <option value="">— Select —</option>
-              <% ['9','10','11','12','Gap Year','Other','I am not a student'].forEach(function(g) { %>
+              <% ['9','10','11','12','Gap Year','I am not a student'].forEach(function(g) { %>
               <option value="<%= g %>" <%= (profile && profile.grade === g) ? 'selected' : '' %>><%= g %></option>
               <% }) %>
             </select>
@@ -76,11 +76,11 @@
         <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
           <div class="form-group" style="flex:1;min-width:250px;">
             <label for="llmKey">LLM API Key</label>
-            <input type="password" id="llmKey" name="llmKey" placeholder="<%= (profile && profile.llm_apikey) ? '••••••••••••' : 'Enter your API key' %>">
+            <input type="text" id="llmKey" name="llmKey" autocomplete="off" placeholder="<%= (profile && profile.llm_apikey) ? '••••••••••••' : 'Enter your API key' %>">
           </div>
           <div class="form-group" style="flex:1;min-width:250px;">
             <label for="embeddingKey">Embedding API Key</label>
-            <input type="password" id="embeddingKey" name="embeddingKey" placeholder="<%= (profile && profile.embedding_apikey) ? '••••••••••••' : 'Enter your API key' %>">
+            <input type="text" id="embeddingKey" name="embeddingKey" autocomplete="off" placeholder="<%= (profile && profile.embedding_apikey) ? '••••••••••••' : 'Enter your API key' %>">
           </div>
         </div>
       </div>

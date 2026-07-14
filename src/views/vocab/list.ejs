@@ -47,6 +47,21 @@
       </div>
       <button type="submit" class="btn-sm btn-primary">Share</button>
     </form>
+    <div style="display:flex; gap:0.5rem; align-items:center;">
+      <form method="POST" action="/vocab/lists/<%= list.id %>/share-link" style="display:flex; gap:0.5rem; align-items:end;" onsubmit="event.preventDefault(); fetch(this.action,{method:'POST'}).then(r=>r.json()).then(d=>{this.querySelector('input').value=d.url;this.querySelector('input').select();navigator.clipboard?.writeText(d.url);}).catch(e=>alert(e.message))">
+        <div class="form-group" style="margin:0;flex:1;">
+          <label style="font-size:0.85rem;">Share Link</label>
+          <input type="text" readonly placeholder="Click 'Generate' to create…" style="width:280px;padding:0.4rem;font-size:0.85rem;">
+        </div>
+        <button type="submit" class="btn-sm btn-primary">Generate & Copy</button>
+      </form>
+      <form method="POST" action="/vocab/lists/<%= list.id %>/share-link/toggle">
+        <input type="hidden" name="enabled" value="<%= !list.share_token_enabled %>">
+        <button type="submit" class="btn-sm <%= list.share_token_enabled ? 'btn-danger' : 'btn-outline' %>">
+          <%= list.share_token_enabled ? 'Disable Link' : 'Enable Link' %>
+        </button>
+      </form>
+    </div>
   </div>
   <% } %>
 
@@ -65,23 +80,6 @@
           <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%= w.part_of_speech %></span>
           <p style="margin:0.25rem 0 0;font-size:0.9rem;"><%= w.definition %></p>
         </div>
-        <% if (isOwner) { %>
-        <div style="display:flex; gap:0.5rem; align-items:center;">
-          <form method="POST" action="/vocab/lists/<%= list.id %>/share-link" style="display:flex; gap:0.5rem; align-items:end;" onsubmit="event.preventDefault(); fetch(this.action,{method:'POST'}).then(r=>r.json()).then(d=>{this.querySelector('input').value=d.url;this.querySelector('input').select();navigator.clipboard?.writeText(d.url);}).catch(e=>alert(e.message))">
-            <div class="form-group" style="margin:0;flex:1;">
-              <label style="font-size:0.85rem;">Share Link</label>
-              <input type="text" readonly placeholder="Click 'Generate' to create…" style="width:280px;padding:0.4rem;font-size:0.85rem;">
-            </div>
-            <button type="submit" class="btn-sm btn-primary">Generate & Copy</button>
-          </form>
-          <form method="POST" action="/vocab/lists/<%= list.id %>/share-link/toggle">
-            <input type="hidden" name="enabled" value="<%= !list.share_token_enabled %>">
-            <button type="submit" class="btn-sm <%= list.share_token_enabled ? 'btn-danger' : 'btn-outline' %>">
-              <%= list.share_token_enabled ? 'Disable Link' : 'Enable Link' %>
-            </button>
-          </form>
-        </div>
-        <% } %>
       </div>
       <% }) %>
     </div>

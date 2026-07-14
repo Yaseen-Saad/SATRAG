@@ -1,18 +1,25 @@
 const supabase = require('../lib/supabase');
 const llm = require('../lib/llm');
 
+const DEFAULT_PROFILE = { llm_apikey: null, embedding_apikey: null, monthly_gen_count: 0, monthly_gen_month: null };
+
 async function checkAPIKeys(req, res, next) {
     try {
         let profile;
-        const result = await supabase
+        let result = await supabase
             .from('public_profiles')
             .select('llm_apikey, embedding_apikey, monthly_gen_count, monthly_gen_month')
             .eq('id', req.user.id)
-        if (result.error) throw result.error
-        if (!result.data || result.data.length === 0) {
-            profile = { llm_apikey: null, embedding_apikey: null, monthly_gen_count: 0, monthly_gen_month: null }
+        if (result.error) {
+            result = await supabase
+                .from('public_profiles')
+                .select('llm_apikey, embedding_apikey')
+                .eq('id', req.user.id)
+        }
+        if (result.error || !result.data || result.data.length === 0) {
+            profile = { ...DEFAULT_PROFILE }
         } else {
-            profile = result.data[0]
+            profile = { ...DEFAULT_PROFILE, ...result.data[0] }
         }
 
         const currentMonth = new Date().toISOString().slice(0, 7)
@@ -22,7 +29,7 @@ async function checkAPIKeys(req, res, next) {
         if (genMonth !== currentMonth) {
             genCount = 0
             genMonth = currentMonth
-            await supabase.service.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id)
+            await supabase.service.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id).catch(() => {})
         }
         req.user.genCount = genCount
         req.user.genMonth = genMonth

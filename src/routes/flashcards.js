@@ -21,15 +21,17 @@ router.get('/', requireAuth, async (req, res) => {
 
 router.get('/session', requireAuth, async (req, res) => {
     try {
-        const { listId, wordId } = req.query
-        if (!listId && !wordId) return res.redirect('/flashcards')
+        const { listId, wordId, all } = req.query
+        if (!listId && !wordId && !all) return res.redirect('/flashcards')
         let listName = 'Flashcard Practice'
-        if (listId) {
+        if (all) {
+            listName = 'All Flashcards'
+        } else if (listId) {
             const { list: listData } = await vocabEngine.getList(listId, req.user.id)
             if (listData) listName = listData.name || listName
         }
-        const cards = await flashcardsEngine.getSessionCards(req.user.id, { listId, wordId })
-        res.render('flashcards/session', { user: req.user, cards, listName, listId, wordId, error: null })
+        const cards = await flashcardsEngine.getSessionCards(req.user.id, { listId, wordId, all: all === "true" })
+        res.render('flashcards/session', { user: req.user, cards, listName, listId, wordId, all, error: null })
 
     } catch (error) {
         console.error('Flashcards session error:', error)

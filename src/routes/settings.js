@@ -19,10 +19,10 @@ const upload = multer({
 
 const router = Router()
 
-const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "Other", "I am not a student"])
+const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
 
-const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, llm_apikey, embedding_apikey';
+const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, llm_apikey, embedding_apikey, grade';
 
 router.get('/', requireAuth, async (req, res) => {
     try {

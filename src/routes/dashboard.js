@@ -54,14 +54,14 @@ router.get('/', requireAuth, async (req, res) => {
 router.get('/leaderboard', optionalAuth, async (req, res) => {
   try {
 
-    const { page = 1, limit = 50 } = req.query;
+    const { page = 1, limit = 50, sortBy = 'score', sortDir = 'desc', grade = '' } = req.query;
     const result = await dashboardEngine.getLeaderboard({
       limit: parseInt(limit), offset: (parseInt(page) - 1) * parseInt(limit),
-      userId: req.user?.id
+      userId: req.user?.id, sortBy, sortDir, gradeFilter: grade
     })
-    res.render('dashboard/leaderboard', { user: req.user, entries: result.entries || [], totalCount: result.totalCount || 0, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), error: null });
+    res.render('dashboard/leaderboard', { user: req.user, entries: result.entries || [], totalCount: result.totalCount || 0, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), sortBy, sortDir, grade, error: null });
   } catch (Err) {
-    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, error: Err.message })
+    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, sortBy: 'score', sortDir: 'desc', grade: '', error: Err.message })
   }
 })
 

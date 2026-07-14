@@ -71,7 +71,7 @@ class FlashcardsEngine {
         }))
     }
 
-    async getSessionCards(userId, { listId, wordId }) {
+    async getSessionCards(userId, { listId, wordId, all }) {
         if (wordId) {
             await this.ensureWordInitialized(userId, wordId)
             const { data } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId).eq('word_id', wordId).single()
@@ -85,9 +85,13 @@ class FlashcardsEngine {
             const { data } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId).in('word_id', wordIds).order('next_review', { ascending: true })
             return data || []
         }
+        if (all) {
+            const { data } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId).order('next_review', { ascending: true })
+            return data || []
+        }
         return []
     }
-
+    
     async ensureWordInitialized(userId, wordId) {
         const { data: existing } = await supabase
             .from('user_flashcard_progress').select('id').eq('user_id', userId).eq('word_id', wordId).maybeSingle()

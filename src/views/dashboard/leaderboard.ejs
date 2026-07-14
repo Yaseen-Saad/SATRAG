@@ -19,6 +19,20 @@
   <div class="flash flash-error"><%= error %></div>
   <% } %>
 
+  <div class="dash-card" style="margin-bottom:1rem;">
+    <form id="leaderboard-filters" style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+      <label style="font-size:0.85rem;color:var(--text-muted);">Filter by grade:</label>
+      <select id="grade-filter" onchange="applyFilters()" style="padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:var(--surface);color:var(--text);">
+        <option value="">All Grades</option>
+        <option value="9th" <%= grade === '9th' ? 'selected' : '' %>>9th</option>
+        <option value="10th" <%= grade === '10th' ? 'selected' : '' %>>10th</option>
+        <option value="11th" <%= grade === '11th' ? 'selected' : '' %>>11th</option>
+        <option value="12th" <%= grade === '12th' ? 'selected' : '' %>>12th</option>
+        <option value="Gap Year" <%= grade === 'Gap Year' ? 'selected' : '' %>>Gap Year</option>
+      </select>
+    </form>
+  </div>
+
   <% if (entries.length === 0) { %>
   <div class="card" style="text-align:center; padding:3rem;">
     <p style="font-size:1.2rem; color:var(--text-muted);">No one has joined the leaderboard yet.</p>
@@ -32,10 +46,9 @@
           <th style="width:50px;">Rank</th>
           <th>Name</th>
           <th>Grade</th>
-          <th style="text-align:center;">Correct</th>
-          <th style="text-align:center;">Accuracy</th>
-          <th style="text-align:center;">Quiz Avg</th>
-          <th style="text-align:center;">Score</th>
+          <th style="text-align:center;cursor:pointer;" onclick="toggleSort('correct')">Correct <%= sortBy === 'correct' ? (sortDir === 'desc' ? '↓' : '↑') : '' %></th>
+          <th style="text-align:center;cursor:pointer;" onclick="toggleSort('accuracy')">Accuracy <%= sortBy === 'accuracy' ? (sortDir === 'desc' ? '↓' : '↑') : '' %></th>
+          <th style="text-align:center;cursor:pointer;" onclick="toggleSort('score')">Score <%= sortBy === 'score' ? (sortDir === 'desc' ? '↓' : '↑') : '' %></th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +63,6 @@
           <td style="text-align:center; color:<%= e.accuracy >= 70 ? 'var(--success)' : e.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
             <%= e.accuracy %>%
           </td>
-          <td style="text-align:center;"><%= e.quizzes > 0 ? e.avgQuiz + '%' : '—' %></td>
           <td style="text-align:center; font-weight:700; color:var(--indigo);"><%= e.score %></td>
         </tr>
         <% }) %>
@@ -59,3 +71,27 @@
   </div>
   <% } %>
 </div>
+
+<script>
+  var currentSortBy = '<%= sortBy %>';
+  var currentSortDir = '<%= sortDir %>';
+  var currentGrade = '<%= grade %>';
+
+  function toggleSort(col) {
+    if (currentSortBy === col) {
+      currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc';
+    } else {
+      currentSortBy = col;
+      currentSortDir = 'desc';
+    }
+    applyFilters();
+  }
+
+  function applyFilters() {
+    var grade = document.getElementById('grade-filter').value;
+    var url = '/dashboard/leaderboard?sortBy=' + encodeURIComponent(currentSortBy) +
+              '&sortDir=' + encodeURIComponent(currentSortDir);
+    if (grade) url += '&grade=' + encodeURIComponent(grade);
+    window.location.href = url;
+  }
+</script>
