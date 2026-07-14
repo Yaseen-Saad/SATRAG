@@ -43,21 +43,27 @@ router.post('/login', async (req, res) => {
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return res.render('auth/login', { error: error.message })
-    await supabase.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).catch(e => console.error('last_login update failed:', e));
+    const { error: loginErr } = await supabase.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id);
+    if (loginErr) console.error('last_login update failed:', loginErr.message);
     const remember = req.body.remember === '1';
     res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : undefined })
     res.redirect('/')
 })
 
 router.post('/signup', async (req, res) => {
-    let { email, password, firstName, lastName, school } = req.body;
+    let { email, password, firstName, lastName, school, referral } = req.body;
     email = normalizeEmail(sanitize(email));
     firstName = sanitize(firstName);
     lastName = sanitize(lastName);
     school = sanitize(school);
+    referral = (referral || '').trim();
 
-    if (!email || !password || !firstName || !lastName || !school) {
+    const ALLOWED_REFERALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other']);
+    if (!email || !password || !firstName || !lastName || !school || !referral) {
         return res.render('auth/signup', { error: 'All fields are required' })
+    }
+    if (!ALLOWED_REFERALS.has(referral)) {
+        return res.render('auth/signup', { error: 'Invalid referral source' })
     }
 
     const pwErrors = validatePassword(password);
@@ -83,7 +89,7 @@ router.post('/signup', async (req, res) => {
     if (error) return res.render('auth/signup', { error: error.message })
     if (data.session) {
         await supabase.from('public_profiles').update({
-            first_name: firstName, last_name: lastName, school, email
+            first_name: firstName, last_name: lastName, school, email, referral
         }).eq('id', data.user.id);
         res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
         return res.redirect('/settings')

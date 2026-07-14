@@ -3,11 +3,22 @@ const llm = require('../lib/llm');
 
 async function checkAPIKeys(req, res, next) {
     try {
-        const { data: profile, error } = await supabase
-            .from('public_profiles')
-            .select('llm_apikey, embedding_apikey, monthly_gen_count, monthly_gen_month')
-            .eq('id', req.user.id).single()
-        if (error) throw error
+        let profile;
+        try {
+            const result = await supabase
+                .from('public_profiles')
+                .select('llm_apikey, embedding_apikey, monthly_gen_count, monthly_gen_month')
+                .eq('id', req.user.id).single()
+            if (result.error) throw result.error
+            profile = result.data
+        } catch (e) {
+            const result = await supabase
+                .from('public_profiles')
+                .select('llm_apikey, embedding_apikey')
+                .eq('id', req.user.id).single()
+            if (result.error) throw result.error
+            profile = { ...result.data, monthly_gen_count: 0, monthly_gen_month: null }
+        }
         const currentMonth = new Date().toISOString().slice(0, 7)
         let genCount = profile.monthly_gen_count || 0
         let genMonth = profile.monthly_gen_month

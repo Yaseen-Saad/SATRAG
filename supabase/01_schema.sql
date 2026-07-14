@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS user_topic_stats (
     last_attempt TIMESTAMP DEFAULT NOW(),
     current_difficulty_band INT DEFAULT 3,
     UNIQUE(user_id, subject, topic, subtopic)
-)
+);
 
 -- Avatar Images Bucket
 INSERT INTO storage.buckets
@@ -210,67 +210,86 @@ VALUES
    ARRAY['image/jpeg', 'image/png', 'image/gif'],
    NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
-
--- RLS: sat_questions (anyone can CRUD)
 ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "sat_questions select" ON sat_questions;
 CREATE POLICY "sat_questions select" ON sat_questions FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "sat_questions insert" ON sat_questions;
 CREATE POLICY "sat_questions insert" ON sat_questions FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "sat_questions update" ON sat_questions;
 CREATE POLICY "sat_questions update" ON sat_questions FOR UPDATE USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "sat_questions delete" ON sat_questions;
 CREATE POLICY "sat_questions delete" ON sat_questions FOR DELETE USING (true);
 
--- RLS: user_question_state (users own their rows)
+
+-- RLS: user_question_state
 ALTER TABLE user_question_state ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "user_question_state select" ON user_question_state;
 CREATE POLICY "user_question_state select" ON user_question_state FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "user_question_state insert" ON user_question_state;
 CREATE POLICY "user_question_state insert" ON user_question_state FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "user_question_state update" ON user_question_state;
 CREATE POLICY "user_question_state update" ON user_question_state FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "user_question_state delete" ON user_question_state;
 CREATE POLICY "user_question_state delete" ON user_question_state FOR DELETE USING (auth.uid() = user_id);
 
--- RLS: user_question_attempts (users own their rows)
+
+-- RLS: user_question_attempts
 ALTER TABLE user_question_attempts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "user_question_attempts select" ON user_question_attempts;
 CREATE POLICY "user_question_attempts select" ON user_question_attempts FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "user_question_attempts insert" ON user_question_attempts;
 CREATE POLICY "user_question_attempts insert" ON user_question_attempts FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "user_question_attempts delete" ON user_question_attempts;
 CREATE POLICY "user_question_attempts delete" ON user_question_attempts FOR DELETE USING (auth.uid() = user_id);
 
--- RLS: user_topic_stats (users own their rows)
+
+-- RLS: user_topic_stats
 ALTER TABLE user_topic_stats ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own topic stats" ON user_topic_stats;
 CREATE POLICY "Users can view own topic stats" ON user_topic_stats
-    FOR SELECT USING (auth.uid() = user_id)
+    FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert own topic stats" ON user_topic_stats;
 CREATE POLICY "Users can insert own topic stats" ON user_topic_stats
-    FOR INSERT WITH CHECK (auth.uid() = user_id)
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can update own topic stats" ON user_topic_stats;
 CREATE POLICY "Users can update own topic stats" ON user_topic_stats
-    FOR UPDATE USING (auth.uid() = user_id)
+    FOR UPDATE USING (auth.uid() = user_id);
 
 
--- RLS: word_lists (owners only)
+-- RLS: word_lists
 ALTER TABLE word_lists ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "word_lists owner all" ON word_lists;
 CREATE POLICY "word_lists owner all" ON word_lists
     FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
 
--- RLS: word_list_entries (owners of parent list)
+
+-- RLS: word_list_entries
 ALTER TABLE word_list_entries ENABLE ROW LEVEL SECURITY;
 
--- RLS: public_profiles (view everyone, edit your own)
+
+-- RLS: public_profiles
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public Profiles are viewable by everyone" ON public_profiles;
 CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Users can update their own public profile only" ON public_profiles;
 CREATE POLICY "Users can update their own public profile only" ON public_profiles FOR UPDATE USING (auth.uid() = id);
-
--- Avatars Policies
-DROP POLICY IF EXISTS "Avatars select if bucket is public" ON storage.objects;
-CREATE POLICY "Avatars select if bucket is public"
-ON storage.objects FOR SELECT TO public
-USING (
-  bucket_id = 'avatars'
-  AND (SELECT b.public FROM storage.buckets b WHERE b.id = bucket_id) = true
-);
-
-DROP POLICY IF EXISTS "Allow uploads to avatars" ON storage.objects;
-CREATE POLICY "Allow uploads to avatars" ON storage.objects
-  FOR INSERT
-  WITH CHECK (
-    bucket_id = 'avatars'
-    AND auth.role() = 'authenticated'
-    AND (storage.foldername(name))[1] = auth.uid()::text
-  );
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);
@@ -281,5 +300,5 @@ CREATE INDEX IF NOT EXISTS idx_uqs_user_question ON user_question_state(user_id,
 CREATE INDEX IF NOT EXISTS idx_uqs_question_status ON user_question_state(question_id, status);
 CREATE INDEX IF NOT EXISTS idx_uqa_question_time ON user_question_attempts(question_id, attempt_time);
 CREATE INDEX IF NOT EXISTS idx_word_lists_share_token ON word_lists(share_token);
-CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_status(user_id, accuracy_pct);
-CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_status(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_stats(user_id, accuracy_pct);
+CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_stats(user_id, subject);

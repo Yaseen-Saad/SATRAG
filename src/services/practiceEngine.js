@@ -1,4 +1,4 @@
-const { supabase } = require('../lib/supabase')
+const supabase = require('../lib/supabase')
 class PracticeEngine {
     async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });

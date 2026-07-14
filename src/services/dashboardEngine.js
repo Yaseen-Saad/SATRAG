@@ -18,8 +18,8 @@ class DashboardEngine {
             const avgScore = allQuizzes.length ? Math.round(allQuizzes.reduce((acc, quiz) => acc + quiz.score, 0) / (allQuizzes.length)) : null;
             const validScores = (avgQuality || []).filter(e => e.quality_score != null).map(e => e.quality_score);
             const avgQualityScore = validScores.length ? Math.round(validScores.reduce((acc, score) => acc + score, 0) / validScores.length) : null;
-            const ratings = feedbackData?.filter(feedback => feedback.satisfaction_score !== null);
-            const avgSatisfaction = ratings?.length ? Math.round(ratings.reduce((acc, feedback) => acc + feedback.satisfaction_score, 0) / ratings.length) : null;
+            const ratings = feedbackData?.data?.filter(feedback => feedback.satisfaction_score !== null) || [];
+            const avgSatisfaction = ratings.length ? Math.round(ratings.reduce((acc, feedback) => acc + feedback.satisfaction_score, 0) / ratings.length) : null;
             return {
                 avgScore,
                 avgQualityScore,

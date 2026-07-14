@@ -21,11 +21,17 @@ const router = Router()
 
 const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "Other", "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
-const ALLOWED_REFERALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other'])
 
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const { data: profile } = await supabase.from('public_profiles').select('id, first_name, last_name, school, grade, gender, birthdate, email, avatar_url, participate_in_leaderboard, monthly_gen_count, monthly_gen_month').eq('id', req.user.id).single();
+        let profile = null;
+        try {
+            const result = await supabase.from('public_profiles').select('id, first_name, last_name, school, grade, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login').eq('id', req.user.id).single();
+            profile = result.data;
+        } catch (e) {
+            const result = await supabase.from('public_profiles').select('id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login').eq('id', req.user.id).single();
+            profile = result.data;
+        }
         res.render('settings/index', { user: req.user, profile, error: null, success: null, prompt: req.query.prompt })
     } catch (err) {
         console.error('Settings page error:', err);
@@ -66,10 +72,7 @@ router.post('/update-all', requireAuth, async (req, res) => {
         if (embeddingKey) updates.embedding_apikey = embeddingKey;
 
         const leaderboardEnabled = req.body.leaderboardstatus === 'enabled';
-        const referral = (req.body.referral || '').trim();
-        if (referral && !ALLOWED_REFERALS.has(referral)) errors.push('Invalid referral source');
         updates.participate_in_leaderboard = leaderboardEnabled;
-        if (referral) updates.referral = referral;
 
         if (errors.length > 0) {
             return res.redirect('/settings?error=' + encodeURIComponent(errors.join('; ')));
