@@ -121,7 +121,7 @@ class RAGEngine {
         if (!data || !data.length) return []
         return [...data].sort(() => Math.random() - 0.5).slice(0, Math.min(count, data.length))
     }
-    async generateSATQuestion({ subject, topic, difficulty }) {
+    async generateSATQuestion({ subject, topic, difficulty, apiKey, embedApiKey }) {
         const examples = await this.findSATExamples({ subject, topic, difficulty, count: 3 });
         const prompt = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
         const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => ({
@@ -132,7 +132,7 @@ class RAGEngine {
                 subject: ex.subject, topic: ex.topic, difficulty: ex.difficulty
             }, null, 2)}`
         })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SINGLE JSON OBJECT` }];
-        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 8192 });
+        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 8192, apiKey: apiKey, embedApiKey: embedApiKey });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
         const match = raw.match(/\{[\s\S]*\}/);

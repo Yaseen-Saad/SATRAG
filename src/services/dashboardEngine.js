@@ -190,7 +190,7 @@ class DashboardEngine {
         let tempStreak = 0;
         const todayStr = new Date().toISOString().split('T')[0]
         const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-        const hasActivityRecently = uniqueDays[0] === todayStr || uniqueDays[0] === yesterdayStr
+        const hasActivityRecently = uniqueDays[uniqueDays.length - 1] === todayStr || uniqueDays[uniqueDays.length - 1] === yesterdayStr
 
         for (let i = 0; i < uniqueDays.length; i++) {
             if (i === 0) {
@@ -212,7 +212,7 @@ class DashboardEngine {
 
         longestStreak = Math.max(longestStreak, tempStreak);
         currentStreak = hasActivityRecently ? tempStreak : 0;
-        if (hasActivityRecently && uniqueDays[0] === todayStr && tempStreak === uniqueDays.length) {
+        if (hasActivityRecently && uniqueDays[uniqueDays.length - 1] === todayStr && tempStreak === uniqueDays.length) {
             currentStreak = tempStreak;
         }
 

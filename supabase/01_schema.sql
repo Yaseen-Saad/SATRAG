@@ -186,6 +186,22 @@ CREATE TABLE IF NOT EXISTS public_profiles (
     last_login TIMESTAMP DEFAULT NOW()
 );
 
+-- Per-Topic Practice
+CREATE TABLE IF NOT EXISTS user_topic_stats (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users NOT NULL,
+    subject TEXT NOT NULL CHECK (subject IN ('math', 'reading', 'writing')),
+    topic TEXT NOT NULL,
+    subtopic TEXT NOT NULL,
+    total_attempts INT DEFAULT 0,
+    total_correct INT DEFAULT 0,
+    accuracy_pct NUMERIC(5,2) DEFAULT 0,
+    avg_time_ms INT DEFAULT 0,
+    last_attempt TIMESTAMP DEFAULT NOW(),
+    current_difficulty_band INT DEFAULT 3,
+    UNIQUE(user_id, subject, topic, subtopic)
+)
+
 -- Avatar Images Bucket
 INSERT INTO storage.buckets
   (id, name, public, file_size_limit, allowed_mime_types, created_at, updated_at)
@@ -214,6 +230,16 @@ ALTER TABLE user_question_attempts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "user_question_attempts select" ON user_question_attempts FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "user_question_attempts insert" ON user_question_attempts FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "user_question_attempts delete" ON user_question_attempts FOR DELETE USING (auth.uid() = user_id);
+
+-- RLS: user_topic_stats (users own their rows)
+ALTER TABLE user_topic_stats ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view own topic stats" ON user_topic_stats
+    FOR SELECT USING (auth.uid() = user_id)
+CREATE POLICY "Users can insert own topic stats" ON user_topic_stats
+    FOR INSERT WITH CHECK (auth.uid() = user_id)
+CREATE POLICY "Users can update own topic stats" ON user_topic_stats
+    FOR UPDATE USING (auth.uid() = user_id)
+
 
 -- RLS: word_lists (owners only)
 ALTER TABLE word_lists ENABLE ROW LEVEL SECURITY;
@@ -255,3 +281,5 @@ CREATE INDEX IF NOT EXISTS idx_uqs_user_question ON user_question_state(user_id,
 CREATE INDEX IF NOT EXISTS idx_uqs_question_status ON user_question_state(question_id, status);
 CREATE INDEX IF NOT EXISTS idx_uqa_question_time ON user_question_attempts(question_id, attempt_time);
 CREATE INDEX IF NOT EXISTS idx_word_lists_share_token ON word_lists(share_token);
+CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_status(user_id, accuracy_pct);
+CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_status(user_id, subject);

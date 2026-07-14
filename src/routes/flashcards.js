@@ -25,8 +25,8 @@ router.get('/session', requireAuth, async (req, res) => {
         if (!listId && !wordId) return res.redirect('/flashcards')
         let listName = 'Flashcard Practice'
         if (listId) {
-            const list = await vocabEngine.getList(listId, req.user.id)
-            if (list) listName = list.name || listName
+            const { list: listData } = await vocabEngine.getList(listId, req.user.id)
+            if (listData) listName = listData.name || listName
         }
         const cards = await flashcardsEngine.getSessionCards(req.user.id, { listId, wordId })
         res.render('flashcards/session', { user: req.user, cards, listName, listId, wordId, error: null })

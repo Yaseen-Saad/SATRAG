@@ -115,4 +115,42 @@ router.get('/history', requireAuth, async (req, res) => {
         res.render('practice/history', { user: req.user, error: 'Error loading history', attempts: [], questionId: null })
     }
 })
+
+
+router.get('/adaptive', requireAuth, async (req, res) => {
+    try {
+        const { subject } = req.query
+        const topicStats = await practice.getTopicStats(req.user.id)
+        const weakTopics = topicStats.filter(topic => topic.accuracy_pct < 70)
+
+        if (req.query.json === "true") {
+            const result = await practice.getAdaptiveQuestion(req.user.id, subject)
+            return res.json(result)
+        }
+        res.render('practice/adaptive', {
+            user: req.user, topicstats, weakTopics, subject, questions: null, reason: null, error: null
+        })
+
+    } catch (error) {
+        console.error('Adaptive practice error:', error)
+        res.redirect('/practice')
+    }
+})
+
+router.post('/adaptive/next', requireAuth, async (req, res) => {
+    try {
+        const { subject } = req.body
+        const topicStats = await practice.getTopicStats(req.user.id)
+        const weakTopics = topicStats.filter(topic => topic.accuracy_pct < 70)
+        const result = await practice.getAdaptiveQuestion(req.user.id, subject)
+
+        res.render('practice/adaptive', {
+            user: req.user, topicstats, weakTopics, subject, questions: result.question, reason: result.reason, error: result.question ? null : "No questions available. Please try a different subject or complete more practice questions first."
+        })
+
+    } catch (error) {
+        console.error('Adaptive practice error:', error)
+        res.redirect('/practice/adaptive')
+    }
+})
 module.exports = router

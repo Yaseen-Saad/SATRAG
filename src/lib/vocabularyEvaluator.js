@@ -1,16 +1,10 @@
 const fs = require("fs")
 const path = require("path")
 const llm = require('./llm')
-
-
-// This function is AI generated but it works :)
-const interpolate = (tpl, args) => {
-    const handler = new Function(...Object.keys(args), `return \`${tpl}\`;`);
-    return handler(...Object.values(args));
-};
+const { interpolate } = require('./utils')
 
 class VocabularyEvaluator {
-    async evaluateEntry(entry, targetWord) {
+    async evaluateEntry(entry, targetWord, apiKey, embedApiKey) {
         try {
             const prompt = fs.readFileSync(path.join(__dirname, '../prompts/evaluate_vocab_entry.txt'), 'utf-8');
             const filled = interpolate(prompt, {
@@ -27,7 +21,9 @@ class VocabularyEvaluator {
             const response = await llm.generateCompletion({
                 messages: [{ role: 'user', content: filled }],
                 temperature: 0.2,
-                maxTokens: 800
+                maxTokens: 800,
+                apiKey: apiKey,
+                embedApiKey: embedApiKey
             })
             const jsonMatch = response.content.match(/\{[\s\S]*\}/);
             if (!jsonMatch) throw new Error('No JSON in LLM response');

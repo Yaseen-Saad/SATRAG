@@ -56,7 +56,8 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
-                apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey
+                apiKey: req.user.useFreeModels ? undefined : req.user.llm_apikey,
+                embedApiKey: req.user.useFreeModels ? undefined : req.user.embed_apikey
             });
             entry = parseGeneratedEntry(response.content, word);
         }
@@ -350,7 +351,7 @@ router.post('/lists/:id/share', requireAuth, async (req, res) => {
 
 router.post('/lists/:id/share-link/toggle', requireAuth, async (req, res) => {
     try {
-        await vocabEngine.toggleShareToken(req.params.id, req.user.id, req.body.enabled === true);
+        await vocabEngine.toggleShareToken(req.params.id, req.user.id, req.body.enabled === 'true');
         res.redirect(`/vocab/lists/${req.params.id}`)
     } catch (errr) {
         res.redirect(`/vocab/lists/${req.params.id}?error=${encodeURIComponent(errr.message)}`)
