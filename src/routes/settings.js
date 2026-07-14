@@ -88,7 +88,7 @@ router.post('/update-all', requireAuth, async (req, res) => {
 
 router.post('/avatar/upload', requireAuth, upload.single('avatar'), async (req, res) => {
     try {
-        if (!req.file) return res.redirect('/settings?error=No file selected');
+        if (!req.file) return res.status(400).json({ error: 'No file selected' });
         const ext = path.extname(req.file.originalname).toLowerCase();
         const filename = `${req.user.id}/${Date.now()}${ext}`;
         const { error: uploadError } = await supabase.storage.from('avatars').upload(filename, req.file.buffer, {
@@ -97,11 +97,12 @@ router.post('/avatar/upload', requireAuth, upload.single('avatar'), async (req, 
         });
         if (uploadError) throw new Error(uploadError.message);
         const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filename);
-        await supabase.from('public_profiles').update({ avatar_url: publicUrl }).eq('id', req.user.id);
-        res.redirect('/settings?success=Avatar uploaded');
+        const { error: updateErr } = await supabase.from('public_profiles').update({ avatar_url: publicUrl }).eq('id', req.user.id);
+        if (updateErr) console.error('Avatar DB update failed:', updateErr.message);
+        res.json({ url: publicUrl });
     } catch (err) {
         console.error('Avatar upload error:', err);
-        res.redirect('/settings?error=' + encodeURIComponent(err.message));
+        res.status(500).json({ error: err.message });
     }
 })
 

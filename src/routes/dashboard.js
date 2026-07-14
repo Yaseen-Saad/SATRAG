@@ -77,4 +77,5 @@ router.get('/analytics', requireAuth, async (req, res) => {
     res.render('dashboard/analytics', { user: req.user, sessions: [], trend: [], timeAnalytics: [], error: error.message });
   }
 })
+
 module.exports = router;

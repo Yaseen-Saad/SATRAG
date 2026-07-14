@@ -88,9 +88,15 @@ router.post('/signup', async (req, res) => {
     })
     if (error) return res.render('auth/signup', { error: error.message })
     if (data.session) {
-        await supabase.from('public_profiles').update({
-            first_name: firstName, last_name: lastName, school, email, referral
-        }).eq('id', data.user.id);
+        const profileRow = {
+            id: data.user.id,
+            first_name: firstName, last_name: lastName, school, email, referral,
+            participate_in_leaderboard: true,
+            first_login: new Date().toISOString(),
+            last_login: new Date().toISOString()
+        }
+        const { error: profileErr } = await supabase.from('public_profiles').upsert(profileRow, { onConflict: 'id' })
+        if (profileErr) console.error('Profile creation failed:', profileErr.message)
         res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
         return res.redirect('/settings')
     }

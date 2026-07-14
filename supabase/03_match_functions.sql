@@ -50,8 +50,6 @@ END;
 $$;
 
 
-
-
 CREATE OR REPLACE FUNCTION match_sat_questions(
     query_embedding vector(1024),
     match_subject TEXT DEFAULT NULL,
@@ -129,8 +127,24 @@ $$;
 CREATE OR REPLACE FUNCTION public_profile_new_users()
 RETURNS TRIGGER AS $$
 BEGIN 
-    INSERT INTO public_profiles(id, first_name, last_name, school, email, birthdate, participate_in_leaderboard, gender, referral, first_login, last_login, embedding_apikey, llm_apikey)
-    VALUES(new.id, new.first_name, new.last_name, new.school, new.email, new.birthdate, new.participate_in_leaderboard, new.gender, new.referral, new.first_login, new.last_login, new.embedding_apikey, new.llm_apikey);
+    INSERT INTO public_profiles(id, first_name, last_name, school, email, referral, participate_in_leaderboard, first_login, last_login)
+    VALUES(
+        new.id,
+        COALESCE(new.raw_user_meta_data->>'first_name', ''),
+        COALESCE(new.raw_user_meta_data->>'last_name', ''),
+        COALESCE(new.raw_user_meta_data->>'school', ''),
+        COALESCE(new.email, ''),
+        COALESCE(new.raw_user_meta_data->>'referral', ''),
+        true,
+        NOW(),
+        NOW()
+    )
+    ON CONFLICT (id) DO UPDATE SET
+        first_name = EXCLUDED.first_name,
+        last_name = EXCLUDED.last_name,
+        school = EXCLUDED.school,
+        email = EXCLUDED.email,
+        referral = EXCLUDED.referral;
     RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

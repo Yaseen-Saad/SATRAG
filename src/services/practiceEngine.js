@@ -97,7 +97,7 @@ class PracticeEngine {
         const nStatus = isCorrect ? "solved_correct" : "solved_incorrect"
         const newBest = existing?.best_time_ms ? Math.min(existing.best_time_ms, timeMs) : timeMs;
         if (question.subject || question.topic) {
-            const [{ error: upsertErr }, { error: updateTopicError }] = await Promise.all([supabase.from('user_question_state').upsert({
+            const { error: upsertErr } = await supabase.from('user_question_state').upsert({
                 user_id: userId, question_id: questionId,
                 status: nStatus,
                 times_attempted: attemptNumber,
@@ -106,7 +106,8 @@ class PracticeEngine {
                 last_attempt: new Date().toISOString(),
                 first_attempt: existing?.first_attempt || new Date().toISOString(),
                 first_solved: isCorrect && !existing?.first_solved ? new Date().toISOString() : existing?.first_solved,
-            }, { onConflict: 'user_id, question_id' }), this.updateTopicStats(userId, question.subject, question.topic, question.subtopic, isCorrect, timeMs)])
+            }, { onConflict: 'user_id, question_id' })
+            this.updateTopicStats(userId, question.subject, question.topic, question.subtopic, isCorrect, timeMs).catch(() => {})
 
             if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
             const percentile = await this.getSpeedPercentile({ questionId, userTimeMs: timeMs })
