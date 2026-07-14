@@ -66,9 +66,11 @@ class DashboardEngine {
         if (!attempts || attempts.length === 0) return [];
         const breakdown = {};
         for (const attempt of attempts) {
-            const key = `${attempt.sat_questions.subject}-${attempt.sat_questions.topic}`;
+            const rawSubject = attempt.sat_questions.subject;
+            const subject = (rawSubject === 'reading' || rawSubject === 'writing') ? 'reading_writing' : rawSubject;
+            const key = `${subject}-${attempt.sat_questions.topic}`;
             if (!breakdown[key]) {
-                breakdown[key] = { subject: attempt.sat_questions.subject, topic: attempt.sat_questions.topic, correct: 0, incorrect: 0, total: 0 };
+                breakdown[key] = { subject, topic: attempt.sat_questions.topic, correct: 0, incorrect: 0, total: 0 };
             }
             breakdown[key].total++
             if (attempt.is_correct) breakdown[key].correct++
@@ -158,7 +160,7 @@ class DashboardEngine {
             current.questions.push(
                 {
                     id: att.question_id,
-                    subject: att.sat_questions.subject,
+                    subject: (att.sat_questions.subject === 'reading' || att.sat_questions.subject === 'writing') ? 'reading_writing' : att.sat_questions.subject,
                     topic: att.sat_questions.topic,
                     correct: att.is_correct
                 }

@@ -15,7 +15,7 @@
                         <span class="topic-name">${t.topic}</span>
                         <span class="topic-accuracy ${t.accuracy_pct < 50 ? 'accuracy-low' : 'accuracy-mid'}">${Math.round(t.accuracy_pct)}%</span>
                     </div>
-                    <div class="topic-stat-meta">${t.subject} · Band ${t.current_difficulty_band}/7</div>
+                    <div class="topic-stat-meta">${(t.subject === 'reading' || t.subject === 'writing') ? 'Reading & Writing' : t.subject} · Band ${t.current_difficulty_band}/7</div>
                     <div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(100, t.accuracy_pct)}%"></div></div>
                 </div>
             `).join('')}
@@ -25,7 +25,7 @@
                 <select name="subject" id="subject" class="form-control">
                     <option value="">All Subjects</option>
                     <option value="math" ${subject === 'math' ? 'selected' : ''}>Math</option>
-                    <option value="reading" ${subject === 'reading' ? 'selected' : ''}>Reading & Writing</option>
+                    <option value="reading_writing" ${subject === 'reading_writing' ? 'selected' : ''}>Reading & Writing</option>
                 </select>
                 <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem">
                     ${question ? 'Get Next Question' : 'Start Adaptive Session'}
@@ -39,7 +39,7 @@
                 <div class="adaptive-reason">${reason}</div>
                 <div class="question-card">
                     <div class="question-header">
-                        <span class="badge badge-subject">${question.subject || 'General'}</span>
+                        <span class="badge badge-subject">${(question.subject === 'reading' || question.subject === 'writing') ? 'Reading & Writing' : (question.subject || 'General')}</span>
                         <span class="badge badge-difficulty">Band ${question.difficulty_band || '?'}/7</span>
                         ${question.topic ? '<span class="badge badge-topic">' + question.topic + '</span>' : ''}
                     </div>

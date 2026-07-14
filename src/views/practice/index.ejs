@@ -17,9 +17,8 @@
         <label>Subject</label>
         <select name="subject" onchange="this.form.submit()">
           <option value="">All</option>
+          <option value="reading_writing" <%= filters.subject === 'reading_writing' ? 'selected' : '' %>>Reading & Writing</option>
           <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
-          <option value="reading" <%= filters.subject === 'reading' ? 'selected' : '' %>>Reading</option>
-          <option value="writing" <%= filters.subject === 'writing' ? 'selected' : '' %>>Writing</option>
         </select>
       </div>
       <div class="form-group">
@@ -112,7 +111,7 @@
       <% questions.forEach(q => { %>
       <a href="/practice/question/<%= q.id %>?from=<%= encodeURIComponent(currentUrl)%>" class="card card-link practice-item">
         <div class="practice-item-header">
-          <span class="badge badge--<%= q.subject %>"><%= q.subject %></span>
+          <span class="badge badge--<%= (q.subject === 'reading' || q.subject === 'writing') ? 'reading_writing' : q.subject %>"><%= (q.subject === 'reading' || q.subject === 'writing') ? 'Reading & Writing' : q.subject %></span>
           <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
           <small style="color:var(--text-light);"><%= q.topic %> · <%= q.subtopic %></small>
         </div>

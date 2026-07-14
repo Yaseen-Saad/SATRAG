@@ -2,6 +2,7 @@ const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
 const supabase = require('../lib/supabase').service
 const practice = require('../services/practiceEngine')
+const PracticeEngine = require('../services/practiceEngine')
 const vocabEngine = require('../services/vocabEngine')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const rag = require('../lib/rag')
@@ -45,13 +46,14 @@ router.get('/generate', requireAuth, async (req, res) => {
 router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { subject, topic, difficulty, count = 1 } = req.body
+        const genSubject = subject === 'reading_writing' ? (Math.random() > 0.5 ? 'reading' : 'writing') : subject;
         let maxIter = Math.min(parseInt(count), 5);
         if (req.user.useFreeModels) {
             maxIter = Math.min(maxIter, 5 - (req.user.genCount || 0));
         }
         const questions = []
         for (let i = 0; i < maxIter; i++) {
-            const generated = await rag.generateSATQuestion({ subject, topic, difficulty })
+            const generated = await rag.generateSATQuestion({ subject: genSubject, topic, difficulty })
             if (generated) {
                 questions.push(generated)
                 await incrementGenCount(req.user)

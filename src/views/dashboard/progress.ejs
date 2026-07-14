@@ -88,7 +88,7 @@
       <% weakestTopics.forEach(function(t) { %>
       <div class="topic-row">
         <div class="topic-info">
-          <span class="topic-subject"><%= t.subject %></span>
+          <span class="topic-subject"><%= (t.subject === 'reading' || t.subject === 'writing') ? 'Reading & Writing' : t.subject %></span>
           <span class="topic-name"><%= t.topic %></span>
         </div>
         <div class="topic-right">

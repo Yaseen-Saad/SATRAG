@@ -11,8 +11,7 @@
     <select name="subject" class="form-input" required onchange="filterTopics()">
       <option value="">— Select —</option>
       <option value="math" <%= subject === 'math' ? 'selected' : '' %>>Math</option>
-      <option value="reading" <%= subject === 'reading' ? 'selected' : '' %>>Reading</option>
-      <option value="writing" <%= subject === 'writing' ? 'selected' : '' %>>Writing</option>
+      <option value="reading_writing" <%= subject === 'reading_writing' ? 'selected' : '' %>>Reading & Writing</option>
     </select>
   </div>
   <div class="form-group">
@@ -44,7 +43,7 @@
 <% generated.forEach((q, i) => { %>
 <div class="card" style="margin-bottom:1rem; padding:1.5rem;">
   <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
-    <span class="badge badge--<%= q.subject %>"><%= q.subject %></span>
+    <span class="badge badge--<%= (q.subject === 'reading' || q.subject === 'writing') ? 'reading_writing' : q.subject %>"><%= (q.subject === 'reading' || q.subject === 'writing') ? 'Reading & Writing' : q.subject %></span>
     <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
     <small style="color:var(--text-light);"><%= q.topic %> · <%= q.subtopic %></small>
   </div>
@@ -78,10 +77,15 @@
     const subject = document.querySelector('[name="subject"]').value;
     document.querySelectorAll('[name="topic"] option').forEach(opt => {
       if (opt.value === '') return;
-      opt.style.display = !subject || opt.dataset.subject === subject ? '' : 'none';
+      if (!subject) { opt.style.display = ''; return; }
+      if (subject === 'reading_writing') {
+        opt.style.display = (opt.dataset.subject === 'reading' || opt.dataset.subject === 'writing') ? '' : 'none';
+      } else {
+        opt.style.display = opt.dataset.subject === subject ? '' : 'none';
+      }
     });
     document.querySelector('[name="topic"]').value = '';
-  }
+}
   document.addEventListener('DOMContentLoaded', filterTopics);
 
   document.querySelectorAll('.save-btn').forEach(btn => {

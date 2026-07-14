@@ -1,4 +1,14 @@
 const supabase = require('../lib/supabase').service
+
+const SUBJECT_LABELS = { math: 'Math', reading: 'Reading & Writing', writing: 'Reading & Writing', reading_writing: 'Reading & Writing' }
+const isRW = (s) => s === 'reading' || s === 'writing' || s === 'reading_writing'
+
+function applySubjectFilter(query, subject) {
+    if (!subject) return query
+    if (subject === 'reading_writing' || isRW(subject)) return query.in('subject', ['reading', 'writing'])
+    return query.eq('subject', subject)
+}
+
 class PracticeEngine {
     async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
@@ -6,8 +16,7 @@ class PracticeEngine {
             query = query.eq('is_active', true);
         else if (active === false)
             query = query.eq('is_active', false);
-        if (subject)
-            query = query.eq('subject', subject);
+        query = applySubjectFilter(query, subject);
         if (topic)
             query = query.eq('topic', topic);
         if (subtopic)
@@ -163,12 +172,16 @@ class PracticeEngine {
             supabase.from("user_question_state").select("status, question_id").eq("user_id", userId),
         ])
         const correctAnswers = totalAttempts?.data?.filter(a => a.is_correct) || []
-        const bySubj = { math: 0, reading: 0, writing: 0 }
+        const bySubj = { math: 0, 'reading_writing': 0 }
         if (bySubject.data) {
             const ids = bySubject.data.filter(subj => subj.status === "solved_correct").map(subj => subj.question_id)
             if (ids.length) {
                 const { data: qs } = await supabase.from('sat_questions').select('id, subject').in('id', ids);
-                qs?.forEach(q => { if (bySubj[q.subject] == null) bySubj[q.subject] = 0; bySubj[q.subject]++ })
+                qs?.forEach(q => {
+                    const key = isRW(q.subject) ? 'reading_writing' : q.subject;
+                    if (bySubj[key] == null) bySubj[key] = 0;
+                    bySubj[key]++;
+                })
 
             }
         }
@@ -182,11 +195,12 @@ class PracticeEngine {
 
     async getTopicTree(subject) {
         let query = supabase.from('sat_questions').select('topic, subtopic, subject')
-        if (subject) query = query.eq('subject', subject)
+        query = applySubjectFilter(query, subject)
         const { data } = await query;
         const tree = {};
         (data || []).forEach(q => {
-            if (!tree[q.topic]) tree[q.topic] = { subtopics: new Set(), subject: q.subject };
+            const displaySubject = isRW(q.subject) ? 'reading_writing' : q.subject;
+            if (!tree[q.topic]) tree[q.topic] = { subtopics: new Set(), subject: displaySubject };
             if (q.subtopic) tree[q.topic].subtopics.add(q.subtopic);
         })
         return Object.entries(tree).map(([topic, entry]) => ({
@@ -264,11 +278,11 @@ class PracticeEngine {
     async getAdaptiveQuestion(userId, subject) {
         const weakTopics = await this.getWeakTopics(userId, 70)
         let targetTopic = null;
-        if (subject) targetTopic = weakTopics.find(t => t.subject === subject)
+        if (subject) targetTopic = weakTopics.find(t => isRW(subject) ? isRW(t.subject) : t.subject === subject)
         if (!targetTopic && weakTopics.length > 0) targetTopic = weakTopics[0];
 
         let query = supabase.from('sat_questions').select('*').eq('is_active', true);
-        if (subject) query = query.eq('subject', subject);
+        query = applySubjectFilter(query, subject);
 
         if (targetTopic) {
             const band = targetTopic.current_difficulty_band
@@ -291,7 +305,7 @@ class PracticeEngine {
 
         if (!questions || questions.length === 0) {
             let fallbackQuery = supabase.from('sat_questions').select("*").eq('is_active', true).order('created_at', { ascending: false }).limit(1);
-            if (subject) fallbackQuery = fallbackQuery.eq('subject', subject);
+            fallbackQuery = applySubjectFilter(fallbackQuery, subject);
             const { data: fallback } = await fallbackQuery;
             return { question: fallback?.[0] || null, weakTopic: targetTopic, reason: targetTopic ? `Practicing ${targetTopic.topic} (${Math.round(targetTopic.accuracy_pct)}% accuracy)` : `Random question: complete more practice for personalized recommendations` }
         }
@@ -302,7 +316,8 @@ class PracticeEngine {
                 : 'Suggested question based on your profile'
         }
     }
-
 }
 
 module.exports = new PracticeEngine()
+module.exports.SUBJECT_LABELS = SUBJECT_LABELS
+module.exports.isRW = isRW
