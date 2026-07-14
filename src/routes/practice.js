@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
-const supabase = require('../lib/supabase')
+const supabase = require('../lib/supabase').service
 const practice = require('../services/practiceEngine')
 const vocabEngine = require('../services/vocabEngine')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')

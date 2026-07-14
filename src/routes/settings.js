@@ -5,7 +5,7 @@ const path = require('path');
 const { requireAuth } = require('../middleware/auth');
 const { sanitize } = require('../lib/utils')
 const settingsEngine = require('../services/settingsEngine');
-const supabase = require('../lib/supabase');
+const supabase = require('../lib/supabase').service;
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -22,20 +22,15 @@ const router = Router()
 const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "Other", "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
 
+const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, llm_apikey, embedding_apikey';
+
 router.get('/', requireAuth, async (req, res) => {
     try {
-        let profile = null;
-        try {
-            const result = await supabase.from('public_profiles').select('id, first_name, last_name, school, grade, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login').eq('id', req.user.id).single();
-            profile = result.data;
-        } catch (e) {
-            const result = await supabase.from('public_profiles').select('id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login').eq('id', req.user.id).single();
-            profile = result.data;
-        }
-        res.render('settings/index', { user: req.user, profile, error: null, success: null, prompt: req.query.prompt })
+        const { data: profile } = await supabase.from('public_profiles').select(PROFILE_COLUMNS).eq('id', req.user.id).single();
+        res.render('settings/index', { user: req.user, profile: profile || {}, error: null, success: null, prompt: req.query.prompt })
     } catch (err) {
-        console.error('Settings page error:', err);
-        res.redirect('/');
+        console.error('Settings page error:', err.message);
+        res.render('settings/index', { user: req.user, profile: {}, error: null, success: null, prompt: req.query.prompt })
     }
 })
 
@@ -60,9 +55,9 @@ router.post('/update-all', requireAuth, async (req, res) => {
         updates.first_name = firstName;
         updates.last_name = lastName;
         updates.school = school;
-        if (grade) updates.grade = grade;
-        if (gender) updates.gender = gender;
-        if (birthdate) updates.birthdate = birthdate;
+        updates.grade = grade || null;
+        updates.gender = gender || null;
+        updates.birthdate = birthdate || null;
 
         const llmKey = req.body.llmKey ? sanitize(req.body.llmKey) : '';
         const embeddingKey = req.body.embeddingKey ? sanitize(req.body.embeddingKey) : '';
@@ -70,6 +65,9 @@ router.post('/update-all', requireAuth, async (req, res) => {
         if (embeddingKey && embeddingKey.length < 10) errors.push('Embedding API key too short');
         if (llmKey) updates.llm_apikey = llmKey;
         if (embeddingKey) updates.embedding_apikey = embeddingKey;
+
+        const avatarUrl = (req.body.avatarUrl || '').trim();
+        if (avatarUrl) updates.avatar_url = avatarUrl;
 
         const leaderboardEnabled = req.body.leaderboardstatus === 'enabled';
         updates.participate_in_leaderboard = leaderboardEnabled;
@@ -98,7 +96,7 @@ router.post('/avatar/upload', requireAuth, upload.single('avatar'), async (req, 
         if (uploadError) throw new Error(uploadError.message);
         const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filename);
         const { error: updateErr } = await supabase.from('public_profiles').update({ avatar_url: publicUrl }).eq('id', req.user.id);
-        if (updateErr) console.error('Avatar DB update failed:', updateErr.message);
+        if (updateErr) throw updateErr;
         res.json({ url: publicUrl });
     } catch (err) {
         console.error('Avatar upload error:', err);

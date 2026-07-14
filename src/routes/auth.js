@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) return res.render('auth/login', { error: error.message })
-    const { error: loginErr } = await supabase.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id);
+    const { error: loginErr } = await supabase.service.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id);
     if (loginErr) console.error('last_login update failed:', loginErr.message);
     const remember = req.body.remember === '1';
     res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : undefined })
@@ -95,7 +95,7 @@ router.post('/signup', async (req, res) => {
             first_login: new Date().toISOString(),
             last_login: new Date().toISOString()
         }
-        const { error: profileErr } = await supabase.from('public_profiles').upsert(profileRow, { onConflict: 'id' })
+        const { error: profileErr } = await supabase.service.from('public_profiles').upsert(profileRow, { onConflict: 'id' })
         if (profileErr) console.error('Profile creation failed:', profileErr.message)
         res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
         return res.redirect('/settings')

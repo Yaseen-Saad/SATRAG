@@ -1,4 +1,4 @@
-const supabase = require('../lib/supabase')
+const supabase = require('../lib/supabase').service
 
 class FeedbackEngine {
     async recordFeedback({ userId, wordID, satisfaction_score, helpfulComponents, problematicComponents, comments }) {

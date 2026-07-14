@@ -169,14 +169,14 @@ CREATE TABLE IF NOT EXISTS user_flashcard_progress (
 -- Public Profiles
 CREATE TABLE IF NOT EXISTS public_profiles (
     id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    school TEXT NOT NULL,
+    first_name TEXT NOT NULL DEFAULT '',
+    last_name TEXT NOT NULL DEFAULT '',
+    school TEXT NOT NULL DEFAULT '',
     grade TEXT,
     monthly_gen_count INT DEFAULT 0,
     monthly_gen_month TEXT,
     avatar_url TEXT,
-    email TEXT NOT NULL, 
+    email TEXT NOT NULL DEFAULT '',
     birthdate TEXT,
     participate_in_leaderboard BOOLEAN DEFAULT true,
     gender TEXT CHECK (gender IN ('male', 'female')),

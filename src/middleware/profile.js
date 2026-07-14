@@ -1,4 +1,4 @@
-const supabase = require('../lib/supabase')
+const supabase = require('../lib/supabase').service
 
 async function requireProfileComplete(req, res, next) {
     try {

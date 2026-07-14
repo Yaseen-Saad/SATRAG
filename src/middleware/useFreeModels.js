@@ -22,7 +22,7 @@ async function checkAPIKeys(req, res, next) {
         if (genMonth !== currentMonth) {
             genCount = 0
             genMonth = currentMonth
-            await supabase.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id)
+            await supabase.service.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id)
         }
         req.user.genCount = genCount
         req.user.genMonth = genMonth
@@ -53,7 +53,7 @@ async function incrementGenCount(user) {
     try {
         const currentMonth = new Date().toISOString().slice(0, 7)
         const newCount = (user.genCount || 0) + 1
-        await supabase.from('public_profiles').update({
+        await supabase.service.from('public_profiles').update({
             monthly_gen_count: newCount,
             monthly_gen_month: currentMonth
         }).eq('id', user.id)
