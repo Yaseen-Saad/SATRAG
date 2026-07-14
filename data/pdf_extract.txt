@@ -1,0 +1,585 @@
+﻿=== PAGE 1 ===
+The Digital 
+SAT┬« Suite of 
+Assessments Specifications Overview 
+Summer 2022 
+
+=== PAGE 2 ===
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   
+ Contents 
+1 Introduction ΓÇô How to Use This Document 
+2 Digital SAT Test Specifications at a Glance 
+3 Taking the Digital SAT Suite Assessments 
+3 Implementation timeline 
+3 Devices 3 Internet connectivity and battery life 4 Digital testing application 4 Borrowing a device from College Board 
+5 
+Practice and Preparation 
+5 Getting familiar with the digital testing application 
+5 Preparing for the test 6 
+Resources and Supports for Students with Disabilities 
+7 Supports for English Learners (ELs) 
+8 The Digital SAT Suite: WhatΓÇÖs staying the same? 
+9 The Digital SAT Suite of Assessments: WhatΓÇÖs changing? 
+9 Suite-level changes 9 Section-level changes 
+10 Multistage adaptive testing 11 Section breakdown and timing 12 
+Content Specifications 
+12 Reading and Writing 12 Reading and Writing content domains 13 Math 14 Math content domains 16 
+Scoring 
+16 Vertical score scale 16 Benchmarks 17 Skills Insight 17 Score reports 18 Comparing scores from the current SAT to digital SAT 
+The Digital SAT Suite of Assessments Specifications Overview 
+ii 
+
+=== PAGE 3 ===
+ 
+  Introduction: How to Use 
+This Document 
+Beginning internationally in 2023, the SAT┬« Suite of Assessments will be delivered digitally. 
+College Board has listened to input from our members, and weΓÇÖre adapting to ensure we continue to meet the needs of all our stakeholders. 
+While the transition to digital will bring a number of student- and educator-friendly changes, 
+many important features of the SAT Suite will stay the same. The SAT Suite will continue to measure the knowledge and skills that students are learning in school and that matter most for college and career readiness. WeΓÇÖre not simply creating a digital version of the current paper and pencil testsΓÇöweΓÇÖre taking full advantage of what digital testing makes possible. The digital SAT Suite will be easier to take, easier to give, more secure, and more relevant. 
+This document provides an overview of whatΓÇÖs changing and whatΓÇÖs staying the same when 
+we transition to a digital SAT Suite. It provides a summary of College BoardΓÇÖs Assessment Framework for the Digital SAT Suite, the full test specifications. 
+This document isnΓÇÖt intended as a technical manual for taking or administering the digital 
+SAT Suite tests. Instead, itΓÇÖs meant to help counselors, students, educators, and families understand what to expect when the SAT Suite goes digital. 
+The Digital SAT Suite of Assessments Specifications Overview 
+1 1 
+
+=== PAGE 4 ===
+ 
+  
+ 
+ 
+ 
+  
+ Digital SAT Suite Test 
+Specifications at a Glance 
+Table 1: Format and delivery details for the digital SAT Suite 
+Category Reading and Writing (RW) Section Math Section 
+Format Two-stage adaptive test design: 
+one Reading and Writing section administered via two separately timed modules Two-stage adaptive test design: one Math section administered via two separately timed modules 
+T est length (number of operational and pretest questions) 1st module: 25 operational questions and 2 pretest questions 
+2nd module: 25 operational 
+questions and 2 pretest questions 1st module: 20 operational questions and 2 pretest questions 
+2nd module: 20 
+operational questions and 2 pretest questions 
+Time per stage 1st module: 32 minutes 
+2nd module: 32 minutes 1st module: 35 minutes 2nd module: 35 minutes 
+T otal number 
+of questions 54 questions 44 questions 
+T otal time allotted 64 minutes 70 minutes 
+Scores reported T otal score 
+RW and Math section scores 
+Question type(s) used Discrete; four-option multiple-choice Discrete; four-option multiple-choice (Γëê75%) and student-produced response (SPR) (Γëê25%) 
+Stimulus topics Literature, history/social studies, humanities, science Science, social science, real-world topics 
+Informational graphics Y es; tables, bar graphs, line graphs Ye s 
+Sample questions for the digital SAT are available in the Digital SAT Sample Questions and 
+Answer Explanations document online. 
+The Digital SAT Suite of Assessments Specifications Overview 2 2 
+
+=== PAGE 5 ===
+ 
+  Taking the Digital SAT 
+Suite Assessments 
+Implementation timeline 
+WeΓÇÖll make the transition from paper and pencil to digital at international test centers in the 
+spring of 2023 and at U.S. schools and test centers in the spring of 2024. 
+All students will take the PSATΓäó 8/9 and PSAT/NMSQT┬« digitally starting in fall of 2023, 
+followed by the digital PSATΓäó 10 in spring of 2024. 
+Most students who take the SAT for the first time do so in the spring of their junior (11th 
+grade) year. For students testing internationally, those in the graduating class of 2024 will be the first to take the digital SAT. In the U.S., students in the graduating class of 2025 will be the first class to take the digital test. 
+International PSAT -Related U.S. SAT and 
+SAT Assessments SAT School Day 
+Spring 2023 
+Spring 2024 Fall 2023 
+Paper and Pencil Digital 
+Devices 
+Students can take the digital SAT Suite tests on a wide range of devices, including their own laptops (Windows or MacOS), iPads, school-owned desktops and laptops, and school-managed Chromebooks. Students will take the digital SAT Suite using a custom-built digital testing application that theyΓÇÖll download in advance of test day. 
+Internet connectivity and battery life 
+Students will connect to the test centerΓÇÖs or schoolΓÇÖs internet to start and complete testing. The exam application has been built to withstand internet outages. If the internet connection drops during testing, students will still be able to progress through the test with no disruption. If a studentΓÇÖs computer battery runs down, they can simply plug in, restart their device, and pick up where they left offΓÇöall their work will be saved, and they wonΓÇÖt lose testing time. Students will be responsible for bringing their device fully charged on test day, as there may be limited access to power outlets in their testing room. 
+The Digital SAT Suite of Assessments Specifications Overview 
+3 3 
+
+=== PAGE 6 ===
+ 
+    
+  Digital testing application 
+The digital SAT Suite assessments will be administered on College Board's customized digital 
+testing application. The application is a modified version of the one used to successfully deliver the 2021 digital AP┬« Exams. 
+Creating our own custom-built app for the digital SAT Suite allows us to prioritize the features 
+that matter most to students and educators. With a custom app, weΓÇÖre also able to adapt more easily to changes in market needs and respond quickly to user feedback. The app will also easily integrate with other College Board and partner systems, creating a better experience for students and educators. 
+The digital testing application will include many test tools for students. Examples include: 
+┬ºMark for review: Students can flag and return to any question within a given test module 
+they want to come back to later. 
+┬ºT esting timer: A clock counts down the time remaining in each module. Students can hide the timer, and they get an alert when 5 minutes remain in the module. 
+┬ºCalculator: A built-in graphing calculator is available on the entire Math section. (Students can also bring their own approved calculator.) 
+┬ºReference sheet: On the Math section, students have access to a list of common formulas. 
+┬ºAnnotation: Students can highlight any part of a question and leave themselves a note. 
+Borrowing a device from College Board 
+Students taking the SAT on a weekend who do not have access to a device can request to borrow one from College Board, and weΓÇÖll provide one for use on test day. This applies to students taking the SAT on the weekend internationally as well as in the United States. Students will request a device when they register for the SAT. More information about borrowing a device will be available when registration opens for the digital SAT in fall of 2022. 
+The Digital SAT Suite of Assessments Specifications Overview 
+4 4 
+
+=== PAGE 7 ===
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ Practice and Preparation 
+Below is a summary of resources useful for practicing and preparing for the digital SAT Suite 
+tests, available starting in fall 2022. 
+Getting familiar with the digital testing application 
+Students preparing for the digital SAT Suite tests will have access to an exam app preview within the digital testing app. This tool helps students get familiar with the functionality of the digital testing application, acquaints them with the central features of the assessments, and lets them try a small number of sample Reading and Writing and Math questions. These sample questions will help test takers familiarize themselves with the kinds of questions they will encounter on test day and how to properly enter their answers. Students can try all the testing tools and see how the digital exams work with any assistive technology they may use. 
+Preparing for the test 
+Students taking the digital SAT Suite tests will have access to a wide range of free, high-quality test preparation resources. 
+SAMPLE TEST QUESTIONS (WITH ANSWER EXPLANATIONS) 
+These questions illustrate the range of skills and knowledge on the digital SAT Suite tests as well as the response formats used (multiple-choice and, for select Math questions, student-produced response). 
+FULL-LENGTH ADAPTIVE DIGITAL SAT PRACTICE TEST FORMS 
+Students can take full-length digital practice tests directly in the digital testing application, allowing them to get the full digital SAT Suite experience while familiarizing themselves with test content. Practice tests for the PSAT-related assessments will also be available starting in 2023. 
+Full-length linear paper and pencil practice test forms are also available from College Board as 
+downloadable PDFs. These forms are recommended only for students who will require paper-based accommodations on test day. 
+OFFICIAL SAT PRACTICE ON KHAN ACADEMY 
+Students can log on to Khan Academy┬« to practice with digital SAT test questions and receive feedback, including answer explanations. In addition to providing test preparation activities, Khan Academy offers students a range of high-quality skill and knowledge building activities, including numerous videos and articles that target specific areas where students might need additional support. 
+TEST IMPLEMENTATION AND CLASSROOM PRACTICE GUIDES 
+These resources, developed primarily for teachers, detail the design of the digital SAT Suite, offer guidance to educators looking to incorporate test preparation for the suite as part of their classroom duties, and provide information about evidence-based instructional best practices supporting college and career readiness for all students. 
+SAT SUITE QUESTION BANK (SSQB) 
+This tool, developed primarily for educators, allows teachers to search for and download sets of practice SAT Suite questions targeted to their lesson plans. T eachers can apply multiple filters to the question bank to find the kind of questions they want. The SSQB will be updated with digital SAT Suite content starting in early 2023. 
+The Digital SAT Suite of Assessments Specifications Overview 
+5 5 
+
+=== PAGE 8 ===
+ 
+ 
+   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+  
+ 
+    
+ Resources and Supports 
+for Students with 
+Disabilities 
+The digital SAT Suite will continue to offer students with disabilities the same range of 
+accommodations available in the current paper-based suite. 
+The following is a list of examples of accommodations commonly offered as part of the digital 
+SAT Suite. Accommodations arenΓÇÖt limited to those listed, as College Board considers any reasonable accommodation for any documented disability as long as a student qualifies for testing accommodations. The process for requesting accommodations will remain the same. 
+┬ºTiming and Scheduling 
+wextended time: time and one-half (+50%), double time (+100%), more than double time (>+100%) 
+wextra/extended breaks 
+┬ºReading/Seeing T ext 
+wtext to speech 
+wbraille with raised line drawings, contracted 
+┬ºRecording Answers 
+wwriter/scribe to record responses 
+wbraille writer 
+┬ºModified Setting 
+wsmall-group setting 
+wwheelchair accessibility 
+┬ºOther 
+wpermission for food/drink/medication 
+wpermission to test blood sugar 
+wauditory amplification/FM system 
+The Digital SAT Suite of Assessments Specifications Overview 
+6 6 
+
+=== PAGE 9 ===
+ 
+ 
+  
+ 
+ 
+ 
+ Supports for English 
+Learners (ELs) 
+College Board will continue to offer testing supports for English learners (EL) during SAT 
+School Day, PSAT 10, and PSAT 8/9 administrations. These supports arenΓÇÖt available for SAT Weekend administrations or for the PSAT/NMSQT. 
+T esting supports include: 
+┬ºTranslated test directions. 
+┬ºUse of bilingual word-to-word dictionaries. 
+┬ºTime and one-half (+50%) extended testing time. 
+Students who meet the following criteria at the time of testing can use EL supports: 
+┬ºTheyΓÇÖre enrolled in an elementary or secondary school in the United States or one of the 
+U.S. territories. 
+┬ºTheyΓÇÖre an English learner as defined by their state or by federal policy. 
+┬ºThey use the same supports in class or for other assessments. 
+More information about the availability of supports and the procedures for requesting them prior to testing can be found at satsuite.collegeboard.org/k12-educators/administration/sat-school-day/ordering/english-learner-supports. 
+The Digital SAT Suite of Assessments Specifications Overview 
+7 7 
+
+=== PAGE 10 ===
+ 
+  
+ 
+ 
+  
+ 
+ 
+  The Digital SAT Suite: 
+WhatΓÇÖs staying the same? 
+The digital SAT Suite will continue to measure the skills and knowledge that students are 
+learning in school and that matter most for college and career readiness. The suite will continue to be scored on the same score scale as the paper and pencil tests they are replacing (for example, the SAT will continue to be scored on the familiar 400ΓÇô1600 scale), and the SAT and PSAT-related assessments will continue to be linked through a vertical score scale that allows students and educators to meaningfully track growth across the suite. 
+The two sections of the digital SAT SuiteΓÇö(1) Reading and Writing and (2) MathΓÇöalso 
+measure largely similar knowledge and skills as their paper and pencil predecessors, including: 
+┬ºUse of reading/writing passages across a range of academic disciplines and text complexities. 
+┬ºRequired demonstrations of command of evidence, both textual and quantitative. 
+┬ºEmphasis on high-utility words and phrases in context. 
+┬ºFocus on revising and editing writing to improve the effectiveness of expression, achieve specified rhetorical goals, and demonstrate command of core conventions of Standard English sentence structure, usage, and punctuation. 
+┬ºContinued focus on the math that matters most for college and career readiness and success. 
+┬ºMath problems in (and out of) context. 
+┬ºUse of both multiple-choice and student-produced response question formats in the Math section. 
+College Board remains strongly committed to the validity and fairness of our assessmentsΓÇö ensuring that our tests measure what theyΓÇÖre intended to measure and that the tests afford an equal opportunity to all test takers to show their best work. As with the paper-based suite, test fairness considerations are at the foundation of the design, development, and administration of the digital SAT Suite. 
+The digital SAT Suite will retain strong alignment to state academic standards. And while 
+the digital SAT Suite will simplify the test-taking process and be an easier experience for students and educators, it will maintain the rigor of the current paper and pencil tests. 
+The Digital SAT Suite of Assessments Specifications Overview 
+8 8 
+
+=== PAGE 11 ===
+ 
+  
+ 
+ 
+ 
+ 
+  
+ 
+ 
+  The Digital SAT Suite: 
+WhatΓÇÖs changing? 
+While weΓÇÖre preserving many important features of the SAT Suite, weΓÇÖre not simply creating a 
+digital version of the current paper and pencil tests. The digital SAT Suite tests will be more flexible exams that are easier to take, easier to give, more secure, and more relevant. 
+Suite-level changes 
+┬ºThe digital SAT Suite assessments are substantially shorter than their paper and pencil predecessorsΓÇölasting 2 hours and 14 minutes instead of 3 hours. 
+┬ºT est takers have more time, on average, to answer each question, meaning that, more so than ever before, the digital SAT Suite tests are measures of studentsΓÇÖ skills and knowledge, not test-taking speed. 
+┬ºStudents and educators will receive scores fasterΓÇöin days instead of weeks. 
+┬ºIn addition to the many ways that the current SAT Suite connects students to opportunities theyΓÇÖve earned through their hard work, digital SAT Suite score reports will connect students to information and resources about local two-year colleges, workforce training programs, and career options. 
+┬ºThe tests will be more secure. Currently, if one test form is compromised, it can mean canceling scores for whole groups of students. Going digital allows us to give every student a highly comparable but unique test form, so it will be practically impossible to share answers. 
+┬ºStates, schools, and districts will have much more flexibility for administering SAT Suite tests. 
+Section-level changes 
+READING AND WRITING 
+┬ºThe digital assessments have a single Reading and Writing section instead of separate Reading and Writing and Language T ests. This shift allows us to measure English language arts and content area literacy knowledge and skills more efficiently while acknowledging the reciprocal, mutually reinforcing nature of reading and writing skills and knowledge. 
+┬ºThe digital SAT Reading and Writing section will feature many shorter passages instead of a few long texts, meaning students will see a wider range of topics that represent the kinds of works theyΓÇÖll read in college. At the same time, these shorter passages maintain the level of rigor of longer reading passages in terms of text complexity and grounding in academic disciplines. 
+┬ºA single (discrete) question is associated with each passage (or passage pair) instead of having several questions associated with a small number of long passages. 
+The Digital SAT Suite of Assessments Specifications Overview 
+9 9 
+
+=== PAGE 12 ===
+ 
+  
+  MATH 
+┬ºCalculators are allowed throughout the Math section. A single Math section replaces 
+the separately timed no-calculator and calculator-allowed portions of the paper and pencil SAT Suite Math T ests. This change allows the Math section to more accurately reflect how calculators are used in schools and in the real world. It also eases test administration by eliminating separately timed test portions with different rules. Students may continue to use their own approved calculator on test day or take advantage of the graphing calculator built directly into the testing application. 
+┬ºThe average length of in-context questions (ΓÇ£word problemsΓÇ¥) has been reduced. In-context questions still serve a valuable role in the Math section, as they assess whether students can apply their math skills and knowledge to both academic and real-world situations. However, College Board has listened to feedback that longer contexts posed barriers that could inhibit some students, often but not only English learners, from demonstrating their core math achievement. 
+Multistage adaptive testing 
+The digital SAT Suite will utilize a multistage adaptive testing (MST) methodology. Adaptive testing has been used for large-scale digital standardized assessments for nearly 40 years. Being adaptive means we can fairly and accurately measure the same things with a shorter test while preserving test reliability. 
+Figure 1: Digital SAT Suite Multistage Adaptive Testing Model 
+Module 1 Module 2 
+Students are given a targeted 
+mix of questions of varying difficulties based on their performance in module 1. Students are given a broad mix of easy, medium, and hard questions. StudentΓÇÖs 
+Score 
+In a multistage adaptive SAT Suite test, each test section (Reading and Writing; Math) is 
+divided into two equal-length and separately timed stages, each composed of a module of questions. As illustrated in figure 1, students begin each test section by answering the set of questions in the first module. This module contains a broad mix of easy, medium, and hard questions that allows students to demonstrate their achievement before moving on to the second module. The questions in this second module are broadly targeted to the test takerΓÇÖs achievement level based on how they perform in the first module; questions are either (on average) higher difficulty or lower difficulty than questions in the first module. This means that the test ΓÇ£adaptsΓÇ¥ to present questions that are more appropriate to a studentΓÇÖs performance level. 
+MST testing benefits students in several ways. First and foremost, it results in shorter 
+tests that retain the precision and reliability of longer (linear) tests. This is because question difficulty in the second module of each section is personalized based on student performance in the first stage, resulting in a more efficient assessment and a more tailored experience for each student. Second, unlike in most question-by-question adaptive testing 
+The Digital SAT Suite of Assessments Specifications Overview 
+10 10 
+
+=== PAGE 13 ===
+models, students taking one of the digital SAT Suite tests can navigate freely through a given 
+moduleΓÇÖs questions, previewing upcoming questions or marking earlier questions to return to 
+as time permits. 
+Section breakdown and timing 
+Each assessment in the digital SAT Suite is composed of two sections: Reading and Writing 
+and Math. Students have 64 minutes to complete the Reading and Writing section and 70 minutes to complete the Math section. 
+Each section is composed of two equal-length modules of test questions. Each Reading and 
+Writing module lasts 32 minutes, while each Math module lasts 35 minutes. Each module is separately timed, and students can move backward and forward among questions in a given module before time runs out. When time runs out on the first module of each section, the test delivery platform moves students to the second module. When students complete the Reading and Writing section, they are moved to the Math section after a 10-minute break between the sections. A small number of indistinguishable, unscored items are included in each section to aid with the test development process. 
+T otal testing time for the digital SAT Suite is 2 hours and 14 minutes for each assessment 
+(SAT, PSAT/NMSQT, PSAT 10, and PSAT 8/9). 
+The Digital SAT Suite of Assessments Specifications Overview 
+11 11 
+
+=== PAGE 14 ===
+ 
+ 
+ 
+  Content Specifications 
+Reading and Writing 
+The Reading and Writing section of the digital SAT Suite assessments is designed to 
+measure studentsΓÇÖ attainment of critical college and career readiness in literacy. The section focuses on key elements of comprehension, rhetoric, and language use that the best available evidence identifies as necessary for college readiness and success. In this section, students answer multiple-choice questions requiring them to read, comprehend, and use information and ideas in texts; analyze the craft and structure of texts; revise texts to improve the rhetorical expression of ideas; and edit texts to conform to core conventions of Standard English. 
+Reading and Writing content domains 
+Questions on the Reading and Writing Section represent one of four content domains: 
+┬ºCraft and Structure: Measures the comprehension, vocabulary, analysis, synthesis, and reasoning skills and knowledge needed to understand and use high-utility words and phrases in context, evaluate texts rhetorically, and make connections between topically related texts 
+┬ºInformation and Ideas: Measures comprehension, analysis, and reasoning skills and knowledge and the ability to locate, interpret, evaluate, and integrate information and ideas from texts and informational graphics (tables, bar graphs, and line graphs) 
+┬ºStandard English Conventions: Measures the ability to edit texts to conform to core conventions of Standard English sentence structure, usage, and punctuation 
+┬ºExpression of Ideas: Measures the ability to revise texts to improve the effectiveness of written expression and to meet specific rhetorical goals 
+Questions from all four domains appear in each Reading and Writing test module, beginning with Craft and Structure questions and then continuing through Information and Ideas, Standard English Conventions, and Expression of Ideas questions. Questions within the Craft and Structure, Information and Ideas, and Expression of Ideas content domains that test similar skills and knowledge are grouped together to reduce the need for context switching and arranged from easiest to hardest. This makes it easier for students to budget their time and allows each test taker the best opportunity to show what they know and can do. Questions in the Standard English Conventions content domain are arranged from easiest to hardest regardless of which specific convention is being tested. T able 2 provides a breakdown of question distribution by content domain. 
+The Digital SAT Suite of Assessments Specifications Overview 
+12 12 
+
+=== PAGE 15 ===
+   
+ 
+ 
+ 
+  
+ 
+  
+ 
+ 
+ Table 2: Digital SAT Suite of Assessments Reading and Writing Section Content Domains 
+and Question Distribution 
+Content 
+Domain Domain Description Skill/Knowledge T esting Points Operational Question Distribution 
+Craft and 
+Structure Students will use comprehension, vocabulary, analysis, synthesis, and reasoning skills and knowledge to understand and use high-utility words and phrases in context, evaluate texts rhetorically, and make connections between topically related texts. Words in Context 
+T ext Structure 
+and Purpos
+e 
+Cross-T ext Connections Γëê28% / 13-15 questions 
+Inf
+ormation 
+and Ideas Students will use comprehension, analysis, and reasoning skills and knowledge and the ability to locate, interpret, evaluate, and integrate information and ideas from texts and informational graphics. Central Ideas and Details 
+Command of 
+Evidence 
+┬º
+T extual 
+┬ºQuantitative 
+Inferences Γëê26% / 12-14 questions 
+Standard English Conventions Students will use editing skills and knowledge to make text conform to core conventions of Standard English sentence structure, usage, and punctuation. Boundaries 
+Form, Structure, 
+and Sens
+e Γëê26% / 11-15 questions 
+E
+xpression of 
+Ideas Students will use the ability to revise texts to improve the effectiveness of written expression and to meet specific rhetorical goals. Rhetorical Synthesis 
+Transitions Γëê20% / 
+8-12 questions 
+Math 
+The Math section of the digital SAT Suite assessments is designed to measure studentsΓÇÖ 
+attainment of critical college and career readiness knowledge and skills in math. The digital SAT Suite Math section focuses on key elements of algebra, advanced math, problem-solving and data analysis, and geometry and trigonometry (except for the PSAT 8/9 which does not test trigonometry) that evidence identifies as necessary for college and career readiness and success. Over the course of the Math section, students answer multiple-choice and student-produced response (SPR) questions that measure their fluency with, understanding of, and ability to apply the math concepts, skills, and practices that are most essential for readiness for entry-level postsecondary work. 
+The Digital SAT Suite of Assessments Specifications Overview 
+13 13 
+
+=== PAGE 16 ===
+ 
+   
+   
+ 
+  
+ Math content domains 
+Questions on the Math section represent one of four content domains: 
+┬ºAlgebra: Measures the ability to analyze, fluently solve, and create linear equations and 
+inequalities as well as analyze and fluently solve equations and systems of equations using multiple techniques 
+┬ºAdvanced Math: Measures skills and knowledge central for progression to more advanced math courses, including demonstrating an understanding of absolute value, quadratic, exponential, polynomial, rational, radical, and other nonlinear equations 
+┬ºProblem-Solving and Data Analysis: Measures the ability to apply quantitative reasoning about ratios, rates, and proportional relationships; understand and apply unit rate; and analyze and interpret one- and two-variable data 
+┬ºGeometry and Trigonometry (SAT , PSAT/NMSQT , PSAT 10)/Geometry (PSAT 8/9): Measures the ability to solve problems that focus on area and volume; angles, triangles, and trigonometry; and circles (NOTE: PSAT 8/9 doesnΓÇÖt include trigonometry questions.) 
+Questions from all four content domains appear in each test module. Across each module, questions are arranged from easiest to hardest, allowing each test taker the best opportunity to demonstrate what they know and can do. T able 3 provides an overview of the question distribution by content domain. 
+Table 3: Digital SAT Math Section Content Domains and Question Distribution 
+This table shows information for the SAT. Tables for the PSAT-related assessments are broadly similar and can be 
+found in the full Assessment Framework document . 
+Content 
+Domain Domain Description Skill/Kno 
+wledge 
+T esting Points Operational Question Distribution 
+Algebra Students will analyze, fluently 
+solve, and create linear equations and inequalities as well as analyze and fluently solve equations and systems of equations using multiple techniques. Linear equations in one variable 
+Linear equations 
+in two variables 
+Linear functions Systems of two 
+linear equations in two variables 
+Linear inequalities in 
+one or two variables Γëê35% / 13-15 questions 
+Advanced Math Students will demonstrate the ability to progress to more advanced math courses, including demonstrating an understanding of absolute value, quadratic, exponential, polynomial, rational, radical, and other nonlinear equations. Equivalent expressions 
+Nonlinear equations 
+in one variable and systems of equations in two variables 
+Nonlinear functions Γëê35% / 
+13-15 questions 
+The Digital SAT Suite of Assessments Specifications Overview 14 14 
+
+=== PAGE 17 ===
+   
+ 
+  
+ Table 3: Digital SAT Math Section Content Domains and Question Distribution 
+This table shows information for the SAT. Tables for the PSAT-related assessments are broadly similar and can be 
+found in the full Assessment Framework document . 
+Content 
+Domain Domain Description Skill/Kno 
+wledge 
+T esting Points Operational Question Distribution 
+Problem-
+Solving and Data Analysis Students will apply quantitative reasoning about ratios, rates,and proportional relationships;understand and apply unitrate; and analyze and interpret one- and two-variable data. Ratios, rates, proportional relationships, and units 
+Percentages One-variable data: 
+distributions and measures of center and spread 
+Two-variable 
+data: models and scatterplots 
+Probability and 
+conditional probability 
+Inference from 
+sample statistics and margin of error 
+Evaluating statistical 
+claims: observational studies and experiments Γëê15% / 5-7 questions 
+Geometry and Trigonometry Students will solve problems that focus on area and volume; angles, triangles, and trigonometry; and circles. Area and volume 
+Lines, angles, 
+and triangles 
+Right triangles and 
+trigonometry 
+Cir
+cles Γëê15% / 
+5-7 questions 
+The Digital SAT Suite of Assessments Specifications Overview 15 15 
+
+=== PAGE 18 ===
+  
+ Scoring 
+Each of the digital SAT Suite assessments yields three scores: a total score and two section 
+scores. The total score is based on studentsΓÇÖ performance on the entire assessment and is the arithmetic sum of the two section scores. Two section scores, one for Reading and Writing and the other for Math, are based on studentsΓÇÖ performance on each section. 
+NOTE: Subscores and cross-test scores will no longer be reported for the digital SAT Suite. 
+Vertical score scale 
+The assessments in the suite remain on a vertical score scale so that students and educators 
+can meaningfully track growth over time. T able 4 details how the vertical scale works for the digital SAT Suite. 
+Table 4: Digital SAT Suite Total Score and Section Score Scales 
+T esting Program T otal Score Scale Section Score Scales 
+PSAT 8/9 240ΓÇô1440, in 10-point intervals 120ΓÇô720, in 10-point intervals 
+PSAT/NMSQT 
+and PSAT 10 320ΓÇô1520, in 10-point intervals 160ΓÇô760, in 10-point intervals 
+SAT 400ΓÇô1600, in 10-point intervals 200ΓÇô800, in 10-point intervals 
+Benchmarks 
+T o help students and educators better understand what scores mean and how to interpret 
+progress toward college and career readiness over time, College Board has empirically established benchmark scores for PSAT 8/9, PSAT 10, PSAT/NMSQT, and the SAT. College and Career Readiness Benchmarks establish the points on the score scale at or above which students are considered college and career ready (i.e., have a high likelihood of succeeding in common entry-level credit-bearing postsecondary courses), while grade-level benchmarks help students and their families, teachers, and others track progress toward college and career readiness. 
+T able 5 lists the benchmark scores for each assessment based on the age and attainment 
+of the typical test-taking population(s). Note that because these scores are based on the performance of many students over many years, they are highly stable but also subject to occasional revision if and when test performance patterns change. We will continue to review and analyze performance data as cohorts of students take the digital SAT Suite. 
+The Digital SAT Suite of Assessments Specifications Overview 
+16 16 
+
+=== PAGE 19 ===
+ 
+ 
+ 
+   
+    
+ 
+ 
+ 
+ 
+ Table 5: Digital SAT Suite Benchmarks, by Test Section and Testing Program 
+SAT PSAT/NMSQT 
+and PSAT 10
+ PSAT 8/9 
+Benchmark Score Reading 
+and 
+W
+riting Math Reading 
+and 
+Writing Math Reading 
+and 
+Writing Math 
+College and 
+Career Readiness 480 530 
+11th grade 460 510 
+10th grade 430 480 
+9th grade 410 450 
+8th grade 390 430 
+Skills Insight 
+Skills InsightΓäó is a tool developed by College Board to help SAT Suite test users better 
+understand the meaning of scores by describing the skill and knowledge attainment that 
+these scores typically represent. 
+The Skills Insight descriptors are vertically aligned so that they show progression in skill 
+and knowledge attainment across successively higher score bands. Collectively, these descriptors provide more transparency around the meaning of scores in a different way than quantitative indicators such as benchmarks or percentile ranks. Skills Insight information will continue to be included in student score reports for the digital SAT Suite. 
+Score reports 
+The student score report is used by students, parents, and educators to better understand student scores on a digital SAT Suite test. The score report doesnΓÇÖt just present students with their scores; it also helps them understand their own progress toward their postsecondary goals as well as how their scores compare to those of other students. In addition to scores, student reports include: 
+┬ºPerformance growth across the SAT Suite. (Students will see how they are progressing between PSAT 8/9, PSAT/NMSQT and PSAT 10, and the SAT.) 
+┬ºInformation on content areas and domains to help students pinpoint where to focus their practice to improve their score, with links to practice resources. 
+┬ºScore comparisons and percentile rankings for a variety of test taker populations, including the studentΓÇÖs school, district, and state as well as all test takers. 
+┬ºProgress toward established benchmarks. 
+┬ºNational Merit Scholarship qualifying information (if they took the PSAT/NMSQT). 
+┬ºOpportunities to connect to resources for college planning (BigFuture┬«), scholarships (BigFuture Scholarships), Advanced Placement┬«, and Student Search Service
+Γäó. 
+The Digital SAT Suite of Assessments Specifications Overview 17 17 
+
+=== PAGE 20 ===
+ 
+ Comparing scores from the current SAT to digital SAT 
+T o facilitate the transition from the current SAT to the digital SAT, scores on the digital SAT 
+will be statistically linked to scores on the current SAT through a series of studies conducted in 2022. The underlying linking methodology is essentially the same as that used in most assessment programs to equate alternate test forms over time. 
+The digital SAT and paper and pencil SAT measure similar, but not identical, content, so a 
+score on the paper and pencil test is not a perfect predictor of how a student would perform on the digital test (and vice versa). Directly linking the digital SAT to the current SAT will enable a variety of stakeholders to use both digital SAT scores and current SAT scores without the need for further conversions. 
+View sample questions for the digital SAT 
+in the Digital SAT Sample Questions and Answer Explanations document. 
+┬⌐ 2022 College Board. College Board, Advanced Placement, AP , BigFuture, SAT, and the acorn logo are registered trademarks of College 
+Board. PSAT, Skills Insight, and Student Search Service are trademarks owned by College Board. PSAT/NMSQT is a registered trademark of College Board and National Merit Scholarship Corporation. All other marks are the property of their respective owners. Visit College Board on the web: collegeboard.org . 
+Khan Academy is a registered trademark in the United States and other jurisdictions. 
+The Digital SAT Suite of Assessments Specifications Overview 18 18 
+
