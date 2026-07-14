@@ -99,7 +99,7 @@ class FlashcardsEngine {
     async submitReview(userId, wordId, quality) {
         const { data: card } = await supabase.from('user_flashcard_progress').select('*').eq('user_id', userId).eq('word_id', wordId).single()
         if (!card) throw new Error('Card not found')
-        const updates = this.applySM2(card, quality)
+        const updates = await this.applySM2(card, quality)
         const { error } = await supabase.from('user_flashcard_progress').update(updates).eq('id', card.id)
         if (error) throw error
         return { success: true }

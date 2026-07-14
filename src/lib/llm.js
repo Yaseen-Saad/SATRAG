@@ -10,18 +10,17 @@ class LLMResponse {
         this.finishReason = finishReason || '';
     }
 }
+
 class LLMService {
     constructor() {
         this.chatBaseURL = config.LLM_BASE_URL;
         this.chatModel = config.LLM_MODEL;
         this.embedBaseURL = config.EMBEDDING_BASE_URL;
-        this.embedModel = config.EMBEDDING_MODEL
+        this.embedModel = config.EMBEDDING_MODEL;
         this.embedApiKey = config.EMBEDDING_API_KEY;
         this.apiKey = config.LLM_API_KEY;
         this.cache = new Map();
         this.cacheSize = 100;
-        this.userApiKey = null;
-        this.userEmbedApiKey = null;
     }
 
     async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2, apiKey, embedApiKey }) {
@@ -41,7 +40,7 @@ class LLMService {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.userApiKey || this.apiKey}`
+                        'Authorization': `Bearer ${apiKey || this.apiKey}`
                     },
                     body: JSON.stringify(body)
                 });
@@ -70,27 +69,16 @@ class LLMService {
             }
         }
     }
-    setUserKeys(apiKey, embedApiKey) {
-        this.userApiKey = apiKey || this.apiKey;
-        this.userEmbedApiKey = embedApiKey || this.embedApiKey;
-    }
-    clearUserKeys() {
-        this.userApiKey = null;
-        this.userEmbedApiKey = null;
-    }
+
     async generateEmbedding(text, { apiKey, embedApiKey } = {}) {
-        const headers = { 'Content-Type': 'application/json' }
-        const key = embedApiKey || this.userEmbedApiKey;
-        if (key) {
-            headers['Authorization'] = `Bearer ${key}`
-        }
         const embeddings = await this.generateEmbeddings([text], { apiKey, embedApiKey });
         return embeddings[0];
     }
 
     async generateEmbeddings(texts, { apiKey, embedApiKey } = {}) {
         const headers = { 'Content-Type': 'application/json' }
-        const key = embedApiKey || this.userEmbedApiKey || this.embedApiKey;
+        const key = embedApiKey || this.embedApiKey;
+        
         if (key) {
             headers['Authorization'] = `Bearer ${key}`
         }
