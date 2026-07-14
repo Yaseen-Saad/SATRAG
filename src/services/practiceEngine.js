@@ -173,7 +173,7 @@ class PracticeEngine {
         }
         return {
             totalQuestions: totalQuestions.count || 0,
-            totalAttempts: totalAttempts?.count || 0,
+            totalAttempts: totalAttempts?.data?.length || 0,
             correctAttempts: correctAnswers?.length || 0,
             solvedBySubject: bySubj
         }
@@ -205,7 +205,7 @@ class PracticeEngine {
         return { prevId: prev.data?.[0]?.id || null, nextId: next.data?.[0]?.id || null }
     }
 
-    async updateTopicStats(userId, subject, topuc, subtopic, isCorrect, timeMs) {
+    async updateTopicStats(userId, subject, topic, subtopic, isCorrect, timeMs) {
         if (!subject || !topic) return
         const { data: existing } = await supabase
             .from('user_topic_stats')
@@ -230,7 +230,7 @@ class PracticeEngine {
                 accuracy_pct: Math.round(newAccuracy * 100) / 100,
                 avg_time_ms: newAvgTime,
                 last_attempted: new Date().toISOString(),
-                updated_at: new Date().toISOString,
+                updated_at: new Date().toISOString(),
                 current_difficulty_band: newBand
             }).eq('id', existing.id)
         } else {
@@ -251,19 +251,23 @@ class PracticeEngine {
         }
     }
     async getTopicStats(userId) {
-        const { data } = await supabase.from('user_topic_stats').select("*").eq('user_id', userId).order('accuracy_pct', { accending: true })
+        const { data } = await supabase.from('user_topic_stats').select("*").eq('user_id', userId).order('accuracy_pct', { ascending: true })
         return data || []
     }
 
     async getWeakTopics(userId, threshold = 70) {
-        const { data } = await supabase.from('user_topic_stats').select("*").eq('user_id', userId).lt('accuracy_pct', threshold).order('accuracy_pct', { accending: true })
+        const { data } = await supabase.from('user_topic_stats').select("*").eq('user_id', userId).lt('accuracy_pct', threshold).order('accuracy_pct', { ascending: true })
         return data || []
     }
 
     async getAdaptiveQuestion(userId, subject) {
         const weakTopics = await this.getWeakTopics(userId, 70)
         let targetTopic = null;
-        if (subject) targetTopic = weakTopics.find(t => t.subject == subject)
+        if (subject) targetTopic = weakTopics.find(t => t.subject === subject)
+        if (!targetTopic && weakTopics.length > 0) targetTopic = weakTopics[0];
+
+        let query = supabase.from('sat_questions').select('*').eq('is_active', true);
+        if (subject) query = query.eq('subject', subject);
 
         if (targetTopic) {
             const band = targetTopic.current_difficulty_band
@@ -285,10 +289,12 @@ class PracticeEngine {
         const { data: questions } = await query.order('created_at', { ascending: false }).limit(5)
 
         if (!questions || questions.length === 0) {
-            const { data: fallback } = await supabase.from('sat_questions').select("*").eq('subject', subject).order('created_at', { ascending: false }).limit(1)
+            let fallbackQuery = supabase.from('sat_questions').select("*").eq('is_active', true).order('created_at', { ascending: false }).limit(1);
+            if (subject) fallbackQuery = fallbackQuery.eq('subject', subject);
+            const { data: fallback } = await fallbackQuery;
             return { question: fallback?.[0] || null, weakTopic: targetTopic, reason: targetTopic ? `Practicing ${targetTopic.topic} (${Math.round(targetTopic.accuracy_pct)}% accuracy)` : `Random question: complete more practice for personalized recommendations` }
         }
-        const question = questions[Math.floor(Math.random() * question.length)]
+        const question = questions[Math.floor(Math.random() * questions.length)]
         return {
             question, weakTopic: targetTopic, reason: targetTopic
                 ? `Practicing ${targetTopic.topic} — ${Math.round(targetTopic.accuracy_pct)}% accuracy, difficulty band ${targetTopic.current_difficulty_band}`

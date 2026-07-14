@@ -8,11 +8,12 @@ function notFoundHandler(req, res, next) {
 
 function errorHandler(err, req, res, next) {
     console.error('Unhandled error:', err);
+    const message = process.env.NODE_ENV === 'production' ? 'Internal server error' : (err.message || 'Internal server error');
     res.status(err.status || 500);
     if (!req.accepts('html')) {
-        return res.json({ error: err.message || 'Internal server error' });
+        return res.json({ error: message });
     }
-    res.render('error', { error: err.message || 'Internal server error', statusCode: err.status || 500 });
+    res.render('error', { error: message, statusCode: err.status || 500 });
 }
 
 module.exports = { notFoundHandler, errorHandler };

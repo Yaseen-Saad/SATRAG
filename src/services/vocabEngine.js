@@ -1,4 +1,5 @@
 const supabase = require('../lib/supabase').service
+const rag = require('../lib/rag')
 
 class VocabEngine {
     async getMyLists(userId) {
@@ -43,6 +44,33 @@ class VocabEngine {
             return count > 0;
         }
         return false;
+    }
+
+    async autoAddFromWrongAnswer(userId, questionData) {
+        try {
+            let lists = await this.getMyLists(userId)
+            let mistakesList = lists.find(list => list.name === "Mistakes" && list.visibility === 'private')
+            if (!mistakesList) {
+                mistakesList = await this.createList(userId, 'Mistakes', 'Words from questions you answered incorrectly', 'private')
+            }
+            const wordsToFind = []
+            if (questionData.passage_text) {
+                const match = questionData.passage_text.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/g)
+                if (match) wordsToFind.push(...match.slice(0, 5))
+            }
+
+            for (const word of wordsToFind) {
+                const entry = await rag.findByWord(word.toUpperCase())
+                if (entry) {
+                    const alreadyIn = await supabase.from('word_list_entries').select('id').eq('list_id', mistakesList.id).eq('word_id', entry.id).maybeSingle()
+                    if (!alreadyIn) await this.addWordToList(mistakesList.id, entry.id)
+                }
+            }
+            return { listId: mistakesList.id, wordsFound: wordsToFind.length }
+        } catch (error) {
+            console.error(error)
+            return { listId: null, wordsFound: 0 }
+        }
     }
 
     async getList(listId, userId) {
@@ -155,7 +183,7 @@ class VocabEngine {
 
     async generateShareLink(listId, userId) {
         const { data: list } = await supabase.from('word_lists')
-            .select('created_by').eq('id', listId).single();
+            .select('created_by, share_token').eq('id', listId).single();
         if (!list || list.created_by !== userId) throw new Error("Not your list");
         if (!list.share_token) {
             await supabase.from('word_lists')

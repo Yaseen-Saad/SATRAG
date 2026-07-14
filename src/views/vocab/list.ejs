@@ -13,6 +13,8 @@
     <div class="dash-header-actions">
       <a href="/vocab/lists" class="btn btn-outline btn-sm">All Lists</a>
       <a href="/flashcards/session?listId=<%=list.id%>" class="btn btn-outline btn-sm">Flashcards Practice</a>
+      <a href="/vocab/lists/<%= list.id %>/export?format=print" class="btn btn-outline btn-sm" target="_blank">Print Sheet</a>
+      <a href="/vocab/lists/<%= list.id %>/export?format=csv" class="btn btn-outline btn-sm">Download CSV</a>
       <% if (typeof user !== 'undefined' && user) { %>
       <form method="POST" action="/vocab/lists/<%= list.id %>/clone" style="display:inline;">
         <button type="submit" class="btn btn-outline btn-sm">Clone</button>

@@ -33,7 +33,7 @@ async function checkAPIKeys(req, res, next) {
         }
         req.user.llm_apikey = profile.llm_apikey
         req.user.embedding_apikey = profile.embedding_apikey
-\        req.user.useFreeModels = false;
+        req.user.useFreeModels = false;
         next();
     } catch (err) {
         console.error('Error in checkAPIKeys middleware', err)

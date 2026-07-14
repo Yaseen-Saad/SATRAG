@@ -7,15 +7,15 @@ Evaluate this vocabulary entry on five criteria (each on scale 0.0 to 1.0)
 5. format: Does the entry follow the Gulotta format? Word in UPPERCASE? Valid part of speech (noun, verb, adj, adverb)? Pronunciation in parentheses?
 
 Entry to evaluate:
-WORD: ${word}
-PRONUNCIATION: ${pronunciation}
-PART OF SPEECH: ${part_of_speech}
-DEFINITION: ${definition}
-MNEMONIC TYPE: ${mnemonic_type}
-MNEMONIC: ${mnemonic_phrase}
-PICTURE STORY: ${picture_story}
-OTHER FORMS: ${other_forms}
-EXAMPLE SENTENCE: ${example_sentence}
+WORD: {{word}}
+PRONUNCIATION: {{pronunciation}}
+PART OF SPEECH: {{part_of_speech}}
+DEFINITION: {{definition}}
+MNEMONIC TYPE: {{mnemonic_type}}
+MNEMONIC: {{mnemonic_phrase}}
+PICTURE STORY: {{picture_story}}
+OTHER FORMS: {{other_forms}}
+EXAMPLE SENTENCE: {{example_sentence}}
 
 Return ONLY valid JSON (no markdown, no backticks, no thinking, no "here is your answer"):
 {

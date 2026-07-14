@@ -25,7 +25,7 @@ const ALLOWED_REFERALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 
 
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const { data: profile } = await supabase.from('public_profiles').select('*').eq('id', req.user.id).single();
+        const { data: profile } = await supabase.from('public_profiles').select('id, first_name, last_name, school, grade, gender, birthdate, email, avatar_url, participate_in_leaderboard, monthly_gen_count, monthly_gen_month').eq('id', req.user.id).single();
         res.render('settings/index', { user: req.user, profile, error: null, success: null, prompt: req.query.prompt })
     } catch (err) {
         console.error('Settings page error:', err);
@@ -62,8 +62,6 @@ router.post('/update-all', requireAuth, async (req, res) => {
         const embeddingKey = req.body.embeddingKey ? sanitize(req.body.embeddingKey) : '';
         if (llmKey && llmKey.length < 10) errors.push('LLM API key too short');
         if (embeddingKey && embeddingKey.length < 10) errors.push('Embedding API key too short');
-        if (llmKey && !/^sk-/.test(llmKey)) errors.push('LLM API key should start with sk-');
-        if (embeddingKey && !/^sk-/.test(embeddingKey)) errors.push('Embedding API key should start with sk-');
         if (llmKey) updates.llm_apikey = llmKey;
         if (embeddingKey) updates.embedding_apikey = embeddingKey;
 

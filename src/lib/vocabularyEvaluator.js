@@ -28,10 +28,9 @@ class VocabularyEvaluator {
             const jsonMatch = response.content.match(/\{[\s\S]*\}/);
             if (!jsonMatch) throw new Error('No JSON in LLM response');
             const result = JSON.parse(jsonMatch[0]);
-            if (!result || typeof result.isValid !== 'boolean' || typeof result.score !== 'number' || typeof result.feedback !== 'string') {
+            if (!result || typeof result.isValid !== 'boolean' || typeof result.overallScore !== 'number') {
                 throw new Error('Invalid JSON structure in LLM response');
             }
-            result.overallScore = result.overallScore ?? 5;
             result.componentScores = result.componentScores ?? {};
             result.issues = result.issues ?? [];
             result.suggestions = result.suggestions ?? [];
@@ -39,8 +38,13 @@ class VocabularyEvaluator {
         } catch (err) {
             console.error('Error evaluating entry:', err);
             return {
+                isValid: false,
+                overallScore: 0,
                 score: 0,
-                feedback: 'Error evaluating entry'
+                feedback: 'Error evaluating entry',
+                componentScores: {},
+                issues: ['Evaluation failed due to an error'],
+                suggestions: []
             }
         }
     }

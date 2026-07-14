@@ -1,7 +1,8 @@
 const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
-const { service: supabase } = require('../lib/supabase')
+const supabase = require('../lib/supabase')
 const practice = require('../services/practiceEngine')
+const vocabEngine = require('../services/vocabEngine')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const rag = require('../lib/rag')
 const router = Router()
@@ -46,7 +47,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         const { subject, topic, difficulty, count = 1 } = req.body
         let maxIter = Math.min(parseInt(count), 5);
         if (req.user.useFreeModels) {
-            maxIter = Math.min(maxIter, 5 - req.user.genCount);
+            maxIter = Math.min(maxIter, 5 - (req.user.genCount || 0));
         }
         const questions = []
         for (let i = 0; i < maxIter; i++) {
@@ -90,6 +91,15 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
     try {
         const { answer, timeMs } = req.body
         const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) })
+        if (!result.isCorrect) {
+            const { data: questionData } = await supabase.from('sat_questions')
+                .select('passage_text, subject, topic')
+                .eq('id', req.params.id)
+                .single()
+            if (questionData) {
+                await vocabEngine.autoAddFromWrongAnswer(req.user.id, questionData)
+            }
+        }
         res.json({ success: true, ...result })
     } catch (err) {
         console.error('Answer error:', err)
@@ -128,7 +138,7 @@ router.get('/adaptive', requireAuth, async (req, res) => {
             return res.json(result)
         }
         res.render('practice/adaptive', {
-            user: req.user, topicstats, weakTopics, subject, questions: null, reason: null, error: null
+            user: req.user, topicStats, weakTopics, subject, question: null, reason: null, error: null
         })
 
     } catch (error) {
@@ -143,9 +153,12 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         const topicStats = await practice.getTopicStats(req.user.id)
         const weakTopics = topicStats.filter(topic => topic.accuracy_pct < 70)
         const result = await practice.getAdaptiveQuestion(req.user.id, subject)
+        if (result.question && typeof result.question.options === 'string') {
+            try { result.question.options = JSON.parse(result.question.options); } catch(e) {}
+        }
 
         res.render('practice/adaptive', {
-            user: req.user, topicstats, weakTopics, subject, questions: result.question, reason: result.reason, error: result.question ? null : "No questions available. Please try a different subject or complete more practice questions first."
+            user: req.user, topicStats, weakTopics, subject, question: result.question, reason: result.reason, error: result.question ? null : "No questions available. Please try a different subject or complete more practice questions first."
         })
 
     } catch (error) {
@@ -153,4 +166,6 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         res.redirect('/practice/adaptive')
     }
 })
+
+
 module.exports = router

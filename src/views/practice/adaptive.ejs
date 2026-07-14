@@ -1,0 +1,81 @@
+<%- include('../layouts/main', { body: `
+<div class="container">
+    <div class="page-header">
+        <h1>Adaptive Practice</h1>
+        <p class="subtitle">Questions personalized to your weak areas</p>
+    </div>
+
+    <div class="adaptive-layout">
+        <div class="adaptive-sidebar">
+            <h3>Your Weak Topics</h3>
+            ${weakTopics.length === 0 ? '<p class="muted">Answer more questions to unlock personalized recommendations.</p>' : ''}
+            ${weakTopics.map(t => `
+                <div class="topic-stat-card">
+                    <div class="topic-stat-header">
+                        <span class="topic-name">${t.topic}</span>
+                        <span class="topic-accuracy ${t.accuracy_pct < 50 ? 'accuracy-low' : 'accuracy-mid'}">${Math.round(t.accuracy_pct)}%</span>
+                    </div>
+                    <div class="topic-stat-meta">${t.subject} · Band ${t.current_difficulty_band}/7</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${Math.min(100, t.accuracy_pct)}%"></div></div>
+                </div>
+            `).join('')}
+
+            <form method="POST" action="/practice/adaptive/next" class="adaptive-form">
+                <label for="subject">Focus Subject</label>
+                <select name="subject" id="subject" class="form-control">
+                    <option value="">All Subjects</option>
+                    <option value="math" ${subject === 'math' ? 'selected' : ''}>Math</option>
+                    <option value="reading" ${subject === 'reading' ? 'selected' : ''}>Reading & Writing</option>
+                </select>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:0.5rem">
+                    ${question ? 'Get Next Question' : 'Start Adaptive Session'}
+                </button>
+            </form>
+        </div>
+
+        <div class="adaptive-main">
+            ${error ? '<div class="alert alert-error">' + error + '</div>' : ''}
+            ${question ? `
+                <div class="adaptive-reason">${reason}</div>
+                <div class="question-card">
+                    <div class="question-header">
+                        <span class="badge badge-subject">${question.subject || 'General'}</span>
+                        <span class="badge badge-difficulty">Band ${question.difficulty_band || '?'}/7</span>
+                        ${question.topic ? '<span class="badge badge-topic">' + question.topic + '</span>' : ''}
+                    </div>
+                    <div class="question-text">${question.question_text || question.stem_plain_text || ''}</div>
+                    ${question.passage_text ? '<div class="question-passage">' + question.passage_text + '</div>' : ''}
+                    <div class="question-options" id="question-options">
+                        ${(question.options || question.answerOptions || []).map((opt, i) => `
+                            <button class="option-btn" data-answer="${String.fromCharCode(65 + i)}" onclick="selectAnswer(this, '${String.fromCharCode(65 + i)}')">
+                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                                <span class="option-text">${typeof opt === 'string' ? opt : opt.text || opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="question-actions" id="question-actions" style="display:none">
+                        <form method="POST" action="/practice/adaptive/next" style="display:inline">
+                            <input type="hidden" name="subject" value="${subject || ''}">
+                            <button type="submit" class="btn btn-primary">Next Question</button>
+                        </form>
+                        <a href="/practice/question/${question.id}" class="btn btn-outline">View Full Details</a>
+                    </div>
+                </div>
+                <script>
+                function selectAnswer(btn, answer) {
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    document.getElementById('question-actions').style.display = 'flex';
+                }
+                </script>
+            ` : `
+                <div class="adaptive-empty">
+                    <div class="empty-icon">📚</div>
+                    <h3>Ready to Practice?</h3>
+                    <p>We'll find questions from your weakest areas to help you improve faster.</p>
+                </div>
+            `}
+        </div>
+    </div>
+</div>
+` }) %>

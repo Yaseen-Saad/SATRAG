@@ -357,6 +357,35 @@ router.post('/lists/:id/share-link/toggle', requireAuth, async (req, res) => {
         res.redirect(`/vocab/lists/${req.params.id}?error=${encodeURIComponent(errr.message)}`)
     }
 })
+router.get('/lists/:id/export', requireAuth, async (req, res) => {
+    try {
+        const { list, words } = await vocabEngine.getList(req.params.id, req.user.id)
+        if (!list) return res.redirect('/vocab/lists')
+        const format = req.query.format || 'print'
+        if (format === 'csv') {
+            let csv = "Word,Pronunciation,Part of Speech,Definition,Example,Mnemonic Type,Mnemonic\n"
+            for (const word of words) {
+                csv += [
+                    `"${(word.word || '').replace(/"/g, '""')}"`,
+                    `"${(word.pronunciation || '').replace(/"/g, '""')}"`,
+                    `"${(word.part_of_speech || '').replace(/"/g, '""')}"`,
+                    `"${(word.definition || '').replace(/"/g, '""')}"`,
+                    `"${(word.example_sentence || '').replace(/"/g, '""')}"`,
+                    `"${(word.mnemonic_type || '').replace(/"/g, '""')}"`,
+                    `"${(word.mnemonic_phrase || '').replace(/"/g, '""')}"`
+                ].join(',')
+                csv += '\n'
+            }
+            res.setHeader('Content-Type', 'text/csv')
+            res.setHeader('Content-Disposition', `attachment; filename="${list.name.replace(/[^a-z0-9]/gi, '_')}.csv"`)
+            return res.send(csv)
+        }
+        res.render('vocab/print', { user: req.user, list, words })
+    } catch (error) {
+        console.error('Export error:', error)
+        res.redirect('/vocab/lists')
+    }
+})
 
 router.get('/:word', optionalAuth, async (req, res) => {
     const entry = await rag.findByWord(req.params.word.toUpperCase());

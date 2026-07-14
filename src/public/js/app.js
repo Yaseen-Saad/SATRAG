@@ -6,16 +6,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const overlay = document.getElementById('overlay');
     if (hamburger && navLinks) {
         hamburger.addEventListener('click', function () {
-            navLinks.classList.toggle('show');
+            navLinks.classList.toggle('open');
             if (overlay) {
-                overlay.classList.toggle('show');
+                overlay.classList.toggle('visible');
             }
         });
     }
     if (overlay) {
         overlay.addEventListener('click', function () {
-            navLinks.classList.remove('show');
-            overlay.classList.remove('show');
+            navLinks.classList.remove('open');
+            overlay.classList.remove('visible');
         });
     }
     const themeToggle = document.getElementById('theme-toggle');
@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.addEventListener('keydown', function (e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (window.location.pathname === '/flashcards/session') return;
         if (e.key === 't' || e.key === 'T') {
             e.preventDefault();
             const toggle = document.getElementById('theme-toggle');

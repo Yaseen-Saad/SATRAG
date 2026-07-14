@@ -9,7 +9,9 @@
   <% } %>
 
   <div class="dash-card" style="margin-bottom:1.5rem">
-    <div class="dash-card-header"><h2>Create New List</h2></div>
+    <div class="dash-card-header">
+      <h2>Create New List</h2>
+    </div>
     <div class="dash-card-body">
       <form method="POST" action="/vocab/lists" style="display:flex; gap:0.5rem; align-items:end; flex-wrap:wrap;">
         <div class="form-group" style="flex:2;min-width:200px;margin:0;"><input type="text" name="name" placeholder="List name" required style="width:100%"></div>
@@ -51,7 +53,15 @@
   <% } else { %>
   <div class="dash-card">
     <table>
-      <thead><tr><th>Name</th><th>Words</th><th>Visibility</th><th>By</th><th></th></tr></thead>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Words</th>
+          <th>Visibility</th>
+          <th>By</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody>
         <% currentLists.forEach(function(l) { %>
         <tr>
@@ -70,6 +80,12 @@
               <button type="submit" class="btn-danger btn-sm">Delete</button>
             </form>
             <% } %>
+          </td>
+          <td>
+            <div class="list-actions" style="margin-bottom: 1rem;">
+              <a href="/vocab/lists/<%= list.id %>/export?format=print" class="btn btn-outline btn-sm" target="_blank"> Print Study Sheet</a>
+              <a href="/vocab/lists/<%= list.id %>/export?format=csv" class="btn btn-outline btn-sm"> Download CSV</a>
+            </div>
           </td>
         </tr>
         <% }) %>
