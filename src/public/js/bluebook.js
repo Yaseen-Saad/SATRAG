@@ -128,8 +128,7 @@
         } catch (error) {
             btn.textContent = `Error, please try again`
             btn.disabled = false
-            status.textContent = data.error || "Failed to add words"
-
+            status.textContent = "Network error — please try again"
         }
     }
 

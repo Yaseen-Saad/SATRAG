@@ -91,7 +91,7 @@ class RAGEngine {
 
     async findByWord(word) {
         const { data } = await supabase.from('vocab_entries')
-            .select("*").eq('word', word).limit(1).single();
+            .select("*").ilike('word', word).limit(1).single();
         return data;
     }
 
