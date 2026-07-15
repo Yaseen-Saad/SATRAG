@@ -173,10 +173,12 @@
     document.getElementById("palette-overlay")?.addEventListener('click', e => {
         if (e.target === document.getElementById("palette-overlay")) closePalette();
     })
-    document.getElementById('feedback-overlay')?.addEventListener('click', () => document.getElementById('feedback-overlay')?.classList.remove('open'))
+    document.getElementById('feedback-overlay')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('feedback-overlay')) document.getElementById('feedback-overlay')?.classList.remove('open')
+    })
 
     document.addEventListener('keydown', function (e) {
-        if (!document.getElementById('.question-data')) return;
+        if (!document.getElementById('question-data')) return;
         if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('.bb-feedback-overlay.open')) return;
         const isSpr = !!document.querySelector('.bb-spr-input')
         if (!isSpr) {

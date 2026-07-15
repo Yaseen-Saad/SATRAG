@@ -62,7 +62,7 @@ class VocabEngine {
             }
             const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
             const skill = (questionData.skill_description || questionData.subtopic || "").toLowerCase()
-            const isWIC = skill.includes('word in context')
+            const isWIC = skill.includes('word in context') || skill.includes('words in context')
             if (!(isRW && isWIC)) return { listId: mistakesList.id, wordsFound: 0 }
             let options = []
             if (questionData.options) {

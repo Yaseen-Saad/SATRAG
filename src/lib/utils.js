@@ -111,8 +111,8 @@ function parseGeneratedEntry(text, word) {
         } else if (/^other\s+forms:/.test(fl)) {
             entry.other_forms = line.replace(/^Other\s+forms:\s*/i, '').trim()
             currentField = 'other_forms'
-        } else if (/^s?sentence:/.test(fl)) {
-            entry.example_sentence = line.replace(/^[Ss]centence:\s*/i, '').replace(/^Sentence:\s*/i, '').trim()
+        } else if (/^sc?entence:/i.test(fl)) {
+            entry.example_sentence = line.replace(/^sc?entence:\s*/i, '').trim()
             currentField = 'example_sentence'
         } else if (currentField && line && !line.match(/^[A-Z][a-z]/)) {
             entry[currentField] += ' ' + line
