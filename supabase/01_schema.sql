@@ -22,32 +22,6 @@ CREATE TABLE IF NOT EXISTS vocab_entries (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Quiz attempts
-CREATE TABLE IF NOT EXISTS quiz_attempts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users NOT NULL,
-    quiz_type TEXT NOT NULL,
-    score INT NOT NULL,
-    total_questions INT NOT NULL,
-    attempt_time TIMESTAMP DEFAULT NOW(),
-    completed_at TIMESTAMP DEFAULT NULL
-);
-
--- Quiz questions
-CREATE TABLE IF NOT EXISTS quiz_questions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    attempt_id UUID REFERENCES quiz_attempts ON DELETE CASCADE,
-    word_id UUID REFERENCES vocab_entries NOT NULL,
-    question_type TEXT NOT NULL,
-    prompt TEXT,
-    options JSONB,
-    correct_index INT NOT NULL,
-    user_answer_index INT,
-    is_correct BOOLEAN,
-    explanation TEXT,
-    question_time TIMESTAMP DEFAULT NOW()
-);
-
 -- Feedback events
 CREATE TABLE IF NOT EXISTS feedback_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

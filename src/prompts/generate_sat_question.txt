@@ -6,7 +6,7 @@ For each question, respond with exactly one JSON object with these fields:
 - "topic": the content domain (see below)
 - "subtopic": the specific skill testing point (see below)
 - "difficulty": "easy", "medium", or "hard"
-- "difficulty_band": integer 1-7
+- "difficulty_band": integer 1-7 (METADATA ONLY — include in JSON, do NOT put random numbers in question text)
 - "question_text": the stem/question HTML (may include HTML tags like <p>, <strong>)
 - "stem_plain_text": plain text version of the stem
 - "passage_text": for reading/writing, a relevant passage (HTML). For math, null.
@@ -16,11 +16,29 @@ For each question, respond with exactly one JSON object with these fields:
 - "skill_code": a short skill identifier
 - "skill_description": a brief skill description
 
+BLANK FORMAT (CRITICAL):
+- For Reading/Writing questions with a blank/gap in the passage, use <u>word</u> to represent the word being tested.
+- Example: "The scientist found the results to be entirely <u>ambiguous</u>."
+- NEVER use underscores like ______ or ______blank. ALWAYS use <u>word</u> HTML tags.
+
+DIFFICULTY RUBRIC (CRITICAL):
+
+EASY (difficulty_band 1-2):
+- Reading/Writing: Short, simple passage (2-3 sentences). Vocabulary is common/high-utility. The correct answer is directly stated in the text. Distractors are clearly wrong.
+- Math: Singe-step problem. Direct application of one formula or concept. Small whole numbers. No multi-step reasoning.
+
+MEDIUM (difficulty_band 3-5):
+- Reading/Writing: Moderate passage (3-5 sentences). Vocabulary is requires context clues. Correct answer requires one inference. Distractors are plausible misreadings.
+- Math: Two-step problem. May combine two formulas or concepts. Involves fractions, decimals, or variables. Requires algebraic manipulation.
+
+HARD (difficulty_band 6-7):
+- Reading/Writing: Complex passage with nuanced argumentation or subtle shifts in tone. Vocabulary is precise/domain-specific. Correct answer requires synthesizing multiple sentences. Distractors are very close to correct — they test precise understanding vs. approximate understanding. For Command of Evidence: the correct quote must be the BEST support, not just A support. For Inferences: the answer must follow logically but is not directly stated.
+- Math: Multi-step problem combining 2-3 concepts. Non-routine application. Variables, abstract expressions, or real-world contexts with multiple quantities. Wrong answers test common algebraic errors (sign mistakes, distribution errors, order of operations).
+
 SUBJECT-SPECIFIC RULES:
 
 --- MATH ---
 Calculator is allowed on all questions. A built-in graphing calculator is available.
-Average word problem length has been REDUCED on the digital SAT — keep contexts concise.
 Content domains and their approximate question distribution:
 
 Domain: Algebra
@@ -57,7 +75,6 @@ Skill/Knowledge Testing Points:
 Math rules:
 - WRONG ANSWERS MUST test real student mistakes: sign errors, order of operations, misapplied formulas, unit errors, rounding errors.
 - Include realistic contexts: money, rates, population growth, measurements, data from tables/charts.
-- For "hard" difficulty: multi-step problems, combining multiple concepts, non-routine problem solving.
 - Never include "all of the above" or "none of the above".
 - Formulas the SAT provides (don't include in question): area/volume formulas, Pythagorean theorem, special right triangles, circle equations, quadratic formula.
 - If the question is SPR, the answer must be a numeric value (not an expression or equation).
@@ -100,6 +117,8 @@ Reading/Writing rules:
 - Do NOT reference real people or copyrighted works.
 - For Standard English Conventions: the passage should have exactly ONE error that the question targets. Wrong answers should test knowledge of other grammar rules.
 - For Expression of Ideas / Transitions: the question presents a passage with a blank and asks which transition best completes it.
+- For Command of Evidence: provide 4 specific quotes from the passage. The correct one must be the BEST support for the claim. Distractors should be real quotes from the passage that support a different claim or are only tangentially related.
+- For Inferences: the answer must be something that logically follows from the passage but is NOT directly stated. Distractors should be things that are either contradicted by the passage or unsupported.
 
 GENERAL RULES:
 - MCQ questions MUST have exactly 4 options (A, B, C, D).
@@ -107,14 +126,12 @@ GENERAL RULES:
 - Reading/Writing questions MUST include passage_text.
 - Math questions should NOT include passage_text.
 - Make the question realistic and similar to actual digital SAT questions.
-- Difficulty 1-2=easy, 3-5=medium, 6-7=hard.
 - Questions must be answerable without external knowledge.
 - The correct answer must be DEFINITIVELY, UNAMBIGUOUSLY correct; distractors should be plausible.
-
-STRICT LENGTH LIMITS:
-- Passage (reading/writing): 25-150 words MAXIMUM.
-- Question stem: 1-3 short sentences MAXIMUM. Never paragraph-length stems.
-- Each answer choice: 1 short sentence or phrase MAXIMUM (under 15 words).
-- Explanation: 1-2 sentences only.
-- The entire question (stem + all options) should be under 120 words for reading/writing, under 80 words for math.
-- Keep word problem contexts concise — the digital SAT specifically reduced average problem length.
+- STRICT LENGTH LIMITS:
+  - Passage (reading/writing): 25-150 words MAXIMUM.
+  - Question stem: 1-3 short sentences MAXIMUM. Never paragraph-length stems.
+  - Each answer choice: 1 short sentence or phrase MAXIMUM (under 15 words).
+  - Explanation: 1-2 sentences only.
+  - The entire question (stem + all options) should be under 120 words for reading/writing, under 80 words for math.
+  - Keep word problem contexts concise — the digital SAT specifically reduced average problem length.

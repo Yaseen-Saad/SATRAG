@@ -34,18 +34,20 @@ router.get('/', requireAuth, async (req, res) => {
         res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
     }
 })
+
 router.get('/generate', requireAuth, async (req, res) => {
     try {
         const topicTree = await practice.getTopicTree();
-        res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
+        res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, subtopic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
     } catch (err) {
         console.error(err)
         res.status(500).render('practice/generate', { user: req.user, error: 'Error loading page', topicTree: [], generated: null })
     }
 })
+
 router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
-        const { subject, topic, difficulty, count = 1 } = req.body
+        const { subject, topic, subtopic, difficulty, count = 1 } = req.body
         const genSubject = subject === 'reading_writing' ? (Math.random() > 0.5 ? 'reading' : 'writing') : subject;
         let maxIter = Math.min(parseInt(count), 5);
         if (req.user.useFreeModels) {
@@ -53,19 +55,19 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         }
         const questions = []
         for (let i = 0; i < maxIter; i++) {
-            const generated = await rag.generateSATQuestion({ subject: genSubject, topic, difficulty })
+            const generated = await rag.generateSATQuestion({ subject: genSubject, topic, subtopic, difficulty })
             if (generated) {
                 questions.push(generated)
                 await incrementGenCount(req.user)
             }
         }
         const topicTree = await practice.getTopicTree(subject);
-        res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, difficulty, count })
+        res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, subtopic, difficulty, count })
     } catch (err) {
         console.error(err)
-        const { subject, topic, difficulty, count } = req.body
+        const { subject, topic, subtopic, difficulty, count } = req.body
         const topicTree = await practice.getTopicTree();
-        res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null, subject, topic, difficulty, count })
+        res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null, subject, topic, subtopic, difficulty, count })
     }
 });
 
@@ -77,6 +79,7 @@ router.post('/generate/save', requireAuth, async (req, res) => {
         res.status(500).json({ success: false, error: 'Error saving generated question' })
     }
 });
+
 router.get('/question/:id', requireAuth, async (req, res) => {
     try {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
@@ -89,6 +92,7 @@ router.get('/question/:id', requireAuth, async (req, res) => {
         res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })
     }
 })
+
 router.post('/question/:id/answer', requireAuth, async (req, res) => {
     try {
         const { answer, timeMs } = req.body
@@ -109,7 +113,6 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
     }
 })
 
-
 router.get('/question/:id/mark', requireAuth, async (req, res) => {
     try {
         const result = await practice.toggleMarkForReview(req.user.id, req.params.id)
@@ -118,6 +121,7 @@ router.get('/question/:id/mark', requireAuth, async (req, res) => {
         res.status(500).json({ success: false, error: err.message })
     }
 })
+
 router.get('/history', requireAuth, async (req, res) => {
     try {
         const { data: attempts } = await supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', req.user.id).order('attempt_time', { ascending: false }).limit(req.query.limit || 20)
@@ -168,6 +172,5 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         res.redirect('/practice/adaptive')
     }
 })
-
 
 module.exports = router

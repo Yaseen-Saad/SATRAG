@@ -23,9 +23,9 @@ class LLMService {
         this.cacheSize = 100;
     }
 
-    async generateCompletion({ messages, system, model, maxTokens = 2048, temperature = 0.7, retries = 2, apiKey, embedApiKey }) {
-        const cacheKey = JSON.stringify({ messages, system, model, maxTokens, temperature });
-        if (this.cache.has(cacheKey)) {
+    async generateCompletion({ messages, system, model, maxTokens = 4096, temperature = 0.7, retries = 2, apiKey, embedApiKey, skipCache = false }) {
+        const cacheKey = skipCache ? null : JSON.stringify({ messages, system, model, maxTokens, temperature });
+        if (cacheKey && this.cache.has(cacheKey) && !skipCache) {
             return this.cache.get(cacheKey);
         }
         const body = {
@@ -55,10 +55,12 @@ class LLMService {
 
                 const data = await res.json();
                 const result = new LLMResponse({ content: data.choices[0].message.content, success: true, model: data.model, usage: data.usage, finishReason: data.choices[0].finish_reason });
-                this.cache.set(cacheKey, result);
-                if (this.cache.size > this.cacheSize) {
-                    const firstKey = this.cache.keys().next().value;
-                    this.cache.delete(firstKey);
+                if (cacheKey) {
+                    this.cache.set(cacheKey, result);
+                    if (this.cache.size > this.cacheSize) {
+                        const firstKey = this.cache.keys().next().value;
+                        this.cache.delete(firstKey);
+                    }
                 }
                 return result;
             } catch (error) {
@@ -78,7 +80,7 @@ class LLMService {
     async generateEmbeddings(texts, { apiKey, embedApiKey } = {}) {
         const headers = { 'Content-Type': 'application/json' }
         const key = embedApiKey || this.embedApiKey;
-        
+
         if (key) {
             headers['Authorization'] = `Bearer ${key}`
         }

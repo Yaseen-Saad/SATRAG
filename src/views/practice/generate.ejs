@@ -5,6 +5,8 @@
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
+<script>const topicTree = <%- JSON.stringify(topicTree) %>;</script>
+
 <form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;" data-loading>
   <div class="form-group">
     <label>Subject</label>
@@ -16,11 +18,17 @@
   </div>
   <div class="form-group">
     <label>Topic</label>
-    <select name="topic" class="form-input" required>
+    <select name="topic" class="form-input" required id="topic-select" onchange="populateSubtopics()">
       <option value="">— Select —</option>
       <% topicTree.forEach(t => { %>
       <option value="<%= t.topic %>" data-subject="<%= t.subject || '' %>" <%= topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
       <% }) %>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Subtopic</label>
+    <select name="subtopic" class="form-input" id="subtopic-select">
+      <option value="">— Select Topic First —</option>
     </select>
   </div>
   <div class="form-group">
@@ -73,20 +81,40 @@
 <% } %>
 
 <script>
+  const topicSelect = document.getElementById('topic-select');
+  const subtopicSelect = document.getElementById('subtopic-select');
+
   function filterTopics() {
     const subject = document.querySelector('[name="subject"]').value;
-    document.querySelectorAll('[name="topic"] option').forEach(opt => {
+    document.querySelectorAll('#topic-select option').forEach(opt => {
       if (opt.value === '') return;
       if (!subject) { opt.style.display = ''; return; }
       if (subject === 'reading_writing') {
-        opt.style.display = (opt.dataset.subject === 'reading' || opt.dataset.subject === 'writing') ? '' : 'none';
+        opt.style.display = opt.dataset.subject === 'reading_writing' ? '' : 'none';
       } else {
         opt.style.display = opt.dataset.subject === subject ? '' : 'none';
       }
     });
-    document.querySelector('[name="topic"]').value = '';
-}
-  document.addEventListener('DOMContentLoaded', filterTopics);
+    topicSelect.value = '';
+    populateSubtopics();
+  }
+
+  function populateSubtopics() {
+    const topic = topicSelect.value;
+    const entry = topicTree.find(t => t.topic === topic);
+    subtopicSelect.innerHTML = '<option value="">— All Subtopics —</option>';
+    (entry?.subtopics || []).forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      subtopicSelect.appendChild(opt);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    filterTopics();
+    populateSubtopics();
+  });
 
   document.querySelectorAll('.save-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -95,9 +123,7 @@
       btn.disabled = true;
       const res = await fetch('/practice/generate/save', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(question)
       });
       const data = await res.json();

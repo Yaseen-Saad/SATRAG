@@ -112,27 +112,48 @@ class RAGEngine {
         }
         return result
     }
-    async findSATExamples({ subject, topic, difficulty, count = 5 }) {
-        let query = supabase.from('sat_questions').select('*').eq("source", "collegeboard").limit(count);
-        if (subject) query = query.eq('subject', subject);
-        if (topic) query = query.eq('topic', topic);
-        if (difficulty) query = query.eq('difficulty', difficulty);
-        const { data } = await query;
-        if (!data || !data.length) return []
-        return [...data].sort(() => Math.random() - 0.5).slice(0, Math.min(count, data.length))
+
+    async findSATExamples({ subject, topic, subtopic, difficulty, count = 5 }) {
+        const limit = count + 3;
+
+        async function tryQuery(filters) {
+            let q = supabase.from('sat_questions').select('*').eq('source', 'collegeboard');
+            if (filters.subject) q = q.eq('subject', filters.subject);
+            if (filters.topic) q = q.eq('topic', filters.topic);
+            if (filters.subtopic) q = q.eq('subtopic', filters.subtopic);
+            if (filters.difficulty) q = q.eq('difficulty', filters.difficulty);
+            const { data } = await q.limit(limit);
+            return data || [];
+        }
+
+        let results = await tryQuery({ subject, topic, subtopic, difficulty });
+        if (results.length < 2) results = await tryQuery({ subject, topic, subtopic });
+        if (results.length < 2) results = await tryQuery({ subject, topic });
+        if (results.length < 2) results = await tryQuery({ subject });
+        if (results.length < 2) results = await tryQuery({});
+
+        const shuffled = [...results].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, Math.min(count, shuffled.length));
     }
-    async generateSATQuestion({ subject, topic, difficulty, apiKey, embedApiKey }) {
-        const examples = await this.findSATExamples({ subject, topic, difficulty, count: 3 });
+
+    async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
+        const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 });
         const prompt = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
-        const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => ({
-            role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
-                question_type: ex.question_type, passage_text: ex.passage_text,
-                question_text: ex.question_text, options: typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options,
-                correct_answer: ex.correct_answer, explanation: ex.explanation,
-                subject: ex.subject, topic: ex.topic, difficulty: ex.difficulty
-            }, null, 2)}`
-        })), { role: 'user', content: `Please generate 1 new SAT question in JSON format with the following constraints:\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nDifficulty: ${difficulty || 'any'}\n NO MARKDOWN, ONLY THE SINGLE JSON OBJECT` }];
-        const response = await llm.generateCompletion({ messages, temperature: 0.7, maxTokens: 8192, apiKey: apiKey, embedApiKey: embedApiKey });
+        const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
+            const opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options;
+            const passage = (ex.passage_text || '').substring(0, 300);
+            return {
+                role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
+                    question_type: ex.question_type, passage_text: passage || null,
+                    question_text: (ex.question_text || '').substring(0, 300),
+                    options: opts, correct_answer: ex.correct_answer,
+                    explanation: (ex.explanation || '').substring(0, 200),
+                    subject: ex.subject, topic: ex.topic, subtopic: ex.subtopic || ex.skill_description,
+                    difficulty: ex.difficulty, difficulty_band: ex.score_band_range_cd
+                }, null, 2)}`
+            };
+        }), { role: 'user', content: `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.` }];
+        const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 4096, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
         const match = raw.match(/\{[\s\S]*\}/);
@@ -142,7 +163,7 @@ class RAGEngine {
         }
         const result = JSON.parse(match[0].trim());
         if (result.question_text) {
-            result.question_text = result.question_text.replace(/_{2,}blank/gi, '<span style="border-bottom:2px solid; display:inline-block; min-width:80px;">&nbsp;</span>').replace(/_{4,}/g, '<span style="border-bottom:2px solid; display:inline-block; min-width:80px;">&nbsp;</span>');
+            result.question_text = result.question_text.replace(/_{2,}\s*(?:blank)?\s*/gi, '<span style="text-decoration: underline;">   </span>');
         }
         let opts = result.options;
         if (opts && typeof opts === 'object' && !Array.isArray(opts)) {
@@ -150,6 +171,7 @@ class RAGEngine {
         }
         return { ...result, options: opts ? JSON.stringify(opts) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
     }
+
     async saveGeneratedQuestion(question) {
         const text = question.stem_plain_text || question.question_text || ""
         const embedding = text ? await llm.generateEmbedding(text) : null

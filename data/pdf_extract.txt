@@ -6,33 +6,6 @@ Summer 2022
 
 === PAGE 2 ===
   
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
    
  Contents 
 1 Introduction ΓÇô How to Use This Document 
@@ -149,43 +122,6 @@ The Digital SAT Suite of Assessments Specifications Overview
 
 === PAGE 7 ===
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-  
- 
- 
- 
- 
- 
- 
  Practice and Preparation 
 Below is a summary of resources useful for practicing and preparing for the digital SAT Suite 
 tests, available starting in fall 2022. 
@@ -209,26 +145,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 5 5 
 
 === PAGE 8 ===
- 
- 
    
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-  
- 
-  
- 
-    
  Resources and Supports 
 for Students with 
 Disabilities 
@@ -256,13 +173,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 6 6 
 
 === PAGE 9 ===
- 
- 
-  
- 
- 
- 
- Supports for English 
+Supports for English 
 Learners (ELs) 
 College Board will continue to offer testing supports for English learners (EL) during SAT 
 School Day, PSAT 10, and PSAT 8/9 administrations. These supports arenΓÇÖt available for SAT Weekend administrations or for the PSAT/NMSQT. 
@@ -280,13 +191,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 7 7 
 
 === PAGE 10 ===
- 
-  
- 
- 
-  
- 
- 
+
   The Digital SAT Suite: 
 WhatΓÇÖs staying the same? 
 The digital SAT Suite will continue to measure the skills and knowledge that students are 
@@ -307,14 +212,6 @@ The Digital SAT Suite of Assessments Specifications Overview
 8 8 
 
 === PAGE 11 ===
- 
-  
- 
- 
- 
- 
-  
- 
  
   The Digital SAT Suite: 
 WhatΓÇÖs changing? 
@@ -371,10 +268,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 11 11 
 
 === PAGE 14 ===
- 
- 
- 
-  Content Specifications 
+Content Specifications 
 Reading and Writing 
 The Reading and Writing section of the digital SAT Suite assessments is designed to 
 measure studentsΓÇÖ attainment of critical college and career readiness in literacy. The section focuses on key elements of comprehension, rhetoric, and language use that the best available evidence identifies as necessary for college readiness and success. In this section, students answer multiple-choice questions requiring them to read, comprehend, and use information and ideas in texts; analyze the craft and structure of texts; revise texts to improve the rhetorical expression of ideas; and edit texts to conform to core conventions of Standard English. 
@@ -389,16 +283,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 12 12 
 
 === PAGE 15 ===
-   
- 
- 
- 
-  
- 
-  
- 
- 
- Table 2: Digital SAT Suite of Assessments Reading and Writing Section Content Domains 
+Table 2: Digital SAT Suite of Assessments Reading and Writing Section Content Domains 
 and Question Distribution 
 Content 
 Domain Domain Description Skill/Knowledge T esting Points Operational Question Distribution 
@@ -433,12 +318,7 @@ The Digital SAT Suite of Assessments Specifications Overview
 13 13 
 
 === PAGE 16 ===
- 
-   
-   
- 
-  
- Math content domains 
+Math content domains 
 Questions on the Math section represent one of four content domains: 
 ┬ºAlgebra: Measures the ability to analyze, fluently solve, and create linear equations and 
 inequalities as well as analyze and fluently solve equations and systems of equations using multiple techniques 
