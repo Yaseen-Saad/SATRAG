@@ -4,6 +4,10 @@ const fs = require('fs')
 const path = require('path')
 const evaluator = require('../lib/vocabularyEvaluator')
 const llm = require('../lib/llm')
+const qualityChecker = require('../lib/qualityChecker')
+const { parseGeneratedEntry } = require('../lib/utils')
+const { incrementGenCount } = require('../middleware/useFreeModels')
+
 class VocabEngine {
     async getMyLists(userId) {
         const { data } = await supabase.from('word_lists').select('*, word_count:word_list_entries(count)').eq('created_by', userId).order('created_at', { ascending: false });
@@ -49,15 +53,16 @@ class VocabEngine {
         return false;
     }
 
-    async autoAddFromWrongAnswer(userId, questionData, user) {
+    async addWICWordsToMostakes(user, questionData) {
         try {
-            let lists = await this.getMyLists(userId)
+            let lists = await this.getMyLists(user.id)
             let mistakesList = lists.find(list => list.name === "Mistakes" && list.visibility === 'private')
             if (!mistakesList) {
-                mistakesList = await this.createList(userId, 'Mistakes', 'Words from questions you answered incorrectly', 'private')
+                mistakesList = await this.createList(user.id, 'Mistakes', 'Words from questions you answered incorrectly', 'private')
             }
             const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
-            const isWIC = (questionData.skill_description || questionData.subtopic || "").toLowerCase().includes('word in context')
+            const skill = (questionData.skill_description || questionData.subtopic || "").toLowerCase()
+            const isWIC = skill.includes('word in context')
             if (!isRW && !isWIC) return { listId: mistakesList.id, wordsFound: 0 }
             let options = []
             if (questionData.options) {
@@ -116,6 +121,8 @@ class VocabEngine {
                     entry.validation_passed = evaluationResult?.isValid ?? false;
                     const saved = await rag.addEntry(entry);
                     const lists = await vocabEngine.getMyLists(user.id);
+                    wordId = saved.id;
+                    await incrementGenCount(user)
                 }
                 if (wordId) {
                     const alreadyIn = await supabase.from('word_list_entries').select('id').eq('list_id', mistakesList.id).eq('word_id', wordId).maybeSingle()

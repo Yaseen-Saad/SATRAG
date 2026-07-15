@@ -97,21 +97,40 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
     try {
         const { answer, timeMs } = req.body
         const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) })
+        let isWIC = false;
         if (!result.isCorrect) {
             const { data: questionData } = await supabase.from('sat_questions')
                 .select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description')
                 .eq('id', req.params.id)
                 .single()
             if (questionData) {
-                await vocabEngine.autoAddFromWrongAnswer(req.user.id, questionData, req.user)
+                const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
+                const skill = (questionData.skill_description || questionData.subtopic || "").toLowerCase()
+                isWIC = isRW && skill.includes('word in context')
             }
         }
-        res.json({ success: true, ...result })
+        res.json({ success: true, ...result, isWIC })
     } catch (err) {
         console.error('Answer error:', err)
         res.status(500).json({ success: false, error: err.message })
     }
 })
+
+
+
+router.post('/question/:id/add-mistakes', requireAuth, checkAPIKeys, async (req, res) => {
+    try {
+        const { data: qData } = await supabase.from('sat_questions').select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description').eq('id', req.params.id).single()
+        if (!qData) return res.status(404).json({ success: false, error: 'Question not found' })
+        const result = await vocabEngine.addWICWordsToMostakes(req.user, qData)
+        res.json({ success: true, ...result, isWIC })
+    } catch (err) {
+        console.error('Answer error:', err)
+        res.status(500).json({ success: false, error: err.message })
+    }
+})
+
+
 
 router.get('/question/:id/mark', requireAuth, async (req, res) => {
     try {

@@ -83,6 +83,7 @@
             return;
         }
         const pct = data && data.percentile;
+        const showMistakesBtn = !data.isCorrect && data.isWIC;
         content.innerHTML = `
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
           ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
@@ -90,12 +91,45 @@
         ${!data.isCorrect ? `<p>Correct answer: <strong>${data.correctAnswer}</strong></p>` : `<p>You selected <strong>${selectedAnswer}</strong></p>`}
         <p>Time: ${Math.round((Date.now() - startTime) / 1000)}s${pct != null && pct !== undefined ? ' · Faster than ' + pct + '% of users' : ''}</p>
         ${data.attemptNumber ? '<p>Attempt #' + data.attemptNumber + '</p>' : ''}
+        ${showMistakesBtn ? '<div id="mistakes-prompt" style="margin:1rem 0;padding:0.75rem;border:1px solid var(--border);border-radius:8px;"><p style="margin:0 0 0.5rem;">This is a Words in Context question. Add the answer words to your <strong>Mistakes</strong> list?</p><button class="bb-fb-btn" id="add-mistakes-btn" onclick="addToMistakes()" style="margin-right:0.5rem;">+ Add to Mistakes</button><span id="mistakes-status" style="font-size:0.85rem;color:var(--text-muted);"></span></div>' : ''}
         <div class="bb-fb-actions">
           ${data.isCorrect ? '<button class="bb-fb-btn primary" onclick="window.location=document.getElementById(\'return-to\')?.dataset?.url || \'/practice\'">Back to Bank</button>' : '<button class="bb-fb-btn success" onclick="tryAgain()">Try Again</button>'}
           <button class="bb-fb-btn ghost" onclick="toggleMarkBtn()">★ Mark for Review</button>
         </div>`;
         overlay.classList.add('open');
     }
+
+    window.addToMistakes = async function () {
+        const btn = document.getElementById('add-mistakes-btn')
+        const status = document.getElementById('mistakes-status')
+        if (!btn) return
+        btn.disabled = true
+        btn.textContent = 'Adding...'
+        status.textContent = "";
+        try {
+            const res = await fetch(`/practice/question/${questionId}/add-mistakes`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+            const data = await res.json()
+            if (data.success && data.wordsFound > 0) {
+                btn.textContent = `Added ${data.wordsFound} words`
+                btn.style.backgroundColor = `var(--bb-correct)`
+                status.textContent = ""
+            } else if (data.success && data.wordsFound === 0) {
+                btn.textContent = `Words already in list`
+                status.textContent = ""
+            } else {
+
+                btn.textContent = `Error, please try again`
+                btn.disabled = false
+                status.textContent = data.error || "Failed to add words"
+            }
+        } catch (error) {
+            btn.textContent = `Error, please try again`
+            btn.disabled = false
+            status.textContent = data.error || "Failed to add words"
+
+        }
+    }
+
     window.tryAgain = function () {
         answered = false
         selectedAnswer = null

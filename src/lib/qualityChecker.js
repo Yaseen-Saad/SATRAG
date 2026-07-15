@@ -8,6 +8,7 @@ class QualityChecker {
             formatcompliance: 0.10
         };
     };
+
     assessQuality(entry) {
         const scores = {
             authenticity: this.assessAuthenticity(entry),
@@ -22,6 +23,7 @@ class QualityChecker {
         else if (!entry.example_sentence || !entry.example_sentence.trim()) overall *= 0.6
         return { overall, scores, issues: this.identifyIssues(entry, scores), strength: this.identifyStrengths(entry, scores) }
     }
+
     assessAuthenticity(entry) {
         let score = 10;
         if (!entry.mnemonic_phrase) score -= 3
@@ -34,6 +36,7 @@ class QualityChecker {
         if (entry.pronunciation && entry.pronunciation.includes('-')) score += 0.5;
         return Math.max(0, Math.min(10, score));
     }
+
     assessCreativity(entry) {
         let score = 10;
         if (entry.mnemonic_phrase) {
@@ -41,6 +44,7 @@ class QualityChecker {
         } else score -= 5;
         return Math.max(0, Math.min(10, score));
     }
+
     assessAccuracy(entry) {
         let score = 10;
         if (entry.example_sentence) {
@@ -61,6 +65,7 @@ class QualityChecker {
         }
         return Math.max(0, Math.min(10, score));
     }
+
     assessFormatCompliance(entry) {
         let score = 10;
         if (entry.word && entry.word !== entry.word.toUpperCase()) score -= 1;
@@ -69,6 +74,7 @@ class QualityChecker {
         if (entry.mnemonic_type && !['sounds-like', 'looks-like'].includes(entry.mnemonic_type)) score -= 1;
         return Math.max(0, Math.min(10, score));
     }
+
     identifyIssues(entry, scores) {
         const issues = [];
         if (scores.authenticity < 6) issues.push("Doesn't match authentic Gulotta style");
