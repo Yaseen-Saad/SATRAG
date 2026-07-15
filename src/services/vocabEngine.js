@@ -53,7 +53,7 @@ class VocabEngine {
         return false;
     }
 
-    async addWICWordsToMostakes(user, questionData) {
+    async addWICWordsToMistakes(user, questionData) {
         try {
             let lists = await this.getMyLists(user.id)
             let mistakesList = lists.find(list => list.name === "Mistakes" && list.visibility === 'private')
@@ -73,24 +73,28 @@ class VocabEngine {
                 }
             }
             if (!options.length) return { listId: mistakesList.id, wordsFound: 0 }
+            console.log('I am in the function');
+
             const passage = (questionData.passage_text || "").replace(/<[^>]+>/g, '').trim().toLowerCase()
+            const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
             let wordsFound = 0
-            for (const opt of options) {
-                let word = (opt.content || opt.text || opt || "").replace(/<[^>]+>/g, '').trim().toLowerCase()
-                if (!word || word.length < 2) continue
-                const existing = await rag.findByWord(word);
+            const wordPromises = options.map(async (opt) => {
+                const rawWord = (opt.content || opt.text || opt || "").replace(/<[^>]+>/g, '').trim().toLowerCase()
+                if (!rawWord || rawWord.length < 2) return null
+                const existing = await rag.findByWord(rawWord);
                 let wordId
-                if (existing) wordId = existing.id
-                else {
-                    word = word.toUpperCase();
+                if (existing) {
+                    wordId = existing.id
+                } else {
+                    const word = rawWord.toUpperCase()
+                    let entry = null
                     const similar = await rag.retrieveSimilar(word, 3)
                     let similarText = ''
                     if (similar.length > 0)
                         similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Scentence: ${s.example_sentence}`).join('\n\n')
-                    const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
                     const userPrompt = `Generate a vocabulary entry for "${word}".
-                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}
-                            Follow the format exactly. Make the mnemonic memorable.`;
+                    ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}
+                    Follow the format exactly. Make the mnemonic memorable.`;
 
                     let response = await llm.generateCompletion({
                         messages: [{ role: 'user', content: userPrompt }],
@@ -98,8 +102,9 @@ class VocabEngine {
                         temperature: 0.6,
                         apiKey: user.useFreeModels ? undefined : user.llm_apikey
                     });
+                    console.log(response);
 
-                    let entry = parseGeneratedEntry(response.content, word);
+                    entry = parseGeneratedEntry(response.content, word);
                     if (!entry.definition || !entry.definition.trim()) {
                         console.error('Raw LLM response for', word, ':', response.content)
                         response = await llm.generateCompletion({
@@ -113,26 +118,32 @@ class VocabEngine {
                     }
                     if (!entry.definition || !entry.definition.trim()) {
                         console.error('Retry also failed for', word, ':', response.content)
-                        throw new Error(`LLM returned an unparseable response for "${word}". Try again.`)
-                    }
-                    const quality = qualityChecker.assessQuality(entry);
-                    const evaluationResult = await evaluator.evaluateEntry(entry, word);
+                        return null
+                    } const quality = qualityChecker.assessQuality(entry);
                     entry.quality_score = quality.overall
-                    entry.validation_passed = evaluationResult?.isValid ?? false;
+                    try {
+                        const evaluationResult = await evaluator.evaluateEntry(entry, wordUpper);
+                        entry.validation_passed = evaluationResult?.isValid ?? false;
+                    } catch (e) {
+                        entry.validation_passed = false;
+                    }
                     const saved = await rag.addEntry(entry);
-                    const lists = await vocabEngine.getMyLists(user.id);
-                    wordId = saved.id;
+                    wordId = saved?.id;
                     await incrementGenCount(user)
                 }
+
                 if (wordId) {
                     const alreadyIn = await supabase.from('word_list_entries').select('id').eq('list_id', mistakesList.id).eq('word_id', wordId).maybeSingle()
                     if (!alreadyIn) {
                         await this.addWordToList(mistakesList.id, wordId)
-                        wordsFound++
+                        return wordUpper || rawWord
                     }
                 }
-            }
-            return { listId: mistakesList.id, wordsFound }
+                return null
+            })
+
+            const results = await Promise.all(wordPromises)
+            return { listId: mistakesList.id, wordsFound: results.filter(Boolean).length }
         } catch (error) {
             console.error(error)
             return { listId: null, wordsFound: 0 }

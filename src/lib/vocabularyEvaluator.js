@@ -36,7 +36,8 @@ class VocabularyEvaluator {
             result.suggestions = result.suggestions ?? [];
             return result;
         } catch (err) {
-            console.error('Error evaluating entry:', err);
+            if (err.message !== "No JSON in LLM response")
+                console.error('Error evaluating entry:', err);
             return {
                 isValid: false,
                 overallScore: 0,

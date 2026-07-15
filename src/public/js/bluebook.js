@@ -83,6 +83,8 @@
             return;
         }
         const pct = data && data.percentile;
+        console.log(data);
+
         const showMistakesBtn = !data.isCorrect && data.isWIC;
         content.innerHTML = `
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
@@ -104,9 +106,10 @@
         const status = document.getElementById('mistakes-status')
         if (!btn) return
         btn.disabled = true
-        btn.textContent = 'Adding...'
+        btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;margin-right:0.4rem;"></span> Adding words...'
         status.textContent = "";
         try {
+            console.log("Called!")
             const res = await fetch(`/practice/question/${questionId}/add-mistakes`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
             const data = await res.json()
             if (data.success && data.wordsFound > 0) {

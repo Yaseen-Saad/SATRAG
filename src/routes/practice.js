@@ -106,7 +106,7 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
             if (questionData) {
                 const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
                 const skill = (questionData.skill_description || questionData.subtopic || "").toLowerCase()
-                isWIC = isRW && skill.includes('word in context')
+                isWIC = isRW && skill.includes('words in context')
             }
         }
         res.json({ success: true, ...result, isWIC })
@@ -117,20 +117,19 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
 })
 
 
-
 router.post('/question/:id/add-mistakes', requireAuth, checkAPIKeys, async (req, res) => {
     try {
+        console.log("call received!")
         const { data: qData } = await supabase.from('sat_questions').select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description').eq('id', req.params.id).single()
         if (!qData) return res.status(404).json({ success: false, error: 'Question not found' })
-        const result = await vocabEngine.addWICWordsToMostakes(req.user, qData)
-        res.json({ success: true, ...result, isWIC })
+            console.log("data received!")
+        const result = await vocabEngine.addWICWordsToMistakes(req.user, qData)
+        res.json({ success: true, ...result })
     } catch (err) {
         console.error('Answer error:', err)
         res.status(500).json({ success: false, error: err.message })
     }
 })
-
-
 
 router.get('/question/:id/mark', requireAuth, async (req, res) => {
     try {
