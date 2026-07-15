@@ -99,11 +99,11 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
         const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) })
         if (!result.isCorrect) {
             const { data: questionData } = await supabase.from('sat_questions')
-                .select('passage_text, subject, topic')
+                .select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description')
                 .eq('id', req.params.id)
                 .single()
             if (questionData) {
-                await vocabEngine.autoAddFromWrongAnswer(req.user.id, questionData)
+                await vocabEngine.autoAddFromWrongAnswer(req.user.id, questionData, req.user)
             }
         }
         res.json({ success: true, ...result })
@@ -160,7 +160,7 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         const weakTopics = topicStats.filter(topic => topic.accuracy_pct < 70)
         const result = await practice.getAdaptiveQuestion(req.user.id, subject)
         if (result.question && typeof result.question.options === 'string') {
-            try { result.question.options = JSON.parse(result.question.options); } catch(e) {}
+            try { result.question.options = JSON.parse(result.question.options); } catch (e) { }
         }
 
         res.render('practice/adaptive', {

@@ -11,7 +11,7 @@ I am creating an SAT Study Buddy with the help of Generative-AI, focusing mainly
 6. bug report and ticket system
 7. Add questions rush to make students update with the stress of the test
 8. add word parts Root: rupt (Latin for 'break'); Prefix: ab- (away); Suffix: -t (used to form adjectives indicating a state or quality)
-9. 
+9. Add an Sat questions evaluator just like the vocab evaluator
 
 
 Some analytics from a popular website I want to implement:

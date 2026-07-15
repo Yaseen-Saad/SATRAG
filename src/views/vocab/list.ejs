@@ -80,6 +80,11 @@
           <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%= w.part_of_speech %></span>
           <p style="margin:0.25rem 0 0;font-size:0.9rem;"><%= w.definition %></p>
         </div>
+        <% if (isOwner) { %>
+        <form method="POST" action="/vocab/lists/<%= list.id %>/remove/<%= w.id %>" onsubmit="return confirm('Remove <%= w.word %> from this list?')">
+          <button type="submit" class="btn btn-sm" style="color:var(--error);background:none;border:1px solid var(--error);padding:0.25rem 0.6rem;font-size:0.8rem;">Remove</button>
+        </form>
+        <% } %>
       </div>
       <% }) %>
     </div>

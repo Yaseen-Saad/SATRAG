@@ -1,6 +1,9 @@
 const supabase = require('../lib/supabase').service
 const rag = require('../lib/rag')
-
+const fs = require('fs')
+const path = require('path')
+const evaluator = require('../lib/vocabularyEvaluator')
+const llm = require('../lib/llm')
 class VocabEngine {
     async getMyLists(userId) {
         const { data } = await supabase.from('word_lists').select('*, word_count:word_list_entries(count)').eq('created_by', userId).order('created_at', { ascending: false });
@@ -46,27 +49,83 @@ class VocabEngine {
         return false;
     }
 
-    async autoAddFromWrongAnswer(userId, questionData) {
+    async autoAddFromWrongAnswer(userId, questionData, user) {
         try {
             let lists = await this.getMyLists(userId)
             let mistakesList = lists.find(list => list.name === "Mistakes" && list.visibility === 'private')
             if (!mistakesList) {
                 mistakesList = await this.createList(userId, 'Mistakes', 'Words from questions you answered incorrectly', 'private')
             }
-            const wordsToFind = []
-            if (questionData.passage_text) {
-                const match = questionData.passage_text.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/g)
-                if (match) wordsToFind.push(...match.slice(0, 5))
-            }
-
-            for (const word of wordsToFind) {
-                const entry = await rag.findByWord(word.toUpperCase())
-                if (entry) {
-                    const alreadyIn = await supabase.from('word_list_entries').select('id').eq('list_id', mistakesList.id).eq('word_id', entry.id).maybeSingle()
-                    if (!alreadyIn) await this.addWordToList(mistakesList.id, entry.id)
+            const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
+            const isWIC = (questionData.skill_description || questionData.subtopic || "").toLowerCase().includes('word in context')
+            if (!isRW && !isWIC) return { listId: mistakesList.id, wordsFound: 0 }
+            let options = []
+            if (questionData.options) {
+                try {
+                    options = typeof questionData.options === 'string' ? JSON.parse(questionData.options) : questionData.options
+                } catch (err) {
+                    console.log(err);
                 }
             }
-            return { listId: mistakesList.id, wordsFound: wordsToFind.length }
+            if (!options.length) return { listId: mistakesList.id, wordsFound: 0 }
+            const passage = (questionData.passage_text || "").replace(/<[^>]+>/g, '').trim().toLowerCase()
+            let wordsFound = 0
+            for (const opt of options) {
+                let word = (opt.content || opt.text || opt || "").replace(/<[^>]+>/g, '').trim().toLowerCase()
+                if (!word || word.length < 2) continue
+                const existing = await rag.findByWord(word);
+                let wordId
+                if (existing) wordId = existing.id
+                else {
+                    word = word.toUpperCase();
+                    const similar = await rag.retrieveSimilar(word, 3)
+                    let similarText = ''
+                    if (similar.length > 0)
+                        similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Scentence: ${s.example_sentence}`).join('\n\n')
+                    const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
+                    const userPrompt = `Generate a vocabulary entry for "${word}".
+                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}
+                            Follow the format exactly. Make the mnemonic memorable.`;
+
+                    let response = await llm.generateCompletion({
+                        messages: [{ role: 'user', content: userPrompt }],
+                        system: systemPrompt,
+                        temperature: 0.6,
+                        apiKey: user.useFreeModels ? undefined : user.llm_apikey
+                    });
+
+                    let entry = parseGeneratedEntry(response.content, word);
+                    if (!entry.definition || !entry.definition.trim()) {
+                        console.error('Raw LLM response for', word, ':', response.content)
+                        response = await llm.generateCompletion({
+                            messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
+                            system: systemPrompt,
+                            temperature: 0.7,
+                            apiKey: user.useFreeModels ? undefined : user.llm_apikey,
+                            embedApiKey: user.useFreeModels ? undefined : user.embed_apikey
+                        });
+                        entry = parseGeneratedEntry(response.content, word);
+                    }
+                    if (!entry.definition || !entry.definition.trim()) {
+                        console.error('Retry also failed for', word, ':', response.content)
+                        throw new Error(`LLM returned an unparseable response for "${word}". Try again.`)
+                    }
+                    const quality = qualityChecker.assessQuality(entry);
+                    const evaluationResult = await evaluator.evaluateEntry(entry, word);
+                    entry.quality_score = quality.overall
+                    entry.validation_passed = evaluationResult?.isValid ?? false;
+                    const saved = await rag.addEntry(entry);
+                    const lists = await vocabEngine.getMyLists(user.id);
+                }
+                if (wordId) {
+                    const alreadyIn = await supabase.from('word_list_entries').select('id').eq('list_id', mistakesList.id).eq('word_id', wordId).maybeSingle()
+                    if (!alreadyIn) {
+                        await this.addWordToList(mistakesList.id, wordId)
+                        wordsFound++
+                    }
+                }
+            }
+            return { listId: mistakesList.id, wordsFound }
         } catch (error) {
             console.error(error)
             return { listId: null, wordsFound: 0 }
