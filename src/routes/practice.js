@@ -2,7 +2,6 @@ const { Router } = require('express')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
 const supabase = require('../lib/supabase').service
 const practice = require('../services/practiceEngine')
-const PracticeEngine = require('../services/practiceEngine')
 const vocabEngine = require('../services/vocabEngine')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const rag = require('../lib/rag')
@@ -31,7 +30,7 @@ router.get('/', requireAuth, async (req, res) => {
         })
     } catch (err) {
         console.error(err)
-        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {} })
+        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {}, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search, currentUrl: req.originalUrl })
     }
 })
 
@@ -84,7 +83,7 @@ router.get('/question/:id', requireAuth, async (req, res) => {
     try {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
         if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [] })
-        const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, userId: req.user.id })
+        const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, subject: question.subject, topic: question.topic, userId: req.user.id })
         const returnTo = req.query.from || '/practice'
         res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, returnTo })
     } catch (err) {
@@ -119,10 +118,8 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
 
 router.post('/question/:id/add-mistakes', requireAuth, checkAPIKeys, async (req, res) => {
     try {
-        console.log("call received!")
         const { data: qData } = await supabase.from('sat_questions').select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description').eq('id', req.params.id).single()
         if (!qData) return res.status(404).json({ success: false, error: 'Question not found' })
-            console.log("data received!")
         const result = await vocabEngine.addWICWordsToMistakes(req.user, qData)
         res.json({ success: true, ...result })
     } catch (err) {

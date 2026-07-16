@@ -156,7 +156,7 @@ class RAGEngine {
         const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 4096, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
-        const match = raw.match(/\{[\s\S]*\}/);
+        const match = raw.match(/\{[\s\S]*?\}/);
         if (!match) {
             console.error('LLM raw response:', raw.slice(0, 500))
             throw new Error('No JSON in LLM response');

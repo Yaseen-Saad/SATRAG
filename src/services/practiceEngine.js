@@ -58,9 +58,8 @@ class PracticeEngine {
                     if (ids.length) query = query.in('id', ids); else return { questions: [], total: 0, page, limit };
                 }
             }
-            if (marked) {
+            if (marked === true || marked === 'true') {
                 const ids = [...stateMap].filter(([_, s]) => s.marked_for_review).map(([id]) => id)
-                console.log("Marked param:", marked, 'stateMap Size', stateMap.size, 'found IDs:', ids)
                 if (ids.length) query = query.in('id', ids); else return { questions: [], total: 0, page, limit };
             }
         }
@@ -211,12 +210,20 @@ class PracticeEngine {
     async getAdjacentQuestions({ questionId, subject, topic, userId }) {
         const { data: current } = await supabase.from('sat_questions').select('id, created_at').eq('id', questionId).single()
         if (!current) return { prevId: null, nextId: null }
-        let base = supabase.from('sat_questions').select('id').neq('id', questionId)
-        if (subject) base = base.eq('subject', subject)
-        if (topic) base = base.eq('topic', topic)
+
+        let prevQuery = supabase.from('sat_questions').select('id').neq('id', questionId)
+        let nextQuery = supabase.from('sat_questions').select('id').neq('id', questionId)
+        if (subject) {
+            prevQuery = prevQuery.eq('subject', subject)
+            nextQuery = nextQuery.eq('subject', subject)
+        }
+        if (topic) {
+            prevQuery = prevQuery.eq('topic', topic)
+            nextQuery = nextQuery.eq('topic', topic)
+        }
         const [prev, next] = await Promise.all([
-            base.lt('created_at', current.created_at).order('created_at', { ascending: false }).limit(1),
-            base.gt('created_at', current.created_at).order('created_at', { ascending: true }).limit(1)])
+            prevQuery.lt('created_at', current.created_at).order('created_at', { ascending: false }).limit(1),
+            nextQuery.gt('created_at', current.created_at).order('created_at', { ascending: true }).limit(1)])
         return { prevId: prev.data?.[0]?.id || null, nextId: next.data?.[0]?.id || null }
     }
 

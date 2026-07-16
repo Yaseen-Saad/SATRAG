@@ -55,8 +55,8 @@ router.post('/review', requireAuth, async (req, res) => {
 
 router.post('/list/:id/start', requireAuth, async function (req, res) {
     try {
-        const list = await vocabEngine.getList(req.params.id, req.user.id)
-        if (!list) return res.status(404).render('error', { error: 'List not found', statusCode: 404 })
+        const result = await vocabEngine.getList(req.params.id, req.user.id)
+        if (!result?.list) return res.status(404).render('error', { error: 'List not found', statusCode: 404 })
         res.redirect(`/flashcards/session?listId=${req.params.id}`)
     } catch (error) {
         console.error('Start flashcards session error:', error)

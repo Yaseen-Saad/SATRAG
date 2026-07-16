@@ -21,6 +21,17 @@
   margin: -2rem -1.5rem;
 }
 
+[data-theme=dark] .bluebook {
+  --bb-bg: #0b1120;
+  --bb-surface: #1e293b;
+  --bb-border: #334155;
+  --bb-text: #f1f5f9;
+  --bb-text-muted: #94a3b8;
+  --bb-primary: #1e3a5f;
+  --bb-primary-light: #2563eb;
+  --bb-accent: #3b82f6;
+}
+
 /* ========== TOP BAR ========== */
 .bb-topbar {
   display: flex;
@@ -124,7 +135,7 @@
 }
 
 .bb-panel-question {
-  background: white;
+  background: var(--bb-surface);
   flex: 1 1 50%;
   padding: 2rem;
 }
@@ -187,7 +198,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s;
-  background: white;
+  background: var(--bb-surface);
   text-align: left;
   font-size: 0.95rem;
   font-family: "Georgia", "Times New Roman", serif;
@@ -352,7 +363,7 @@
 
 .bb-dot.current {
   border-color: white;
-  background: white;
+  background: var(--bb-surface);
   color: var(--bb-primary);
 }
 
@@ -404,7 +415,7 @@
 }
 
 .bb-palette {
-  background: white;
+  background: var(--bb-surface);
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 440px;
@@ -452,7 +463,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  background: white;
+  background: var(--bb-surface);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -511,7 +522,7 @@
 }
 
 .legend-dot.unanswered {
-  background: white;
+  background: var(--bb-surface);
   border: 2px solid var(--bb-border);
 }
 
@@ -539,7 +550,7 @@
 }
 
 .bb-feedback {
-  background: white;
+  background: var(--bb-surface);
   border-radius: 12px;
   padding: 2rem;
   max-width: 500px;

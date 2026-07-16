@@ -82,7 +82,7 @@ function sendLimit(res, req, retrySeconds) {
     if (!req.accepts('html')) {
         return res.status(429).json({ error: msg, retryAfterSeconds: retrySeconds });
     }
-    res.status(429).render('error', { error: msg, statusCode: 429 });
+    res.status(429).render('error', { error: msg, statusCode: 429, title: 'Rate Limited' });
 }
 
 module.exports = rateLimiter;

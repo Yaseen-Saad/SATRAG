@@ -34,6 +34,22 @@ CREATE TABLE IF NOT EXISTS feedback_events (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Tickets Table
+CREATE TABLE IF NOT EXISTS tickets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    section TEXT,
+    subject TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+);
+
+-- Ticket Messages
+CREATE TABLE IF NOT EXISTS ticket_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users not null,
+    message TEXT NOT NULL,
+    submitted_at TIMESTAMP DEFAULT NOW(),
+);
+
 -- SAT Question Bank
 CREATE TABLE IF NOT EXISTS sat_questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

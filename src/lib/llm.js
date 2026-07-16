@@ -54,6 +54,9 @@ class LLMService {
                 }
 
                 const data = await res.json();
+                if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                    throw new Error('Invalid LLM response structure: no choices returned');
+                }
                 const result = new LLMResponse({ content: data.choices[0].message.content, success: true, model: data.model, usage: data.usage, finishReason: data.choices[0].finish_reason });
                 if (cacheKey) {
                     this.cache.set(cacheKey, result);

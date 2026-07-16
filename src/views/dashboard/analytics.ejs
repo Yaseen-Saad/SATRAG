@@ -21,11 +21,11 @@
     <div class="dash-card-body">
       <div class="mini-stat-grid">
         <div class="mini-stat">
-          <div class="mini-stat-value"><%= Math.floor(timeAnalytics.totalTimeSec / 60) %>m <%= timeAnalytics.totalTimeSec % 60 %>s</div>
+          <div class="mini-stat-value"><%= Math.floor((timeAnalytics.totalTimeSec || 0) / 60) %>m <%= (timeAnalytics.totalTimeSec || 0) % 60 %>s</div>
           <div class="mini-stat-label">Total Study Time</div>
         </div>
         <div class="mini-stat">
-          <div class="mini-stat-value"><%= timeAnalytics.avgTimeSec %>s</div>
+          <div class="mini-stat-value"><%= timeAnalytics.avgTimeSec || 0 %>s</div>
           <div class="mini-stat-label">Avg per Question</div>
         </div>
         <div class="mini-stat">

@@ -22,7 +22,7 @@ const router = Router()
 const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
 
-const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, llm_apikey, embedding_apikey, grade';
+const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, grade';
 
 router.get('/', requireAuth, async (req, res) => {
     try {
@@ -59,8 +59,8 @@ router.post('/update-all', requireAuth, async (req, res) => {
         updates.gender = gender || null;
         updates.birthdate = birthdate || null;
 
-        const llmKey = req.body.llmKey ? sanitize(req.body.llmKey) : '';
-        const embeddingKey = req.body.embeddingKey ? sanitize(req.body.embeddingKey) : '';
+        const llmKey = req.body.llmKey ? req.body.llmKey.trim() : '';
+        const embeddingKey = req.body.embeddingKey ? req.body.embeddingKey.trim() : '';
         if (llmKey && llmKey.length < 10) errors.push('LLM API key too short');
         if (embeddingKey && embeddingKey.length < 10) errors.push('Embedding API key too short');
         if (llmKey) updates.llm_apikey = llmKey;

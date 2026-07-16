@@ -132,9 +132,9 @@
     </div>
 
     <% if (total > limit) { %>
-    <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center;">
+    <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
       <% for (let p = 1; p <= Math.ceil(total / limit); p++) { %>
-      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + filters.topic : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%= filters.search ? '&search=' + filters.search : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
+      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + encodeURIComponent(filters.topic) : '' %><%= filters.subtopic ? '&subtopic=' + encodeURIComponent(filters.subtopic) : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.source ? '&source=' + filters.source : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%= filters.search ? '&search=' + encodeURIComponent(filters.search) : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
       <% } %>
     </div>
     <% } %>

@@ -37,7 +37,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         const similar = await rag.retrieveSimilar(word, 3)
         let similarText = ''
         if (similar.length > 0)
-            similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Scentence: ${s.example_sentence}`).join('\n\n')
+            similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Sentence: ${s.example_sentence}`).join('\n\n')
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
         const userPrompt = `Generate a vocabulary entry for "${word}".
                             ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}

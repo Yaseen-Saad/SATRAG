@@ -11,10 +11,17 @@
     let selectedAnswer = null;
     if (alreadyAnswered && restoredAttempts.length) {
         answered = true
+        if (timerInterval) clearInterval(timerInterval)
         const lastAttempt = restoredAttempts[restoredAttempts.length - 1]
         document.querySelectorAll('.bb-option').forEach(opt => {
-            if (opt.dataset.label === lastAttempt.selected_answer) opt.classList.add('selected')
-            if (opt.dataset.label === lastAttempt.selected_answer) opt.classList.add(wasCorrect ? 'correct' : 'incorrect')
+            if (opt.dataset.label === lastAttempt.selected_answer) {
+                opt.classList.add('selected')
+                opt.classList.add(wasCorrect ? 'correct' : 'incorrect')
+            }
+            if (!wasCorrect && opt.dataset.label !== lastAttempt.selected_answer) {
+                const correctLabel = questionData?.correctanswer
+                if (correctLabel && opt.dataset.label === correctLabel) opt.classList.add('correct')
+            }
         })
     }
     const timer = document.getElementById('timer');
@@ -109,7 +116,6 @@
         btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;margin-right:0.4rem;"></span> Adding words...'
         status.textContent = "";
         try {
-            console.log("Called!")
             const res = await fetch(`/practice/question/${questionId}/add-mistakes`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
             const data = await res.json()
             if (data.success && data.wordsFound > 0) {
@@ -140,7 +146,7 @@
         document.querySelectorAll('.bb-option').forEach(option => {
             option.classList.remove('selected', 'correct', 'incorrect')
         })
-        document.getElementById('feedback-overlay').classList.remove('open')
+        document.getElementById('feedback-overlay')?.classList.remove('open')
         startTime = Date.now()
     }
 
@@ -150,21 +156,33 @@
         origSubmit(label);
     };
     window.toggleMarkBtn = async () => {
-        await fetch(`/practice/question/${questionId}/mark`);
-        const btn = document.getElementById('mark-btn');
-        const isMarked = btn.classList.toggle('marked');
-        btn.textContent = isMarked ? '★ Marked' : '☆ Mark for Review';
-        document.getElementById('feedback-overlay')?.classList.remove('open');
+        try {
+            await fetch(`/practice/question/${questionId}/mark`);
+            const btn = document.getElementById('mark-btn');
+            if (btn) {
+                const isMarked = btn.classList.toggle('marked');
+                btn.textContent = isMarked ? '★ Marked' : '☆ Mark for Review';
+            }
+            document.getElementById('feedback-overlay')?.classList.remove('open');
+        } catch (e) {
+            console.error('Failed to toggle mark:', e);
+        }
     }
     document.querySelectorAll('.bb-eliminate-btn').forEach(button => {
         button.addEventListener('click', function (e) {
             e.stopPropagation()
             const option = this.closest('.bb-option')
-            option.classList.toggle('eliminated')
-            this.textContent = option.classList.contains('eliminated') ? '✕' : '−'
+            if (option) {
+                option.classList.toggle('eliminated')
+                this.textContent = option.classList.contains('eliminated') ? '✕' : '−'
+            }
         })
     })
     window.openPalette = function () {
+        const paletteGrid = document.querySelector('.bb-palette-grid');
+        if (paletteGrid) {
+            paletteGrid.innerHTML = '<div class="bb-palette-item current">1</div>';
+        }
         document.getElementById("palette-overlay")?.classList.add('open')
     }
     window.closePalette = function () {
