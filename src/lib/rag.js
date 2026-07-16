@@ -149,7 +149,7 @@ class RAGEngine {
                     options: opts, correct_answer: ex.correct_answer,
                     explanation: (ex.explanation || '').substring(0, 200),
                     subject: ex.subject, topic: ex.topic, subtopic: ex.subtopic || ex.skill_description,
-                    difficulty: ex.difficulty, difficulty_band: ex.score_band_range_cd
+                    difficulty: ex.difficulty, difficulty_band: ex.difficulty_band
                 }, null, 2)}`
             };
         }), { role: 'user', content: `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.` }];

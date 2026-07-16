@@ -4,8 +4,7 @@ class DashboardEngine {
 
     async getUserDashboardData(userId) {
         try {
-            const [quizzesResult, vocabCountResult, qualityResult, feedbackData, practiceStates, recentAttempts] = await Promise.all([
-                supabase.from('quiz_attempts').select('score, total_questions, attempt_time').eq('user_id', userId).not('score', 'is', null),
+            const [vocabCountResult, qualityResult, feedbackData, practiceStates, recentAttempts] = await Promise.all([
                 supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),
                 supabase.from('vocab_entries').select('quality_score').not('quality_score', 'is', null),
                 supabase.from("feedback_events").select("satisfaction_score, helpful_components, comments, created_at, word_id").eq('user_id', userId).order("created_at", { ascending: false }).limit(10),
@@ -13,15 +12,12 @@ class DashboardEngine {
                 supabase.from('user_question_attempts').select('*, sat_questions!inner(question_text, subject, topic)').eq('user_id', userId).order('attempt_time', { ascending: false }).limit(10)
             ])
 
-            const allQuizzes = quizzesResult?.data || [];
             const avgQuality = qualityResult?.data || [];
-            const avgScore = allQuizzes.length ? Math.round(allQuizzes.reduce((acc, quiz) => acc + quiz.score, 0) / (allQuizzes.length)) : null;
             const validScores = (avgQuality || []).filter(e => e.quality_score != null).map(e => e.quality_score);
             const avgQualityScore = validScores.length ? Math.round(validScores.reduce((acc, score) => acc + score, 0) / validScores.length) : null;
             const ratings = feedbackData?.data?.filter(feedback => feedback.satisfaction_score !== null) || [];
             const avgSatisfaction = ratings.length ? Math.round(ratings.reduce((acc, feedback) => acc + feedback.satisfaction_score, 0) / ratings.length) : null;
             return {
-                avgScore,
                 avgQualityScore,
                 avgSatisfaction,
                 practiceStates: practiceStates || [],
@@ -29,7 +25,7 @@ class DashboardEngine {
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
-            return { avgScore: null, avgQualityScore: null, avgSatisfaction: null, practiceStates: [], recentAttempts: [] };
+            return { avgQualityScore: null, avgSatisfaction: null, practiceStates: [], recentAttempts: [] };
         }
     }
 
@@ -254,16 +250,5 @@ class DashboardEngine {
         return feedback.map(f => ({ ...f, word: wordsMap[f.word_id] || 'Unknown' }));
     }
 
-    async getRecentQuizzes(userId) {
-        const { data: quizzes, error } = await supabase
-            .from('quiz_attempts')
-            .select('*')
-            .eq('user_id', userId)
-            .not('score', 'is', null)
-            .order('attempt_time', { ascending: false })
-            .limit(10);
-        if (error) throw error;
-        return quizzes || [];
-    }
 }
 module.exports = new DashboardEngine();

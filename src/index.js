@@ -17,6 +17,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const practiceRoutes = require('./routes/practice');
 const settingsRoutes = require('./routes/settings');
 const flashcardsRoutes = require('./routes/flashcards');
+const ticketsRoutes = require('./routes/ticket');
 const { requireAuth, optionalAuth } = require('./middleware/auth');
 const { requireProfileComplete } = require('./middleware/profile');
 
@@ -59,6 +60,7 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/practice', practiceRoutes);
 app.use('/flashcards', flashcardsRoutes)
 app.use('/settings', settingsRoutes);
+app.use('/tickets', ticketsRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

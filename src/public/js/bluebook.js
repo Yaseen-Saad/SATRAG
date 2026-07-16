@@ -9,6 +9,7 @@
     let startTime = Date.now();
     let answered = false;
     let selectedAnswer = null;
+    let timerInterval = null;
     if (alreadyAnswered && restoredAttempts.length) {
         answered = true
         if (timerInterval) clearInterval(timerInterval)
@@ -25,7 +26,6 @@
         })
     }
     const timer = document.getElementById('timer');
-    let timerInterval = null;
     if (timer)
         timerInterval = setInterval(_ => {
             if (answered) return;

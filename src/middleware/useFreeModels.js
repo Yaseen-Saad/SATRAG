@@ -60,7 +60,7 @@ async function incrementGenCount(user) {
     try {
         const currentMonth = new Date().toISOString().slice(0, 7)
         const newCount = (user.genCount || 0) + 1
-        await supabase.service.from('public_profiles').update({
+        await supabase.from('public_profiles').update({
             monthly_gen_count: newCount,
             monthly_gen_month: currentMonth
         }).eq('id', user.id)

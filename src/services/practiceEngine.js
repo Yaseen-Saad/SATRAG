@@ -238,16 +238,16 @@ class PracticeEngine {
             .eq('subtopic', subtopic || null)
             .maybeSingle()
         if (existing) {
-            const newTotal = existing.total_attempted + 1
+            const newTotal = existing.total_attempts + 1
             const newCorrect = existing.total_correct + (isCorrect ? 1 : 0)
             const newAccuracy = (newCorrect / newTotal) * 100
-            const newAvgTime = Math.round((existing.avg_time_ms * existing.total_attempted + timeMs) / newTotal)
+            const newAvgTime = Math.round((existing.avg_time_ms * existing.total_attempts + timeMs) / newTotal)
             let newBand = existing.current_difficulty_band
             if (newAccuracy >= 85 && newBand < 7) newBand = Math.min(7, newBand + 1)
             else if (newAccuracy < 50 && newBand > 1) newBand = Math.max(1, newBand - 1)
             else if (newAccuracy < 70 && newBand > 2) newBand = Math.max(2, newBand - 1)
             await supabase.from('user_topic_stats').update({
-                total_attempted: newTotal,
+                total_attempts: newTotal,
                 total_correct: newCorrect,
                 accuracy_pct: Math.round(newAccuracy * 100) / 100,
                 avg_time_ms: newAvgTime,
@@ -261,7 +261,7 @@ class PracticeEngine {
                 subject,
                 topic,
                 subtopic: subtopic || null,
-                total_attempted: 1,
+                total_attempts: 1,
                 total_correct: isCorrect ? 1 : 0,
                 accuracy_pct: isCorrect ? 100 : 0,
                 avg_time_ms: timeMs,

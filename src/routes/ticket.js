@@ -37,7 +37,7 @@ router.post('/:ticketId/comment', requireAuth, async (req, res) => {
         const ticketId = req.params.ticketId
         const { content } = req.body
         if (!content) return res.status(400).json({ success: false, error: 'Comment content required' })
-        const { error } = await supabase.from('ticket_comments').insert({ ticket_id: ticketId, user_id: req.user.id, content, created_at: new Date().toISOString() })
+        const { error } = await supabase.from('ticket_messages').insert({ ticket_id: ticketId, user_id: req.user.id, content, created_at: new Date().toISOString() })
         if (error) return res.status(500).json({ success: false, error: error.message })
         res.json({ success: true })
     } catch (err) {
@@ -51,7 +51,7 @@ router.get('/:ticketId', requireAuth, async (req, res) => {
         const ticketId = req.params.ticketId
         const { data: ticket, error } = await supabase.from('tickets').select('*').eq('id', ticketId).eq('user_id', req.user.id).single()
         if (error || !ticket) return res.status(404).json({ error: 'Ticket not found' })
-        const { data: comments } = await supabase.from('ticket_comments').select('*').eq('ticket_id', ticketId).order('created_at', { ascending: true })
+        const { data: comments } = await supabase.from('ticket_messages').select('*').eq('ticket_id', ticketId).order('created_at', { ascending: true })
         res.json({ ticket, comments: comments || [] })
     } catch (err) {
         console.error('Ticket fetch error:', err)

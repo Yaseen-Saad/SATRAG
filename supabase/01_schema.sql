@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS tickets (
     section TEXT,
     subject TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
+    active BOOLEAN DEFAULT true,
+    user_id UUID REFERENCES auth.users NOT NULL
 );
 
 -- Ticket Messages
@@ -47,7 +49,7 @@ CREATE TABLE IF NOT EXISTS ticket_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users not null,
     message TEXT NOT NULL,
-    submitted_at TIMESTAMP DEFAULT NOW(),
+    submitted_at TIMESTAMP DEFAULT NOW()
 );
 
 -- SAT Question Bank
@@ -281,6 +283,16 @@ CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles FOR 
 
 DROP POLICY IF EXISTS "Users can update their own public profile only" ON public_profiles;
 CREATE POLICY "Users can update their own public profile only" ON public_profiles FOR UPDATE USING (auth.uid() = id);
+
+-- RLS: Word lists
+CREATE POLICY "Users can view public and their own private lists" ON word_lists_entries
+    FOR SELECT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid() OR visibility = 'public'));
+
+CREATE POLICY "Users can add to their own private lists" ON word_lists_entries
+    FOR INSERT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
+
+CREATE POLICY "Users can delete from their own private lists" ON word_lists_entries
+    FOR DELETE USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);

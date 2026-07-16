@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const button = e.target.closest('button.rating-btn');
             if (!button) return;
             group.querySelectorAll('button.rating-btn').forEach(btn => {
-                btn.classList.remove('active');
+                btn.classList.remove('selected');
             })
-            button.classList.add('active');
+            button.classList.add('selected');
             const input = group.querySelector('input[name="rating"][type="hidden"]');
             if (input) input.value = button.dataset.value;
 
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function () {
             const button = this.querySelector("button[type='submit']");
             if (button && !button.disabled) {
-                button.classList.add('loading');
+                button.classList.add('is-loading');
                 button.disabled = true;
             }
         });

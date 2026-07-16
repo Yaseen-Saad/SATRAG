@@ -8,8 +8,8 @@ const rag = require('../lib/rag')
 const router = Router()
 
 router.get('/', requireAuth, async (req, res) => {
+    let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
     try {
-        let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
         const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined;
         const topicTree = await practice.getTopicTree(subject);
         const validTopics = topicTree.map(t => t.topic)
