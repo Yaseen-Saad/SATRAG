@@ -47,9 +47,10 @@ CREATE TABLE IF NOT EXISTS tickets (
 -- Ticket Messages
 CREATE TABLE IF NOT EXISTS ticket_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticket_id UUID REFERENCES tickets ON DELETE CASCADE NOT NULL,
     user_id UUID REFERENCES auth.users not null,
     message TEXT NOT NULL,
-    submitted_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- SAT Question Bank
@@ -119,8 +120,7 @@ CREATE TABLE IF NOT EXISTS word_lists (
     share_token UUID DEFAULT NULL UNIQUE,
     share_token_enabled BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(name)
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS word_list_entries (
@@ -205,18 +205,14 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "sat_questions select" ON sat_questions;
-CREATE POLICY "sat_questions select" ON sat_questions FOR SELECT USING (true);
-
 DROP POLICY IF EXISTS "sat_questions insert" ON sat_questions;
-CREATE POLICY "sat_questions insert" ON sat_questions FOR INSERT WITH CHECK (true);
+CREATE POLICY "sat_questions insert" ON sat_questions FOR INSERT WITH CHECK (auth.uid() = created_by);
 
 DROP POLICY IF EXISTS "sat_questions update" ON sat_questions;
-CREATE POLICY "sat_questions update" ON sat_questions FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "sat_questions update" ON sat_questions FOR UPDATE USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
 
 DROP POLICY IF EXISTS "sat_questions delete" ON sat_questions;
-CREATE POLICY "sat_questions delete" ON sat_questions FOR DELETE USING (true);
-
+CREATE POLICY "sat_questions delete" ON sat_questions FOR DELETE USING (auth.uid() = created_by);
 
 -- RLS: user_question_state
 ALTER TABLE user_question_state ENABLE ROW LEVEL SECURITY;
@@ -233,7 +229,6 @@ CREATE POLICY "user_question_state update" ON user_question_state FOR UPDATE USI
 DROP POLICY IF EXISTS "user_question_state delete" ON user_question_state;
 CREATE POLICY "user_question_state delete" ON user_question_state FOR DELETE USING (auth.uid() = user_id);
 
-
 -- RLS: user_question_attempts
 ALTER TABLE user_question_attempts ENABLE ROW LEVEL SECURITY;
 
@@ -245,7 +240,6 @@ CREATE POLICY "user_question_attempts insert" ON user_question_attempts FOR INSE
 
 DROP POLICY IF EXISTS "user_question_attempts delete" ON user_question_attempts;
 CREATE POLICY "user_question_attempts delete" ON user_question_attempts FOR DELETE USING (auth.uid() = user_id);
-
 
 -- RLS: user_topic_stats
 ALTER TABLE user_topic_stats ENABLE ROW LEVEL SECURITY;
@@ -262,7 +256,6 @@ DROP POLICY IF EXISTS "Users can update own topic stats" ON user_topic_stats;
 CREATE POLICY "Users can update own topic stats" ON user_topic_stats
     FOR UPDATE USING (auth.uid() = user_id);
 
-
 -- RLS: word_lists
 ALTER TABLE word_lists ENABLE ROW LEVEL SECURITY;
 
@@ -270,10 +263,70 @@ DROP POLICY IF EXISTS "word_lists owner all" ON word_lists;
 CREATE POLICY "word_lists owner all" ON word_lists
     FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
 
-
 -- RLS: word_list_entries
 ALTER TABLE word_list_entries ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "word_list_entries select" ON word_list_entries;
+CREATE POLICY "word_list_entries select" ON word_list_entries
+    FOR SELECT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid() OR visibility IN ('public', 'system'))) OR id IN (SELECT id FROM list_shares WHERE shared_with_user_id = auth.uid());
+
+DROP POLICY IF EXISTS "word_list_entries insert" ON word_list_entries;
+CREATE POLICY "word_list_entries insert" ON word_list_entries
+    FOR INSERT WITH CHECK (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
+
+DROP POLICY IF EXISTS "word_list_entries delete" ON word_list_entries;
+CREATE POLICY "word_list_entries delete" ON word_list_entries
+    FOR DELETE USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
+
+-- RLS: vocab_entries
+ALTER TABLE vocab_entries ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "vocab_entries owner all" ON vocab_entries;
+CREATE POLICY "vocab_entries owner all" ON vocab_entries
+    FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+
+-- RLS: feedback_events
+ALTER TABLE feedback_events ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "feedback_events owner all" ON feedback_events;
+CREATE POLICY "feedback_events owner all" ON feedback_events
+    FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+
+-- RLS: tickets
+ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "tickets owner all" ON tickets;
+CREATE POLICY "tickets owner all" ON tickets
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- RLS: ticket_messagesg
+ALTER TABLE ticket_messages ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "ticket_messages owner all" ON ticket_messages;
+CREATE POLICY "ticket_messages owner all" ON ticket_messages
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- RLS: user_flashcard_progress
+ALTER TABLE user_flashcard_progress ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "user_flashcard_progress owner all" ON user_flashcard_progress;
+CREATE POLICY "user_flashcard_progress owner all" ON user_flashcard_progress
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- RLS: list_shares
+ALTER TABLE list_shares ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "list_shares owner all" ON list_shares;
+CREATE POLICY "list_shares owner all" ON list_shares
+    FOR ALL USING (auth.uid() = shared_by_user_id) WITH CHECK (auth.uid() = shared_by_user_id);
+
+DROP POLICY IF EXISTS "list_shares viewable" ON list_shares;
+CREATE POLICY "list_shares viewable" ON list_shares
+    FOR SELECT USING (auth.uid() = shared_with_user_id OR auth.uid() = shared_by_user_id);
+
+DROP POLICY IF EXISTS "ticket_messages owner all" ON ticket_messages;
+CREATE POLICY "ticket_messages owner all" ON ticket_messages
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- RLS: public_profiles
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
@@ -285,13 +338,17 @@ DROP POLICY IF EXISTS "Users can update their own public profile only" ON public
 CREATE POLICY "Users can update their own public profile only" ON public_profiles FOR UPDATE USING (auth.uid() = id);
 
 -- RLS: Word lists
-CREATE POLICY "Users can view public and their own private lists" ON word_lists_entries
+
+DROP POLICY IF EXISTS idx_vocab_entries_embedding ON vocab_entries USING hnsw (embedding vector_cosine_ops);
+CREATE POLICY "word_lists public read" ON word_lists FOR SELECT USING (visibility IN ('public', 'system') OR created_by = auth.uid() OR id IN (SELECT list_id FROM list_shares WHERE shared_with_user_id = auth.uid()));
+
+CREATE POLICY "Users can view public and their own private lists" ON word_list_entries
     FOR SELECT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid() OR visibility = 'public'));
 
-CREATE POLICY "Users can add to their own private lists" ON word_lists_entries
-    FOR INSERT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
+CREATE POLICY "Users can add to their own private lists" ON word_list_entries
+    FOR INSERT WITH CHECK (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
 
-CREATE POLICY "Users can delete from their own private lists" ON word_lists_entries
+CREATE POLICY "Users can delete from their own private lists" ON word_list_entries
     FOR DELETE USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
@@ -305,3 +362,5 @@ CREATE INDEX IF NOT EXISTS idx_uqa_question_time ON user_question_attempts(quest
 CREATE INDEX IF NOT EXISTS idx_word_lists_share_token ON word_lists(share_token);
 CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_stats(user_id, accuracy_pct);
 CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_stats(user_id, subject);
+CREATE INDEX IF NOT EXISTS idx_vocab_entries_embedding ON vocab_entries USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS idx_sat_questions_embedding ON sat_questions USING hnsw (embedding vector_cosine_ops);
