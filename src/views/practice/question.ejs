@@ -3,7 +3,7 @@
 <div class="flash flash-error"><%= error || 'Question not found' %></div>
 <a href="/practice" class="btn btn--primary">Back to Bank</a>
 <% } else { %>
-<% const opts = question.options ? (typeof question.options === 'string' ? JSON.parse(question.options) : question.options) : []; %>
+<% let opts =[]; try{ opts= question.options ? (typeof question.options === 'string' ? JSON.parse(question.options) : question.options) : []; } catch(e) { console.error('Error parsing question options:', e); } %>
 <% const hasPassage = !!question.passage_text; %>
 
 <div class="bluebook">

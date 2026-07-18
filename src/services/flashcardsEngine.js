@@ -64,7 +64,7 @@ class FlashcardsEngine {
 
         const dueIds = new Set((progress || []).map(prog => prog.word_id))
 
-        const { data: entries } = await supabase.from('word_list_entries').select('list_id, word_id')
+        const { data: entries } = await supabase.from('word_list_entries').select('list_id, word_id').eq('user_id', userId).in('list_id', lists.map(list => list.id))
 
         return lists.map(list => ({
             ...list, dueCount: (entries || []).filter(entry => entry.list_id === list.id && dueIds.has(entry.word_id)).length
@@ -78,7 +78,7 @@ class FlashcardsEngine {
             return data ? [data] : []
         }
         if (listId) {
-            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId)
+            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId).eq('user_id', userId)
             if (!entries || entries.length === 0) return []
             const wordIds = entries.map(entry => entry.word_id)
             await Promise.all(wordIds.map(wordId => this.ensureWordInitialized(userId, wordId)))
@@ -91,7 +91,7 @@ class FlashcardsEngine {
         }
         return []
     }
-    
+
     async ensureWordInitialized(userId, wordId) {
         const { data: existing } = await supabase
             .from('user_flashcard_progress').select('id').eq('user_id', userId).eq('word_id', wordId).maybeSingle()

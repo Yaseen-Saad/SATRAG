@@ -332,24 +332,12 @@ CREATE POLICY "ticket_messages owner all" ON ticket_messages
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public Profiles are viewable by everyone" ON public_profiles;
-CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles FOR SELECT USING (true);
+CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles
+    FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Users can update their own public profile only" ON public_profiles;
-CREATE POLICY "Users can update their own public profile only" ON public_profiles FOR UPDATE USING (auth.uid() = id);
-
--- RLS: Word lists
-
-DROP POLICY IF EXISTS idx_vocab_entries_embedding ON vocab_entries USING hnsw (embedding vector_cosine_ops);
-CREATE POLICY "word_lists public read" ON word_lists FOR SELECT USING (visibility IN ('public', 'system') OR created_by = auth.uid() OR id IN (SELECT list_id FROM list_shares WHERE shared_with_user_id = auth.uid()));
-
-CREATE POLICY "Users can view public and their own private lists" ON word_list_entries
-    FOR SELECT USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid() OR visibility = 'public'));
-
-CREATE POLICY "Users can add to their own private lists" ON word_list_entries
-    FOR INSERT WITH CHECK (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
-
-CREATE POLICY "Users can delete from their own private lists" ON word_list_entries
-    FOR DELETE USING (list_id IN (SELECT id FROM word_lists WHERE created_by = auth.uid()));
+CREATE POLICY "Users can update their own public profile only" ON public_profiles
+    FOR UPDATE USING (auth.uid() = id);
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);

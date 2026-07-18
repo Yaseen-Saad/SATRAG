@@ -3,6 +3,8 @@ const llm = require('./llm')
 const fs = require("fs")
 const path = require("path")
 
+const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
+
 class RAGEngine {
     async retrieveSimilar(word, topK = 3) {
         try {
@@ -138,9 +140,14 @@ class RAGEngine {
 
     async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
         const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 });
-        const prompt = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
+        const prompt = SAT_QUESTION_PROMPT
         const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
-            const opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options;
+            let opts;
+            try {
+                opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options;
+            } catch (error) {
+                console.log("Failed to parse RAG example options", error.message);
+            }
             const passage = (ex.passage_text || '').substring(0, 300);
             return {
                 role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
@@ -156,7 +163,7 @@ class RAGEngine {
         const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 4096, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
-        const match = raw.match(/\{[\s\S]*?\}/);
+        const match = raw.match(/\{[\s\S]*\}/);
         if (!match) {
             console.error('LLM raw response:', raw.slice(0, 500))
             throw new Error('No JSON in LLM response');

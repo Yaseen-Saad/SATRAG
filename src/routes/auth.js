@@ -20,7 +20,10 @@ function sanitize(str) {
 
 function validatePassword(password) {
     const errors = [];
-    if (!password || password.length < 8) errors.push('Password must be at least 8 characters');
+    if (!password || password.length < 8) {
+        errors.push('Password must be at least 8 characters');
+        return errors;
+    }
     if (!/[A-Z]/.test(password)) errors.push('Password must contain an uppercase letter');
     if (!/[0-9]/.test(password)) errors.push('Password must contain a number');
     if (!/[^A-Za-z0-9]/.test(password)) errors.push('Password must contain a special character');
@@ -103,7 +106,7 @@ router.post('/signup', async (req, res) => {
             }
             const { error: profileErr } = await supabase.service.from('public_profiles').upsert(profileRow, { onConflict: 'id' })
             if (profileErr) console.error('Profile creation failed:', profileErr.message)
-            res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 86400000 })
+            res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 86400000 })
             return res.redirect('/settings')
         }
         res.render('auth/login', { error: "Signup successful! Check your email to confirm, then log in." })
@@ -152,18 +155,18 @@ router.post('/reset-password', async (req, res) => {
     try {
         const { email, newPassword, access_token } = req.body;
         const token = access_token || req.cookies?.sb_access_token || req.headers.authorization?.split(" ")[1];
-        if (!email || !newPassword) return res.render('auth/reset-password', { email, access_token, error: "Missing required fields", success: null })
+        if (!email || !newPassword) return res.render('auth/reset-password', { email, error: "Missing required fields", success: null })
 
         const pwErrors = validatePassword(newPassword);
-        if (pwErrors.length > 0) return res.render('auth/reset-password', { email, access_token, error: pwErrors.join('; '), success: null })
+        if (pwErrors.length > 0) return res.render('auth/reset-password', { email, error: pwErrors.join('; '), success: null })
 
-        if (!token) return res.render('auth/reset-password', { email, access_token, error: "Invalid access token", success: null })
+        if (!token) return res.render('auth/reset-password', { email, error: "Invalid access token", success: null })
 
         const { data, error } = await supabase.auth.updateUser({
             accessToken: token,
             password: newPassword,
         })
-        if (error) return res.render('auth/reset-password', { email, access_token, error: error.message, success: null })
+        if (error) return res.render('auth/reset-password', { email, error: error.message, success: null })
         res.render('auth/login', { error: "Password reset successful! Please log in." })
     } catch (err) {
         console.error('Reset password error:', err.message);

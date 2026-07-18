@@ -10,7 +10,7 @@ async function seedSampleData() {
         .select('*', { count: 'exact', head: true })
         .eq('source', 'sample')
     if (count > 0) return
-    const filePath = path.join(__dirname, '../../data/sample.txt');
+    const filePath = path.join(__dirname, '../data/sample.txt');
     const entries = parseSampleEntries(filePath);
     let seeded = 0;
     let failed = 0;
@@ -42,7 +42,7 @@ async function seedSATQuestions() {
             if (!fq || !fq.type) continue;
             const subject = SHIT_TO_ENGLISH[question.primary_class_cd]
             if (!subject) continue;
-            const options = fq.answerOptions ? JSON.stringify(fq.answerOptions.map((o, i) => ({ label: String.fromCharCode(65 + i), content: o.content }))) : null;
+            const options = fq.answerOptions ? fq.answerOptions.map((o, i) => ({ label: String.fromCharCode(65 + i), content: o.content })) : null;
             const correctAnswer = fq.correct_answer?.[0] || fq.keys?.[0] || "";
             rows.push({
                 question_text: fq.stem,
@@ -58,7 +58,7 @@ async function seedSATQuestions() {
                 options, correct_answer: correctAnswer,
                 explanation: fq.rationale || null,
                 source: 'collegeboard',
-                tags: JSON.stringify([question.skill_cd, question.primary_class_cd]),
+                tags: [question.skill_cd, question.primary_class_cd],
                 is_active: question.isActive,
             })
         } catch (err) { failed++; }

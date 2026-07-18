@@ -24,7 +24,7 @@ class LLMService {
     }
 
     async generateCompletion({ messages, system, model, maxTokens = 4096, temperature = 0.7, retries = 2, apiKey, embedApiKey, skipCache = false }) {
-        const cacheKey = skipCache ? null : JSON.stringify({ messages, system, model, maxTokens, temperature });
+        const cacheKey = skipCache ? null : JSON.stringify({ messages, system, model, maxTokens, temperature, apiKey: (apiKey || this.apiKey) });
         if (cacheKey && this.cache.has(cacheKey) && !skipCache) {
             return this.cache.get(cacheKey);
         }

@@ -96,6 +96,12 @@
   const progressText = document.getElementById('progress-text');
   const completeStats = document.getElementById('complete-stats');
 
+  function escapeHTML(str) {
+    if (!str) return ''
+    const div = document.createElement('div');
+    div.append(document.createTextNode(str))
+    return div.innerHTML
+  }
   if (sessionStorage.getItem(sessionKey)) {
     const savedIndex = parseInt(sessionStorage.getItem(sessionKey), 10);
     if (!isNaN(savedIndex) && savedIndex >= 0 && savedIndex < cards.length) {
@@ -117,15 +123,15 @@
     if (!card) return showComplete();
     const v = card.vocab_entries;
     frontEl.innerHTML = `
-      <div class="fc-card-word">${v.word}</div>
-      ${v.pronunciation ? `<div class="fc-card-pronunciation">${v.pronunciation}</div>` : ''}
-      ${v.part_of_speech ? `<div class="fc-card-pos">${v.part_of_speech}</div>` : ''}
+      <div class="fc-card-word">${escapeHTML(v.word)}</div>
+      ${v.pronunciation ? `<div class="fc-card-pronunciation">${escapeHTML(v.pronunciation)}</div>` : ''}
+      ${v.part_of_speech ? `<div class="fc-card-pos">${escapeHTML(v.part_of_speech)}</div>` : ''}
       <div class="fc-card-hint">Tap to reveal</div>
     `;
     backEl.innerHTML = `
-      <div class="fc-card-definition">${v.definition}</div>
-      ${v.example_sentence ? `<div class="fc-card-example">“${v.example_sentence}”</div>` : ''}
-      ${v.mnemonic_phrase ? `<div class="fc-card-mnemonic">${v.mnemonic_phrase}</div>` : ''}
+      <div class="fc-card-definition">${escapeHTML(v.definition)}</div>
+      ${v.example_sentence ? `<div class="fc-card-example">“${escapeHTML(v.example_sentence)}”</div>` : ''}
+      ${v.mnemonic_phrase ? `<div class="fc-card-mnemonic">${escapeHTML(v.mnemonic_phrase)}</div>` : ''}
       <div class="fc-ratings" id="ratings">
         <button class="fc-rating-btn again" onclick="rateCard(0, event)" data-shortcut="1">
           <span class="rating-label">Again</span>
@@ -151,7 +157,7 @@
     reviewing = false;
     const pct = ((index + 1) / cards.length * 100).toFixed(1);
     progressFill.style.width = pct + '%';
-    progressText.textContent = (index + 1) + ' of ' + cards.length + '  (' + v.word + ')';
+    progressText.textContent = (index + 1) + ' of ' + cards.length + '  (' + escapeHTML(v.word) + ')';
   }
 
   function rateCard(quality, e) {

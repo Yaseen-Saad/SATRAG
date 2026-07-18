@@ -25,10 +25,10 @@ DIFFICULTY RUBRIC (CRITICAL):
 
 EASY (difficulty_band 1-2):
 - Reading/Writing: Short, simple passage (2-3 sentences). Vocabulary is common/high-utility. The correct answer is directly stated in the text. Distractors are clearly wrong.
-- Math: Singe-step problem. Direct application of one formula or concept. Small whole numbers. No multi-step reasoning.
+- Math: Single-step problem. Direct application of one formula or concept. Small whole numbers. No multi-step reasoning.
 
 MEDIUM (difficulty_band 3-5):
-- Reading/Writing: Moderate passage (3-5 sentences). Vocabulary is requires context clues. Correct answer requires one inference. Distractors are plausible misreadings.
+- Reading/Writing: Moderate passage (3-5 sentences). Vocabulary requires context clues. Correct answer requires one inference. Distractors are plausible misreadings.
 - Math: Two-step problem. May combine two formulas or concepts. Involves fractions, decimals, or variables. Requires algebraic manipulation.
 
 HARD (difficulty_band 6-7):

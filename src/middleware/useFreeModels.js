@@ -29,7 +29,7 @@ async function checkAPIKeys(req, res, next) {
         if (genMonth !== currentMonth) {
             genCount = 0
             genMonth = currentMonth
-            await supabase.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id).catch(() => {})
+            await supabase.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id).catch((e) => {console.error('Failed to reset monthly_gen_count', e)})
         }
         req.user.genCount = genCount
         req.user.genMonth = genMonth

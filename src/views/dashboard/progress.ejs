@@ -78,14 +78,14 @@
   </div>
 
   <!-- Topic Weak Spots -->
-  <% if (topicBreakdown.length > 0) { %>
+  <% if (typeof topicBreakdown !== 'undefined' && topicBreakdown && topicBreakdown.length > 0) { %>
   <div class="dash-card">
     <div class="dash-card-header">
       <h2>Weakest Topics</h2>
       <a href="/practice" class="btn btn-ghost btn-sm">Practice These</a>
     </div>
     <div class="dash-card-body">
-      <% weakestTopics.forEach(function(t) { %>
+      <% if (typeof weakestTopics !== 'undefined' && weakestTopics) { weakestTopics.forEach(function(t) { %>
       <div class="topic-row">
         <div class="topic-info">
           <span class="topic-subject"><%= (t.subject === 'reading' || t.subject === 'writing') ? 'Reading & Writing' : t.subject %></span>
@@ -104,7 +104,7 @@
     </div>
   </div>
   <% } %>
-  <% if (dailyWord) { %>
+  <% if (typeof dailyWord !== 'undefined' && dailyWord) { %>
         <div class="dash-card" style="margin-top:1rem;">
           <div class="dash-card-header">
             <h2>Word of the Day</h2>

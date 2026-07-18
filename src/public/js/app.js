@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (overlay) {
         overlay.addEventListener('click', function () {
-            navLinks.classList.remove('open');
+            if (navLinks) navLinks.classList.remove('open');
             overlay.classList.remove('visible');
         });
     }
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem("theme") || "dark"
+    const savedTheme = localStorage.getItem("theme") || window.matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark';
     html.setAttribute("data-theme", savedTheme);
     if (themeToggle) {
         themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";

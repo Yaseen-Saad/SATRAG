@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const rateLimiter = require('./middleware/rateLimiter');
@@ -24,8 +23,9 @@ const { requireProfileComplete } = require('./middleware/profile');
 const app = express();
 
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.set('trust proxy', 1)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: false }));
 app.use(expressLayouts);

@@ -73,9 +73,9 @@
 </div>
 
 <script>
-  var currentSortBy = '<%= sortBy %>';
-  var currentSortDir = '<%= sortDir %>';
-  var currentGrade = '<%= grade %>';
+  let currentSortBy = '<%- JSON.stringify(sortBy) %>';
+  let currentSortDir = '<%- JSON.stringify(sortDir) %>';
+  let currentGrade = '<%- JSON.stringify(grade) %>';
 
   function toggleSort(col) {
     if (currentSortBy === col) {

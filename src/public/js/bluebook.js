@@ -26,7 +26,7 @@
         })
     }
     const timer = document.getElementById('timer');
-    if (timer)
+    if (timer && !alreadyAnswered) {
         timerInterval = setInterval(_ => {
             if (answered) return;
             const elapsed = Math.floor((Date.now() - startTime) / 1000)
@@ -52,6 +52,7 @@
         if (answered) return
         answered = true;
         const timeMs = Date.now() - startTime;
+        if (timerInterval) clearInterval(timerInterval);
         try {
             const res = await fetch(`/practice/question/${questionId}/answer`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answer: label || selectedAnswer, timeMs }) })
             const data = await res.json();
@@ -90,8 +91,6 @@
             return;
         }
         const pct = data && data.percentile;
-        console.log(data);
-
         const showMistakesBtn = !data.isCorrect && data.isWIC;
         content.innerHTML = `
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
@@ -197,7 +196,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (!document.getElementById('question-data')) return;
-        if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('.bb-feedback-overlay.open')) return;
+        if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('#feedback-overlay.open')) return;
         const isSpr = !!document.querySelector('.bb-spr-input')
         if (!isSpr) {
             const keyMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D' };

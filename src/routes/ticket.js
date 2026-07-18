@@ -36,8 +36,8 @@ router.post('/:ticketId/comment', requireAuth, async (req, res) => {
     try {
         const ticketId = req.params.ticketId
         const { content } = req.body
-        if (!content) return res.status(400).json({ success: false, error: 'Comment content required' })
-        const { error } = await supabase.from('ticket_messages').insert({ ticket_id: ticketId, user_id: req.user.id, content, created_at: new Date().toISOString() })
+        if (!content?.message) return res.status(400).json({ success: false, error: 'Comment content required' })
+        const { error } = await supabase.from('ticket_messages').insert({ ticket_id: ticketId, user_id: req.user.id, message:content.message, created_at: new Date().toISOString() })
         if (error) return res.status(500).json({ success: false, error: error.message })
         res.json({ success: true })
     } catch (err) {
