@@ -1705,26 +1705,6 @@ input:focus:valid {
 
 /* ===== Dark Mode ===== */
 
-[data-theme="dark"] {
-  --primary: #6366f1;
-  --primary-light: #818cf8;
-  --secondary: #4338ca;
-  --success: #16a34a;
-  --warning: #d97706;
-  --error: #dc2626;
-
-  --text: #e5e7eb;
-  --text-muted: #9ca3af;
-  --text-light: #6b7280;
-
-  --surface: #1f2937;
-  --surface-2: #374151;
-  --surface-3: #4b5563;
-
-  --border: #4b5563;
-
-  --gradient: linear-gradient(90deg, rgba(99, 102, 241, 1) 0%, rgba(147, 51, 234, 1) 100%);
-}
 
 [data-theme="dark"] .flash-error {
   background-color: rgba(220, 38, 38, 0.15);
@@ -1747,7 +1727,7 @@ input:focus:valid {
 }
 
 
-@media (preferes-reduced-motion:reduce) {
+@media (prefers-reduced-motion:reduce) {
 
   *,
   *::before,

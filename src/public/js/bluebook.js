@@ -3,7 +3,7 @@
     let questionData = document.getElementById('question-data')?.dataset;
     let questionId = questionData?.id;
     let restoredAttempts = []
-    try { restoredAttempts = JSON.parse(questionData?.attempts || '[]') } catch (error) { console.log(error) }
+    try { restoredAttempts = JSON.parse(questionData?.attempts || '[]') } catch (error) { console.error('Failed to parse attempts:', error) }
     let alreadyAnswered = questionData?.answered === 'true';
     let wasCorrect = questionData?.correct === 'true';
     let startTime = Date.now();
@@ -34,69 +34,70 @@
             const s = String(elapsed % 60).padStart(2, "0")
             timer.textContent = `${m}:${s}`
         }, 1000)
-    document.querySelectorAll('.bb-option').forEach(opt => {
-        opt.addEventListener('click', function (e) {
-            if (answered) return
-            selectOption(this.dataset.label)
-        })
-    })
-    window.selectOption = function (label) {
-        document.querySelectorAll('.bb-option').forEach(opt => opt.classList.remove("selected"))
-        const selected = document.querySelector(`.bb-option[data-label="${label}"]`)
-        if (selected) selected.classList.add('selected')
-        selectedAnswer = label;
-        const btn = document.getElementById('submit-btn');
-        if (btn) btn.disabled = false;
-    }
-    window.submitAnswer = async function (label) {
-        if (answered) return
-        answered = true;
-        const timeMs = Date.now() - startTime;
-        if (timerInterval) clearInterval(timerInterval);
-        try {
-            const res = await fetch(`/practice/question/${questionId}/answer`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answer: label || selectedAnswer, timeMs }) })
-            const data = await res.json();
-            if (!data.success) {
-                showFeedback('error', data.error || 'Error submitting answer', null);
-                return
-            }
-            document.querySelectorAll(".bb-option").forEach(opt => {
-                if (opt.dataset.label === data.correctAnswer) opt.classList.add('correct')
-                else if (opt.dataset.label === selectedAnswer && !data.isCorrect) opt.classList.add('incorrect')
+        document.querySelectorAll('.bb-option').forEach(opt => {
+            opt.addEventListener('click', function (e) {
+                if (answered) return
+                selectOption(this.dataset.label)
             })
-
-            if (data.isCorrect) {
-                const dot = document.querySelector(".bb-dot[data-index].current")
-                if (dot) dot.classList.add('answered')
-            }
-            showFeedback(data.isCorrect ? "correct" : "incorrect", null, data)
-        } catch (err) {
-            showFeedback('error', err.message || 'Error submitting answer', null);
+        })
+        window.selectOption = function (label) {
+            document.querySelectorAll('.bb-option').forEach(opt => opt.classList.remove("selected"))
+            const selected = document.querySelector(`.bb-option[data-label="${label}"]`)
+            if (selected) selected.classList.add('selected')
+            selectedAnswer = label;
+            const btn = document.getElementById('submit-btn');
+            if (btn) btn.disabled = false;
         }
-    }
-    function showFeedback(type, errorMsg, data) {
-        const overlay = document.getElementById('feedback-overlay')
-        if (!overlay) return
-        const content = overlay.querySelector('.bb-feedback')
-        if (!content) return;
-        if (type === "error") {
-            content.innerHTML = `
+        window.submitAnswer = async function (label) {
+            if (answered) return
+            answered = true;
+            const timeMs = Date.now() - startTime;
+            if (timerInterval) clearInterval(timerInterval);
+            try {
+                const res = await fetch(`/practice/question/${questionId}/answer`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answer: label || selectedAnswer, timeMs }) })
+                const data = await res.json();
+                if (!data.success) {
+                    showFeedback('error', data.error || 'Error submitting answer', null);
+                    return
+                }
+                document.querySelectorAll(".bb-option").forEach(opt => {
+                    if (opt.dataset.label === data.correctAnswer) opt.classList.add('correct')
+                    else if (opt.dataset.label === selectedAnswer && !data.isCorrect) opt.classList.add('incorrect')
+                })
+
+                if (data.isCorrect) {
+                    const dot = document.querySelector(".bb-dot[data-index].current")
+                    if (dot) dot.classList.add('answered')
+                }
+                showFeedback(data.isCorrect ? "correct" : "incorrect", null, data)
+            } catch (err) {
+                showFeedback('error', err.message || 'Error submitting answer', null);
+            }
+        }
+        function showFeedback(type, errorMsg, data) {
+            const overlay = document.getElementById('feedback-overlay')
+            if (!overlay) return
+            const content = overlay.querySelector('.bb-feedback')
+            if (!content) return;
+            if (type === "error") {
+                const safeMsg = errorMsg ? errorMsg.replace(/</g, '<').replace(/>/g, '>') : 'Something went wrong';
+                content.innerHTML = `
         <h2 style="color:var(--bb-incorrect);">Error</h2>
-        <p>${errorMsg || 'Something went wrong'}</p>
+        <p>${safeMsg}</p>
         <div class="bb-fb-actions">
           <button class="bb-fb-btn primary" onclick="window.location=document.getElementById('return-to')?.dataset?.url || '/practice'">Back to Bank</button>
           <button class="bb-fb-btn ghost" onclick="tryAgain()">Try Again</button>
         </div>`;
-            overlay.classList.add('open');
-            return;
-        }
-        const pct = data && data.percentile;
-        const showMistakesBtn = !data.isCorrect && data.isWIC;
-        content.innerHTML = `
+                overlay.classList.add('open');
+                return;
+            }
+            const pct = data && data.percentile;
+            const showMistakesBtn = !data.isCorrect && data.isWIC;
+            content.innerHTML = `
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
           ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
         </h2>
-        ${!data.isCorrect ? `<p>Correct answer: <strong>${data.correctAnswer}</strong></p>` : `<p>You selected <strong>${selectedAnswer}</strong></p>`}
+        ${!data.isCorrect ? `<p>Correct answer: <strong>${String(data.correctAnswer).replace(/</g, '<')}</strong></p>` : `<p>You selected <strong>${String(selectedAnswer).replace(/</g, '<')}</strong></p>`}
         <p>Time: ${Math.round((Date.now() - startTime) / 1000)}s${pct != null && pct !== undefined ? ' · Faster than ' + pct + '% of users' : ''}</p>
         ${data.attemptNumber ? '<p>Attempt #' + data.attemptNumber + '</p>' : ''}
         ${showMistakesBtn ? '<div id="mistakes-prompt" style="margin:1rem 0;padding:0.75rem;border:1px solid var(--border);border-radius:8px;"><p style="margin:0 0 0.5rem;">This is a Words in Context question. Add the answer words to your <strong>Mistakes</strong> list?</p><button class="bb-fb-btn" id="add-mistakes-btn" onclick="addToMistakes()" style="margin-right:0.5rem;">+ Add to Mistakes</button><span id="mistakes-status" style="font-size:0.85rem;color:var(--text-muted);"></span></div>' : ''}
@@ -104,116 +105,116 @@
           ${data.isCorrect ? '<button class="bb-fb-btn primary" onclick="window.location=document.getElementById(\'return-to\')?.dataset?.url || \'/practice\'">Back to Bank</button>' : '<button class="bb-fb-btn success" onclick="tryAgain()">Try Again</button>'}
           <button class="bb-fb-btn ghost" onclick="toggleMarkBtn()">★ Mark for Review</button>
         </div>`;
-        overlay.classList.add('open');
-    }
+            overlay.classList.add('open');
+        }
 
-    window.addToMistakes = async function () {
-        const btn = document.getElementById('add-mistakes-btn')
-        const status = document.getElementById('mistakes-status')
-        if (!btn) return
-        btn.disabled = true
-        btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;margin-right:0.4rem;"></span> Adding words...'
-        status.textContent = "";
-        try {
-            const res = await fetch(`/practice/question/${questionId}/add-mistakes`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
-            const data = await res.json()
-            if (data.success && data.wordsFound > 0) {
-                btn.textContent = `Added ${data.wordsFound} words`
-                btn.style.backgroundColor = `var(--bb-correct)`
-                status.textContent = ""
-            } else if (data.success && data.wordsFound === 0) {
-                btn.textContent = `Words already in list`
-                status.textContent = ""
-            } else {
+        window.addToMistakes = async function () {
+            const btn = document.getElementById('add-mistakes-btn')
+            const status = document.getElementById('mistakes-status')
+            if (!btn) return
+            btn.disabled = true
+            btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;margin-right:0.4rem;"></span> Adding words...'
+            status.textContent = "";
+            try {
+                const res = await fetch(`/practice/question/${questionId}/add-mistakes`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                const data = await res.json()
+                if (data.success && data.wordsFound > 0) {
+                    btn.textContent = `Added ${data.wordsFound} words`
+                    btn.style.backgroundColor = `var(--bb-correct)`
+                    status.textContent = ""
+                } else if (data.success && data.wordsFound === 0) {
+                    btn.textContent = `Words already in list`
+                    status.textContent = ""
+                } else {
 
+                    btn.textContent = `Error, please try again`
+                    btn.disabled = false
+                    status.textContent = data.error || "Failed to add words"
+                }
+            } catch (error) {
                 btn.textContent = `Error, please try again`
                 btn.disabled = false
-                status.textContent = data.error || "Failed to add words"
+                status.textContent = "Network error — please try again"
             }
-        } catch (error) {
-            btn.textContent = `Error, please try again`
-            btn.disabled = false
-            status.textContent = "Network error — please try again"
         }
-    }
 
-    window.tryAgain = function () {
-        answered = false
-        selectedAnswer = null
-        const btn = document.getElementById('submit-btn');
-        if (btn) btn.disabled = true;
-        document.querySelectorAll('.bb-option').forEach(option => {
-            option.classList.remove('selected', 'correct', 'incorrect')
+        window.tryAgain = function () {
+            answered = false
+            selectedAnswer = null
+            const btn = document.getElementById('submit-btn');
+            if (btn) btn.disabled = true;
+            document.querySelectorAll('.bb-option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect')
+            })
+            document.getElementById('feedback-overlay')?.classList.remove('open')
+            startTime = Date.now()
+        }
+
+        const origSubmit = window.submitAnswer;
+        window.submitAnswer = function (label) {
+            if (timerInterval) clearInterval(timerInterval);
+            origSubmit(label);
+        };
+        window.toggleMarkBtn = async () => {
+            try {
+                await fetch(`/practice/question/${questionId}/mark`, { method: 'POST' });
+                const btn = document.getElementById('mark-btn');
+                if (btn) {
+                    const isMarked = btn.classList.toggle('marked');
+                    btn.textContent = isMarked ? '★ Marked' : '☆ Mark for Review';
+                }
+                document.getElementById('feedback-overlay')?.classList.remove('open');
+            } catch (e) {
+                console.error('Failed to toggle mark:', e);
+            }
+        }
+        document.querySelectorAll('.bb-eliminate-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.stopPropagation()
+                const option = this.closest('.bb-option')
+                if (option) {
+                    option.classList.toggle('eliminated')
+                    this.textContent = option.classList.contains('eliminated') ? '✕' : '−'
+                }
+            })
         })
-        document.getElementById('feedback-overlay')?.classList.remove('open')
-        startTime = Date.now()
-    }
-
-    const origSubmit = window.submitAnswer;
-    window.submitAnswer = function (label) {
-        if (timerInterval) clearInterval(timerInterval);
-        origSubmit(label);
-    };
-    window.toggleMarkBtn = async () => {
-        try {
-            await fetch(`/practice/question/${questionId}/mark`);
-            const btn = document.getElementById('mark-btn');
-            if (btn) {
-                const isMarked = btn.classList.toggle('marked');
-                btn.textContent = isMarked ? '★ Marked' : '☆ Mark for Review';
+        window.openPalette = function () {
+            const paletteGrid = document.querySelector('.bb-palette-grid');
+            if (paletteGrid) {
+                paletteGrid.innerHTML = '<div class="bb-palette-item current">1</div>';
             }
-            document.getElementById('feedback-overlay')?.classList.remove('open');
-        } catch (e) {
-            console.error('Failed to toggle mark:', e);
+            document.getElementById("palette-overlay")?.classList.add('open')
         }
-    }
-    document.querySelectorAll('.bb-eliminate-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.stopPropagation()
-            const option = this.closest('.bb-option')
-            if (option) {
-                option.classList.toggle('eliminated')
-                this.textContent = option.classList.contains('eliminated') ? '✕' : '−'
-            }
+        window.closePalette = function () {
+            document.getElementById("palette-overlay")?.classList.remove('open')
+        }
+        document.getElementById("palette-overlay")?.addEventListener('click', e => {
+            if (e.target === document.getElementById("palette-overlay")) closePalette();
         })
-    })
-    window.openPalette = function () {
-        const paletteGrid = document.querySelector('.bb-palette-grid');
-        if (paletteGrid) {
-            paletteGrid.innerHTML = '<div class="bb-palette-item current">1</div>';
-        }
-        document.getElementById("palette-overlay")?.classList.add('open')
-    }
-    window.closePalette = function () {
-        document.getElementById("palette-overlay")?.classList.remove('open')
-    }
-    document.getElementById("palette-overlay")?.addEventListener('click', e => {
-        if (e.target === document.getElementById("palette-overlay")) closePalette();
-    })
-    document.getElementById('feedback-overlay')?.addEventListener('click', (e) => {
-        if (e.target === document.getElementById('feedback-overlay')) document.getElementById('feedback-overlay')?.classList.remove('open')
-    })
+        document.getElementById('feedback-overlay')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('feedback-overlay')) document.getElementById('feedback-overlay')?.classList.remove('open')
+        })
 
-    document.addEventListener('keydown', function (e) {
-        if (!document.getElementById('question-data')) return;
-        if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('#feedback-overlay.open')) return;
-        const isSpr = !!document.querySelector('.bb-spr-input')
-        if (!isSpr) {
-            const keyMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D' };
-            if (keyMap[e.key] && !e.ctrlKey && !e.metaKey) {
-                e.preventDefault();
-                window.selectOption(keyMap[e.key]);
+        document.addEventListener('keydown', function (e) {
+            if (!document.getElementById('question-data')) return;
+            if (document.querySelector('.bb-palette-overlay.open') || document.querySelector('#feedback-overlay.open')) return;
+            const isSpr = !!document.querySelector('.bb-spr-input')
+            if (!isSpr) {
+                const keyMap = { '1': 'A', '2': 'B', '3': 'C', '4': 'D' };
+                if (keyMap[e.key] && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                    window.selectOption(keyMap[e.key]);
+                }
+                if (e.key === 'Enter' && selectedAnswer) {
+                    e.preventDefault();
+                    window.submitAnswer();
+                }
+            } else {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const sprInput = document.getElementById('spr-answer');
+                    if (sprInput && sprInput.value.trim()) window.submitAnswer(sprInput.value.trim());
+                }
             }
-            if (e.key === 'Enter' && selectedAnswer) {
-                e.preventDefault();
-                window.submitAnswer();
-            }
-        } else {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const sprInput = document.getElementById('spr-answer');
-                if (sprInput && sprInput.value.trim()) window.submitAnswer(sprInput.value.trim());
-            }
-        }
-    });
-})()
+        });
+    }) ()

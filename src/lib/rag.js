@@ -51,7 +51,8 @@ class RAGEngine {
                 .order('created_at', { ascending: false })
                 .limit(topK);
             return data || [];
-        } catch {
+        } catch (fallbackErr) {
+            console.error('Keyword search fallback failed:', fallbackErr.message);
             const { data } = await supabase.from('vocab_entries')
                 .select('*')
                 .order('created_at', { ascending: false })
@@ -134,7 +135,7 @@ class RAGEngine {
         if (results.length < 2) results = await tryQuery({ subject });
         if (results.length < 2) results = await tryQuery({});
 
-        const shuffled = [...results].sort(() => Math.random() - 0.5);
+        const shuffled = results.length <= 1 ? [...results] : results.map((v, i) => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(([_, v]) => v);
         return shuffled.slice(0, Math.min(count, shuffled.length));
     }
 

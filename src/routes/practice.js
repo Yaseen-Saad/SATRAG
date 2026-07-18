@@ -123,16 +123,17 @@ router.post('/question/:id/add-mistakes', requireAuth, checkAPIKeys, async (req,
         const result = await vocabEngine.addWICWordsToMistakes(req.user, qData)
         res.json({ success: true, ...result })
     } catch (err) {
-        console.error('Answer error:', err)
+        console.error('Add mistakes error:', err)
         res.status(500).json({ success: false, error: err.message })
     }
 })
 
-router.get('/question/:id/mark', requireAuth, async (req, res) => {
+router.post('/question/:id/mark', requireAuth, async (req, res) => {
     try {
         const result = await practice.toggleMarkForReview(req.user.id, req.params.id)
         res.json({ success: true, ...result })
     } catch (err) {
+        console.error('Mark question error:', err)
         res.status(500).json({ success: false, error: err.message })
     }
 })
@@ -175,7 +176,7 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         const weakTopics = topicStats.filter(topic => topic.accuracy_pct < 70)
         const result = await practice.getAdaptiveQuestion(req.user.id, subject)
         if (result.question && typeof result.question.options === 'string') {
-            try { result.question.options = JSON.parse(result.question.options); } catch (e) { }
+            try { result.question.options = JSON.parse(result.question.options); } catch (e) { console.error('Failed to parse options for adaptive question:', e.message); }
         }
 
         res.render('practice/adaptive', {

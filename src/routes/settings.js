@@ -67,7 +67,7 @@ router.post('/update-all', requireAuth, async (req, res) => {
         if (embeddingKey) updates.embedding_apikey = embeddingKey;
 
         const avatarUrl = (req.body.avatarUrl || '').trim();
-        if (avatarUrl) updates.avatar_url = avatarUrl;
+        if (avatarUrl && /^https?:\/\//.test(avatarUrl)) updates.avatar_url = avatarUrl;
 
         const leaderboardEnabled = req.body.leaderboardstatus === 'enabled';
         updates.participate_in_leaderboard = leaderboardEnabled;
@@ -107,7 +107,7 @@ router.post('/avatar/upload', requireAuth, upload.single('avatar'), async (req, 
 router.get('/avatar/:user', requireAuth, async (req, res) => {
     const { data: profile } = await supabase.from('public_profiles').select('avatar_url').eq('id', req.params.user).single();
     if (!profile) return res.status(404).send('Not found');
-    if (profile.avatar_url) return res.redirect(profile.avatar_url);
+    if (profile.avatar_url && /^https?:\/\//.test(profile.avatar_url)) return res.redirect(profile.avatar_url);
     res.status(404).send('No avatar');
 })
 

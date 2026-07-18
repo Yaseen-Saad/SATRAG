@@ -332,6 +332,7 @@ CREATE POLICY "ticket_messages owner all" ON ticket_messages
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public Profiles are viewable by everyone" ON public_profiles;
+
 CREATE POLICY "Public Profiles are viewable by everyone" ON public_profiles
     FOR SELECT USING (true);
 
