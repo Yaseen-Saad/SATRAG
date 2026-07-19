@@ -1,11 +1,8 @@
 # SATrack
 **Generate mnemonics. Practice questions. Track your proress. All in one place.**
 
-[![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com)
+[![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com) [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org) [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 
-[![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
-
-[![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 
 
 # I JUST WANT TO ADD THE FEATURES I WANT TO ADD
