@@ -33,9 +33,19 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
  5. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
  6. **Answer Tracking**: Tracks correct/incorrect answeres, time spent, attempt count, best time, and speed percentile.
 
- 
+## Flashcards:
+1. **Spaced Repetition**: Implements te SuperMemo SM-2 algorithm (Again/Hard/Good/Easy ratings), just like Anki's Algorithms for optimal review scheduling.
+2. **Session Management**: Start flashcard sessions from any vocabulary list or review all cards.
+3. **Progress Tracking**: Tracks stage, ease factor, interval, review count, and correct/incorrect counts per card.
+4. **Anki Compatible**: Export flashcards as CSV for Anki import; import words from CSV or plain text.
 
+### Dashboard \& Analytics:
+1. **Progress Dashboard**: Vocabulary stats, practice stats, weekly activity chart, study streak, daily word, flashcard stats.
+2. **Leaderboard**: Public leaderboard ranked by correct answers or accuracy, filterable by grade.
+3. **Analytics Page**: Session-by-session performance breakdown performance trends, time analytics.
+4. **Topic Breakdown**: Per-topic accuracy analysis to identify your weak areas
 
+### User System (Technical Stuff):
 
 
 
@@ -51,6 +61,7 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 9. Add an Sat questions evaluator just like the vocab evaluator (vif, very important feature HAHAHAA)
 10. Oh lol add a study resources section.
 11. Add Bluebook exams that are already set (just if someone wants to try them in the website with an automatic marking and the adaptive behaviour)
+12. SAT WRAP!!!!! (monthly or weekly, the yearly spotify shit sucks)
 
 Some analytics from a popular website I want to implement:
 
