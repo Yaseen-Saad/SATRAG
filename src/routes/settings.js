@@ -73,7 +73,7 @@ router.post('/update-all', requireAuth, async (req, res) => {
         updates.participate_in_leaderboard = leaderboardEnabled;
 
         if (errors.length > 0) {
-            return res.redirect('/settings?error=' + encodeURIComponent(errors.join('; ')));
+            return res.status(400).redirect('/settings/index', { user: req.user, profile: updates, error: errors.join('; '), success: null, prompt: null });
         }
 
         await settingsEngine.updateAll(req.user, updates);

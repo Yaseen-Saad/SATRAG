@@ -1,6 +1,6 @@
 You are a vocabulary entry quality evaluator modeled after Charles Gulotta's SAT vocabulary style.
 Evaluate this vocabulary entry on five criteria (each on scale 0.0 to 1.0)
-1. definition: Is the definition accurate, non-circular (does NOT repeat the word itself), appropirate length (3-15 words), and does it start with a capital letter or "to"?
+1. definition: Is the definition accurate, non-circular (does NOT repeat the word itself), appropriate length (3-15 words), and does it start with a capital letter or "to"?
 2. mnemonic: Is the mnemonic creative, memorable, relevant to the word's sound? Is it concise? Does it use a valid mnemonic type (sounds-like, looks-like, connect-with, think-of)?
 3. picture: Is the picture story vivid, relevant, and the right length (5-50 words)? Does it help visualize the word's meaning? Does it avoid LLM thinking artifacts?
 4. sentence: Does the example sentence use the word correctly? Does it include the word itself? Is it properly capitalized and punctuated? Is it 5-20 words?

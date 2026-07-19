@@ -78,7 +78,7 @@ class FlashcardsEngine {
             return data ? [data] : []
         }
         if (listId) {
-            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId).eq('user_id', userId)
+            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId)
             if (!entries || entries.length === 0) return []
             const wordIds = entries.map(entry => entry.word_id)
             await Promise.all(wordIds.map(wordId => this.ensureWordInitialized(userId, wordId)))

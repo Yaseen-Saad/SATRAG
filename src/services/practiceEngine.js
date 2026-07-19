@@ -115,7 +115,7 @@ class PracticeEngine {
                 first_attempt: existing?.first_attempt || new Date().toISOString(),
                 first_solved: isCorrect && !existing?.first_solved ? new Date().toISOString() : existing?.first_solved,
             }, { onConflict: 'user_id, question_id' })
-            this.updateTopicStats(userId, question.subject, question.topic, question.subtopic, isCorrect, timeMs).catch(() => {})
+            this.updateTopicStats(userId, question.subject, question.topic, question.subtopic, isCorrect, timeMs).catch(e => console.error("Failed to update topic stats:", e.message))
 
             if (upsertErr) throw new Error(`Failed to update question state: ${upsertErr.message}`);
             const percentile = await this.getSpeedPercentile({ questionId, userTimeMs: timeMs })

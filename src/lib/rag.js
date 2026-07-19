@@ -147,7 +147,7 @@ class RAGEngine {
             try {
                 opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options;
             } catch (error) {
-                console.log("Failed to parse RAG example options", error.message);
+                console.error("Failed to parse RAG example options", error.message);
             }
             const passage = (ex.passage_text || '').substring(0, 300);
             return {

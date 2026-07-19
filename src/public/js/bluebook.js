@@ -80,7 +80,7 @@
             const content = overlay.querySelector('.bb-feedback')
             if (!content) return;
             if (type === "error") {
-                const safeMsg = errorMsg ? errorMsg.replace(/</g, '<').replace(/>/g, '>') : 'Something went wrong';
+                const safeMsg = errorMsg ? errorMsg.replace(/</g, '<').replace(/>/g, '>').replace(/&/g, '&').replace(/"/g, '"') : 'Something went wrong';
                 content.innerHTML = `
         <h2 style="color:var(--bb-incorrect);">Error</h2>
         <p>${safeMsg}</p>
@@ -97,7 +97,7 @@
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
           ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
         </h2>
-        ${!data.isCorrect ? `<p>Correct answer: <strong>${String(data.correctAnswer).replace(/</g, '<')}</strong></p>` : `<p>You selected <strong>${String(selectedAnswer).replace(/</g, '<')}</strong></p>`}
+        ${!data.isCorrect ? `<p>Correct answer: <strong>${String(data.correctAnswer).replace(/</g, '<').replace(/>/g, '>').replace(/&/g, '&').replace(/"/g, '"')}</strong></p>` : `<p>You selected <strong>${String(selectedAnswer).replace(/</g, '<').replace(/>/g, '>').replace(/&/g, '&').replace(/"/g, '"')}</strong></p>`}
         <p>Time: ${Math.round((Date.now() - startTime) / 1000)}s${pct != null && pct !== undefined ? ' · Faster than ' + pct + '% of users' : ''}</p>
         ${data.attemptNumber ? '<p>Attempt #' + data.attemptNumber + '</p>' : ''}
         ${showMistakesBtn ? '<div id="mistakes-prompt" style="margin:1rem 0;padding:0.75rem;border:1px solid var(--border);border-radius:8px;"><p style="margin:0 0 0.5rem;">This is a Words in Context question. Add the answer words to your <strong>Mistakes</strong> list?</p><button class="bb-fb-btn" id="add-mistakes-btn" onclick="addToMistakes()" style="margin-right:0.5rem;">+ Add to Mistakes</button><span id="mistakes-status" style="font-size:0.85rem;color:var(--text-muted);"></span></div>' : ''}

@@ -8,7 +8,9 @@
 <a href="/practice/question/<%= questionId %>" class="btn btn--ghost btn--sm" style="margin-bottom:1rem;">← Back to Question</a>
 
 <% if (!attempts || attempts.length === 0) { %>
-<div class="card"><p style="text-align:center; color:var(--text-muted);">No attempts recorded for this question.</p></div>
+<div class="card">
+  <p style="text-align:center; color:var(--text-muted);">No attempts recorded for this question.</p>
+</div>
 <% } else { %>
 <% const PAGE_SIZE = 10; %>
 <% const totalPages = Math.ceil(attempts.length / PAGE_SIZE); %>
@@ -35,20 +37,22 @@
   <button class="btn btn-outline btn-sm" id="load-more-btn" onclick="loadMore()">Load More (<%= attempts.length - PAGE_SIZE %> remaining)</button>
 </div>
 <script>
-  var allAttempts = <%- JSON.stringify(attempts) %>;
-  var PAGE_SIZE = <%= PAGE_SIZE %>;
-  var currentPage = 1;
+  let allAttempts = <%- JSON.stringify(attempts) %>;
+  let PAGE_SIZE = <%= PAGE_SIZE %>;
+  let currentPage = 1;
+
   function loadMore() {
     currentPage++;
-    var list = document.getElementById('attempts-list');
-    var start = (currentPage - 1) * PAGE_SIZE;
-    var end = Math.min(start + PAGE_SIZE, allAttempts.length);
-    for (var i = start; i < end; i++) {
-      var a = allAttempts[i];
-      var div = document.createElement('div');
+    let list = document.getElementById('attempts-list');
+    let start = (currentPage - 1) * PAGE_SIZE;
+    let end = Math.min(start + PAGE_SIZE, allAttempts.length);
+    for (let i = start; i < end; i++) {
+      let a = allAttempts[i];
+      let div = document.createElement('div');
       div.className = 'card';
       div.style.marginBottom = '0.5rem';
-      div.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center;"><div><strong>Attempt #' + a.attempt_number + '</strong> <small style="color:var(--text-light); margin-left:0.5rem;">' + new Date(a.attempt_time).toLocaleString() + '</small></div><span style="font-weight:600; ' + (a.is_correct ? 'color:var(--success);' : 'color:var(--error);') + '">' + (a.is_correct ? '✓ Correct' : '✗ Incorrect') + '</span></div><p style="margin:0.25rem 0 0; font-size:0.9rem; color:var(--text-muted);">Answer: ' + a.selected_answer + ' · Time: ' + Math.round(a.time_taken_ms / 1000) + 's</p>';
+      let safeAnswer = String(a.selected_answer || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+      div.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center;"><div><strong>Attempt #' + a.attempt_number + '</strong> <small style="color:var(--text-light); margin-left:0.5rem;">' + new Date(a.attempt_time).toLocaleString() + '</small></div><span style="font-weight:600; ' + (a.is_correct ? 'color:var(--success);' : 'color:var(--error);') + '">' + (a.is_correct ? '✓ Correct' : '✗ Incorrect') + '</span></div><p style="margin:0.25rem 0 0; font-size:0.9rem; color:var(--text-muted);">Answer: ' + safeAnswer + ' · Time: ' + Math.round(a.time_taken_ms / 1000) + 's</p>';
       list.appendChild(div);
     }
     if (end >= allAttempts.length) {

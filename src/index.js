@@ -40,7 +40,8 @@ app.get('/', optionalAuth, async (req, res) => {
   try {
     res.render("index", { user: req.user || null })
   } catch (error) {
-    console.log('Home page error:', error);
+    console.error('Home page error:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
