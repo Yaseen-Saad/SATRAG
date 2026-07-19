@@ -2,7 +2,6 @@
 **Generate mnemonics. Practice questions. Track your proress. All in one place.**
 
 [![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com) [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org) [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com) [![AI Powered](https://img.shields.io/badge/AI%20Powered-RAG-blueviolet?style=for-the-badge)](#)
-
 ---
 
 ## Story Time!! (Why I Built This?)
@@ -11,11 +10,22 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 
 1. Generates **mnemonic devices** for vocabulary words (yes this damn section) so you can actually *remeber* or ~~retrive~~ the words, inspired by Charles Gulotta's Book: [500 Key Words for the SAT: And How To Remember Them Forever!](https://www.goodreads.com/book/show/656272.500_Key_Words_for_the_SAT).
 2. Uses **RAG (Retrieval-Augmented Generation)** to pull similar examples from a real question bank before generating new content.
+3. Tracks your weaknesses and **adapts** to serve your questionswhere you need the most practice.
+4. Feels like the **real test** with a Bluebook-style practice interface.
 
+Built this as a high schooler for high schoolers. No subscriptions, no paywalls. Just bring your own API keys after 5 free monthly generations (I will add a video tutorial on how to get your keys) and you're good to go.
+---
 
+## Features:
+### Vocabulary Builder:
+1. **AI-Powered Mnemonics**: Enter any word, get a full vocabulary entry with pronunciation, definition, mnemonic device, picture story, other forms, and example sentences.
+2. **RAG-Enhanced Generation**: The system retrieves similar vocabulary entries from the database as style references before generating, so every entry feels much more authentic.
+3. **Quality Assurance**: Dual validation system with both rule-based quality checking (authenticity, creativity, accuracy, completness, and format) and LLM-based evaluation (YESSS, LLMs Checking on LLMs).
+4. **Regeneration with Feedback**: Not happy with an entry? (tbh this will happen a lot as AI still sucks) Regenerate with specific instructions. Your feedback improves future genrations, **the more you use the model, the smarter it becomes for you and the others**.
+ 5. **Word Lists**: Create, manage, clone, share (via email or public links), and export (CSV or print format) vocabulary lists, autogenerate a *"your mistakes list"*.
+ 6. **Daily Word**: A rotating vocabulary word each day to keep you sharp.
 
-
-
+ 
 
 
 
@@ -32,6 +42,7 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 8. add word parts Root: rupt (Latin for 'break'); Prefix: ab- (away); Suffix: -t (used to form adjectives indicating a state or quality) (next feature || next version, not sure tbh)
 9. Add an Sat questions evaluator just like the vocab evaluator (vif, very important feature HAHAHAA)
 10. Oh lol add a study resources section.
+11. Add Bluebook exams that are already set (just if someone wants to try them in the website with an automatic marking and the adaptive behaviour)
 
 Some analytics from a popular website I want to implement:
 
