@@ -25,6 +25,11 @@
             }
         })
     }
+
+    document.querySelectorAll('.bb-stem, .bb-passage-content').forEach(ele => {
+        ele.querySelectorAll('.sr-only').forEach(span => span.remove())
+    })
+
     const timer = document.getElementById('timer');
     if (timer && !alreadyAnswered) {
         timerInterval = setInterval(_ => {
@@ -49,7 +54,7 @@
             if (btn) btn.disabled = false;
         }
         window.submitAnswer = async function (label) {
-            if (answered) return
+            if (answered) return;
             answered = true;
             const timeMs = Date.now() - startTime;
             if (timerInterval) clearInterval(timerInterval);
@@ -217,4 +222,5 @@
                 }
             }
         });
-    }) ()
+    }
+})()

@@ -33,14 +33,13 @@
     <div class="bb-panel bb-panel-passage">
       <div class="bb-passage-content">
         <% 
-          let lineNum = 1;
           const lines = (question.passage_text || '').split('\n');
           lines.forEach(line => {
             if (line.trim()) {
               const words = line.trim();
         %>
-        <p><span class="line-num"><%= lineNum %></span><%- words %></p>
-        <% lineNum++; } }); %>
+        <p><%- words %></p>
+        <% } }); %>
       </div>
     </div>
     <% } %>

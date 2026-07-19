@@ -146,7 +146,6 @@
   line-height: 1.7;
   color: #2d2d2d;
 }
-
 .bb-passage-content p {
   margin-bottom: 0.75rem;
   color: #2d2d2d;
@@ -157,18 +156,6 @@
   text-indent: -1.5rem;
 }
 
-.bb-passage-content .line-num {
-  color: var(--bb-text-muted);
-  font-size: 0.8rem;
-  font-weight: 400;
-  margin-right: 0.5rem;
-  user-select: none;
-  font-family: system-ui, -apple-system, sans-serif;
-  display: inline-block;
-  width: 1.5rem;
-  text-align: right;
-}
-
 /* ========== QUESTION PANEL ========== */
 .bb-stem {
   font-size: 1.05rem;
@@ -176,7 +163,6 @@
   color: #1a1a1a;
   margin-bottom: 1.5rem;
 }
-
 .bb-stem p {
   margin-bottom: 0.75rem;
   font-size: 1.05rem;
@@ -705,4 +691,46 @@
   margin: 0 auto;
 }
 
-/*# sourceMappingURL=bluebook.css.map */
+/* ========== DARK MODE OVERRIDES ========== */
+[data-theme=dark] .bb-passage-content,
+[data-theme=dark] .bb-passage-content p {
+  color: var(--bb-text);
+}
+
+[data-theme=dark] .bb-stem,
+[data-theme=dark] .bb-stem p {
+  color: var(--bb-text);
+}
+
+[data-theme=dark] .bb-option:hover {
+  background: rgba(40, 96, 176, 0.1);
+}
+
+[data-theme=dark] .bb-option.selected {
+  background: rgba(30, 77, 140, 0.15);
+}
+
+[data-theme=dark] .bb-option.correct {
+  background: rgba(22, 163, 74, 0.1);
+}
+
+[data-theme=dark] .bb-option.incorrect {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+[data-theme=dark] .bb-palette-item.current {
+  background: rgba(30, 77, 140, 0.15);
+}
+
+[data-theme=dark] .bb-palette-item.answered {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(147, 197, 253, 0.3);
+}
+
+[data-theme=dark] .bb-palette-item.correct {
+  background: rgba(22, 163, 74, 0.1);
+}
+
+[data-theme=dark] .legend-dot.answered {
+  background: rgba(59, 130, 246, 0.3);
+}/*# sourceMappingURL=bluebook.css.map */
