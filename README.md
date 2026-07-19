@@ -55,6 +55,9 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 
 > Just a clarification for the 5 free generations, this is not something like offering premium plans but I am using free [z.ai](https://z.ai) API and if all the requests were from my own API I would be banned lol.
 ---
+> [!WARNING]
+> **Be careful!** The following content is 100% technical. 
+> Proceed only if you are comfortable with advanced configurations.
 
 
 
