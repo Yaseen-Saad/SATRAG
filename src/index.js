@@ -66,7 +66,15 @@ app.use('/tickets', ticketsRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
-  console.log(`SAT Study Buddy running on http://localhost:${PORT}`);
+  console.error(`SAT Study Buddy running on http://localhost:${PORT}`);
 });

@@ -5,7 +5,7 @@
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<script>const topicTree = <%- JSON.stringify(topicTree) %>;</script>
+<script>const topicTree = <%- JSON.stringify(topicTree).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') %>;</script>
 
 <form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;" data-loading>
   <div class="form-group">
@@ -63,7 +63,7 @@
   <% } %>
   <div style="margin-bottom:0.75rem;"><%- q.question_text %></div>
   <% if (q.options) { %>
-  <% const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; %>
+  <% let opts = []; try { opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options; } catch(parseErr) { console.error('Failed to parse options:', parseErr); } %>
   <div style="display:grid; gap:0.35rem;">
     <% opts.forEach(o => { %>
     <div style="padding:0.4rem 0.75rem; background:var(--surface-2); border-radius:var(--radius-sm); <%= o.label === q.correct_answer ? 'border:2px solid var(--success);' : '' %>">
@@ -75,7 +75,7 @@
   <p><strong>Answer:</strong> <%= q.correct_answer %></p>
   <% } %>
   <p style="margin-top:0.5rem; color:var(--text-muted);"><strong>Explanation:</strong> <%= q.explanation %></p>
-  <button class="btn btn--sm btn--primary save-btn" data-question='<%= JSON.stringify(q).replace(/'/g, "'") %>' style="margin-top:0.5rem;">Add to Bank</button>
+  <button class="btn btn--sm btn--primary save-btn" data-question='<%= JSON.stringify(q) %>' style="margin-top:0.5rem;">Add to Bank</button>
 </div>
 <% }) %>
 <% } %>

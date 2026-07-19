@@ -14,12 +14,17 @@ const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels
 const router = Router();
 
 router.get('/', requireAuth, async (req, res) => {
-    const { word } = req.query
-    if (word && word.trim()) {
-        return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
+    try {
+        const { word } = req.query
+        if (word && word.trim()) {
+            return res.redirect(`/vocab/${word.trim().toUpperCase()}`)
+        }
+        const recent = await rag.listRecent(10)
+        res.render('vocab/index', { user: req.user, recent, error: null })
+    } catch (err) {
+        console.error('Vocab index error:', err)
+        res.render('vocab/index', { user: req.user, recent: [], error: 'Error loading page' })
     }
-    const recent = await rag.listRecent(10)
-    res.render('vocab/index', { user: req.user, recent, error: null })
 })
 
 router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
@@ -83,17 +88,23 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
 })
 
 router.get('/generate/:word', requireAuth, async (req, res) => {
-    const word = req.params.word.toUpperCase();
-    const existing = await rag.findByWord(word)
-    if (!existing) {
-        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${word}"` })
+    try {
+        const word = req.params.word.toUpperCase();
+        const existing = await rag.findByWord(word)
+        if (!existing) {
+            return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${word}"` })
+        }
+        res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
+    } catch (err) {
+        console.error('Vocab generate page error:', err)
+        res.render('vocab/index', { user: req.user, recent: [], error: 'Error loading page' })
     }
-    res.render('vocab/regenerate', { user: req.user, word, entry: existing, error: null })
 })
 
 router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
+        if (!word) return res.redirect('/vocab');
         const w = word.trim().toUpperCase()
         const negativeContent = `NEGATIVE FEEDBACK FOR ${w}:\nIssue: ${reason} — ${specificIssue}\nAvoid: ${improvements}`
         await supabase.from('rag_feedback_examples').insert({ word: w, type: "negative", content: negativeContent })
@@ -141,8 +152,13 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
 })
 
 router.get('/lists', requireAuth, async (req, res) => {
-    const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
-    res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: req.query.tab || 'mine' })
+    try {
+        const [myLists, systemLists, publicLists, sharedLists] = await Promise.all([vocabEngine.getMyLists(req.user.id), vocabEngine.getSystemLists(), vocabEngine.getPublicLists(req.user.id), vocabEngine.getSharedWithMe(req.user.id)])
+        res.render('vocab/lists', { user: req.user, myLists, systemLists, publicLists, sharedLists, error: null, tab: req.query.tab || 'mine' })
+    } catch (err) {
+        console.error('Vocab lists error:', err)
+        res.render('vocab/lists', { user: req.user, myLists: [], systemLists: [], publicLists: [], sharedLists: [], error: 'Error loading lists', tab: req.query.tab || 'mine' })
+    }
 })
 
 router.post('/lists', requireAuth, async (req, res) => {
@@ -178,9 +194,9 @@ router.get('/lists/:id', optionalAuth, async (req, res) => {
 router.post('/lists/:id/add', requireAuth, async (req, res) => {
     try {
         await vocabEngine.addWordToList(req.params.id, req.body.wordId);
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}`);
+        res.redirect(`/vocab/lists/${req.params.id}`);
     } catch (err) {
-        res.redirect(req.headers.referer || `/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
+        res.redirect(`/vocab/lists/${req.params.id}?error=` + encodeURIComponent(err.message));
     }
 })
 
@@ -288,15 +304,20 @@ router.get('/lists/:id/export', requireAuth, async (req, res) => {
 })
 
 router.get('/:word', optionalAuth, async (req, res) => {
-    const entry = await rag.findByWord(req.params.word.toUpperCase());
-    if (!entry) {
-        return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+    try {
+        const entry = await rag.findByWord(req.params.word.toUpperCase());
+        if (!entry) {
+            return res.render('vocab/index', { user: req.user, recent: await rag.listRecent(10), error: `No entry found for "${req.params.word}"` })
+        }
+        let lists = [];
+        if (req.user) {
+            lists = await vocabEngine.getMyLists(req.user.id);
+        }
+        res.render('vocab/word', { user: req.user, entry, lists, error: null })
+    } catch (err) {
+        console.error('Vocab word page error:', err)
+        res.render('vocab/index', { user: req.user, recent: [], error: 'Error loading word' })
     }
-    let lists = [];
-    if (req.user) {
-        lists = await vocabEngine.getMyLists(req.user.id);
-    }
-    res.render('vocab/word', { user: req.user, entry, lists, error: null })
 });
 
 

@@ -69,7 +69,7 @@ class VocabEngine {
                 try {
                     options = typeof questionData.options === 'string' ? JSON.parse(questionData.options) : questionData.options
                 } catch (err) {
-                    console.log(err);
+                    console.error('Failed to parse question options:', err);
                 }
             }
             if (!options.length) return { listId: mistakesList.id, wordsFound: 0 }

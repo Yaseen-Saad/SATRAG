@@ -78,9 +78,10 @@ class FlashcardsEngine {
             return data ? [data] : []
         }
         if (listId) {
-            const { data: entries } = await supabase.from('word_list_entries').select('word_id').eq('list_id', listId)
+            const { data: entries } = await supabase.from('word_list_entries').select('word_id, vocab_entries(user_id)').eq('list_id', listId)
             if (!entries || entries.length === 0) return []
-            const wordIds = entries.map(entry => entry.word_id)
+            const wordIds = entries.filter(entry => entry.vocab_entries?.user_id === userId).map(entry => entry.word_id)
+            if (wordIds.length === 0) return []
             await Promise.all(wordIds.map(wordId => this.ensureWordInitialized(userId, wordId)))
             const { data } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId).in('word_id', wordIds).order('next_review', { ascending: true })
             return data || []

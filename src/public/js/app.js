@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedTheme = localStorage.getItem("theme") || (window.matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark');
     html.setAttribute("data-theme", savedTheme);
     if (themeToggle) {
-        themeToggle.setAttribute("aria-pressed", savedTheme === "dark" ? "false" : "true");
+        themeToggle.setAttribute("aria-pressed", savedTheme === "dark" ? "true" : "false");
         themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
         themeToggle.addEventListener('click', function () {
             const currentTheme = html.getAttribute("data-theme");
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             html.setAttribute("data-theme", newTheme);
             localStorage.setItem("theme", newTheme);
             themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
-            themeToggle.setAttribute("aria-pressed", newTheme === "dark" ? "false" : "true");
+            themeToggle.setAttribute("aria-pressed", newTheme === "dark" ? "true" : "false");
         });
     }
 

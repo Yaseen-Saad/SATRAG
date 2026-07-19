@@ -82,7 +82,7 @@
 
 <% if (cards && cards.length > 0) { %>
 <script>
-  const cards = <%- JSON.stringify(cards) %>;
+  const cards = <%- JSON.stringify(cards).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') %>;
   let currentIndex = 0;
   const sessionKey = 'fc-session' + cards[0]?.word_id
   let flipped = false;

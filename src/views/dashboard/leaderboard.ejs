@@ -24,10 +24,10 @@
       <label style="font-size:0.85rem;color:var(--text-muted);">Filter by grade:</label>
       <select id="grade-filter" onchange="applyFilters()" style="padding:0.4rem 0.6rem;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;background:var(--surface);color:var(--text);">
         <option value="">All Grades</option>
-        <option value="9th" <%= grade === '9th' ? 'selected' : '' %>>9th</option>
-        <option value="10th" <%= grade === '10th' ? 'selected' : '' %>>10th</option>
-        <option value="11th" <%= grade === '11th' ? 'selected' : '' %>>11th</option>
-        <option value="12th" <%= grade === '12th' ? 'selected' : '' %>>12th</option>
+        <option value="9" <%= grade === '9' ? 'selected' : '' %>>9th</option>
+        <option value="10" <%= grade === '10' ? 'selected' : '' %>>10th</option>
+        <option value="11" <%= grade === '11' ? 'selected' : '' %>>11th</option>
+        <option value="12" <%= grade === '12' ? 'selected' : '' %>>12th</option>
         <option value="Gap Year" <%= grade === 'Gap Year' ? 'selected' : '' %>>Gap Year</option>
       </select>
     </form>
@@ -73,9 +73,9 @@
 </div>
 
 <script>
-  let currentSortBy = <%- JSON.stringify(sortBy) %>;
-  let currentSortDir = <%- JSON.stringify(sortDir) %>;
-  let currentGrade = <%- JSON.stringify(grade) %>;
+  let currentSortBy = <%- JSON.stringify(sortBy).replace(/</g, '\\u003c') %>;
+  let currentSortDir = <%- JSON.stringify(sortDir).replace(/</g, '\\u003c') %>;
+  let currentGrade = <%- JSON.stringify(grade).replace(/</g, '\\u003c') %>;
 
   function toggleSort(col) {
     if (currentSortBy === col) {

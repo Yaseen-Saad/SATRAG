@@ -73,7 +73,7 @@ router.post('/update-all', requireAuth, async (req, res) => {
         updates.participate_in_leaderboard = leaderboardEnabled;
 
         if (errors.length > 0) {
-            return res.status(400).redirect('/settings/index', { user: req.user, profile: updates, error: errors.join('; '), success: null, prompt: null });
+            return res.redirect('/settings?error=' + encodeURIComponent(errors.join('; ')));
         }
 
         await settingsEngine.updateAll(req.user, updates);
@@ -105,10 +105,15 @@ router.post('/avatar/upload', requireAuth, upload.single('avatar'), async (req, 
 })
 
 router.get('/avatar/:user', requireAuth, async (req, res) => {
-    const { data: profile } = await supabase.from('public_profiles').select('avatar_url').eq('id', req.params.user).single();
-    if (!profile) return res.status(404).send('Not found');
-    if (profile.avatar_url && /^https?:\/\//.test(profile.avatar_url)) return res.redirect(profile.avatar_url);
-    res.status(404).send('No avatar');
+    try {
+        const { data: profile } = await supabase.from('public_profiles').select('avatar_url').eq('id', req.params.user).single();
+        if (!profile) return res.status(404).send('Not found');
+        if (profile.avatar_url && /^https?:\/\//.test(profile.avatar_url)) return res.redirect(profile.avatar_url);
+        res.status(404).send('No avatar');
+    } catch (err) {
+        console.error('Avatar redirect error:', err)
+        res.status(404).send('Not found');
+    }
 })
 
 module.exports = router;

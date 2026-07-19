@@ -3,15 +3,15 @@ I am creating an SAT Study Buddy with the help of Generative-AI, focusing mainly
 
 
 # I JUST WANT TO ADD THE FEATURES I WANT TO ADD
-1. Sign up with google
-2. Connect to google calender to make some sort of reminder of practicing daily
-3. add the option to upload your sat score report which will help the adaptive mode to track your weak parts
-4. correct streak
-5. switch to dark mode while solving
-6. bug report and ticket system
-7. Add questions rush to make students update with the stress of the test
-8. add word parts Root: rupt (Latin for 'break'); Prefix: ab- (away); Suffix: -t (used to form adjectives indicating a state or quality)
-9. Add an Sat questions evaluator just like the vocab evaluator
+1. Sign up with google (next version)
+2. Connect to google calender to make some sort of reminder of practicing daily (next version)
+3. add the option to upload your sat score report which will help the adaptive mode to track your weak parts (next feature)
+4. correct streak (next feature)
+5. switch to dark mode while solving (already deploied)
+6. bug report and ticket system (already depolied)
+7. Add questions rush to make students update with the stress of the test (probably won't do it)
+8. add word parts Root: rupt (Latin for 'break'); Prefix: ab- (away); Suffix: -t (used to form adjectives indicating a state or quality) (next feature || next version, not sure tbh)
+9. Add an Sat questions evaluator just like the vocab evaluator (vif, very important feature HAHAHAA)
 
 
 Some analytics from a popular website I want to implement:

@@ -710,3 +710,47 @@
     max-width: 720px;
     margin: 0 auto;
 }
+
+/* ========== DARK MODE OVERRIDES ========== */
+[data-theme="dark"] .bb-passage-content,
+[data-theme="dark"] .bb-passage-content p {
+    color: var(--bb-text);
+}
+
+[data-theme="dark"] .bb-stem,
+[data-theme="dark"] .bb-stem p {
+    color: var(--bb-text);
+}
+
+[data-theme="dark"] .bb-option:hover {
+    background: rgba(40, 96, 176, 0.1);
+}
+
+[data-theme="dark"] .bb-option.selected {
+    background: rgba(30, 77, 140, 0.15);
+}
+
+[data-theme="dark"] .bb-option.correct {
+    background: rgba(22, 163, 74, 0.1);
+}
+
+[data-theme="dark"] .bb-option.incorrect {
+    background: rgba(220, 38, 38, 0.1);
+}
+
+[data-theme="dark"] .bb-palette-item.current {
+    background: rgba(30, 77, 140, 0.15);
+}
+
+[data-theme="dark"] .bb-palette-item.answered {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(147, 197, 253, 0.3);
+}
+
+[data-theme="dark"] .bb-palette-item.correct {
+    background: rgba(22, 163, 74, 0.1);
+}
+
+[data-theme="dark"] .legend-dot.answered {
+    background: rgba(59, 130, 246, 0.3);
+}
