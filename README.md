@@ -1,7 +1,23 @@
 # SATrack
 **Generate mnemonics. Practice questions. Track your proress. All in one place.**
 
-[![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com) [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org) [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com) [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org) [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com) [![AI Powered](https://img.shields.io/badge/AI%20Powered-RAG-blueviolet?style=for-the-badge)](#)
+
+---
+
+## Story Time!! (Why I Built This?)
+
+As a gap year student, I struggled signifcantly with SAT prep last year (my senior year): the lack of free resources available for HALI students reduced my score signifcantly, and let's be real, SAT prep tools are either *expensive*, *boring*, or both. I went throgh this hard race and I barely could make it, so I wanted to build something that actually helps, not just another question bank, but a full study companion that:
+
+1. Generates **mnemonic devices** for vocabulary words (yes this damn section) so you can actually *remeber* or ~~retrive~~ the words, inspired by Charles Gulotta's Book: [500 Key Words for the SAT: And How To Remember Them Forever!](https://www.goodreads.com/book/show/656272.500_Key_Words_for_the_SAT).
+2. Uses **RAG (Retrieval-Augmented Generation)** to pull similar examples from a real question bank before generating new content.
+
+
+
+
+
+
+
 
 
 
@@ -15,7 +31,7 @@
 7. Add questions rush to make students update with the stress of the test (probably won't do it)
 8. add word parts Root: rupt (Latin for 'break'); Prefix: ab- (away); Suffix: -t (used to form adjectives indicating a state or quality) (next feature || next version, not sure tbh)
 9. Add an Sat questions evaluator just like the vocab evaluator (vif, very important feature HAHAHAA)
-
+10. Oh lol add a study resources section.
 
 Some analytics from a popular website I want to implement:
 
