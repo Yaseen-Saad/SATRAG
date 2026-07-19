@@ -17,8 +17,6 @@ I am creating an SAT Study Buddy with the help of Generative-AI, focusing mainly
 Some analytics from a popular website I want to implement:
 
 
-
-
 Analytics
 
 All time
