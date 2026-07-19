@@ -56,7 +56,7 @@ router.get('/leaderboard', optionalAuth, async (req, res) => {
 
     const { page = 1, limit = 50, sortBy = 'score', sortDir = 'desc', grade = '' } = req.query;
     const result = await dashboardEngine.getLeaderboard({
-      limit: parseInt(limit), offset: (parseInt(page) - 1) * parseInt(limit),
+      limit: Math.min(Math.max(parseInt(limit) || 50, 1), 100), offset: (Math.max(parseInt(page) || 1, 1) - 1) * Math.min(Math.max(parseInt(limit) || 50, 1), 100),
       userId: req.user?.id, sortBy, sortDir, gradeFilter: grade
     })
     res.render('dashboard/leaderboard', { user: req.user, entries: result.entries || [], totalCount: result.totalCount || 0, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), sortBy, sortDir, grade, error: null });

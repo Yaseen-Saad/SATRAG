@@ -31,7 +31,8 @@ class VocabEngine {
     }
 
     async searchLists(query) {
-        const { data } = await supabase.from('word_lists').select('*').in('visibility', ['system', 'public']).or(`name.ilike.%${query}%,description.ilike.%${query}%`).order('name');
+        const safeQuery = String(query || '').replace(/[%',]/g, '');
+        const { data } = await supabase.from('word_lists').select('*').in('visibility', ['system', 'public']).or(`name.ilike.%${safeQuery}%,description.ilike.%${safeQuery}%`).order('name');
         return data || [];
     }
 

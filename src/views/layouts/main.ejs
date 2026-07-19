@@ -42,7 +42,9 @@
     <%- body %>
   </main>
   <script src="/js/app.js"></script>
+  <% if (typeof pageClass !== 'undefined' && pageClass.includes('practice')) { %>
   <script src="/js/bluebook.js"></script>
+  <% } %>
 </body>
 
 </html>

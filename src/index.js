@@ -23,7 +23,7 @@ const { requireProfileComplete } = require('./middleware/profile');
 const app = express();
 
 app.use(cookieParser());
-app.set('trust proxy', 1)
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
@@ -74,7 +74,8 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
-  console.error(`SAT Study Buddy running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.error(`SAT Study Buddy running on http://localhost:${PORT}`));
+}
+module.exports = app;

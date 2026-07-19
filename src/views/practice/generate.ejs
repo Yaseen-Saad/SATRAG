@@ -75,7 +75,7 @@
   <p><strong>Answer:</strong> <%= q.correct_answer %></p>
   <% } %>
   <p style="margin-top:0.5rem; color:var(--text-muted);"><strong>Explanation:</strong> <%= q.explanation %></p>
-  <button class="btn btn--sm btn--primary save-btn" data-question='<%= JSON.stringify(q) %>' style="margin-top:0.5rem;">Add to Bank</button>
+  <button class="btn btn--sm btn--primary save-btn" data-question="<%- JSON.stringify(q).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;') %>" style="margin-top:0.5rem;">Add to Bank</button>
 </div>
 <% }) %>
 <% } %>

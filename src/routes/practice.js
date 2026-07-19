@@ -95,7 +95,7 @@ router.get('/question/:id', requireAuth, async (req, res) => {
 router.post('/question/:id/answer', requireAuth, async (req, res) => {
     try {
         const { answer, timeMs } = req.body
-        const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) })
+        const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) || 0 })
         let isWIC = false;
         if (!result.isCorrect) {
             const { data: questionData } = await supabase.from('sat_questions')

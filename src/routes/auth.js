@@ -117,7 +117,7 @@ router.post('/signup', async (req, res) => {
 })
 
 router.get('/logout', (req, res) => {
-    res.clearCookie('sb_access_token');
+    res.clearCookie('sb_access_token', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
     res.redirect('/auth/login');
 })
 
