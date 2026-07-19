@@ -46,6 +46,40 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 4. **Topic Breakdown**: Per-topic accuracy analysis to identify your weak areas
 
 ### User System (Technical Stuff):
+1. **Authentication**: Email/password sign up (by google soon) and login with *remember me* and password reset.
+2. **Profiles**: Edit name, school, grade, gender, birthdate, and avatar.
+3. **API Key Management**: Bring your own LLM and embedding API keys (5 free generations/month included)
+4. **Dark Mode** (not very technical lol): Toggle etween dark and light theems.
+5. **Keyboard Shortcuts**: Number keys for navigation, T for theme toggle, Space/Enter to flip flashcards.
+6. **Bug Reports**: Built in ticket system for reporting issues.
+
+> Just a clarification for the 5 free generations, this is not something like offering premium plans but I am using free [z.ai](https://z.ai) API and if all the requests were from my own API I would be banned lol.
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
