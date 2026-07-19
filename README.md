@@ -13,7 +13,7 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 3. Tracks your weaknesses and **adapts** to serve your questionswhere you need the most practice.
 4. Feels like the **real test** with a Bluebook-style practice interface.
 
-Built this as a high schooler for high schoolers. No subscriptions, no paywalls. Just bring your own API keys after 5 free monthly generations (I will add a video tutorial on how to get your keys) and you're good to go.
+> Built this as a high schooler for high schoolers. No subscriptions, no paywalls. Just bring your own API keys after 5 free monthly generations (I will add a video tutorial on how to get your keys) and you're good to go.
 ---
 
 ## Features:
@@ -25,7 +25,9 @@ Built this as a high schooler for high schoolers. No subscriptions, no paywalls.
  5. **Word Lists**: Create, manage, clone, share (via email or public links), and export (CSV or print format) vocabulary lists, autogenerate a *"your mistakes list"*.
  6. **Daily Word**: A rotating vocabulary word each day to keep you sharp.
 
- 
+ ### SAT Practice:
+ 1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math, I mean we all know that the College Board's Website's format sucks.
+ 2. 
 
 
 
