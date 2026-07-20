@@ -80,6 +80,8 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 
 
 ## Project Structure
+
+```text
 satbudd/
 ├── api/                        # Vercel serverless function entry
 ├── data/
@@ -125,6 +127,7 @@ satbudd/
 ├── package.json
 ├── vercel.json
 └── .env.example
+```
 
 
 
@@ -140,10 +143,18 @@ satbudd/
 
 
 
+# Acknowledgments
+
+- Hack Club (https://hackclub.com) — For the community and the hackathon
+- Supabase (https://supabase.com) — For the incredible open-source backend
+- Charles Gulotta (https://www.charlesgulotta.com) — For the mnemonic style that inspired the vocabulary entries
+- Jina AI (https://jina.ai) — For the embedding API
+- Every student grinding through SAT prep — this one's for you
 
 
-
-
+<div align="center">
+Built with late nights and too much caffeine by a high schooler who got tired of making flashcards by hand.
+</div>
 
 
 
