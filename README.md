@@ -61,8 +61,14 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 
 ## Tech Stack
 
-
-
+| Layer | Technology |
+|-------|------------|
+| **Runtime** | Node.js (>=18) |
+| **Backend Framework** | Express.js |
+| **Templating** | EJS + Express-ejs-layouts |
+| **Database** | Supabase (SQL DB + Vector DB) |
+| **Authentication** | Supabase built in Auth |
+| **AI / LLM** | OpenAI-compitbale (This is what OpenCode says) |
 
 
 
