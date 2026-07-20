@@ -2,45 +2,15 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title? title : 'SAT Study Buddy' %></title>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/bluebook.css">
+  <%- include('../partials/head') %>
 </head>
 
 <body>
-  <a href="#main-content" class="skip-to-content">Skip to main content</a>
-  <nav class="navbar">
-    <div class="navbar-inner">
-      <a href="/" class="navbar-brand">SAT Study Buddy</a>
-      <button class="hamburger" id="nav-toggle" aria-label="Menu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
-      <button id="theme-toggle" class="nav-link theme-btn" aria-label="Toggle dark mode" aria-pressed="false">🌙</button>
-      <div class="nav-links" id="nav-links">
-        <a href="/vocab" class="nav-link" data-key="1">Words <span class="nav-shortcut-hint">1</span></a>
-        <a href="/practice" class="nav-link" data-key="2">Practice <span class="nav-shortcut-hint">2</span></a>
-        <a href="/flashcards" class="nav-link" data-key="3">Flashcards <span class="nav-shortcut-hint">3</span></a>
-        <% if (typeof user !== 'undefined' && user) { %>
-        <a href="/dashboard" class="nav-link" data-key="4">Dashboard <span class="nav-shortcut-hint">4</span></a>
-        <a href="/dashboard/leaderboard" class="nav-link" aria-label="Leaderboard">Leaderboard</a>
-        <a href="/dashboard/analytics" class="nav-link" data-key="5">Analytics <span class="nav-shortcut-hint">5</span></a>
-        <a href="/settings" class="nav-link" data-key="6">Settings <span class="nav-shortcut-hint">6</span></a>
-        <a href="/auth/logout" class="nav-link nav-link--signout" data-key="l">Sign Out <span class="nav-shortcut-hint">L</span></a>
-        <% } else { %>
-        <a href="/auth/login" class="nav-link" data-key="l">Log In <span class="nav-shortcut-hint">L</span></a>
-        <a href="/auth/signup" class="btn btn--primary btn--sm">Sign Up</a>
-        <% } %>
-      </div>
-    </div>
-  </nav>
-  <div class="overlay" id="overlay"></div>
+  <%- include('../partials/nav') %>
   <main id="main-content">
     <%- body %>
   </main>
+  <%- include("../partials/footer") %>
   <script src="/js/app.js"></script>
   <% if (typeof pageClass !== 'undefined' && pageClass.includes('practice')) { %>
   <script src="/js/bluebook.js"></script>

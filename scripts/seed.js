@@ -1,7 +1,7 @@
 require('dotenv').config();
 const supabase = require('../src/lib/supabase')
 const llm = require('../src/lib/llm')
-const { parseSampleEntries } = require('../src/lib/parser')
+const { parseSampleEntries } = require('./parser')
 const path = require('path')
 const fs = require('fs')
 async function seedSampleData() {
