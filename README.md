@@ -53,6 +53,8 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 5. **Keyboard Shortcuts**: Number keys for navigation, T for theme toggle, Space/Enter to flip flashcards.
 6. **Bug Reports**: Built in ticket system for reporting issues.
 
+## Trying the demo:
+
 > Just a clarification for the 5 free generations, this is not something like offering premium plans but I am using free [z.ai](https://z.ai) API and if all the requests were from my own API I would be banned lol.
 ---
 > [!WARNING]
@@ -78,6 +80,84 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 | **Dev Tools** | Nodemon, Sass |
 ---
 
+## Setting Up the Enviroment:
+### Prerequisites:
+1. **Node.js** >=18
+2. **Supabase** project (with pgvector extension enabled)
+3. An **LLM API Key** (any OpenAI-compatible endpoint)
+4. An **Embedding API key** (e.g., Jina AI)
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/Yaseen-Saad/SATRAG.git
+cd SATRAG
+```
+
+### 2. Install Dependecies
+```bash
+npm install
+```
+
+### 3. Set Up Enviroment Variables
+Copy the ```example.env``` file and fill in your keys:
+```bash
+cp .env.example .env
+```
+Then edit ```.env```:
+
+```bash
+# Supabase
+SUPABASE_URL=YOUR_SUPABASE_URL
+SUPABASE_SERVICE_KEY=YOUR_SERVICE_ROLE_KEY
+SUPABASE_ANON_KEY=YOUR_ANON_KEY
+SUPABASE_PASSWORD=YOUR_DATABASE_PASSWORD
+
+# LLM
+LLM_API_KEY=YOUR_LLM_API_KEY
+LLM_BASE_URL=https://your-llm-provider.com/api/v1
+LLM_MODEL=YOUR_MODEL_NAME
+
+# Embedding
+EMBEDDING_BASE_URL=https://your-embedding-provider.com/v1
+EMBEDDING_MODEL=YOUR_EMBEDDING_MODEL
+EMBEDDING_API_KEY=YOUR_EMBEDDING_API_KEY
+
+# App
+APP_DOMAIN=http://localhost:3000
+PORT=3000
+NODE_ENV=development
+
+# Rate Limiting
+BURST_WINDOW=10000
+BURST_MAX=20
+BURST_BLOCK_MS=900000
+CLEANUP_INTERVAL=60000
+
+```
+### 4. Set Up the Database
+Run these SQL files in your *new* Supabase Database's SQL Editor **in order**:
+```text
+supabase/01_schema.sql      # Tables, RLS policies, indexes
+supabase/02_rag.sql          # RAG feedback tables
+supabase/03_match_functions.sql  # Vector search functions + auth trigger
+```
+
+### 5. Seed the data
+```bash
+npm run seed
+```
+This seeds the vocabulary data and the Collegeboard SAT questions into your Supabase database.
+
+### 6. Build the CSS
+```bash
+npm run build:css
+```
+### 7. Start the dev server
+```bash
+npm run dev
+```
+The app will be running at [http://localhost:3000](http://localhost:3000)
 
 ## Project Structure
 
@@ -135,19 +215,44 @@ satbudd/
 
 
 
+## How to Contribute
+Contriutions are very welcome! Here's how to get started:
+1. Fork the repository
+2. Create a feature branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+3. Make your changes
+4. Test your changes locally:
+```bash
+npm run dev
+```
+5. Commit with a clear message:
+```bash
+git commit -m "Add: the description of your cool feature"
+```
+6. Push to your branch:
+```bash
+git push origin feature/your-feature-name
+```
+7. Open a Pull Request with a description of what you changed and why
 
+### Ideas for Contributions:
+- Fix bugs ro improve existing features
+- Add new question types or topics
+- Improve the UI/UX
+- Write tests
+- Improve documentation (or create it lol)
+- Optimize RAG prompts
 
-
-
-
-
+> Found a bug? Open an issue or a ticket on the website
 
 
 # Acknowledgments
 
 - Hack Club (https://hackclub.com) — For the community and the hackathon
 - Supabase (https://supabase.com) — For the incredible open-source backend
-- Charles Gulotta (https://www.charlesgulotta.com) — For the mnemonic style that inspired the vocabulary entries
+- Charles Gulotta (https://www.charlesgulotta-author.com) — For the mnemonic style that inspired the vocabulary entries
 - Jina AI (https://jina.ai) — For the embedding API
 - Every student grinding through SAT prep — this one's for you
 
