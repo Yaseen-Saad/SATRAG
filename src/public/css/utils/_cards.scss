@@ -1,0 +1,35 @@
+.card {
+  @include card;
+  transition: box-shadow var(--duration) var(--ease);
+
+  & + & {
+    margin-top: var(--sp-4);
+  }
+}
+
+.card-link {
+  @extend .card;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+
+  &:hover {
+    box-shadow: var(--shadow);
+  }
+}
+
+.card-flat {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+}
+
+.card-accent {
+  @extend .card;
+  border-left: 3px solid var(--color-accent);
+}
+
+.card-gold {
+  @extend .card;
+  border-left: 3px solid var(--color-gold);
+}

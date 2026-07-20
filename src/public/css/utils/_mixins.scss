@@ -1,0 +1,65 @@
+// Responsive mixin
+@mixin respond-to($bp) {
+    @if $bp ==sm {
+        @media (min-width: 640px) {
+            @content;
+        }
+    }
+
+    @if $bp ==md {
+        @media (min-width: 768px) {
+            @content;
+        }
+    }
+
+    @if $bp ==lg {
+        @media (min-width: 1024px) {
+            @content;
+        }
+    }
+
+    @if $bp ==xl {
+        @media (min-width: 1280px) {
+            @content;
+        }
+    }
+}
+
+@mixin container {
+    width: 100%;
+    max-width: var(--max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--sp-6);
+    padding-right: var(--sp-6);
+
+    @include respond-to(md) {
+        padding-left: var(--sp-8);
+        padding-right: var(--sp-8);
+    }
+}
+
+@mixin prose {
+    max-width: var(--max-prose);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@mixin card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--sp-6);
+}
+
+@mixin visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
