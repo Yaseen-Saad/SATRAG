@@ -74,6 +74,8 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 > **Be careful!** The following sections are technical. 
 > Proceed only if you are comfortable with development setup.
 
+## Star This Repo
+If you find SATrack helpful, consider giving it a start, it helps other students discover the project and keeps me motivated to build more features.
 ## Tech Stack
 
 | Layer | Technology |
@@ -261,27 +263,29 @@ satbudd/
 
 
 
-## How to Contribute
-Contributions are very welcome! Here's how to get started:
-1. Fork the repository
-2. Create a feature branch:
+## Contributing
+Contributions are very welcome! — whether it's a bug fix, a new feature, or better documentation.
+### How to Contribute:
+Here's how to get started:
+1. **Fork** the repository
+2. **Create** a feature branch
 ```bash
 git checkout -b feature/your-feature-name
 ```
-3. Make your changes
-4. Test your changes locally:
+3. **Make** your changes
+4. **Test** your changes locally:
 ```bash
 npm run dev
 ```
-5. Commit with a clear message:
+5. **Commit** with a clear message:
 ```bash
 git commit -m "Add: the description of your cool feature"
 ```
-6. Push to your branch:
+6. **Push** to your branch:
 ```bash
 git push origin feature/your-feature-name
 ```
-7. Open a Pull Request with a description of what you changed and why
+7. **Open** a Pull Request with a description of what you changed and why
 
 ### Ideas for Contributions:
 - Fix bugs or improve existing features
@@ -292,6 +296,21 @@ git push origin feature/your-feature-name
 - Optimize RAG prompts
 
 > Found a bug? Open an issue or a ticket on the website
+
+## Project Timeline:
+| Feature | Status | Description |
+|:----|:---------|:-----|
+| Question Evaluator | In Progress | LLM-based evaluation of practice questions (mirrors te vocab evaluatpr) |
+| SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
+| More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
+| Improved Streaks | In Progress | Better strak tracking and motivational system |
+| Bluebook Full Exams | In Progress | Complete practice exams with automatic scoring and adaptive behavior |
+| Google Calender Integration | Planned | Daily practice reminders synced to your calendar |
+| Study Resources Section | Planned | Curated collection of SAT study resources |
+| SAT Wrapped | Thinking | Monthly/Weekly personalized stats summary (think Spotify Wrapped, but for SAT) |
+| Google Sign-In | Planned | OAuth login with Google accounts to ease the process up |
+| 2FA Sign-In | Thinking | Configure 2-factor-authentication to secure the accounts|
+| Question Rush Mode | Thinking | Time rapid-fire practice to simulate test-day pressure |
 
 
 # Acknowledgments
@@ -306,6 +325,31 @@ git push origin feature/your-feature-name
 <div align="center">
 Built with late nights and too much caffeine by a high schooler who got tired of making flashcards by hand.
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -368,29 +412,11 @@ See the topics costing you the most points with Pro.
 English
 Accuracy by topic
 
-
-
-
-
-
-
-
-
-
-
 Upgrade to Pro to unlock
 See your accuracy in every topic with Pro.
 
 Math
 Accuracy by topic
-
-
-
-
-
-
-
-
 
 Upgrade to Pro to unlock
 See your accuracy in every topic with Pro.
@@ -413,5 +439,3 @@ Your practice activity
 
 No practice activity yet
 Answer questions on any day and your activity calendar appears here.
-
-0
