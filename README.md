@@ -79,6 +79,53 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 ---
 
 
+## Project Structure
+satbudd/
+├── api/                        # Vercel serverless function entry
+├── data/
+│   ├── sample.txt              # Vocabulary dataset (Gulotta-style entries)
+│   └── sat_questions_with_active.json  # SAT question bank
+├── scripts/
+│   ├── seed.js                 # Seeds vocabulary + questions into Supabase
+│   └── generate_embeddings.js  # Batch-generates embeddings for questions
+├── supabase/
+│   ├── 01_schema.sql           # Database schema + RLS policies
+│   ├── 02_rag.sql              # RAG feedback tables
+│   └── 03_match_functions.sql  # pgvector match functions
+├── src/
+│   ├── index.js                # Express app entry point
+│   ├── config.js               # Zod-validated env config
+│   ├── lib/
+│   │   ├── supabase.js         # Supabase client
+│   │   ├── llm.js              # LLM service (chat + embeddings, with caching)
+│   │   ├── rag.js              # RAG engine (vector search + keyword fallback)
+│   │   ├── parser.js           # Vocabulary entry parser
+│   │   ├── qualityChecker.js   # Rule-based quality assessment
+│   │   └── vocabularyEvaluator.js  # LLM-based evaluation
+│   ├── middleware/
+│   │   ├── auth.js             # Authentication middleware
+│   │   ├── profile.js          # Profile completion check
+│   │   ├── rateLimiter.js      # Burst detection + route-specific limits
+│   │   └── useFreeModels.js    # Free tier generation tracking
+│   ├── routes/
+│   │   ├── auth.js             # Login, signup, logout, password reset
+│   │   ├── vocab.js            # Vocab generation, lists, sharing, export
+│   │   ├── practice.js         # Questions, generation, adaptive mode
+│   │   ├── dashboard.js        # Dashboard, leaderboard, analytics
+│   │   ├── flashcards.js       # Flashcard sessions, SM-2 review
+│   │   ├── feedback.js         # Entry feedback submission
+│   │   ├── settings.js         # Profile settings, API key management
+│   │   └── ticket.js           # Bug report tickets
+│   ├── services/               # Business logic engines
+│   ├── prompts/                # LLM system prompts
+│   ├── views/                  # EJS templates
+│   └── public/
+│       ├── css/                # SCSS source + compiled CSS
+│       └── js/                 # Client-side JavaScript
+├── package.json
+├── vercel.json
+└── .env.example
+
 
 
 
