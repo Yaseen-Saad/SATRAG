@@ -3,60 +3,6 @@
     #{$vendor}#{$name}: #{$value};
   }
 }
-
-:root {
-  --navy: #0f172a;
-  --navy-light: #1e293b;
-  --indigo: #4338ca;
-  --violet: #7c3aed;
-  --teal: #0d9488;
-  --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --surface-3: #f1f5f9;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  --success: #16a34a;
-  --error: #dc2626;
-  --warning: #d97706;
-  --radius-sm: 6px;
-  --radius: 12px;
-  --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-size: 16px;
-  --line-height: 1.6;
-  --nav-height: 64px;
-  --primary: #0f172a;
-  --primary-light: #1e293b;
-  --secondary: #4338ca;
-  --accent: #7c3aed;
-  --bg: #f8fafc;
-  --gradient: linear-gradient(135deg, #4338ca, #7c3aed);
-}
-
-[data-theme="dark"] {
-  --surface: #1e293b;
-  --surface-2: #0f172a;
-  --surface-3: #1a2332;
-  --border: #334155;
-  --text: #f1f5f9;
-  --text-muted: #94a3b8;
-  --text-light: #64748b;
-  --bg: #0b1120;
-  --primary: #e2e8f0;
-  --primary-light: #f1f5f9;
-  --secondary: #818cf8;
-  --accent: #a78bfa;
-  --success: #4ade80;
-  --error: #f87171;
-  --warning: #fbbf24;
-}
-
 *,
 *::before,
 *::after {
