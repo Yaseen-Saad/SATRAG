@@ -1,4 +1,5 @@
 (function () {
+    console.log('excuted')
     'use strict';
     let questionData = document.getElementById('question-data')?.dataset;
     let questionId = questionData?.id;
@@ -31,14 +32,17 @@
     })
 
     const timer = document.getElementById('timer');
-    if (timer && !alreadyAnswered) {
-        timerInterval = setInterval(_ => {
-            if (answered) return;
-            const elapsed = Math.floor((Date.now() - startTime) / 1000)
-            const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
-            const s = String(elapsed % 60).padStart(2, "0")
-            timer.textContent = `${m}:${s}`
-        }, 1000)
+
+    if (timer) { 
+        if (!alreadyAnswered) {
+            timerInterval = setInterval(_ => {
+                if (answered) return;
+                const elapsed = Math.floor((Date.now() - startTime) / 1000)
+                const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
+                const s = String(elapsed % 60).padStart(2, "0")
+                timer.textContent = `${m}:${s}`
+            }, 1000)
+        }
         document.querySelectorAll('.bb-option').forEach(opt => {
             opt.addEventListener('click', function (e) {
                 if (answered) return
@@ -153,6 +157,15 @@
             })
             document.getElementById('feedback-overlay')?.classList.remove('open')
             startTime = Date.now()
+            if (timer && !timerInterval) {
+                timerInterval = setInterval(_ => {
+                    if (answered) return;
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000)
+                    const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
+                    const s = String(elapsed % 60).padStart(2, "0")
+                    timer.textContent = `${m}:${s}`
+                }, 1000)
+            }
         }
 
         const origSubmit = window.submitAnswer;

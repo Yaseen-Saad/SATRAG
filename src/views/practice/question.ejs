@@ -50,7 +50,7 @@
       <% if (question.question_type === 'mcq' && opts.length) { %>
       <div class="bb-options">
         <% opts.forEach(opt => { %>
-        <button class="bb-option" data-label="<%= opt.label %>" onclick="window.selectOption('<%= opt.label %>')">
+        <button class="bb-option" data-label="<%= opt.label %>" onclick="window.selectOption && window.selectOption('<%= opt.label %>')">
           <span class="bb-option-bubble"><%= opt.label %></span>
           <span class="bb-option-text"><%- opt.content %></span>
           <span class="bb-eliminate-btn">−</span>

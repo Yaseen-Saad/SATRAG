@@ -82,13 +82,13 @@ router.post('/generate/save', requireAuth, async (req, res) => {
 router.get('/question/:id', requireAuth, async (req, res) => {
     try {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
-        if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [] })
+        if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [], pageClass: 'practice' })
         const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, subject: question.subject, topic: question.topic, userId: req.user.id })
         const returnTo = req.query.from || '/practice'
-        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, returnTo })
+        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, returnTo, pageClass: 'practice' })
     } catch (err) {
         console.error(err)
-        res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [] })
+        res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [], pageClass: 'practice' })
     }
 })
 
@@ -160,7 +160,7 @@ router.get('/adaptive', requireAuth, async (req, res) => {
             return res.json(result)
         }
         res.render('practice/adaptive', {
-            user: req.user, topicStats, weakTopics, subject, question: null, reason: null, error: null
+            user: req.user, topicStats, weakTopics, subject, question: null, reason: null, error: null, pageClass: 'practice'
         })
 
     } catch (error) {
@@ -180,7 +180,7 @@ router.post('/adaptive/next', requireAuth, async (req, res) => {
         }
 
         res.render('practice/adaptive', {
-            user: req.user, topicStats, weakTopics, subject, question: result.question, reason: result.reason, error: result.question ? null : "No questions available. Please try a different subject or complete more practice questions first."
+            user: req.user, topicStats, weakTopics, subject, question: result.question, reason: result.reason, error: result.question ? null : "No questions available. Please try a different subject or complete more practice questions first.", pageClass: 'practice'
         })
 
     } catch (error) {
