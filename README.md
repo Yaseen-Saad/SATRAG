@@ -69,7 +69,14 @@ As a gap year student, I struggled signifcantly with SAT prep last year (my seni
 | **Database** | Supabase (SQL DB + Vector DB) |
 | **Authentication** | Supabase built in Auth |
 | **AI / LLM** | OpenAI-compitbale (This is what OpenCode says) |
-
+| **Embeddings** | Famhmi-Aiz model on Huging face at first then Jina AI Embeddings v3 (1024-dim vectors) |
+| **Styling** | SCSS (will change later) |
+| **Frontend** | Vanilla JavaScript |
+| **Validation** | Zod |
+| **Security** | Helmet, CORS, and custom rate limiter middleware |
+| **Deployment** | Vercel | 
+| **Dev Tools** | Nodemon, Sass |
+---
 
 
 
