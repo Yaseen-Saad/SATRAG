@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <rect width="160" height="120" rx="16" fill="#090D16"/>
+  <!-- Empty Folder Outline -->
+  <path d="M 40 40 H 65 L 75 50 H 120 V 90 H 40 Z" stroke="#1E293B" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Floating Question Mark Node -->
+  <circle cx="80" cy="65" r="14" fill="#0F172A" stroke="#38BDF8" stroke-width="2"/>
+  <text x="80" y="70" font-family="system-ui, sans-serif" font-weight="700" font-size="14" fill="#38BDF8" text-anchor="middle">?</text>
+</svg>

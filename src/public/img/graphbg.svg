@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <defs>
+    <!-- Radial Alpha Mask -->
+    <radialGradient id="gridMask" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="fadeMask">
+      <rect width="800" height="400" fill="url(#gridMask)"/>
+    </mask>
+  </defs>
+
+  <!-- Grid Pattern with Fade Mask -->
+  <g mask="url(#fadeMask)" stroke="#1E293B" stroke-width="1.5">
+    <path d="M0 40H800 M0 80H800 M0 120H800 M0 160H800 M0 200H800 M0 240H800 M0 280H800 M0 320H800 M0 360H800"/>
+    <path d="M40 0V400 M80 0V400 M120 0V400 M160 0V400 M200 0V400 M240 0V400 M280 0V400 M320 0V400 M360 0V400 M400 0V400 M440 0V400 M480 0V400 M520 0V400 M560 0V400 M600 0V400 M640 0V400 M680 0V400 M720 0V400 M760 0V400"/>
+  </g>
+
+  <!-- Glowing AI Node Intersections -->
+  <circle cx="400" cy="200" r="4" fill="#38BDF8"/>
+  <circle cx="280" cy="120" r="3" fill="#3FCF8E"/>
+  <circle cx="520" cy="280" r="3" fill="#8B5CF6"/>
+</svg>

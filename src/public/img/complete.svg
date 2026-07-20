@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <rect width="160" height="120" rx="16" fill="#090D16"/>
+  <!-- Target Ring -->
+  <circle cx="80" cy="60" r="32" stroke="#1E293B" stroke-width="4"/>
+  <path d="M 80 28 A 32 32 0 1 1 48 60" stroke="#3FCF8E" stroke-width="4" stroke-linecap="round"/>
+  <!-- Checkmark -->
+  <path d="M 68 60 L 76 68 L 92 52" stroke="#3FCF8E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

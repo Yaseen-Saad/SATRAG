@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <rect width="40" height="40" rx="10" fill="#451A03" stroke="#F97316" stroke-width="1.5"/>
+  <!-- Flame Geometry -->
+  <path d="M 20 8 C 20 8 26 14 26 21 C 26 25.4 23.3 29 20 29 C 16.7 29 14 25.4 14 21 C 14 17 17 12 20 8 Z" fill="#F97316"/>
+  <path d="M 20 17 C 20 17 23 20 23 23 C 23 25.2 21.7 27 20 27 C 18.3 27 17 25.2 17 23 C 17 21 18.5 19 20 17 Z" fill="#FDE047"/>
+</svg>
