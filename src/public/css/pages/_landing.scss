@@ -1,3 +1,5 @@
+@use '../utils/mixins' as *;
+
 .landing-hero {
     @include container;
     padding-top: var(--sp-20);

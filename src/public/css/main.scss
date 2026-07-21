@@ -1,7 +1,7 @@
 // Utilities
-@use 'utils/variables';
-@use 'utils/base';
-@use 'utils/mixins';
+@use 'utils/variables' as *;
+@use 'utils/base' as *;
+@use 'utils/mixins' as *;
 
 // Components
 @use 'components/buttons';
