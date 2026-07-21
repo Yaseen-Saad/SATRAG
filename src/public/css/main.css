@@ -220,6 +220,140 @@ code, pre, .mono {
     scroll-behavior: auto !important;
   }
 }
+.btn, .btn-outline, .btn-warning, .btn--primary, .btn--secondary, .btn--outline, .btn--ghost, .btn--warning, .btn--danger, .btn.btn-danger, .btn-danger.btn-primary, .btn-danger.btn-secondary, .btn-danger.btn-outline, .btn-danger.btn-ghost, .btn-danger.btn-warning, .btn-danger, .btn-danger.btn--primary, .btn-danger.btn--secondary, .btn-danger.btn--outline, .btn-danger.btn--ghost, .btn-danger.btn--warning, .btn-danger.btn--danger, .btn.btn--danger, .btn.btn-gold, .btn-gold.btn-primary, .btn-gold.btn-secondary, .btn-gold.btn-outline, .btn-gold.btn-ghost, .btn-gold.btn-warning, .btn-gold.btn-danger, .btn-gold.btn--primary, .btn-gold.btn--secondary, .btn-gold.btn--outline, .btn-gold.btn--ghost, .btn-gold.btn--warning, .btn-gold.btn--danger, .btn.btn-ghost, .btn-ghost.btn-primary, .btn-ghost.btn-secondary, .btn-ghost.btn-outline, .btn-ghost, .btn-ghost.btn-warning, .btn-ghost.btn--primary, .btn-ghost.btn--secondary, .btn-ghost.btn--outline, .btn-ghost.btn--ghost, .btn-ghost.btn--warning, .btn-ghost.btn--danger, .btn.btn--ghost, .btn.btn-secondary, .btn-secondary.btn-primary, .btn-secondary, .btn-secondary.btn-outline, .btn-secondary.btn-warning, .btn-secondary.btn--primary, .btn-secondary.btn--secondary, .btn-secondary.btn--outline, .btn-secondary.btn--ghost, .btn-secondary.btn--warning, .btn-secondary.btn--danger, .btn.btn--secondary, .btn.btn-primary, .btn-primary, .btn-primary.btn-outline, .btn-primary.btn-warning, .btn-primary.btn--primary, .btn-primary.btn--secondary, .btn-primary.btn--outline, .btn-primary.btn--ghost, .btn-primary.btn--warning, .btn-primary.btn--danger, .btn.btn--primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-6);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semi);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration) var(--ease);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:disabled, .btn-primary:disabled, .btn-secondary:disabled, .btn-outline:disabled, .btn-ghost:disabled, .btn-warning:disabled, .btn-danger:disabled, .btn--primary:disabled, .btn--secondary:disabled, .btn--outline:disabled, .btn--ghost:disabled, .btn--warning:disabled, .btn--danger:disabled, .btn[disabled], [disabled].btn-primary, [disabled].btn-secondary, [disabled].btn-outline, [disabled].btn-ghost, [disabled].btn-warning, [disabled].btn-danger, [disabled].btn--primary, [disabled].btn--secondary, [disabled].btn--outline, [disabled].btn--ghost, [disabled].btn--warning, [disabled].btn--danger {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.btn.is-loading, .is-loading.btn-primary, .is-loading.btn-secondary, .is-loading.btn-outline, .is-loading.btn-ghost, .is-loading.btn-warning, .is-loading.btn-danger, .is-loading.btn--primary, .is-loading.btn--secondary, .is-loading.btn--outline, .is-loading.btn--ghost, .is-loading.btn--warning, .is-loading.btn--danger {
+  color: transparent !important;
+  pointer-events: none;
+  position: relative;
+}
+.btn.is-loading::after, .is-loading.btn-primary::after, .is-loading.btn-secondary::after, .is-loading.btn-outline::after, .is-loading.btn-ghost::after, .is-loading.btn-warning::after, .is-loading.btn-danger::after, .is-loading.btn--primary::after, .is-loading.btn--secondary::after, .is-loading.btn--outline::after, .is-loading.btn--ghost::after, .is-loading.btn--warning::after, .is-loading.btn--danger::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+.btn.btn-primary, .btn-primary, .btn-primary.btn-secondary, .btn-primary.btn-outline, .btn-primary.btn-ghost, .btn-primary.btn-warning, .btn-primary.btn-danger, .btn-primary.btn--primary, .btn-primary.btn--secondary, .btn-primary.btn--outline, .btn-primary.btn--ghost, .btn-primary.btn--warning, .btn-primary.btn--danger, .btn.btn--primary, .btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+.btn.btn-primary:hover, .btn-primary:hover, .btn--primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: #fff;
+}
+.btn.btn-primary:active, .btn-primary:active, .btn--primary:active {
+  transform: scale(0.97);
+}
+.btn.btn-secondary, .btn-secondary.btn-primary, .btn-secondary, .btn-secondary.btn-outline, .btn-secondary.btn-ghost, .btn-secondary.btn-warning, .btn-secondary.btn-danger, .btn-secondary.btn--primary, .btn-secondary.btn--secondary, .btn-secondary.btn--outline, .btn-secondary.btn--ghost, .btn-secondary.btn--warning, .btn-secondary.btn--danger, .btn.btn--secondary, .btn--secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn.btn-secondary:hover, .btn-secondary:hover, .btn--secondary:hover {
+  background: var(--color-elevated);
+  border-color: var(--color-border-strong);
+}
+.btn.btn-ghost, .btn-ghost.btn-primary, .btn-ghost.btn-secondary, .btn-ghost.btn-outline, .btn-ghost, .btn-ghost.btn-warning, .btn-ghost.btn-danger, .btn-ghost.btn--primary, .btn-ghost.btn--secondary, .btn-ghost.btn--outline, .btn-ghost.btn--ghost, .btn-ghost.btn--warning, .btn-ghost.btn--danger, .btn.btn--ghost, .btn--ghost {
+  background: transparent;
+  color: var(--color-text-sec);
+}
+.btn.btn-ghost:hover, .btn-ghost:hover, .btn--ghost:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+.btn.btn-gold, .btn-gold.btn-primary, .btn-gold.btn-secondary, .btn-gold.btn-outline, .btn-gold.btn-ghost, .btn-gold.btn-warning, .btn-gold.btn-danger, .btn-gold.btn--primary, .btn-gold.btn--secondary, .btn-gold.btn--outline, .btn-gold.btn--ghost, .btn-gold.btn--warning, .btn-gold.btn--danger {
+  background: var(--color-gold);
+  color: #fff;
+  border-color: var(--color-gold);
+}
+.btn.btn-gold:hover, .btn-gold.btn-primary:hover, .btn-gold.btn-secondary:hover, .btn-gold.btn-outline:hover, .btn-gold.btn-ghost:hover, .btn-gold.btn-warning:hover, .btn-gold.btn-danger:hover, .btn-gold.btn--primary:hover, .btn-gold.btn--secondary:hover, .btn-gold.btn--outline:hover, .btn-gold.btn--ghost:hover, .btn-gold.btn--warning:hover, .btn-gold.btn--danger:hover {
+  opacity: 0.9;
+  color: #fff;
+}
+.btn.btn-danger, .btn-danger.btn-primary, .btn-danger.btn-secondary, .btn-danger.btn-outline, .btn-danger.btn-ghost, .btn-danger.btn-warning, .btn-danger, .btn-danger.btn--primary, .btn-danger.btn--secondary, .btn-danger.btn--outline, .btn-danger.btn--ghost, .btn-danger.btn--warning, .btn-danger.btn--danger, .btn.btn--danger, .btn--danger {
+  background: var(--color-error);
+  color: #fff;
+  border-color: var(--color-error);
+}
+.btn.btn-danger:hover, .btn-danger:hover, .btn--danger:hover {
+  opacity: 0.9;
+  color: #fff;
+}
+.btn.btn-sm, .btn-sm.btn-primary, .btn-sm.btn-secondary, .btn-sm.btn-outline, .btn-sm.btn-ghost, .btn-sm.btn-warning, .btn-sm.btn-danger, .btn-sm.btn--primary, .btn-sm.btn--secondary, .btn-sm.btn--outline, .btn-sm.btn--ghost, .btn-sm.btn--warning, .btn-sm.btn--danger, .btn.btn--sm, .btn-primary.btn--sm, .btn-secondary.btn--sm, .btn-outline.btn--sm, .btn-ghost.btn--sm, .btn-warning.btn--sm, .btn-danger.btn--sm, .btn--primary.btn--sm, .btn--secondary.btn--sm, .btn--outline.btn--sm, .btn--ghost.btn--sm, .btn--warning.btn--sm, .btn--danger.btn--sm {
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--text-xs);
+}
+.btn.btn-lg, .btn-lg.btn-primary, .btn-lg.btn-secondary, .btn-lg.btn-outline, .btn-lg.btn-ghost, .btn-lg.btn-warning, .btn-lg.btn-danger, .btn-lg.btn--primary, .btn-lg.btn--secondary, .btn-lg.btn--outline, .btn-lg.btn--ghost, .btn-lg.btn--warning, .btn-lg.btn--danger, .btn.btn--lg, .btn-primary.btn--lg, .btn-secondary.btn--lg, .btn-outline.btn--lg, .btn-ghost.btn--lg, .btn-warning.btn--lg, .btn-danger.btn--lg, .btn--primary.btn--lg, .btn--secondary.btn--lg, .btn--outline.btn--lg, .btn--ghost.btn--lg, .btn--warning.btn--lg, .btn--danger.btn--lg {
+  padding: var(--sp-4) var(--sp-8);
+  font-size: var(--text-base);
+}
+.btn.btn-block, .btn-block.btn-primary, .btn-block.btn-secondary, .btn-block.btn-outline, .btn-block.btn-ghost, .btn-block.btn-warning, .btn-block.btn-danger, .btn-block.btn--primary, .btn-block.btn--secondary, .btn-block.btn--outline, .btn-block.btn--ghost, .btn-block.btn--warning, .btn-block.btn--danger, .btn.btn--block, .btn-primary.btn--block, .btn-secondary.btn--block, .btn-outline.btn--block, .btn-ghost.btn--block, .btn-warning.btn--block, .btn-danger.btn--block, .btn--primary.btn--block, .btn--secondary.btn--block, .btn--outline.btn--block, .btn--ghost.btn--block, .btn--warning.btn--block, .btn--danger.btn--block {
+  width: 100%;
+}
+
+.card, .card-link, .card-flat, .card-accent.card-link, .card-gold.card-link, .card.card-gold, .card-gold.card-flat, .card.card-accent, .card-accent.card-flat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+  transition: box-shadow var(--duration) var(--ease);
+}
+.card + .card, .card-link + .card, .card-flat + .card, .card + .card-link, .card-link + .card-link, .card-flat + .card-link, .card + .card-flat, .card-link + .card-flat, .card-flat + .card-flat {
+  margin-top: var(--sp-4);
+}
+.card.card-flat, .card-flat {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: var(--sp-6);
+}
+.card.card-accent, .card-accent.card-link, .card-accent.card-flat {
+  border-left: 3px solid var(--color-accent);
+}
+.card.card-gold, .card-gold.card-link, .card-gold.card-flat {
+  border-left: 3px solid var(--color-gold);
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.card-link:hover {
+  box-shadow: var(--shadow);
+}
+
 input[type=text],
 input[type=email],
 input[type=password],
@@ -335,6 +469,60 @@ label {
   .form-grid {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sp-1) var(--sp-3);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semi);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  white-space: nowrap;
+}
+.badge.badge-math {
+  background: rgba(91, 123, 138, 0.12);
+  color: var(--color-info);
+}
+.badge.badge-reading_writing, .badge.badge-reading {
+  background: rgba(180, 106, 77, 0.12);
+  color: var(--color-accent);
+}
+.badge.badge-writing {
+  background: rgba(204, 149, 68, 0.12);
+  color: var(--color-gold);
+}
+.badge.badge-easy {
+  background: rgba(107, 122, 63, 0.12);
+  color: var(--color-success);
+}
+.badge.badge-medium {
+  background: rgba(204, 149, 68, 0.12);
+  color: var(--color-gold);
+}
+.badge.badge-hard {
+  background: rgba(180, 106, 77, 0.12);
+  color: var(--color-accent);
+}
+.badge.badge-gold {
+  background: rgba(204, 149, 68, 0.15);
+  color: var(--color-gold);
+}
+.badge.badge-success {
+  background: rgba(107, 122, 63, 0.12);
+  color: var(--color-success);
+}
+.badge.badge-error {
+  background: rgba(166, 61, 64, 0.12);
+  color: var(--color-error);
+}
+.badge.badge-info {
+  background: rgba(91, 123, 138, 0.12);
+  color: var(--color-info);
 }
 
 .landing-hero {
