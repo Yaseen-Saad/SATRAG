@@ -1,0 +1,15 @@
+<!-- Leaderboard / Podium Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#0F172A" stroke="#1E293B"/>
+  <!-- Center podium (1st) -->
+  <rect x="16" y="16" width="16" height="20" rx="3" stroke="#F59E0B" stroke-width="2" fill="#F59E0B" fill-opacity="0.15"/>
+  <text x="24" y="30" font-family="system-ui, sans-serif" font-weight="900" font-size="12" fill="#F59E0B" text-anchor="middle">1</text>
+  <!-- Left podium (2nd) -->
+  <rect x="6" y="24" width="10" height="12" rx="2" stroke="#64748B" stroke-width="1.5"/>
+  <text x="11" y="33" font-family="system-ui, sans-serif" font-weight="700" font-size="9" fill="#64748B" text-anchor="middle">2</text>
+  <!-- Right podium (3rd) -->
+  <rect x="32" y="24" width="10" height="12" rx="2" stroke="#64748B" stroke-width="1.5"/>
+  <text x="37" y="33" font-family="system-ui, sans-serif" font-weight="700" font-size="9" fill="#64748B" text-anchor="middle">3</text>
+  <!-- Trophy on top -->
+  <path d="M 21 14 H 27 V 18 C 27 20 25 22 24 22 C 23 22 21 20 21 18 Z" stroke="#3FCF8E" stroke-width="1.5"/>
+</svg>

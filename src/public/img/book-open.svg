@@ -1,0 +1,12 @@
+<!-- Book Open / Study Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#090D16"/>
+  <!-- Open book -->
+  <path d="M 32 18 V 46" stroke="#1E293B" stroke-width="2"/>
+  <path d="M 32 18 C 28 16 22 16 16 18 V 44 C 22 42 28 42 32 44" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 32 18 C 36 16 42 16 48 18 V 44 C 42 42 36 42 32 44" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Page lines left -->
+  <path d="M 20 24 H 28 M 20 29 H 27 M 20 34 H 26" stroke="#3FCF8E" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Page lines right -->
+  <path d="M 36 24 H 44 M 37 29 H 44 M 38 34 H 44" stroke="#3FCF8E" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

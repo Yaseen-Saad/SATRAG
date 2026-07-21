@@ -7,6 +7,17 @@
         padding-bottom: var(--sp-12);
         text-align: center;
         @include container;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('/img/graphbg.svg') center/cover no-repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: -1;
+        }
 
         @include respond-to(md) {
             padding-top: var(--sp-24);
@@ -114,6 +125,31 @@
     }
 }
 
+.how-it-works {
+    padding: var(--sp-12) 0;
+    @include container;
+    text-align: center;
+
+    h2 {
+        margin-bottom: var(--sp-2);
+    }
+
+    &-diagram {
+        display: flex;
+        justify-content: center;
+        margin-top: var(--sp-6);
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+
+        img {
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+        }
+    }
+}
+
 .demo-section {
     padding: var(--sp-16) 0;
     @include container;
@@ -195,10 +231,17 @@
         align-items: center;
         justify-content: center;
         min-height: 280px;
-        font-family: var(--font-heading);
-        font-size: var(--text-4xl);
-        opacity: 0.3;
         @include card;
-        @include gradient-text;
+
+        img {
+            width: 96px;
+            height: 96px;
+            opacity: 0.7;
+            transition: opacity var(--duration) var(--ease);
+        }
+
+        &:hover img {
+            opacity: 1;
+        }
     }
 }

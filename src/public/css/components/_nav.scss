@@ -113,6 +113,9 @@
     }
 
     .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         padding: var(--sp-2) var(--sp-3);
         color: var(--color-text-muted);
         font-size: var(--text-sm);
@@ -121,9 +124,20 @@
         border-radius: var(--radius);
         transition: all var(--duration) var(--ease);
 
+        img {
+            width: 14px;
+            height: 14px;
+            opacity: 0.6;
+            transition: opacity var(--duration) var(--ease);
+        }
+
         &:hover {
             background-color: var(--color-elevated);
             color: var(--color-text);
+
+            img {
+                opacity: 1;
+            }
         }
 
         &--signout {

@@ -12,17 +12,17 @@
     </a>
 
     <div class="nav-links" :class="{ 'open': open }" id="nav-links">
-      <a href="/vocab" class="nav-link" data-key="1">Words</a>
-      <a href="/practice" class="nav-link" data-key="2">Practice</a>
-      <a href="/flashcards" class="nav-link" data-key="3">Flashcards</a>
+      <a href="/vocab" class="nav-link" data-key="1"><img src="/img/icon-words.svg" alt="" width="14" height="14"> Words</a>
+      <a href="/practice" class="nav-link" data-key="2"><img src="/img/icon-practice-nav.svg" alt="" width="14" height="14"> Practice</a>
+      <a href="/flashcards" class="nav-link" data-key="3"><img src="/img/icon-flashcards-nav.svg" alt="" width="14" height="14"> Flashcards</a>
       <% if (typeof user !== 'undefined' && user) { %>
-      <a href="/dashboard" class="nav-link" data-key="4">Dashboard</a>
-      <a href="/dashboard/leaderboard" class="nav-link" data-key="5">Leaderboard</a>
-      <a href="/dashboard/analytics" class="nav-link" data-key="6">Analytics</a>
-      <a href="/settings" class="nav-link">Settings</a>
-      <a href="/auth/logout" class="nav-link nav-link--signout">Sign Out</a>
+      <a href="/dashboard" class="nav-link" data-key="4"><img src="/img/icon-dashboard.svg" alt="" width="14" height="14"> Dashboard</a>
+      <a href="/dashboard/leaderboard" class="nav-link" data-key="5"><img src="/img/icon-podium.svg" alt="" width="14" height="14"> Leaderboard</a>
+      <a href="/dashboard/analytics" class="nav-link" data-key="6"><img src="/img/icon-analytics.svg" alt="" width="14" height="14"> Analytics</a>
+      <a href="/settings" class="nav-link"><img src="/img/icon-settings-nav.svg" alt="" width="14" height="14"> Settings</a>
+      <a href="/auth/logout" class="nav-link nav-link--signout"><img src="/img/icon-logout.svg" alt="" width="14" height="14"> Sign Out</a>
       <% } else { %>
-      <a href="/auth/login" class="nav-link">Log In</a>
+      <a href="/auth/login" class="nav-link"><img src="/img/icon-login.svg" alt="" width="14" height="14"> Log In</a>
       <a href="/auth/signup" class="btn btn-primary btn-sm">Sign Up</a>
       <% } %>
     </div>

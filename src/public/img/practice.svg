@@ -1,0 +1,7 @@
+<!-- Practice / Pen Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#0F172A" stroke="#1E293B"/>
+  <path d="M 32 14 L 18 28 L 16 32 L 20 30 L 34 16 Z" stroke="#3FCF8E" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M 30 16 L 32 14 L 34 16 L 18 32 L 16 34 L 18 32" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 16 32 L 14 38 L 20 36 L 18 34" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

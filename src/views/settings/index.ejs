@@ -5,15 +5,15 @@
     <p class="dash-subtitle">Manage your account and preferences</p>
   </div>
   <% if (typeof error !== 'undefined' && error){ %>
-  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()"><img src="/img/icon-close.svg" alt="" width="14" height="14"></button></div>
   <%}%>
   <% if (typeof success !== 'undefined' && success){ %>
-  <div class="flash flash-success"><%= success %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <div class="flash flash-success"><%= success %><button class="dismiss" onclick="this.parentElement.remove()"><img src="/img/icon-close.svg" alt="" width="14" height="14"></button></div>
   <% } %>
   <% if (typeof prompt !== 'undefined' && prompt === "complete-profile"){ %>
-  <div class="flash flash-warning">Please complete your profile to access all features.<button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <div class="flash flash-warning">Please complete your profile to access all features.<button class="dismiss" onclick="this.parentElement.remove()"><img src="/img/icon-close.svg" alt="" width="14" height="14"></button></div>
   <% }else if(typeof prompt !== 'undefined' && prompt==="complete-apikeys"){ %>
-  <div class="flash flash-info">Set your LLM and Embeddings API Keys to unlock AI generation features.<button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <div class="flash flash-info">Set your LLM and Embeddings API Keys to unlock AI generation features.<button class="dismiss" onclick="this.parentElement.remove()"><img src="/img/icon-close.svg" alt="" width="14" height="14"></button></div>
   <% } %>
 
   <form action="/settings/update-all" method="POST" data-loading>
@@ -93,7 +93,7 @@
       <div class="dash-card-body">
         <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
           <div style="text-align:center;">
-            <img src="<%= (profile && profile.avatar_url) || '' %>" alt="Avatar" id="avatar-preview" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:var(--surface-3);" onerror="this.style.display='none'">
+            <img src="<%= (profile && profile.avatar_url) || '/img/auth.svg' %>" alt="Avatar" id="avatar-preview" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:var(--surface-3);" onerror="this.src='/img/auth.svg'">
           </div>
           <div style="flex:1;min-width:250px;">
             <div class="form-group" style="margin:0 0 0.5rem;">
@@ -147,8 +147,8 @@
         </div>
         <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.9rem;color:var(--text-muted);">
           <strong>Model:</strong>Default <br>
-          <strong>LLM Key:</strong> <%= (profile && profile.llm_apikey) ? '✓ Set' : '✗ Not set' %><br>
-          <strong>Embed Key:</strong> <%= (profile && profile.embedding_apikey) ? '✓ Set' : '✗ Not set' %>
+          <strong>LLM Key:</strong> <%= (profile && profile.llm_apikey) ? '<img src="/img/icon-check.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Set' : '<img src="/img/icon-x.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Not set' %><br>
+          <strong>Embed Key:</strong> <%= (profile && profile.embedding_apikey) ? '<img src="/img/icon-check.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Set' : '<img src="/img/icon-x.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Not set' %>
         </div>
       </div>
     </div>

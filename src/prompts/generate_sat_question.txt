@@ -4,7 +4,7 @@ For each question, respond with exactly one JSON object with these fields:
 - "question_type": "mcq" or "spr"
 - "subject": "math", "reading", or "writing"
 - "topic": the content domain (see below)
-- "subtopic": the specific skill testing point (see below)
+- "subtopic": the specific skill testing point (see below — use EXACTLY these strings)
 - "difficulty": "easy", "medium", or "hard"
 - "difficulty_band": integer 1-7 (METADATA ONLY — include in JSON, do NOT put random numbers in question text)
 - "question_text": the stem/question HTML (may include HTML tags like <p>, <strong>)
@@ -39,38 +39,41 @@ SUBJECT-SPECIFIC RULES:
 
 --- MATH ---
 Calculator is allowed on all questions. A built-in graphing calculator is available.
-Content domains and their approximate question distribution:
 
-Domain: Algebra
-Skill/Knowledge Testing Points:
-- Linear equations in one variable
-- Linear equations in two variables
-- Linear functions
-- Systems of two linear equations in two variables
-- Linear inequalities in one or two variables
+Domain: Algebra (approx. 13-15 questions)
+Focus: Linear relationships, equations, inequalities, and systems.
 
-Domain: Advanced Math
-Skill/Knowledge Testing Points:
-- Equivalent expressions
-- Nonlinear equations in one variable and systems of equations in two variables
-- Nonlinear functions
+- "Linear equations in one variable": Solve for x in equations like 3x + 7 = 22 or (2x-5)/3 = 4. Test isolating variables, combining like terms, and distributing. Easy: one-step or two-step with integers. Medium: variables on both sides, fractions/decimals. Hard: equations with nested parentheses or requiring clearing denominators.
+- "Linear equations in two variables": Work with y = mx + b, ax + by = c, and slope-intercept/standard forms. Find slope, intercepts, or convert between forms. Easy: identify slope or y-intercept directly. Medium: find equation from two points or a graph. Hard: interpret slope and intercepts in context (cost models, rates of change).
+- "Linear functions": Evaluate f(x) for given inputs, interpret function notation, and understand domain/range. Easy: f(x) = 2x + 3, find f(5). Medium: given f(x) = ax + b, find x when f(x) = k. Hard: piecewise linear contexts, comparing two linear function models.
+- "Systems of two linear equations in two variables": Solve systems using substitution, elimination, or graphing. Easy: systems with integer solutions. Medium: systems requiring multiplication before elimination. Hard: systems with no solution or infinitely many solutions, or word problems requiring setup.
+- "Linear inequalities in one or two variables": Solve and graph inequalities, interpret inequality solutions on number lines or coordinate planes. Easy: solve x + 3 > 7. Medium: compound inequalities, graphing on number line. Hard: system of inequalities, shaded region interpretation, or word problem setup.
 
-Domain: Problem-Solving and Data Analysis
-Skill/Knowledge Testing Points:
-- Ratios, rates, proportional relationships, and units
-- Percentages
-- One-variable data: distributions and measures of center and spread
-- Two-variable data: models and scatterplots
-- Probability and conditional probability
-- Inference from sample statistics and margin of error
-- Evaluating statistical claims: observational studies and experiments
+Domain: Advanced Math (approx. 13-15 questions)
+Focus: Nonlinear relationships, polynomial expressions, and functions.
 
-Domain: Geometry and Trigonometry
-Skill/Knowledge Testing Points:
-- Area and volume
-- Lines, angles, and triangles
-- Right triangles and trigonometry
-- Circles
+- "Equivalent expressions": Factor, expand, and simplify algebraic expressions. Factor trinomials, factor out GCF, difference of squares, perfect square trinomials. Easy: factor x^2 + 5x + 6. Medium: factor 2x^2 - 8 or expand (x+3)(x-5). Hard: factor by grouping, recognize equivalent forms like (x+1)^2 vs x^2+2x+1.
+- "Nonlinear equations in one variable and systems of equations in two variables": Solve quadratics by factoring, completing the square, or quadratic formula. Solve |x - 3| = 7 type absolute value equations. Easy: x^2 = 25 (take square roots). Medium: x^2 + 5x + 6 = 0 (factor). Hard: use quadratic formula, or set up quadratic from context. For systems: one linear + one nonlinear (e.g., y = x^2 and y = 2x + 3).
+- "Nonlinear functions": Evaluate and interpret quadratic, exponential, and other nonlinear functions. Understand vertex, axis of symmetry, growth/decay rates. Easy: evaluate f(x) = x^2 at x = 4. Medium: find vertex of f(x) = x^2 - 6x + 8. Hard: compare exponential growth models, interpret rate of change in nonlinear contexts.
+
+Domain: Problem-Solving and Data Analysis (approx. 5-7 questions)
+Focus: Quantitative literacy, statistics, and data interpretation.
+
+- "Ratios, rates, proportional relationships, and units": Set up and solve proportions, convert units, interpret rates. Easy: if 3 apples cost $2, how much for 9? Medium: unit conversion with multiple steps (mph to ft/sec). Hard: rates involving density, work rates, or multi-step proportional reasoning.
+- "Percentages": Calculate percent increase/decrease, find part/whole/percent, compound percent. Easy: what is 20% of 50? Medium: if a price increases from $80 to $100, what is percent increase? Hard: successive percent changes (10% increase then 20% decrease), or percent of a percent.
+- "One-variable data: distributions and measures of center and spread": Read histograms, box plots, dot plots. Calculate/interpret mean, median, mode, range, IQR, standard deviation. Easy: find the mean of {2, 4, 6, 8}. Medium: interpret a box plot to find median and IQR. Hard: compare distributions, identify outliers, or determine which measure of center is most appropriate.
+- "Two-variable data: models and scatterplots": Interpret scatterplots, lines of best fit, correlation vs. causation. Easy: identify positive/negative correlation from a scatterplot. Medium: interpret slope of a line of best fit in context. Hard: interpolate or extrapolate, identify influential points, or distinguish correlation from causation.
+- "Probability and conditional probability": Calculate basic probabilities, use two-way tables for joint/conditional probability. Easy: P(rolling a 3 on a die) = 1/6. Medium: from a two-way table, find P(A | B). Hard: independent vs. dependent events, P(A and B) with conditional probability.
+- "Inference from sample statistics and margin of error": Understand sampling methods, margin of error, confidence intervals. Easy: identify a biased sample. Medium: given margin of error, construct a confidence interval. Hard: determine how sample size affects margin of error, or identify sampling bias in study descriptions.
+- "Evaluating statistical claims: observational studies and experiments": Distinguish observational studies from experiments, identify confounding variables, understand random assignment and control groups. Easy: identify whether a study is observational or experimental. Medium: determine which variable is the response variable. Hard: identify confounding variables or flaws in study design.
+
+Domain: Geometry and Trigonometry (approx. 5-7 questions)
+Focus: Geometric relationships, area/volume, and trigonometric ratios.
+
+- "Area and volume": Calculate area of triangles, parallelograms, circles; volume of prisms, cylinders, spheres, cones, pyramids. Easy: area of a rectangle with length 8 and width 5. Medium: volume of a cylinder with radius 3 and height 10. Hard: composite solids, or volume problems requiring subtraction of inner shapes.
+- "Lines, angles, and triangles": Use angle relationships (vertical, complementary, supplementary, parallel lines cut by transversals), triangle sum theorem, isosceles/equilateral triangles. Easy: find complementary angle of 35°. Medium: find x when parallel lines create algebraic angle expressions. Hard: multi-step problems combining triangle angle sums with parallel line theorems.
+- "Right triangles and trigonometry": Apply Pythagorean theorem, SOH-CAH-TOA, 30-60-90 and 45-45-90 triangles. Easy: find hypotenuse of a 3-4-5 triangle. Medium: sin(θ) = 3/5, find cos(θ). Hard: angle of elevation/depression problems, or multi-step problems combining trig with Pythagorean theorem.
+- "Circles": Use circle equations (x-h)^2 + (y-k)^2 = r^2, arc length, sector area, central/inscribed angles. Easy: find radius from circle equation. Medium: arc length = (θ/360) × 2πr. Hard: inscribed angle theorems, or combined circle + triangle problems.
 
 Math rules:
 - WRONG ANSWERS MUST test real student mistakes: sign errors, order of operations, misapplied formulas, unit errors, rounding errors.
@@ -86,30 +89,39 @@ Passages are SHORT: 25-150 words. The digital SAT uses many shorter passages ins
 Passage genres: literature, history/social studies, humanities, science.
 Include line numbers in passage text using <sup> tags: <sup>1</sup> at each paragraph start.
 
-Content domains and their approximate question distribution:
+Domain: Craft and Structure (approx. 10-12 questions)
+Focus: Understanding word choice, text structure, and how texts relate to each other.
 
-Domain: Craft and Structure
-Skill/Knowledge Testing Points:
-- Words in Context: determine meaning of high-utility words/phrases in context
-- Text Structure and Purpose: analyze text structure, explain how parts contribute to the whole
-- Cross-Text Connections: make connections between topically related texts
+- "Words in Context": Determine the meaning of a word or phrase as it is used in the passage. The tested word is highlighted in the passage with a blank (<u>word</u>), and all four answer choices are plausible definitions or synonyms. The correct answer depends on how the word is used in THIS specific context, not its most common definition. Easy: common word with a less common meaning (e.g., "checked" meaning "restrained"). Medium: word whose meaning shifts based on context (e.g., "temperate" in a climate discussion vs. personality). Hard: precise vocabulary where distractors are close synonyms but only one fits the exact shade of meaning (e.g., "ambivalent" vs. "apathetic" vs. "skeptical").
 
-Domain: Information and Ideas
-Skill/Knowledge Testing Points:
-- Central Ideas and Details: identify main ideas and supporting details
-- Command of Evidence — Textual: find the quote that best supports a claim
-- Command of Evidence — Quantitative: interpret data from tables, bar graphs, line graphs
-- Inferences: draw reasonable inferences from the text
+- "Text Structure and Purpose": Analyze how a passage is organized, what the author's purpose is, or how a specific sentence/paragraph contributes to the overall text. The passage may describe a process, present an argument, or compare two approaches. Easy: "The author's primary purpose in the passage is to..." with clearly stated purpose. Medium: "Which choice best describes how the passage is organized?" or "The third sentence serves primarily to..." Hard: questions requiring understanding of subtle rhetorical moves, like how an author qualifies a claim or transitions between perspectives.
 
-Domain: Standard English Conventions
-Skill/Knowledge Testing Points:
-- Boundaries: sentence boundaries, punctuation at boundaries (commas, semicolons, colons, periods)
-- Form, Structure, and Sense: subject-verb agreement, pronoun-antecedent agreement, verb tense, parallel structure, modifier placement, pronoun case, comparative/superlative, commonly confused words
+- "Cross-Text Connections": Two short passages on the same topic (e.g., two scientists discussing a phenomenon, two historical documents, two reviews of the same book). The student must identify how the authors' perspectives relate — agreement, disagreement, shared assumption, or complementary viewpoints. IMPORTANT: Each passage must be 70-150 words long. The passages should present DIFFERENT perspectives or aspects of the same topic. The question asks about the relationship between the texts, NOT about a single text. Easy: one author clearly agrees/disagrees with the other on a stated point. Medium: authors share a topic but emphasize different aspects or reach different conclusions. Hard: the relationship is implicit — authors may agree on facts but disagree on implications, or one author may address a concern the other raises indirectly.
 
-Domain: Expression of Ideas
-Skill/Knowledge Testing Points:
-- Rhetorical Synthesis: combine information from notes/bullet points to achieve a rhetorical goal
-- Transitions: choose the best transition word/phrase to connect ideas
+Domain: Information and Ideas (approx. 8-10 questions)
+Focus: Comprehending, analyzing, and integrating information from passages and data.
+
+- "Central Ideas and Details": Identify the main idea of the passage or a specific detail that supports it. The passage will have a clear central claim supported by evidence. Easy: "Which choice best states the main idea of the passage?" with one obvious main idea. Medium: "According to the passage, which of the following is true about X?" requiring scanning for specific details. Hard: distinguish between the main idea and a supporting detail, or identify an idea that is implied but not directly stated.
+
+- "Command of Evidence — Textual": The question presents a claim or finding, and the student must select the quote from the passage that BEST supports it. All four answer choices are actual quotes from the passage, but only one directly supports the specific claim. Easy: the supporting quote is clearly stated and unambiguous. Medium: two quotes seem relevant, but only one directly supports the specific claim. Hard: the distractors are quotes that support related but different claims, or quotes that are only tangentially relevant.
+
+- "Command of Evidence — Quantitative": The passage includes a table, bar graph, line graph, or scatterplot. The student must interpret the data to answer the question. The data should be clear and readable. Easy: read a value directly from a bar graph or table. Medium: compare two data points or calculate a simple difference. Hard: identify a trend, interpret a rate of change, or determine which data point best supports or contradicts a claim.
+
+- "Inferences": The answer must be something that logically follows from the passage but is NOT directly stated. The passage provides evidence, and the student must draw a reasonable conclusion. Easy: the inference is very close to directly stated (paraphrase). Medium: the inference requires combining two pieces of information from the passage. Hard: the inference requires understanding implications, reading between the lines, or distinguishing reasonable inferences from over-generalizations.
+
+Domain: Standard English Conventions (approx. 11-13 questions)
+Focus: Grammar, punctuation, and sentence structure rules.
+
+- "Boundaries": Correct punctuation and sentence boundaries — commas, semicolons, colons, periods, and dashes used to join or separate clauses. The passage will have exactly ONE punctuation error at a boundary. Easy: missing period between two independent clauses (run-on). Medium: incorrect comma splice or missing semicolon. Hard: complex sentence with multiple clauses where the boundary error is subtle (e.g., missing colon before a list after an independent clause).
+
+- "Form, Structure, and Sense": Subject-verb agreement, pronoun-antecedent agreement, verb tense consistency, parallel structure, modifier placement, pronoun case, comparative/superlative forms, and commonly confused words (there/their/they're, its/it's, who/whom). The passage will have exactly ONE error. Easy: subject-verb agreement with a simple subject (e.g., "The group of students were" → "was"). Medium: verb tense shift in a multi-sentence passage, or misplaced modifier. Hard: parallel structure in a list, pronoun-antecedent agreement with indefinite pronouns, or comparative/superlative in a complex sentence.
+
+Domain: Expression of Ideas (approx. 7-9 questions)
+Focus: Rhetorical effectiveness and logical flow.
+
+- "Rhetorical Synthesis": The passage provides notes or bullet points with information about a topic. The student must choose the sentence that best achieves a specific rhetorical goal (e.g., emphasize a trend, introduce a comparison, provide context). Easy: "A student wants to emphasize X. Which choice best achieves this goal?" with one sentence clearly emphasizing X. Medium: multiple sentences achieve the goal to some degree, but one is more effective. Hard: the differences between choices are subtle — one may be more concise, more formal, or more focused on the specific goal.
+
+- "Transitions": The passage has a blank, and the student must choose the transition word/phrase that best connects the ideas. The transition must be logically appropriate. Easy: clear contrast or addition (however, moreover, therefore). Medium: less obvious transitions requiring understanding of cause-effect, concession, or elaboration. Hard: transitions where the relationship is subtle — e.g., "nevertheless" vs. "consequently" in a passage with qualified agreement.
 
 Reading/Writing rules:
 - DISTRACTORS must be plausible but wrong: common misreadings or over-generalizations.
@@ -119,6 +131,7 @@ Reading/Writing rules:
 - For Expression of Ideas / Transitions: the question presents a passage with a blank and asks which transition best completes it.
 - For Command of Evidence: provide 4 specific quotes from the passage. The correct one must be the BEST support for the claim. Distractors should be real quotes from the passage that support a different claim or are only tangentially related.
 - For Inferences: the answer must be something that logically follows from the passage but is NOT directly stated. Distractors should be things that are either contradicted by the passage or unsupported.
+- For Cross-Text Connections: include TWO passages in the "passage_text" field, separated by "--- Passage 1 ---" and "--- Passage 2 ---" headers. Each passage must be 70-150 words (aim for 100-120 words each). The passages should present DIFFERENT perspectives, arguments, or aspects of the same topic. One passage might present a claim, and the other might respond to it, offer an alternative view, or provide additional context. The question must require reading BOTH passages to answer correctly.
 
 GENERAL RULES:
 - MCQ questions MUST have exactly 4 options (A, B, C, D).
@@ -129,9 +142,10 @@ GENERAL RULES:
 - Questions must be answerable without external knowledge.
 - The correct answer must be DEFINITIVELY, UNAMBIGUOUSLY correct; distractors should be plausible.
 - STRICT LENGTH LIMITS:
-  - Passage (reading/writing): 25-150 words MAXIMUM.
+  - Passage (reading/writing single): 25-150 words MAXIMUM.
+  - Passage (cross-text connections): TWO passages, each 70-150 words (combined max ~300 words).
   - Question stem: 1-3 short sentences MAXIMUM. Never paragraph-length stems.
   - Each answer choice: 1 short sentence or phrase MAXIMUM (under 15 words).
   - Explanation: 1-2 sentences only.
-  - The entire question (stem + all options) should be under 120 words for reading/writing, under 80 words for math.
+  - The entire question (stem + all options) should be under 120 words for reading/writing (except cross-text passages), under 80 words for math.
   - Keep word problem contexts concise — the digital SAT specifically reduced average problem length.

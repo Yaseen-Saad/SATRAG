@@ -21,7 +21,7 @@
     </div>
     <div class="bb-topbar-right">
       <button class="bb-mark-btn <%= uState?.marked_for_review ? 'marked' : '' %>" id="mark-btn" onclick="toggleMarkBtn()">
-        <%= uState?.marked_for_review ? '★ Marked' : '☆ Mark for Review' %>
+        <img src="<%= uState?.marked_for_review ? '/img/icon-star.svg' : '/img/icon-star-outline.svg' %>" alt="" width="16" height="16" style="vertical-align:-3px"> <%= uState?.marked_for_review ? 'Marked' : 'Mark for Review' %>
       </button>
       <span class="bb-timer" id="timer">00:00</span>
     </div>
@@ -53,7 +53,7 @@
         <button class="bb-option" data-label="<%= opt.label %>" onclick="window.selectOption && window.selectOption('<%= opt.label %>')">
           <span class="bb-option-bubble"><%= opt.label %></span>
           <span class="bb-option-text"><%- opt.content %></span>
-          <span class="bb-eliminate-btn">−</span>
+          <span class="bb-eliminate-btn"><img src="/img/icon-minus.svg" alt="Eliminate" width="14" height="14"></span>
         </button>
         <% }) %>
       </div>
@@ -91,7 +91,7 @@
   <div class="bb-palette">
     <div class="bb-palette-header">
       <h3>Questions</h3>
-      <button onclick="closePalette()">✕</button>
+      <button onclick="closePalette()"><img src="/img/icon-close.svg" alt="Close" width="16" height="16"></button>
     </div>
     <div class="bb-palette-grid">
       <div class="bb-palette-item current">1</div>

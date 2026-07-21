@@ -119,10 +119,10 @@
         <div class="practice-item-footer">
           <% if (q.user_state) { %>
           <span class="status-<%= q.user_state.status %>">
-            <%= q.user_state.status === 'solved_correct' ? '✓ Solved' : q.user_state.status === 'solved_incorrect' ? '✗ Incorrect' : '○ Attempted' %>
+            <% if (q.user_state.status === 'solved_correct') { %><img src="/img/icon-check.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Solved<% } else if (q.user_state.status === 'solved_incorrect') { %><img src="/img/icon-x.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Incorrect<% } else { %><img src="/img/icon-dot.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Attempted<% } %>
             <%= q.user_state.best_time_ms ? ` · ${Math.round(q.user_state.best_time_ms / 1000)}s` : '' %>
           </span>
-          <% if (q.user_state.marked_for_review) { %><span class="status-marked">★ Review</span><% } %>
+          <% if (q.user_state.marked_for_review) { %><span class="status-marked"><img src="/img/icon-star.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Review</span><% } %>
           <% } else { %>
           <span style="color:var(--text-light);">Not attempted</span>
           <% } %>

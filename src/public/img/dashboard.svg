@@ -1,0 +1,13 @@
+<!-- Dashboard / Grid Icon -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="12" fill="#0F172A" stroke="#1E293B"/>
+  <!-- Grid panels -->
+  <rect x="10" y="10" width="12" height="10" rx="2" stroke="#38BDF8" stroke-width="2"/>
+  <rect x="26" y="10" width="12" height="10" rx="2" stroke="#3FCF8E" stroke-width="2"/>
+  <rect x="10" y="24" width="12" height="14" rx="2" stroke="#3FCF8E" stroke-width="2"/>
+  <rect x="26" y="24" width="12" height="14" rx="2" stroke="#38BDF8" stroke-width="2"/>
+  <!-- Bar chart inside bottom-left -->
+  <path d="M 14 34 V 31 M 17 34 V 29 M 20 34 V 32" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Sparkline inside top-right -->
+  <path d="M 28 18 L 31 15 L 34 17 L 37 13" stroke="#3FCF8E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
