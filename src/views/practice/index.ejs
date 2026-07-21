@@ -9,13 +9,15 @@
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
+<script>const topicTree = <%- JSON.stringify(topicTree).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') %>;</script>
+
 <div class="practice-layout">
   <aside class="practice-filters">
     <h3>Filters</h3>
-    <form method="GET" action="/practice">
+    <form method="GET" action="/practice" id="filter-form">
       <div class="form-group">
         <label>Subject</label>
-        <select name="subject" onchange="this.form.submit()">
+        <select name="subject" id="filter-subject">
           <option value="">All</option>
           <option value="reading_writing" <%= filters.subject === 'reading_writing' ? 'selected' : '' %>>Reading & Writing</option>
           <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
@@ -32,24 +34,16 @@
 
       <div class="form-group">
         <label>Topic</label>
-        <select name="topic" onchange="this.form.submit()">
+        <select name="topic" id="filter-topic">
           <option value="">All</option>
-          <% (topicTree || []).forEach(t => { %>
-          <option value="<%= t.topic %>" <%= filters.topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
-          <% }) %>
         </select>
       </div>
-      <% if (filters.subtopics && filters.subtopics.length > 0) { %>
       <div class="form-group">
         <label>Subtopic</label>
-        <select name="subtopic">
+        <select name="subtopic" id="filter-subtopic">
           <option value="">All</option>
-          <% filters.subtopics.forEach(function(s) { %>
-          <option value="<%= s %>" <%= filters.subtopic === s ? 'selected' : '' %>><%= s %></option>
-          <% }) %>
         </select>
       </div>
-      <% } %>
       <div class="form-group">
         <label>Difficulty</label>
         <select name="difficulty">
@@ -140,3 +134,68 @@
     <% } %>
   </main>
 </div>
+
+<script>
+(function() {
+  const subjectEl = document.getElementById('filter-subject');
+  const topicEl = document.getElementById('filter-topic');
+  const subtopicEl = document.getElementById('filter-subtopic');
+  const initialTopic = <%- JSON.stringify(filters.topic || '') %>;
+  const initialSubtopic = <%- JSON.stringify(filters.subtopic || '') %>;
+  const initialSubject = <%- JSON.stringify(filters.subject || '') %>;
+
+  function populateTopics() {
+    const subject = subjectEl.value;
+    const prev = topicEl.value;
+    topicEl.innerHTML = '<option value="">All</option>';
+    topicTree.forEach(t => {
+      if (subject && t.subject !== subject) return;
+      const opt = document.createElement('option');
+      opt.value = t.topic;
+      opt.textContent = t.topic;
+      topicEl.appendChild(opt);
+    });
+    if (prev && [...topicEl.options].some(o => o.value === prev)) {
+      topicEl.value = prev;
+    }
+  }
+
+  function populateSubtopics() {
+    const topic = topicEl.value;
+    const prev = subtopicEl.value;
+    subtopicEl.innerHTML = '<option value="">All</option>';
+    const entry = topicTree.find(t => t.topic === topic);
+    (entry?.subtopics || []).forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      subtopicEl.appendChild(opt);
+    });
+    if (prev && [...subtopicEl.options].some(o => o.value === prev)) {
+      subtopicEl.value = prev;
+    }
+  }
+
+  subjectEl.addEventListener('change', () => {
+    populateTopics();
+    populateSubtopics();
+  });
+
+  topicEl.addEventListener('change', () => {
+    const topic = topicEl.value;
+    const entry = topicTree.find(t => t.topic === topic);
+    if (entry && subjectEl.value !== entry.subject) {
+      subjectEl.value = entry.subject;
+      populateTopics();
+      topicEl.value = topic;
+    }
+    populateSubtopics();
+  });
+
+  populateTopics();
+  if (initialTopic) topicEl.value = initialTopic;
+  populateSubtopics();
+  if (initialSubtopic) subtopicEl.value = initialSubtopic;
+  if (initialSubject) subjectEl.value = initialSubject;
+})();
+</script>

@@ -192,19 +192,77 @@ class PracticeEngine {
         }
     }
 
-    async getTopicTree(subject) {
-        let query = supabase.from('sat_questions').select('topic, subtopic, subject')
-        query = applySubjectFilter(query, subject)
-        const { data } = await query;
-        const tree = {};
-        (data || []).forEach(q => {
-            const displaySubject = isRW(q.subject) ? 'reading_writing' : q.subject;
-            if (!tree[q.topic]) tree[q.topic] = { subtopics: new Set(), subject: displaySubject };
-            if (q.subtopic) tree[q.topic].subtopics.add(q.subtopic);
-        })
-        return Object.entries(tree).map(([topic, entry]) => ({
-            topic, subtopics: [...entry.subtopics].sort(), subject: entry.subject
-        }))
+    getTopicTree(subject) {
+        const tree = [
+            {
+                topic: 'Algebra', subject: 'math', subtopics: [
+                    'Linear equations in one variable',
+                    'Linear equations in two variables',
+                    'Linear functions',
+                    'Systems of two linear equations in two variables',
+                    'Linear inequalities in one or two variables'
+                ]
+            },
+            {
+                topic: 'Advanced Math', subject: 'math', subtopics: [
+                    'Equivalent expressions',
+                    'Nonlinear equations in one variable and systems of equations in two variables',
+                    'Nonlinear functions'
+                ]
+            },
+            {
+                topic: 'Problem-Solving and Data Analysis', subject: 'math', subtopics: [
+                    'Ratios, rates, proportional relationships, and units',
+                    'Percentages',
+                    'One-variable data: distributions and measures of center and spread',
+                    'Two-variable data: models and scatterplots',
+                    'Probability and conditional probability',
+                    'Inference from sample statistics and margin of error',
+                    'Evaluating statistical claims: observational studies and experiments'
+                ]
+            },
+            {
+                topic: 'Geometry and Trigonometry', subject: 'math', subtopics: [
+                    'Area and volume',
+                    'Lines, angles, and triangles',
+                    'Right triangles and trigonometry',
+                    'Circles'
+                ]
+            },
+            {
+                topic: 'Craft and Structure', subject: 'reading_writing', subtopics: [
+                    'Words in Context',
+                    'Text Structure and Purpose',
+                    'Cross-Text Connections'
+                ]
+            },
+            {
+                topic: 'Information and Ideas', subject: 'reading_writing', subtopics: [
+                    'Central Ideas and Details',
+                    'Command of Evidence — Textual',
+                    'Command of Evidence — Quantitative',
+                    'Inferences'
+                ]
+            },
+            {
+                topic: 'Standard English Conventions', subject: 'reading_writing', subtopics: [
+                    'Boundaries',
+                    'Form, Structure, and Sense'
+                ]
+            },
+            {
+                topic: 'Expression of Ideas', subject: 'reading_writing', subtopics: [
+                    'Rhetorical Synthesis',
+                    'Transitions'
+                ]
+            }
+        ];
+
+        if (subject) {
+            const filter = isRW(subject) ? 'reading_writing' : subject;
+            return tree.filter(t => t.subject === filter);
+        }
+        return tree;
     }
 
     async getAdjacentQuestions({ questionId, subject, topic, userId }) {

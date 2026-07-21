@@ -11,7 +11,7 @@ router.get('/', requireAuth, async (req, res) => {
     let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
     try {
         const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined;
-        const topicTree = await practice.getTopicTree(subject);
+        const topicTree = practice.getTopicTree();
         const validTopics = topicTree.map(t => t.topic)
         if (topic && !validTopics.includes(topic)) {
             topic = undefined; subtopic = undefined;
@@ -36,7 +36,7 @@ router.get('/', requireAuth, async (req, res) => {
 
 router.get('/generate', requireAuth, async (req, res) => {
     try {
-        const topicTree = await practice.getTopicTree();
+        const topicTree = practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: null, subject: undefined, topic: undefined, subtopic: undefined, difficulty: undefined, count: undefined, topicTree, generated: null })
     } catch (err) {
         console.error(err)
@@ -60,12 +60,12 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
                 await incrementGenCount(req.user)
             }
         }
-        const topicTree = await practice.getTopicTree(subject);
+        const topicTree = practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: null, topicTree, generated: questions, subject, topic, subtopic, difficulty, count })
     } catch (err) {
         console.error(err)
         const { subject, topic, subtopic, difficulty, count } = req.body
-        const topicTree = await practice.getTopicTree();
+        const topicTree = practice.getTopicTree();
         res.render('practice/generate', { user: req.user, error: 'Error generating questions', topicTree, generated: null, subject, topic, subtopic, difficulty, count })
     }
 });

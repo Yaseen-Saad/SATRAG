@@ -50,7 +50,9 @@ router.post('/login', async (req, res) => {
         const { error: loginErr } = await supabase.service.from('public_profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id);
         if (loginErr) console.error('last_login update failed:', loginErr.message);
         const remember = req.body.remember === '1';
-        res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : undefined })
+        const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : undefined };
+        res.cookie('sb_access_token', data.session.access_token, cookieOpts);
+        res.cookie('sb_refresh_token', data.session.refresh_token, cookieOpts);
         res.redirect('/')
     } catch (err) {
         console.error('Login error:', err.message);
@@ -106,7 +108,8 @@ router.post('/signup', async (req, res) => {
             }
             const { error: profileErr } = await supabase.service.from('public_profiles').upsert(profileRow, { onConflict: 'id' })
             if (profileErr) console.error('Profile creation failed:', profileErr.message)
-            res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 86400000 })
+            res.cookie('sb_access_token', data.session.access_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 30 * 24 * 60 * 60 * 1000 });
+            res.cookie('sb_refresh_token', data.session.refresh_token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 30 * 24 * 60 * 60 * 1000 });
             return res.redirect('/settings')
         }
         res.render('auth/login', { error: "Signup successful! Check your email to confirm, then log in." })
@@ -117,7 +120,9 @@ router.post('/signup', async (req, res) => {
 })
 
 router.get('/logout', (req, res) => {
-    res.clearCookie('sb_access_token', { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+    const opts = { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' };
+    res.clearCookie('sb_access_token', opts);
+    res.clearCookie('sb_refresh_token', opts);
     res.redirect('/auth/login');
 })
 

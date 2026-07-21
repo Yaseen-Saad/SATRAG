@@ -10,7 +10,7 @@
 <form method="POST" action="/practice/generate" class="card" style="padding:1.5rem; max-width:600px;" data-loading>
   <div class="form-group">
     <label>Subject</label>
-    <select name="subject" class="form-input" required onchange="filterTopics()">
+    <select name="subject" class="form-input" required id="gen-subject">
       <option value="">— Select —</option>
       <option value="math" <%= subject === 'math' ? 'selected' : '' %>>Math</option>
       <option value="reading_writing" <%= subject === 'reading_writing' ? 'selected' : '' %>>Reading & Writing</option>
@@ -18,17 +18,14 @@
   </div>
   <div class="form-group">
     <label>Topic</label>
-    <select name="topic" class="form-input" required id="topic-select" onchange="populateSubtopics()">
+    <select name="topic" class="form-input" required id="topic-select">
       <option value="">— Select —</option>
-      <% topicTree.forEach(t => { %>
-      <option value="<%= t.topic %>" data-subject="<%= t.subject || '' %>" <%= topic === t.topic ? 'selected' : '' %>><%= t.topic %></option>
-      <% }) %>
     </select>
   </div>
   <div class="form-group">
     <label>Subtopic</label>
     <select name="subtopic" class="form-input" id="subtopic-select">
-      <option value="">— Select Topic First —</option>
+      <option value="">— All Subtopics —</option>
     </select>
   </div>
   <div class="form-group">
@@ -81,41 +78,68 @@
 <% } %>
 
 <script>
+  const subjectEl = document.getElementById('gen-subject');
   const topicSelect = document.getElementById('topic-select');
   const subtopicSelect = document.getElementById('subtopic-select');
+  const initialTopic = '<%= topic || '' %>';
+  const initialSubtopic = '<%= subtopic || '' %>';
 
-  function filterTopics() {
-    const subject = document.querySelector('[name="subject"]').value;
-    document.querySelectorAll('#topic-select option').forEach(opt => {
-      if (opt.value === '') return;
-      if (!subject) { opt.style.display = ''; return; }
-      if (subject === 'reading_writing') {
-        opt.style.display = opt.dataset.subject === 'reading_writing' ? '' : 'none';
-      } else {
-        opt.style.display = opt.dataset.subject === subject ? '' : 'none';
-      }
+  function populateTopics() {
+    const subject = subjectEl.value;
+    const prev = topicSelect.value;
+    topicSelect.innerHTML = '<option value="">— Select —</option>';
+    topicTree.forEach(t => {
+      if (subject && t.subject !== subject) return;
+      const opt = document.createElement('option');
+      opt.value = t.topic;
+      opt.textContent = t.topic;
+      opt.dataset.subject = t.subject;
+      topicSelect.appendChild(opt);
     });
-    topicSelect.value = '';
-    populateSubtopics();
+    if (prev && [...topicSelect.options].some(o => o.value === prev)) {
+      topicSelect.value = prev;
+    }
   }
 
   function populateSubtopics() {
     const topic = topicSelect.value;
-    const entry = topicTree.find(t => t.topic === topic);
+    const prev = subtopicSelect.value;
     subtopicSelect.innerHTML = '<option value="">— All Subtopics —</option>';
+    const entry = topicTree.find(t => t.topic === topic);
     (entry?.subtopics || []).forEach(s => {
       const opt = document.createElement('option');
       opt.value = s;
       opt.textContent = s;
       subtopicSelect.appendChild(opt);
     });
+    if (prev && [...subtopicSelect.options].some(o => o.value === prev)) {
+      subtopicSelect.value = prev;
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    filterTopics();
+  subjectEl.addEventListener('change', () => {
+    populateTopics();
     populateSubtopics();
   });
 
+  topicSelect.addEventListener('change', () => {
+    const topic = topicSelect.value;
+    const entry = topicTree.find(t => t.topic === topic);
+    if (entry && subjectEl.value !== entry.subject) {
+      subjectEl.value = entry.subject;
+      populateTopics();
+      topicSelect.value = topic;
+    }
+    populateSubtopics();
+  });
+
+  populateTopics();
+  if (initialTopic) topicSelect.value = initialTopic;
+  populateSubtopics();
+  if (initialSubtopic) subtopicSelect.value = initialSubtopic;
+</script>
+
+<script>
   document.querySelectorAll('.save-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const question = JSON.parse(btn.dataset.question);
