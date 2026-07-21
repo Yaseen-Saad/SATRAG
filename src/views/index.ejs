@@ -12,26 +12,59 @@
 <section class="social-proof">
   <div class="social-proof-stats">
     <div class="stat-block">
-      <div class="stat-number">400</div>
+      <div class="stat-number">
+        <%= stats.totalWords %>
+      </div>
       <div class="stat-label">Words Generated</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">15</div>
+      <div class="stat-number">
+        <%= stats.totalQuestions %>
+      </div>
       <div class="stat-label">Questions Answered</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">0</div>
-      <div class="stat-label">Active Students</div>
+      <div class="stat-number">
+        <%= stats.totalUsers %>
+      </div>
+      <div class="stat-label">Active Users</div>
     </div>
   </div>
-</section>
-<div class="card" style="text-align:center;">
-  <h2 style="margin-top:0;">Ready to Start?</h2>
-  <p style="color:var(--text-muted);">Enter a word to see its vocabulary entry, or jump straight into a quiz.</p>
-  <div class="flex gap-1 justify-center" style="margin-top:1.25rem;">
-    <form method="GET" action="/vocab" class="flex gap-1" style="max-width:400px; width:100%;">
-      <input type="text" name="word" placeholder="e.g., perspicacious" class="flex-1">
-      <button type="submit" class="btn-primary">Search</button>
-    </form>
+  <div class="social-proof-quotes">
+    <p class="quote">"The mnemonics actually stick. I remembered words weeks later without reviewing."</p>
+    <p class="quote">"Finally, an SAT tool that doesn't feel like a chore. The adaptive practice knows exactly where I'm weak."</p>
   </div>
-</div>
+</section>
+
+<section class="demo-section">
+  <h2>Try It Right Now</h2>
+  <p class="demo-section-sub">
+    Enter any SAT word to see what SATrack generates.
+  </p>
+  <form method="GET" action="/vocab" class="demo-search-wrap">
+    <input type="text" name="word" placeholder="e.g., perspicacious" required>
+    <button type="submit" class="btn-primary">Look Up</button>
+  </form>
+  <div class="feature-section">
+    <div class="feature-text">
+      <h3>Vocabulary That Stays With You</h3>
+      <p>Every word gets a mnemonic device, a picture story, and an example sentence. Generated with AI + RAG so each entry feels authentic, not robotic. Rate entries and the system learns from your feedback. </p>
+    </div>
+    <div class="feature-visual">Words</div>
+  </div>
+  <div class="feature-section feature-section--reverse">
+    <div class="feature-text">
+      <h3>Practice Like the Real Test</h3>
+      <p>Real College Board questions plus AI-generated ones styled after the official bank. The Bluebook interface feels exactly like test day. Adaptive mode targets your weakest topics automatically.</p>
+    </div>
+    <div class="feature-visual">Practice</div>
+  </div>
+  <div class="feature-section">
+    <div class="feature-text">
+      <h3>Never Forget a Word</h3>
+      <p>Spaced repetition flashcards powered by the SM-2 algorithm. Cards you struggle with appear more often. Cards you know fade into the background. Just like Anki, built right in.</p>
+    </div>
+    <div class="feature-visual">Flashcards</div>
+  </div>
+</section>
+<%- include('partials/footer') %>

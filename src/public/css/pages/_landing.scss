@@ -42,6 +42,20 @@
     }
 }
 
+.social-proof {
+    @include container;
+    padding: var(--sp-10) 0;
+    border-block: 1px solid var(--color-border);
+
+    .social-proof-stats {
+        display: flex;
+        justify-content: center;
+        gap: var(--sp-12);
+        flex-wrap: wrap;
+        margin-bottom: var(--sp-8)
+    }
+}
+
 .demo-section {
     @include container;
     padding: var(--sp-16) 0;

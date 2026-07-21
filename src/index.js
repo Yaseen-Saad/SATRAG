@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const rateLimiter = require('./middleware/rateLimiter');
-
+const { getStats } = require('./services/statsEngine');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const authRoutes = require('./routes/auth');
@@ -17,8 +17,10 @@ const practiceRoutes = require('./routes/practice');
 const settingsRoutes = require('./routes/settings');
 const flashcardsRoutes = require('./routes/flashcards');
 const ticketsRoutes = require('./routes/ticket');
+const statsRoutes = require('./routes/stats');
 const { requireAuth, optionalAuth } = require('./middleware/auth');
 const { requireProfileComplete } = require('./middleware/profile');
+const { statfs } = require('fs/promises');
 
 const app = express();
 
@@ -38,7 +40,8 @@ app.use(rateLimiter());
 
 app.get('/', optionalAuth, async (req, res) => {
   try {
-    res.render("index", { user: req.user || null })
+    const stats = await getStats();
+    res.render("index", { user: req.user || null, stats })
   } catch (error) {
     console.error('Home page error:', error);
     res.status(500).send('Internal Server Error');
@@ -62,7 +65,7 @@ app.use('/practice', practiceRoutes);
 app.use('/flashcards', flashcardsRoutes)
 app.use('/settings', settingsRoutes);
 app.use('/tickets', ticketsRoutes);
-
+app.use('/stats', statsRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

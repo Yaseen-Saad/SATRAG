@@ -1,0 +1,45 @@
+<!-- SATrack Clean & Simple RAG Loader -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    .rag-pulse {
+      transform-origin: 32px 32px;
+      animation: gentle-pulse 1.4s ease-in-out infinite alternate;
+    }
+    .ring-spin {
+      transform-origin: 32px 32px;
+      animation: spin 1.8s linear infinite;
+    }
+    @keyframes gentle-pulse {
+      from { opacity: 0.4; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1.02); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- Dark Background -->
+  <rect width="64" height="64" rx="14" fill="#090D16"/>
+
+  <!-- Inactive Base Ring -->
+  <circle cx="32" cy="32" r="21" stroke="#1E293B" stroke-width="4"/>
+
+  <!-- Rotating Loading Arc -->
+  <path class="ring-spin" d="M 32 11 A 21 21 0 0 1 53 32" stroke="#3FCF8E" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Pulsing Center RAG Core -->
+  <g class="rag-pulse">
+    <!-- RAG Brackets [ ] -->
+    <path d="M 22 23 H 19.5 V 41 H 22" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 42 23 H 44.5 V 41 H 42" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Crisp Center "S" -->
+    <text x="32" y="41" 
+          font-family="system-ui, -apple-system, sans-serif" 
+          font-weight="900" 
+          font-size="25" 
+          fill="#FFFFFF" 
+          text-anchor="middle">S</text>
+  </g>
+</svg>
