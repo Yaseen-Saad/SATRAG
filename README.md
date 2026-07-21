@@ -330,3 +330,5 @@ Built with late nights and too much caffeine by a high schooler who got tired of
 
 # features to add later
 1. on scroll counter for numbers in home
+2. Loader for all API calls
+3. better feedback section for AI genersed questions giving them tiers (bronze, silver, gold, plat, diamond)

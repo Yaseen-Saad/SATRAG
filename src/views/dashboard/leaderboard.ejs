@@ -55,7 +55,7 @@
         <% entries.forEach(function(e) { %>
         <tr style="<%= (user && e.userId === user.id) ? 'background:rgba(99,102,241,0.08); font-weight:600;' : '' %>">
           <td style="text-align:center;">
-            <% if (e.rank === 1) { %>🥇<% } else if (e.rank === 2) { %>🥈<% } else if (e.rank === 3) { %>🥉<% } else { %><%= e.rank %><% } %>
+            <% if (e.rank === 1) { %><img src="/public/img/icon-gold-medal.svg" /><% } else if (e.rank === 2) { %><img src="/public/img/icon-silver-medal.svg" /><% } else if (e.rank === 3) { %><img src="/public/img/icon-bronze-medal.svg" /><% } else { %><%= e.rank %><% } %>
           </td>
           <td><%= e.name %></td>
           <td><%= e.grade %></td>

@@ -1,15 +1,17 @@
+@use '../utils/mixins' as *;
+
 .practice-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: var(--sp-6);
 
-    @media (max-width: 768px) {
+    @include respond-to(md-down) {
         grid-template-columns: 1fr;
     }
 }
 
 .practice-filters {
-    @media (max-width: 768px) {
+    @include respond-to(md-down) {
         order: 1;
     }
 
@@ -34,7 +36,7 @@
 .practice-list {
     min-width: 0;
 
-    @media (max-width: 768px) {
+    @include respond-to(md-down) {
         order: 0;
     }
 }
@@ -100,7 +102,7 @@
     gap: var(--sp-6);
     margin-top: var(--sp-4);
 
-    @media (max-width: 768px) {
+    @include respond-to(md-down) {
         grid-template-columns: 1fr;
     }
 }

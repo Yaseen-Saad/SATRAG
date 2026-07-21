@@ -1,5 +1,4 @@
 (function () {
-    console.log('excuted')
     'use strict';
     let questionData = document.getElementById('question-data')?.dataset;
     let questionId = questionData?.id;
@@ -33,7 +32,7 @@
 
     const timer = document.getElementById('timer');
 
-    if (timer) { 
+    if (timer) {
         if (!alreadyAnswered) {
             timerInterval = setInterval(_ => {
                 if (answered) return;
@@ -104,7 +103,7 @@
             const showMistakesBtn = !data.isCorrect && data.isWIC;
             content.innerHTML = `
         <h2 style="${data.isCorrect ? 'color:var(--bb-correct)' : 'color:var(--bb-incorrect)'}">
-          ${data.isCorrect ? '✓ Correct!' : '✗ Incorrect'}
+          ${data.isCorrect ? '<img src="/img/icon-check.svg"/> Correct!' : '<img src="/img/icon-x.svg" /> Incorrect'}
         </h2>
         ${!data.isCorrect ? `<p>Correct answer: <strong>${String(data.correctAnswer).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}</strong></p>` : `<p>You selected <strong>${String(selectedAnswer).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}</strong></p>`}
         <p>Time: ${Math.round((Date.now() - startTime) / 1000)}s${pct != null && pct !== undefined ? ' · Faster than ' + pct + '% of users' : ''}</p>
@@ -112,7 +111,7 @@
         ${showMistakesBtn ? '<div id="mistakes-prompt" style="margin:1rem 0;padding:0.75rem;border:1px solid var(--border);border-radius:8px;"><p style="margin:0 0 0.5rem;">This is a Words in Context question. Add the answer words to your <strong>Mistakes</strong> list?</p><button class="bb-fb-btn" id="add-mistakes-btn" onclick="addToMistakes()" style="margin-right:0.5rem;">+ Add to Mistakes</button><span id="mistakes-status" style="font-size:0.85rem;color:var(--text-muted);"></span></div>' : ''}
         <div class="bb-fb-actions">
           ${data.isCorrect ? '<button class="bb-fb-btn primary" onclick="window.location=document.getElementById(\'return-to\')?.dataset?.url || \'/practice\'">Back to Bank</button>' : '<button class="bb-fb-btn success" onclick="tryAgain()">Try Again</button>'}
-          <button class="bb-fb-btn ghost" onclick="toggleMarkBtn()">★ Mark for Review</button>
+          <button class="bb-fb-btn ghost" onclick="toggleMarkBtn()"><img src='/img/markForReview.svg' /> Mark for Review</button>
         </div>`;
             overlay.classList.add('open');
         }

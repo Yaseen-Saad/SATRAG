@@ -1,0 +1,46 @@
+.setting {
+    &-row {
+        display: flex;
+        gap: var(--sp-3);
+        flex-wrap: wrap;
+    }
+
+    &-half {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    &-third {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    &-avatar {
+        display: flex;
+        gap: var(--sp-4);
+        align-items: center;
+        flex-wrap: wrap;
+
+        &-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--color-border);
+            background: var(--color-elevated);
+        }
+
+        &-info {
+            margin-top: var(--sp-4);
+            padding-top: var(--sp-4);
+            border-top: 1px solid var(--color-border);
+            font-size: var(--text-sm);
+            color: var(--color-text-muted)
+        }
+
+        &-actions {
+            margin-top: var(--sp-6);
+            text-align: right;
+        }
+    }
+}

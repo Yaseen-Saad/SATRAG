@@ -52,12 +52,6 @@ body {
   transition: width var(--duration-md) var(--ease);
 }
 
-.empty-state {
-  color: var(--color-text-muted);
-  text-align: center;
-  padding: var(--sp-8);
-}
-
 .site-footer {
   border-top: 1px solid var(--color-border);
   padding: var(--sp-10) var(--sp-6);
@@ -76,9 +70,4 @@ body {
       color: var(--color-accent);
     }
   }
-}
-
-.option-btn.selected {
-  border-color: var(--color-accent);
-  background: var(--color-accent-muted);
 }
