@@ -203,6 +203,8 @@ VALUES
    ARRAY['image/jpeg', 'image/png', 'image/gif'],
    NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
+
+-- RLS: sat_questions
 ALTER TABLE sat_questions ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "sat_questions insert" ON sat_questions;
