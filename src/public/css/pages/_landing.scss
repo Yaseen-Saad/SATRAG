@@ -56,6 +56,54 @@
         flex-wrap: wrap;
         margin-bottom: var(--sp-8)
     }
+
+    .social-proof-quotes {
+        max-width: 640px;
+        margin: 0 auto;
+
+        .quote {
+            font-family: var(--font-body);
+            font-style: italic;
+            font-size: var(--text-base);
+            color: var(--color-text-sec);
+            text-align: center;
+            padding: 0 var(--sp-6);
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        // For the future
+        .quote-attribution {
+            font-style: normal;
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+            margin-top: var(--sp-1);
+        }
+
+    }
+
+    .stat-block {
+        text-align: center;
+
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: var(--text-3xl);
+            font-weight: var(--weight-bold);
+            color: var(--color-accent);
+            line-height: 1;
+            margin-bottom: var(--sp-1);
+        }
+
+        .stat-label {
+            font-family: var(--font-heading);
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-wide);
+            color: var(--color-text-muted);
+        }
+    }
 }
 
 .demo-section {
@@ -82,5 +130,65 @@
         margin: 0 auto var(--sp-10);
         display: flex;
         gap: var(--sp-3);
+        justify-content: center;
+
+        input {
+            flex: 1;
+            border: 1px solid var(--color-border-strong);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-lg);
+            padding: var(--sp-4) var(--sp-5);
+        }
+
+        button {
+            flex-shrink: 0;
+        }
+    }
+}
+
+.feature-section {
+    @include container;
+    padding: var(--sp-16) 0;
+    display: grid;
+    gap: var(--sp-10);
+    align-items: center;
+
+    .feature-text {
+        max-width: 420px;
+
+        h3 {
+            font-size: var(--text-2xl);
+            margin-bottom: var(--sp-4);
+        }
+
+        p {
+            color: var(--color-text-sec);
+            line-height: var(--leading-normal)
+        }
+    }
+
+    .feature-visual {
+        @include card;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 240px;
+        font-family: var(--font-heading);
+        font-size: var(--text-4xl);
+        color: var(--color-text-muted);
+        opacity: 0.4;
+    }
+
+    &.feature-section--reverse {
+        direction: rtl;
+
+        >* {
+            direction: ltr;
+        }
+    }
+
+    @include respond-to(md) {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-12)
     }
 }

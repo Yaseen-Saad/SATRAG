@@ -27,6 +27,28 @@
 
 
 
+
+.site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: var(--sp-10) 0;
+    text-align: center;
+
+    p {
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+    }
+
+    a {
+        color: var(--color-text-sec);
+        font-weight: var(--weight-semi);
+
+        &:hover {
+            color: var(--color-accent);
+        }
+    }
+}
+
+
 body {
   font-family: var(--font);
   font-size: var(--font-size);

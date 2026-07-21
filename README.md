@@ -325,3 +325,8 @@ git push origin feature/your-feature-name
 <div align="center">
 Built with late nights and too much caffeine by a high schooler who got tired of making flashcards by hand.
 </div>
+
+
+
+# features to add later
+1. on scroll counter for numbers in home
