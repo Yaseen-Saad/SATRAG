@@ -72,7 +72,6 @@
     padding: var(--sp-5) var(--sp-6);
 }
 
-// Mini stat grid
 .mini-stat-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -99,7 +98,6 @@
     margin-top: var(--sp-1);
 }
 
-// Streak
 .streak-display {
     text-align: center;
     padding: var(--sp-6) var(--sp-4);
@@ -130,7 +128,6 @@
     margin-top: var(--sp-2);
 }
 
-// Week grid
 .week-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -164,7 +161,6 @@
     color: var(--color-text-muted);
 }
 
-// Topic rows
 .topic-row {
     display: flex;
     justify-content: space-between;
@@ -232,7 +228,6 @@
     color: var(--color-warning);
 }
 
-// Feedback rows
 .feedback-row {
     display: flex;
     flex-wrap: wrap;

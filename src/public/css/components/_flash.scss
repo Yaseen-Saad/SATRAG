@@ -1,64 +1,61 @@
-@use '../utils/mixins' as *;
-
 @keyframes slideDown {
     from {
+        transform: translateY(-100%);
         opacity: 0;
-        transform: translateY(-8px);
     }
 
     to {
-        opacity: 1;
         transform: translateY(0);
+        opacity: 1;
     }
 }
-
-$flash-variants: (
-    'error': ('bg': var(--color-error-muted),
-        'color': var(--color-error),
-        'border': var(--color-error)),
-    'success': ('bg': var(--color-success-muted),
-        'color': var(--color-success-text, var(--color-success)),
-        'border': var(--color-success)),
-    'info': ('bg': var(--color-info-muted),
-        'color': var(--color-info),
-        'border': var(--color-info)),
-    'warning': ('bg': var(--color-warning-muted),
-        'color': var(--color-warning-text, var(--color-warning)),
-        'border': var(--color-warning))
-);
 
 .flash {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--sp-3);
-    margin-bottom: var(--sp-4);
     padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-4);
     border-radius: var(--radius);
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
-    animation: slideDown 0.3s var(--ease-out);
+    animation: slideDown var(--duration-md) var(--ease-out);
 
-    @each $key, $theme in $flash-variants {
-
-        &-#{$key},
-        &--#{$key} {
-            background: map-get($theme, 'bg');
-            border: 1px solid map-get($theme, 'border');
-            color: map-get($theme, 'color');
-        }
+    &-error {
+        background: var(--color-error-muted);
+        color: var(--color-error);
+        border: 1px solid var(--color-error);
     }
 
-    &-dismiss,
-    .dismiss {
+    &-success {
+        background: var(--color-success-muted);
+        color: var(--color-success);
+        border: 1px solid var(--color-success);
+    }
+
+    &-info {
+        background: var(--color-info-muted);
+        color: var(--color-info);
+        border: 1px solid var(--color-info);
+    }
+
+    &-warning {
+        background: var(--color-warning-muted);
+        color: var(--color-warning);
+        border: 1px solid var(--color-warning);
+    }
+
+    .dismiss,
+    .flash-dismiss {
         flex-shrink: 0;
         padding: 0;
         background: none;
         border: none;
         color: inherit;
-        font-size: var(--text-lg);
+        font-size: var(--text-xl);
         line-height: 1;
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: pointer;
 
         &:hover {

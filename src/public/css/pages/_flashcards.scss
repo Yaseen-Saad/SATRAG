@@ -1,5 +1,17 @@
 @use '../utils/mixins' as *;
 
+.fc-page {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.fc-header-actions {
+    display: flex;
+    gap: var(--sp-2);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-4);
+}
+
 @keyframes pulse {
 
     0%,

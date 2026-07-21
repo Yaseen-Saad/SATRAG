@@ -87,18 +87,19 @@
 
     // ── Spacing Scale ──
     --sp-0: 0;
-    --sp-1: 0.25rem;
-    --sp-2: 0.5rem;
-    --sp-3: 0.75rem;
-    --sp-4: 1rem;
-    --sp-5: 1.25rem;
-    --sp-6: 1.5rem;
-    --sp-8: 2rem;
-    --sp-10: 2.5rem;
-    --sp-12: 3rem;
-    --sp-16: 4rem;
-    --sp-20: 5rem;
-    --sp-24: 6rem;
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+    --sp-20: 80px;
+    --sp-24: 96px;
+    --sp-32: 128px;
 
     // ── Border Radius ──
     --radius-sm: 6px;
@@ -115,6 +116,10 @@
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+    // ── Glass ──
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.06);
 
     // ── Transitions ──
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -190,6 +195,9 @@
   --shadow-lg:  0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
   --shadow-xl:  0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
+  --glass-bg:    rgba(15, 23, 42, 0.6);
+  --glass-border:rgba(255, 255, 255, 0.06);
+
   --bb-bg:          #090D16;
   --bb-surface:     #0F172A;
   --bb-border:      #1E293B;
@@ -245,6 +253,9 @@
   --shadow-md:  0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
   --shadow-lg:  0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
   --shadow-xl:  0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+  --glass-bg:    rgba(255, 255, 255, 0.7);
+  --glass-border:rgba(0, 0, 0, 0.06);
 
   --bb-bg:          #F1F5F9;
   --bb-surface:     #FFFFFF;

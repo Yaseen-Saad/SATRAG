@@ -1,4 +1,5 @@
 @use '../utils/mixins' as *;
+@use 'sass:map';
 
 // AI suggested this too and it is very cool
 $badge-theme-map: (
@@ -45,8 +46,8 @@ $badge-theme-map: (
 
         &-#{$key},
         &--#{$key} {
-            background: map-get($value, 'bg');
-            color: map-get($value, 'color');
+            background: map.get($value, 'bg');
+            color: map.get($value, 'color');
         }
     }
 }

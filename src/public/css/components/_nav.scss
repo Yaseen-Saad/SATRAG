@@ -54,7 +54,7 @@
         border: none;
         cursor: pointer;
 
-        > .bar {
+        >.bar {
             display: block;
             width: 20px;
             height: 2px;
@@ -64,21 +64,21 @@
             transition: all var(--duration-md) var(--ease);
         }
 
-        &:hover > .bar {
+        &:hover>.bar {
             background-color: var(--color-text);
         }
 
         &:has(.active),
         &.active {
-            > .bar:nth-child(1) {
+            >.bar:nth-child(1) {
                 transform: rotate(45deg) translate(4px, 4px);
             }
 
-            > .bar:nth-child(2) {
+            >.bar:nth-child(2) {
                 opacity: 0;
             }
 
-            > .bar:nth-child(3) {
+            >.bar:nth-child(3) {
                 transform: rotate(-45deg) translate(4px, -4px);
             }
         }
