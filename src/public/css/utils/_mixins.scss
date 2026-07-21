@@ -81,6 +81,13 @@
     border: 0;
 }
 
+@mixin gradient-text {
+    background: var(--gradient);
+    background-clip: text;
+    @include prefix(-webkit-background-clip, text);
+    @include prefix(-webkit-text-fill-color, transparent);
+}
+
 @mixin hover-lift {
     transition: transform var(--duration) var(--ease),
         box-shadow var(--duration) var(--ease);

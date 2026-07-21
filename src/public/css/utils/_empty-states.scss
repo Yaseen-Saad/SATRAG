@@ -1,24 +1,24 @@
 .empty-state {
-  text-align: center;
-  padding: var(--sp-12) var(--sp-6);
-  color: var(--color-text-muted);
-}
+    padding: var(--sp-12) var(--sp-6);
+    color: var(--color-text-muted);
+    text-align: center;
 
-.empty-state-icon {
-  font-size: 2.5rem;
-  margin-bottom: var(--sp-4);
-  opacity: 0.5;
-}
+    &-icon {
+        margin-bottom: var(--sp-4);
+        font-size: 2.5rem;
+        opacity: 0.5;
+    }
 
-.empty-state-title {
-  font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  font-weight: var(--weight-semi);
-  color: var(--color-text-sec);
-  margin-bottom: var(--sp-2);
-}
+    &-title {
+        margin-bottom: var(--sp-2);
+        color: var(--color-text-sec);
+        font-family: var(--font-heading);
+        font-size: var(--text-xl);
+        font-weight: var(--weight-semi);
+    }
 
-.empty-state-text {
-  font-size: var(--text-sm);
-  margin-bottom: var(--sp-6);
+    &-text {
+        margin-bottom: var(--sp-6);
+        font-size: var(--text-sm);
+    }
 }
