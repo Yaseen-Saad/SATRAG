@@ -3,7 +3,6 @@
     #{$prop}: $val;
 }
 
-// Responsive mixin
 @mixin respond-to($bp) {
     @if $bp ==sm {
         @media (min-width: 640px) {
@@ -53,8 +52,21 @@
 @mixin card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     padding: var(--sp-6);
+}
+
+@mixin glass {
+    background: rgba(15, 23, 42, 0.6);
+    @include prefix(backdrop-filter, blur(16px));
+    @include prefix(-webkit-backdrop-filter, blur(16px));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="light"] {
+    @include glass;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 @mixin visually-hidden {
@@ -67,4 +79,14 @@
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+@mixin hover-lift {
+    transition: transform var(--duration) var(--ease),
+        box-shadow var(--duration) var(--ease);
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
 }

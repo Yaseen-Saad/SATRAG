@@ -201,7 +201,19 @@
   --bb-marked: #F59E0B;
 }
 
-*, *::before, *::after {
+[data-theme=light] {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit--webkit-backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -211,6 +223,11 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+[data-theme=light] {
+  color-scheme: light;
 }
 
 body {
@@ -222,9 +239,14 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--duration-md) var(--ease), color var(--duration-md) var(--ease);
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
@@ -238,7 +260,12 @@ a:hover {
   color: var(--color-accent-hover);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   color: var(--color-text);
   line-height: var(--leading-tight);
@@ -273,6 +300,7 @@ h6 {
 p {
   margin-bottom: var(--sp-4);
   color: var(--color-text-sec);
+  line-height: var(--leading-normal);
 }
 p:last-child {
   margin-bottom: 0;
@@ -288,7 +316,9 @@ strong {
   color: var(--color-text);
 }
 
-code, pre, .mono {
+code,
+pre,
+.mono {
   font-family: var(--font-mono);
 }
 
@@ -302,8 +332,27 @@ code, pre, .mono {
   color: #fff;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -416,7 +465,7 @@ code, pre, .mono {
 .card, .card-link, .card-flat, .card-accent.card-link, .card-gold.card-link, .card.card-gold, .card-gold.card-flat, .card.card-accent, .card-accent.card-flat {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: var(--sp-6);
   transition: box-shadow var(--duration) var(--ease);
 }
@@ -817,7 +866,7 @@ label {
 .feature-section .feature-visual {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: var(--sp-6);
   display: flex;
   align-items: center;
