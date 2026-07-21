@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
   <%- include('../partials/head') %>
@@ -8,11 +8,12 @@
 <body>
   <%- include('../partials/nav') %>
   <main id="main-content">
+    <%- include('../partials/flash') %>
     <%- body %>
   </main>
-  <%- include("../partials/footer") %>
+  <%- include('../partials/footer') %>
   <script src="/js/app.js"></script>
-  <% if (typeof pageClass !== 'undefined' && pageClass.includes('practice')) { %>
+  <% if (typeof pageClass !== 'undefined' && pageClass && pageClass.includes('practice')) { %>
   <script src="/js/bluebook.js"></script>
   <% } %>
 </body>

@@ -16,6 +16,12 @@
         }
     }
 
+    @if $bp ==md-down {
+        @media (max-width: 767px) {
+            @content;
+        }
+    }
+
     @if $bp ==lg {
         @media (min-width: 1024px) {
             @content;
@@ -63,9 +69,10 @@
     border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-[data-theme="light"] {
-    @include glass;
+@mixin glass-light {
     background: rgba(255, 255, 255, 0.7);
+    @include prefix(backdrop-filter, blur(16px));
+    @include prefix(-webkit-backdrop-filter, blur(16px));
     border: 1px solid rgba(0, 0, 0, 0.06);
 }
 

@@ -1,39 +1,15 @@
-/* === BLUEBOOK DIGITAL SAT INTERFACE === */
-.bluebook {
-    --bb-bg: #f5f7fa;
-    --bb-surface: #ffffff;
-    --bb-border: #d1d5db;
-    --bb-text: #1a1a1a;
-    --bb-text-muted: #6b7280;
-    --bb-primary: #0a2b5e;
-    --bb-primary-light: #1e4d8c;
-    --bb-accent: #2860b0;
-    --bb-correct: #16a34a;
-    --bb-incorrect: #dc2626;
-    --bb-marked: #d97706;
-    --bb-nav-height: 56px;
-    --bb-bot-height: 52px;
+@use './utils/variables' as *;
 
+.bluebook {
     font-family: 'Georgia', 'Times New Roman', serif;
-    height: calc(100vh - 64px);
+    height: calc(100vh - var(--nav-height));
     display: flex;
     flex-direction: column;
     background: var(--bb-bg);
-    margin: -2rem -1.5rem;
+    margin: calc(-1 * var(--sp-8)) calc(-1 * var(--sp-6));
+
 }
 
-[data-theme="dark"] .bluebook {
-    --bb-bg: #0b1120;
-    --bb-surface: #1e293b;
-    --bb-border: #334155;
-    --bb-text: #f1f5f9;
-    --bb-text-muted: #94a3b8;
-    --bb-primary: #1e3a5f;
-    --bb-primary-light: #2563eb;
-    --bb-accent: #3b82f6;
-}
-
-/* ========== TOP BAR ========== */
 .bb-topbar {
     display: flex;
     align-items: center;

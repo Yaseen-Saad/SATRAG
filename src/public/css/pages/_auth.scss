@@ -1,46 +1,47 @@
 @use '../utils/mixins' as *;
-@use '../utils/variables' as *;
-@use '../components/forms' as *;
-.auth-layout {
-    display: grid;
-    min-height: calc(100vh - var(--nav-height));
+@use '../components/buttons' as *;
 
-    @include respond-to(md) {
-        grid-template-columns: 1fr 1fr;
+.auth {
+    &-layout {
+        display: grid;
+        min-height: calc(100vh - var(--nav-height));
+
+        @include respond-to(md) {
+            grid-template-columns: 1fr 1fr;
+        }
     }
 
-    .auth-brand {
+    &-brand {
         display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--sp-12);
         background: var(--color-surface);
         border-right: 1px solid var(--color-border);
-        padding: var(--sp-12);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         text-align: center;
 
         @include respond-to(md) {
             display: flex;
         }
 
-        .auth-brand-name {
-            font-family: var(--font-heading);
-            font-size: var(--text-4xl);
-            font-weight: var(--weight-black);
-            color: var(--color-text);
+        &-name {
             margin-bottom: var(--sp-4);
+            font-family: var(--font-brand);
+            font-size: var(--text-5xl);
+            font-weight: var(--weight-black);
+            @include gradient-text;
         }
 
-        .auth-brand-tagline {
-            font-family: var(--font-body);
-            font-size: var(--text-base);
-            color: var(--color-text-muted);
+        &-tagline {
             max-width: 280px;
+            color: var(--color-text-muted);
+            font-size: var(--text-base);
+            line-height: var(--leading-relaxed);
         }
-
     }
 
-    .auth-form-wrap {
+    &-form-wrap {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -51,28 +52,27 @@
         }
     }
 
-    .auth-card {
+    &-card {
         width: 100%;
         max-width: 400px;
 
         h1 {
-            font-size: var(--text-3xl);
             margin-bottom: var(--sp-2);
+            font-size: var(--text-3xl);
         }
-
-        .auth-subtitle {
-            color: var(--color-text-sec);
-            margin-bottom: var(--sp-8);
-            font-size: var(--text-sm);
-        }
-
     }
 
-    .auth-footer {
-        margin-top: var(--sp-6);
-        text-align: center;
-        font-size: var(--text-sm);
+    &-subtitle {
+        margin-bottom: var(--sp-8);
         color: var(--color-text-muted);
+        font-size: var(--text-sm);
+    }
+
+    &-footer {
+        margin-top: var(--sp-6);
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+        text-align: center;
 
         a {
             color: var(--color-accent);
@@ -81,28 +81,12 @@
     }
 }
 
-.password-field {
-    position: relative;
-}
-
-.password-toggle {
-    position: absolute;
-    right: var(--sp-3);
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--color-text-muted);
-    cursor: pointer;
-    font-size: var(--text-sm);
+.form-group-title,
+.form-label {
+    display: block;
+    margin-bottom: var(--sp-2);
+    color: var(--color-text-sec);
     font-family: var(--font-heading);
-    padding: var(--sp-1) var(--sp-2);
-
-    &:hover {
-        color: var(--color-text);
-    }
-}
-
-.form-group-title {
-    @extend .form-label;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
 }

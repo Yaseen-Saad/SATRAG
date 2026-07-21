@@ -1,0 +1,53 @@
+@use '../utils/mixins' as *;
+
+%table-base {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+
+    thead th {
+        padding: var(--sp-3) var(--sp-4);
+        border-bottom: 2px solid var(--color-border);
+        color: var(--color-text-muted);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-semi);
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-wide);
+        white-space: nowrap;
+    }
+
+    tbody {
+        tr {
+            transition: background var(--duration) var(--ease);
+
+            &:hover {
+                background: var(--color-elevated);
+            }
+
+            &:not(:last-child) {
+                border-bottom: 1px solid var(--color-border);
+            }
+        }
+
+        td {
+            padding: var(--sp-3) var(--sp-4);
+            color: var(--color-text-sec);
+            vertical-align: middle;
+        }
+    }
+
+    @media (max-width: 640px) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.table {
+    @extend %table-base;
+}
+
+table {
+    @extend %table-base;
+}

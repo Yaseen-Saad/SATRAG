@@ -1,25 +1,19 @@
 @use '../utils/mixins' as *;
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="url"],
-input[type="search"],
-input[type="date"],
-select,
-textarea {
+
+%input-base {
     display: block;
     width: 100%;
     padding: var(--sp-3) var(--sp-4);
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    color: var(--color-text);
     background: var(--color-surface);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-sm);
-    transition: border-color var(--duration) var(--ease),
-        box-shadow var(--duration) var(--ease);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
     outline: none;
+    transition:
+        border-color var(--duration) var(--ease),
+        box-shadow var(--duration) var(--ease);
 
     &::placeholder {
         color: var(--color-text-muted);
@@ -27,34 +21,92 @@ textarea {
 
     &:focus {
         border-color: var(--color-accent);
-        box-shadow: 0 0 0 2px rgba(180, 106, 77, 0.15);
+        box-shadow: 0 0 0 3px var(--color-accent-muted);
     }
 
     &:disabled {
+        background: var(--color-elevated);
         opacity: 0.5;
         cursor: not-allowed;
-        background: var(--color-elevated);
+    }
+}
+
+// AI suggested this and it is very cool
+$text-input-types: (
+    'type="text"',
+    'type="email"',
+    'type="password"',
+    'type="number"',
+    'type="url"',
+    'type="search"',
+    'type="date"'
+);
+
+#{for $i from 1 through length($text-input-types)} {
+    input[#{nth($text-input-types, $i)}] {
+        @extend %input-base;
     }
 }
 
 select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B5B4C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    @extend %input-base;
+    padding-right: var(--sp-10);
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right var(--sp-4) center;
-    padding-right: var(--sp-10);
+    appearance: none;
 }
 
 textarea {
-    resize: vertical;
+    @extend %input-base;
     min-height: 100px;
+    resize: vertical;
 }
 
 label {
+    color: var(--color-text);
     font-family: var(--font-body);
     font-size: var(--text-base);
-    color: var(--color-text);
     cursor: pointer;
+}
+
+.form {
+    &-label {
+        display: block;
+        margin-bottom: var(--sp-2);
+        color: var(--color-text-sec);
+        font-family: var(--font-heading);
+        font-size: var(--text-sm);
+        font-weight: var(--weight-medium);
+    }
+
+    &-group {
+        margin-bottom: var(--sp-4);
+
+        label {
+            @extend .form-label;
+        }
+    }
+
+    &-row {
+        display: flex;
+        gap: var(--sp-4);
+        flex-wrap: wrap;
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+    }
+
+    &-grid {
+        display: grid;
+        gap: var(--sp-4);
+
+        @include respond-to(md) {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 }
 
 .checkbox-row,
@@ -64,30 +116,37 @@ label {
     gap: var(--sp-2);
     margin-bottom: var(--sp-2);
 
-    input[type="checkbox"],
-    input[type="radio"] {
+    input[type='checkbox'],
+    input[type='radio'] {
         width: auto;
         accent-color: var(--color-accent);
     }
 }
 
-.form-row {
-    display: flex;
-    gap: var(--sp-4);
-    flex-wrap: wrap;
+.password {
+    &-field {
+        position: relative;
 
-    .form-group {
-        flex: 1;
-        min-width: 200px;
-        .form-label {}
+        input {
+            padding-right: 3rem;
+        }
+    }
+
+    &-toggle {
+        position: absolute;
+        top: 50%;
+        right: var(--sp-3);
+        padding: var(--sp-1) var(--sp-2);
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        font-family: var(--font-heading);
+        font-size: var(--text-sm);
+        transform: translateY(-50%);
+        cursor: pointer;
+
+        &:hover {
+            color: var(--color-text);
+        }
     }
 }
-.form-grid {
-  display: grid;
-  gap: var(--sp-4);
-
-  @include respond-to(md) {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.form-hint {}

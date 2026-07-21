@@ -1,0 +1,14 @@
+.empty-state {
+    text-align: center;
+    padding: var(--sp-12) var(--sp-6);
+    color: var(--color-text-muted);
+
+    h2 {
+        margin-bottom: var(--sp-2);
+        color: var(--color-text);
+    }
+
+    p {
+        margin-bottom: var(--sp-6);
+    }
+}
