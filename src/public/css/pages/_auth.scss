@@ -1,0 +1,108 @@
+@use '../utils/mixins' as *;
+@use '../utils/variables' as *;
+@use '../components/forms' as *;
+.auth-layout {
+    display: grid;
+    min-height: calc(100vh - var(--nav-height));
+
+    @include respond-to(md) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .auth-brand {
+        display: none;
+        background: var(--color-surface);
+        border-right: 1px solid var(--color-border);
+        padding: var(--sp-12);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        @include respond-to(md) {
+            display: flex;
+        }
+
+        .auth-brand-name {
+            font-family: var(--font-heading);
+            font-size: var(--text-4xl);
+            font-weight: var(--weight-black);
+            color: var(--color-text);
+            margin-bottom: var(--sp-4);
+        }
+
+        .auth-brand-tagline {
+            font-family: var(--font-body);
+            font-size: var(--text-base);
+            color: var(--color-text-muted);
+            max-width: 280px;
+        }
+
+    }
+
+    .auth-form-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--sp-8) var(--sp-6);
+
+        @include respond-to(md) {
+            padding: var(--sp-12);
+        }
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 400px;
+
+        h1 {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--sp-2);
+        }
+
+        .auth-subtitle {
+            color: var(--color-text-sec);
+            margin-bottom: var(--sp-8);
+            font-size: var(--text-sm);
+        }
+
+    }
+
+    .auth-footer {
+        margin-top: var(--sp-6);
+        text-align: center;
+        font-size: var(--text-sm);
+        color: var(--color-text-muted);
+
+        a {
+            color: var(--color-accent);
+            font-weight: var(--weight-semi);
+        }
+    }
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: var(--sp-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-family: var(--font-heading);
+    padding: var(--sp-1) var(--sp-2);
+
+    &:hover {
+        color: var(--color-text);
+    }
+}
+
+.form-group-title {
+    @extend .form-label;
+}

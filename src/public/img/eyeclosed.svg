@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Slashed Eye Outline -->
+  <path d="M 9.88 9.88 A 3 3 0 1 0 14.12 14.12"/>
+  <path d="M 2 12 C 5 5, 19 5, 22 12 C 20.3 13.9, 17.8 15.6, 15 16.5"/>
+  <path d="M 9 16.5 C 6.2 15.6, 3.7 13.9, 2 12"/>
+  <!-- Slash Line -->
+  <line x1="3" y1="3" x2="21" y2="21" stroke="#EF4444" stroke-width="2"/>
+</svg>
