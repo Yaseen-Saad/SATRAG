@@ -3,33 +3,39 @@
 <nav class="navbar" x-data="mobileNav()">
   <div class="navbar-inner">
     <a href="/" class="navbar-brand">
-      <img width="200" height="80" src="/img/nav.svg" alt="SATrack">
+      <img width="140" height="32" src="/img/nav.svg" alt="SATrack">
     </a>
-    <button class="hamburger" @click="toggle()" aria-label="Menu">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </button>
-    <button class="theme-btn" @click="$store.theme.toggle()" :aria-pressed="$store.theme.dark" aria-label="Toggle dark mode">
-      <img x-if="$store.theme.dark" src="/img/dark.svg" alt="Dark mode">
-      <img x-if="$store.theme.light" src="/img/light.svg" alt="Light mode">
-    </button>
-    <div class="nav-links" id="nav-links">
 
-      <a href="/vocab" class="nav-link">Words</a>
-      <a href="/practice" class="nav-link">Practice</a>
-      <a href="/flashcards" class="nav-link">Flashcards</a>
-      <% if(typeof user !== 'undefined' && user) {%>
-      <a href="/dashboard" class="nav-link">Dashboard</a>
-      <a href="/dashboard/leaderboard" class="nav-link">Leaderboard</a>
-      <a href="/dashboard/analytics" class="nav-link">Analytics</a>
+    <div class="nav-links" :class="{ 'open': open }" id="nav-links">
+      <a href="/vocab" class="nav-link" data-key="1">Words</a>
+      <a href="/practice" class="nav-link" data-key="2">Practice</a>
+      <a href="/flashcards" class="nav-link" data-key="3">Flashcards</a>
+      <% if (typeof user !== 'undefined' && user) { %>
+      <a href="/dashboard" class="nav-link" data-key="4">Dashboard</a>
+      <a href="/dashboard/leaderboard" class="nav-link" data-key="5">Leaderboard</a>
+      <a href="/dashboard/analytics" class="nav-link" data-key="6">Analytics</a>
       <a href="/settings" class="nav-link">Settings</a>
       <a href="/auth/logout" class="nav-link nav-link--signout">Sign Out</a>
-      <% } else{%>
+      <% } else { %>
       <a href="/auth/login" class="nav-link">Log In</a>
       <a href="/auth/signup" class="btn btn-primary btn-sm">Sign Up</a>
       <% } %>
     </div>
+
+    <button class="theme-btn" @click="$store.theme.toggle()" :aria-pressed="$store.theme.dark" aria-label="Toggle theme">
+      <template x-if="$store.theme.dark">
+        <img src="/img/dark.svg" alt="Dark mode">
+      </template>
+      <template x-if="!$store.theme.dark">
+        <img src="/img/light.svg" alt="Light mode">
+      </template>
+    </button>
+
+    <button class="hamburger" @click="toggle()" :class="{ 'active': open }" aria-label="Menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
   </div>
 </nav>
 
