@@ -3,7 +3,12 @@
 <nav class="navbar" x-data="mobileNav()">
   <div class="navbar-inner">
     <a href="/" class="navbar-brand">
-      <img width="140" height="32" src="/img/nav.svg" alt="SATrack">
+      <template x-if="$store.theme.dark">
+        <img width="140" height="32" src="/img/nav.svg" alt="SATrack">
+      </template>
+      <template x-if="!$store.theme.dark">
+        <img width="140" height="32" src="/img/nav-light.svg" alt="SATrack">
+      </template>
     </a>
 
     <div class="nav-links" :class="{ 'open': open }" id="nav-links">

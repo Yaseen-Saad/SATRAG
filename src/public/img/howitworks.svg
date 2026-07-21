@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 160" fill="none">
+  <rect width="360" height="160" rx="16" fill="#090D16" stroke="#1E293B" stroke-width="1.5"/>
+
+  <!-- Step 1 Node: Prompt / Query -->
+  <g transform="translate(30, 50)">
+    <rect width="80" height="60" rx="10" fill="#0F172A" stroke="#38BDF8" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#38BDF8" text-anchor="middle">INPUT</text>
+    <text x="40" y="44" font-family="system-ui, sans-serif" font-weight="800" font-size="11" fill="#FFFFFF" text-anchor="middle">SAT Question</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <path d="M 118 80 H 138" stroke="#38BDF8" stroke-width="2" stroke-dasharray="3 3"/>
+  <polygon points="142,80 136,76 136,84" fill="#38BDF8"/>
+
+  <!-- Step 2 Node: RAG Vector Search Core -->
+  <g transform="translate(145, 40)">
+    <rect width="90" height="80" rx="12" fill="#0F172A" stroke="#3FCF8E" stroke-width="2"/>
+    <circle cx="45" cy="30" r="12" fill="#090D16" stroke="#3FCF8E" stroke-width="1.5"/>
+    <path d="M 41 26 H 39 V 34 H 41 M 49 26 H 51 V 34 H 49" stroke="#38BDF8" stroke-width="1.5"/>
+    <text x="45" y="34" font-family="system-ui, sans-serif" font-weight="900" font-size="10" fill="#FFFFFF" text-anchor="middle">S</text>
+    <text x="45" y="58" font-family="system-ui, sans-serif" font-weight="800" font-size="10" fill="#3FCF8E" text-anchor="middle">VECTOR SEARCH</text>
+    <text x="45" y="70" font-family="system-ui, sans-serif" font-weight="500" font-size="9" fill="#64748B" text-anchor="middle">pgvector DB</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <path d="M 242 80 H 262" stroke="#3FCF8E" stroke-width="2" stroke-dasharray="3 3"/>
+  <polygon points="266,80 260,76 260,84" fill="#3FCF8E"/>
+
+  <!-- Step 3 Node: Explanations & Mnemonics Output -->
+  <g transform="translate(270, 50)">
+    <rect width="80" height="60" rx="10" fill="#0F172A" stroke="#8B5CF6" stroke-width="1.5"/>
+    <text x="40" y="28" font-family="system-ui, sans-serif" font-weight="700" font-size="10" fill="#8B5CF6" text-anchor="middle">OUTPUT</text>
+    <text x="40" y="44" font-family="system-ui, sans-serif" font-weight="800" font-size="11" fill="#FFFFFF" text-anchor="middle">Smart Hint</text>
+  </g>
+</svg>

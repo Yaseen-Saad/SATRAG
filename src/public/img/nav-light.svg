@@ -1,0 +1,23 @@
+<!-- SATrack Navbar Logo (Light Mode) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <!-- Icon Badge -->
+  <rect x="2" y="4" width="40" height="40" rx="10" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+  <circle cx="22" cy="24" r="14" stroke="#CBD5E1" stroke-width="3"/>
+  <path d="M 22 10 A 14 14 0 1 1 8 24" stroke="#3FCF8E" stroke-width="3" stroke-linecap="round"/>
+  <!-- Brackets -->
+  <path d="M 16 18 H 14.5 V 30 H 16" stroke="#0EA5E9" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M 28 18 H 29.5 V 30 H 28" stroke="#0EA5E9" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- S Text -->
+  <text x="22" y="30" font-family="system-ui, sans-serif" font-weight="900" font-size="17" fill="#0F172A" text-anchor="middle">S</text>
+
+  <!-- Typography -->
+  <text x="52" y="31" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="22" fill="#0F172A" letter-spacing="-0.5">SAT<tspan fill="url(#navBrandGradLight)">rack</tspan></text>
+
+  <!-- Gradient for "rack" -->
+  <defs>
+    <linearGradient id="navBrandGradLight" x1="90" y1="20" x2="140" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#22C55E"/>
+    </linearGradient>
+  </defs>
+</svg>
