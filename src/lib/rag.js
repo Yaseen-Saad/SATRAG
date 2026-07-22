@@ -6,6 +6,21 @@ const path = require("path")
 const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
 
 class RAGEngine {
+    //This needs work
+    getRandom(subject, topic, subtopic) {
+        if (subject && !topic && !subtopic) {
+            return ["math", "reading_writing"][Math.floor(Math.random() * 2)]
+        } if (!subject && topic && !subtopic) {
+            return ["math", "reading_writing"][Math.floor(Math.random() * 2)]
+        } if (topic == "subtopic") {
+
+        }
+    }
+    buildPrompt(subject, topic, subtopic) {
+
+        if (!topic && !subtopic && !subject) return;
+    }
+
     async retrieveSimilar(word, topK = 3) {
         try {
             const embedding = await llm.generateEmbedding(word);
