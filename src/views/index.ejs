@@ -4,41 +4,30 @@
   <p class="landing-sub">Mnemonics you'll remember. Questions that adapt to you. Progress you can see. No subscriptions, no paywalls. 100% Free for students.</p>
   <div class="landing-cta">
     <a href="/auth/signup" class="btn-primary btn-lg">Start Studying Free</a>
-    <a href="/vocab" class="btn-secondary btn-lg">Browse Words</a>
+    <a href="#sample-entries" class="btn-secondary btn-lg">See Sample Entries</a>
   </div>
-
 </section>
 
 <section class="social-proof">
   <div class="social-proof-stats">
     <div class="stat-block">
-      <div class="stat-number">
-        <%= stats.totalWords %>
-      </div>
+      <div class="stat-number"><%= stats.totalWords %></div>
       <div class="stat-label">Words Generated</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">
-        <%= stats.totalQuestions %>
-      </div>
+      <div class="stat-number"><%= stats.totalQuestions %></div>
       <div class="stat-label">Questions Available</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">
-        <%= stats.totalUsers %>
-      </div>
+      <div class="stat-number"><%= stats.totalUsers %></div>
       <div class="stat-label">Active Users</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">
-        <%= stats.totalQuestionAttempts %>
-      </div>
+      <div class="stat-number"><%= stats.totalQuestionAttempts %></div>
       <div class="stat-label">Questions Solved</div>
     </div>
     <div class="stat-block">
-      <div class="stat-number">
-        <%= stats.totalLists %>
-      </div>
+      <div class="stat-number"><%= stats.totalLists %></div>
       <div class="stat-label">Word Lists</div>
     </div>
   </div>
@@ -48,19 +37,116 @@
   </div>
 </section>
 
-<section class="how-it-works">
-  <h2>How It Works</h2>
-  <p class="demo-section-sub">Your question goes in. Smart, contextual explanations come out.</p>
-  <div class="how-it-works-diagram">
-    <img src="/img/howitworks.svg" alt="SATrack RAG pipeline: Input question, vector search, smart hint output" width="360" height="160">
+<section class="sample-entries" id="sample-entries">
+  <h2 class="section-title">See What SATrack Generates</h2>
+  <p class="seciton-sub">Every word gets a mnemoinic, a picture story, and an example sentence, all AI-generated with retrival-augmented generation for quality.</p>
+
+  <div class="sample-entries-grid">
+    <a href="/vocab/ACCOLADE" class="sample-entry">
+      <div class="entry-word">ACCOLADE</div>
+      <div class="entry-pos">Noun</div>
+      <div class="entry-def">an award, or praise</div>
+      <div class="entry-mnemonic">(AKK-oh-lade) Sounds like: echo lad</div>
+      <div class="entry-pic">A young boy is standing on the edge of a cliff, facing a vertical wall of rock. He yells wonderful things about himself so that his voice echoes off the wall and comes back to him.</div>
+      <div class="entry-example">The film received accolades from both the critics and the general public.</div>
+      <span class="entry-link"> See Full Entry</span>
+    </a>
+    <a href="/vocab/AFFIRMATION" class="sample-entry">
+      <div class="entry-word">AFFIRMATION</div>
+      <div class="entry-pos">Noun</div>
+      <div class="entry-def">positive statement; assertion; agreement</div>
+      <div class="entry-mnemonic">(aff-er-MAY-shun) Sounds like: a firm Asian</div>
+      <div class="entry-pic">A muscular man from the Orient being interviewed by a TV news reporter. “We’ve heard,” says the reporter, “that you plan to break the world weightlifting record by lifting a Toyota filled with Sumo wrestlers. Is this true?” “Yes,” replies the Asian man. “And that includes a full tank of gas and maps in the glove compartment.” Looking into the TV camera, the reporter says, “Up until now it had been just another unfounded rumor. But now we’ve received affirmation.”</div>
+      <div class="entry-other-forms">Affirm (verb); affirmative (adj); affirmatively (adv)</div>
+      <div class="entry-example">The prime minister saw her re-election as an affirmation of her policies.</div>
+      <span class="entry-link"> See Full Entry</span>
+    </a>
+    <a href="/vocab/RECAPITULATE" class="sample-entry">
+      <div class="entry-word">RECAPITULATE</div>
+      <div class="entry-pos">Verb</div>
+      <div class="entry-def">to summarize or repeat the main points of something</div>
+      <div class="entry-mnemonic">(ree-kuh-PICH-uh-late) Sounds like: re-CAPE-it-u-late</div>
+      <div class="entry-pic">A superhero is giving a press conference. After explaining his plan to save the city from a giant lizard, a reporter says, “Could you say that again more simply?” The hero sighs, pulls his CAPE up tight (re-CAPE), and repeats his main points in order for the journalists to understand. He is summarizing (recapitulating) his argument.</div>
+      <div class="entry-other-forms">Recapitulation (noun), Recapitulative (adjective)</div>
+      <div class="entry-example">The lawyer recapitulated the key evidence for the jury before resting her case.</div>
+      <span class="entry-link"> See Full Entry</span>
+    </a>
+    <a href="/vocab/SAGACIOUS" class="sample-entry">
+      <div class="entry-word">SAGACIOUS</div>
+      <div class="entry-pos">Adjective</div>
+      <div class="entry-def">having sharp judgment and wisdom; shrewd</div>
+      <div class="entry-mnemonic">(sag-AY-shus) Sounds like: sage with a spacious mind</div>
+      <div class="entry-pic">A wise old sage, wearing a pointy wizard hat, sits in a vast, spacious library filled from floor to ceiling with books. He closes one eye and points a knowing finger, having just solved a complex riddle with ease.</div>
+      <div class="entry-other-forms">Sagacity (noun), Sagaciously (adverb)</div>
+      <div class="entry-example">Her sagacious investment advice saved the company from a disastrous market crash.</div>
+      <span class="entry-link"> See Full Entry</span>
+    </a>
+    <a href="/vocab/PERNICIOUS">
+      <div class="entry-word"> PERNICIOUS </div>
+      <div class="entry-pos"> Adjective </div>
+      <div class="entry-def"> having a harmful effect, especially in a gradual or subtle way </div>
+      <div class="entry-mnemonic"> (per-NISH-us) Sounds like: a poisonous fish named Percy</div>
+      <div class="entry-pic"> A smiling fish named Percy swims gracefully through a town's water supply. Each day, he releases a tiny drop of poison. No one notices at first, but slowly, everyone in town becomes ill. "Percy the pernicious fish," whispers the mayor, "has been nibbling at our health for months." </div>
+      <div class="entry-other-forms"> perniciously (adv), perniciousness (n) </div>
+      <div class="entry-example">The pernicious influence of misinformation can slowly erode public trust in institutions.</div>
+      <span class="entry-link"> See Full Entry</span>
+    </a>
+  </div>
+</section>
+
+
+<section class="how-it-works-3d" id="how-it-works">
+  <div class="hiw-intro">
+    <h2 class="section-title">How SATrack Works Under the Hood</h2>
+    <p class="section-sub">Scroll down to see how your words travel through our AI pipeline — from raw text to intelligent retrieval.</p>
+  </div>
+  <div class="hiw-sticky">
+    <canvas id="hiw-canvas"></canvas>
+    <div class="hiw-labels">
+      <div class="hiw-stage" data-stage="0">
+        <div class="hiw-stage-num">1</div>
+        <h3>You type a word</h3>
+        <p>Your query enters as raw text — just a string of characters like <strong>"perspicacious"</strong></p>
+      </div>
+      <div class="hiw-stage" data-stage="1">
+        <div class="hiw-stage-num">2</div>
+        <h3>Tokens become vectors</h3>
+        <p>Our embedding model converts your word into a <strong>1024-dimensional vector</strong> — a precise numerical fingerprint that captures its meaning</p>
+      </div>
+      <div class="hiw-stage" data-stage="2">
+        <div class="hiw-stage-num">3</div>
+        <h3>Stored in a vector database</h3>
+        <p>Every word in our database lives in a high-dimensional space. <strong>pgvector</strong> indexes them all for instant cosine-similarity search</p>
+      </div>
+      <div class="hiw-stage" data-stage="3">
+        <div class="hiw-stage-num">4</div>
+        <h3>Retrieved by similarity</h3>
+        <p>Your query vector finds its nearest neighbors — the most <strong>semantically similar entries</strong> surface automatically</p>
+      </div>
+      <div class="hiw-stage" data-stage="4">
+        <div class="hiw-stage-num">5</div>
+        <h3>AI generates your entry</h3>
+        <p>Retrieved examples are fed into the LLM as <strong>few-shot context</strong>, producing mnemonics and stories that match real quality standards</p>
+      </div>
+    </div>
+    <div class="hiw-progress-track">
+      <div class="hiw-progress-fill" id="hiw-progress-fill"></div>
+      <div class="hiw-progress-labels">
+        <span>Input</span>
+        <span>Tokenize</span>
+        <span>Embed</span>
+        <span>Store</span>
+        <span>Retrieve</span>
+        <span>Augment</span>
+        <span>Generate</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="demo-section">
-  <h2>Try It Right Now</h2>
-  <p class="demo-section-sub">
-    Enter any SAT word to see what SATrack generates.
-  </p>
+  <h2 class="section-title">Try It Right Now</h2>
+  <p class="demo-section-sub">Enter any SAT word to see what SATrack generates.</p>
   <form method="GET" action="/vocab" class="demo-search-wrap">
     <input type="text" name="word" placeholder="e.g., perspicacious" required>
     <button type="submit" class="btn-primary">Look Up</button>
@@ -68,7 +154,7 @@
   <div class="feature-section">
     <div class="feature-text">
       <h3>Vocabulary That Stays With You</h3>
-      <p>Every word gets a mnemonic device, a picture story, and an example sentence. Generated with AI + RAG so each entry feels authentic, not robotic. Rate entries and the system learns from your feedback. </p>
+      <p>Every word gets a mnemonic device, a picture story, and an example sentence. Generated with AI + RAG so each entry feels authentic, not robotic. Rate entries and the system learns from your feedback.</p>
     </div>
     <div class="feature-visual"><img src="/img/vocab.svg" alt="Vocabulary" width="96" height="96"></div>
   </div>
@@ -85,5 +171,19 @@
       <p>Spaced repetition flashcards powered by the SM-2 algorithm. Cards you struggle with appear more often. Cards you know fade into the background. Just like Anki, built right in.</p>
     </div>
     <div class="feature-visual"><img src="/img/flashcards.svg" alt="Flashcards" width="96" height="96"></div>
+  </div>
+</section>
+
+<section class="story-section" id="story">
+  <div class="story-content">
+    <h2 class="section-title">Why I Built This?</h2>
+    <p class="story-lead">
+      I was studying for the SAT, frustrated. Every vocabulary app felt like flashcards with extra steps, every practice tool either had stale questions or wanted $5000/month. None of them <em>adapted</em> to what I actually didn't know.
+    </p>
+    <p>
+      So I built SATrack: a tool that uses retrieval-augmented generation (RAG) to create vocabulary entries that actually stick. When you look up a word, the system searches its database for the most relevant existing entries, feeds them to an AI as context, and generates a mnemonic, picture, story and example scentence that are grounded in real quality examples.
+    </p>
+    <p>This isn't a company. It's a student project built with Supabase, OpenAI-compitable APIs, and a lot of late nights. Every feature exists because I needed it myself. If it helps you too, that's enough for me.</p>
+    <!-- Will edit this section, I want the story to be like why I built it and what was the motive, what was te thought process and how it helps -->
   </div>
 </section>

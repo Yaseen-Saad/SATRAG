@@ -41,7 +41,7 @@ app.use(rateLimiter());
 app.get('/', optionalAuth, async (req, res) => {
   try {
     const stats = await getStats();
-    res.render("index", { user: req.user || null, stats })
+    res.render("index", { pageClass: 'landing', user: req.user || null, stats })
   } catch (error) {
     console.error('Home page error:', error);
     res.status(500).send('Internal Server Error');
@@ -70,15 +70,15 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 process.on('unhandledRejection', (reason) => {
-    console.error('Unhandled Rejection:', reason);
+  console.error('Unhandled Rejection:', reason);
 });
 process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exit(1);
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
 });
 
 if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.error(`SAT Study Buddy running on http://localhost:${PORT}`));
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.error(`SAT Study Buddy running on http://localhost:${PORT}`));
 }
 module.exports = app;

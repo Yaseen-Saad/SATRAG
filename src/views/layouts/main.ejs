@@ -16,6 +16,18 @@
   <% if (typeof pageClass !== 'undefined' && pageClass && pageClass.includes('practice')) { %>
   <script src="/js/bluebook.js"></script>
   <% } %>
+
+  <% if (typeof pageClass !== 'undefined' && pageClass && pageClass.includes('landing')) { %>
+  <script type="importmap">
+    {
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js"
+  }
+}
+</script>
+  <script type="module" src="/js/landing.js"></script>
+  <% } %>
+
 </body>
 
 </html>

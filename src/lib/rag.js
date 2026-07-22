@@ -3,7 +3,7 @@ const llm = require('./llm')
 const fs = require("fs")
 const path = require("path")
 
-const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question.txt'), 'utf-8');
+const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question_prompts/generate_sat_question.txt'), 'utf-8');
 
 class RAGEngine {
     //This needs work
@@ -17,8 +17,8 @@ class RAGEngine {
         }
     }
     buildPrompt(subject, topic, subtopic) {
-
         if (!topic && !subtopic && !subject) return;
+
     }
 
     async retrieveSimilar(word, topK = 3) {
