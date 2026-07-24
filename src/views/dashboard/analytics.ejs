@@ -44,15 +44,15 @@
     <div class="dash-card-body" style="padding:1rem;">
       <% var maxVal = Math.max(...trend.map(t => t.accuracy), 100); %>
       <svg viewBox="0 0 <%= trend.length * 60 + 60 %> 220" style="width:100%;height:220px;">
-        <text x="0" y="20" font-size="12" fill="var(--text-muted)">100%</text>
-        <text x="0" y="120" font-size="12" fill="var(--text-muted)">50%</text>
-        <text x="0" y="210" font-size="12" fill="var(--text-muted)">0%</text>
+        <text x="0" y="20" font-size="12" fill="var(--color-text-muted)">100%</text>
+        <text x="0" y="120" font-size="12" fill="var(--color-text-muted)">50%</text>
+        <text x="0" y="210" font-size="12" fill="var(--color-text-muted)">0%</text>
         <% trend.forEach(function(t, i) { %>
         <% var x = 50 + i * 60; var h = (t.accuracy / maxVal) * 180; %>
-        <rect x="<%= x - 10 %>" y="<%= 200 - h %>" width="20" height="<%= h %>" rx="3" fill="<%= t.accuracy >= 70 ? 'var(--success)' : t.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>" opacity="0.8">
+        <rect x="<%= x - 10 %>" y="<%= 200 - h %>" width="20" height="<%= h %>" rx="3" fill="<%= t.accuracy >= 70 ? 'var(--color-success)' : t.accuracy >= 40 ? 'var(--color-warning)' : 'var(--color-error)' %>" opacity="0.8">
           <title><%= t.date %>: <%= t.accuracy %>% (<%= t.correct %>/<%= t.total %>)</title>
         </rect>
-        <text x="<%= x %>" y="215" text-anchor="middle" font-size="10" fill="var(--text-muted)"><%= t.date.slice(5) %></text>
+        <text x="<%= x %>" y="215" text-anchor="middle" font-size="10" fill="var(--color-text-muted)"><%= t.date.slice(5) %></text>
         <% }) %>
       </svg>
     </div>
@@ -74,8 +74,8 @@
           <span class="topic-name"><%= s.correct %>/<%= s.total %> correct</span>
         </div>
         <div class="topic-right">
-          <span class="topic-accuracy" style="color:<%= s.accuracy >= 70 ? 'var(--success)' : s.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>;"><%= s.accuracy %>%</span>
-          <span style="font-size:0.85rem;color:var(--text-muted);margin-left:0.75rem;"><%= Math.floor(s.timeSec / 60) %>m <%= s.timeSec % 60 %>s</span>
+          <span class="topic-accuracy" style="color:<%= s.accuracy >= 70 ? 'var(--color-success)' : s.accuracy >= 40 ? 'var(--color-warning)' : 'var(--color-error)' %>;"><%= s.accuracy %>%</span>
+          <span style="font-size:0.85rem;color:var(--color-text-muted);margin-left:0.75rem;"><%= Math.floor(s.timeSec / 60) %>m <%= s.timeSec % 60 %>s</span>
         </div>
       </div>
       <% }) %>

@@ -294,7 +294,7 @@
         font-size: var(--text-sm);
         color: var(--color-error);
         background: none;
-        border: 1px solid var(--sp-2);
+        border: 1px solid var(--color-border);
         border-radius: var(--radius-sm);
     }
 
@@ -349,25 +349,6 @@
             gap: var(--sp-2);
         }
 
-    }
-}
-
-.list {
-    &-tabs {
-        display: flex;
-        border-bottom: 2px solid var(--color-border);
-    }
-
-    &-tab {
-        padding: var(--sp-2) var(--sp-4);
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
-
-        &.active {
-            border-bottom-color: var(--color-accent);
-            color: var(--color-accent);
-            font-weight: var(--weight-semi);
-        }
     }
 }
 

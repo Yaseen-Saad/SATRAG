@@ -31,19 +31,18 @@
             <div class="mini-stat-label">Attempted</div>
           </div>
           <div class="mini-stat">
-            <div class="mini-stat-value" style="color:var(--success)">
-              <%= practiceStats.correct || 0 %>
+            <div class="mini-stat-value" style="color:var(--color-success)"> <%= practiceStats.correct || 0 %>
             </div>
             <div class="mini-stat-label">Correct</div>
           </div>
           <div class="mini-stat">
-            <div class="mini-stat-value" style="color:<%= practiceStats.accuracy !== null ? (practiceStats.accuracy >= 70 ? 'var(--success)' : practiceStats.accuracy >= 40 ? 'var(--warning)' : 'var(--error)') : 'var(--text-muted)' %>;">
+            <div class="mini-stat-value" style="color:<%= practiceStats.accuracy !== null ? (practiceStats.accuracy >= 70 ? 'var(--color-success)' : practiceStats.accuracy >= 40 ? 'var(--color-warning)' : 'var(--color-error)') : 'var(--color-text-muted)' %>;">
               <%= practiceStats.accuracy !== null ? practiceStats.accuracy + '%' : '—' %>
             </div>
             <div class="mini-stat-label">Accuracy</div>
           </div>
           <div class="mini-stat">
-            <div class="mini-stat-value" style="color:var(--warning)"><%= practiceStats.markedForReview || 0 %></div>
+            <div class="mini-stat-value" style="color:var(--color-warning)"><%= practiceStats.markedForReview || 0 %></div>
             <div class="mini-stat-label">Marked for Review</div>
           </div>
         </div>
@@ -92,8 +91,7 @@
           <span class="topic-name"><%= t.topic %></span>
         </div>
         <div class="topic-right">
-          <span class="topic-accuracy" style="color:<%= t.accuracy < 50 ? 'var(--error)' : t.accuracy < 75 ? 'var(--warning)' : 'var(--success)' %>;">
-            <%= t.accuracy %>%
+          <span class="topic-accuracy" style="color:<%= t.accuracy < 50 ? 'var(--color-error)' : t.accuracy < 75 ? 'var(--color-warning)' : 'var(--color-success)' %>;"> <%= t.accuracy %>%
           </span>
           <div class="topic-bar">
             <div class="topic-bar-fill" style="width:<%= t.accuracy %>%"></div>
@@ -113,10 +111,10 @@
     <div class="dash-card-body">
       <div style="font-size:1.5rem;font-weight:bold;color:var(--color-accent);"><%= dailyWord.word %> <span style="font-size:0.9rem;font-weight:normal;color:var(--color-text-muted);"><%= dailyWord.part_of_speech %></span></div>
       <p style="margin:0.5rem 0 0;"><%= dailyWord.definition %></p>
-      <% if (dailyWord.example_sentence) { %><p style="margin:0.5rem 0 0;font-style:italic;font-size:0.9rem;color:var(--text-muted);"><%= dailyWord.example_sentence %></p><% } %>
+      <% if (dailyWord.example_sentence) { %><p style="margin:0.5rem 0 0;font-style:italic;font-size:0.9rem;color:var(--color-text-muted);"><%= dailyWord.example_sentence %></p><% } %>
     </div>
   </div>
-  <% } %>
+  <% } %}
 
   <div class="dash-card" style="margin-top:1rem;">
     <div class="dash-card-header">
@@ -189,7 +187,7 @@
     <div class="feedback-row">
       <div class="feedback-left">
         <strong><%= f.word %></strong>
-        <span class="feedback-rating" style="color:<%= f.satisfaction_score >= 7 ? 'var(--success)' : f.satisfaction_score >= 4 ? 'var(--warning)' : 'var(--error)' %>;">
+        <span class="feedback-rating" style="color:<%= f.satisfaction_score >= 7 ? 'var(--color-success)' : f.satisfaction_score >= 4 ? 'var(--color-warning)' : 'var(--color-error)' %>;">
           <%= f.satisfaction_score %>/10
         </span>
       </div>

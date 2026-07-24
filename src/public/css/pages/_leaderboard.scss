@@ -9,8 +9,8 @@
         padding: var(--sp-4) var(--sp-6);
 
         label {
-            font-size: var(--sp-6);
-            color: var(--color-text-muted)
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
         }
 
         select {
@@ -27,7 +27,7 @@
             &:focus {
                 border-color: var(--color-accent);
                 box-shadow: 0 0 0 3px var(--color-accent-muted);
-                background-color: var(--color-surface-hover);
+                background-color: var(--color-elevated);
             }
         }
     }
@@ -42,7 +42,7 @@
         }
 
         .btn {
-            margin-top: var(--sp-4)
+            margin-top: var(--sp-4);
         }
     }
 
@@ -56,7 +56,7 @@
         cursor: pointer;
 
         &:hover {
-            color: var(--color-accent)
+            color: var(--color-accent);
         }
     }
 
@@ -82,11 +82,11 @@
 
 .medal {
     &-gold {
-        background-color: #F59E0B;
+        background-color: var(--color-warning);
     }
 
     &-silver {
-        background-color: #94A3B8;
+        background-color: var(--color-text-faint);
     }
 
     &-bronze {

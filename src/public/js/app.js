@@ -60,9 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
       Alpine.store('theme').toggle();
       return;
     }
-
-    var navLink = document.querySelector('.nav-link[data-key="' + e.key + '"]');
-    if (navLink) { e.preventDefault(); navLink.click(); }
   });
 
   // Smooth scroll for anchor links

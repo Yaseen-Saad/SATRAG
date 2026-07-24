@@ -165,13 +165,13 @@
   --bb-correct: #3FCF8E;
   --bb-incorrect: #F87171;
   --bb-marked: #FBBF24;
-  --bb-current-bg: #e8f0fe;
-  --bb-answered-bg: #dbeafe;
-  --bb-answered-border: #93c5fd;
-  --bb-correct-bg: #f0fdf4;
-  --bb-incorrect-bg: #fef2f2;
-  --bb-option-hover: rgba(56, 189, 248, 0.08);
-  --bb-option-selected: rgba(30, 41, 59, 0.08);
+  --bb-current-bg: rgba(30, 77, 140, 0.15);
+  --bb-answered-bg: rgba(59, 130, 246, 0.15);
+  --bb-answered-border: rgba(147, 197, 253, 0.3);
+  --bb-correct-bg: rgba(22, 163, 74, 0.1);
+  --bb-incorrect-bg: rgba(220, 38, 38, 0.1);
+  --bb-option-hover: rgba(40, 96, 176, 0.1);
+  --bb-option-selected: rgba(30, 77, 140, 0.15);
 }
 
 [data-theme=light] {
@@ -220,13 +220,13 @@
   --bb-correct: #3FCF8E;
   --bb-incorrect: #EF4444;
   --bb-marked: #F59E0B;
-  --bb-current-bg: rgba(30, 77, 140, 0.15);
-  --bb-answered-bg: rgba(59, 130, 246, 0.15);
-  --bb-answered-border: rgba(147, 197, 253, 0.3);
-  --bb-correct-bg: rgba(22, 163, 74, 0.1);
-  --bb-incorrect-bg: rgba(220, 38, 38, 0.1);
-  --bb-option-hover: rgba(40, 96, 176, 0.1);
-  --bb-option-selected: rgba(30, 77, 140, 0.15);
+  --bb-current-bg: #e8f0fe;
+  --bb-answered-bg: #dbeafe;
+  --bb-answered-border: #93c5fd;
+  --bb-correct-bg: #f0fdf4;
+  --bb-incorrect-bg: #fef2f2;
+  --bb-option-hover: rgba(56, 189, 248, 0.08);
+  --bb-option-selected: rgba(30, 41, 59, 0.08);
 }
 
 :root {
@@ -923,4 +923,6 @@
 
 .bb-spr-input button:hover {
   background: var(--bb-accent);
-}/*# sourceMappingURL=bluebook.css.map */
+}
+
+/*# sourceMappingURL=bluebook.css.map */

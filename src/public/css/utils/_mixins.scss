@@ -49,12 +49,6 @@
     }
 }
 
-@mixin prose {
-    max-width: var(--max-prose);
-    margin-left: auto;
-    margin-right: auto;
-}
-
 @mixin card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -90,14 +84,4 @@
     background-clip: text;
     @include prefix(-webkit-background-clip, text);
     @include prefix(-webkit-text-fill-color, transparent);
-}
-
-@mixin hover-lift {
-    transition: transform var(--duration) var(--ease),
-        box-shadow var(--duration) var(--ease);
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
 }

@@ -39,13 +39,23 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         if (existing) {
             return res.render('vocab/word', { user: req.user, entry: existing, error: null })
         }
-        const similar = await rag.retrieveSimilar(word, 3)
+        const [similar, feedbackPatterns] = await Promise.all([
+            rag.retrieveSimilar(word, 3),
+            rag.getFeedbackPatterns()
+        ])
         let similarText = ''
         if (similar.length > 0)
             similarText = similar.map(s => `${s.word} — ${s.definition}\n Picture: ${s.picture_story}\n Sentence: ${s.example_sentence}`).join('\n\n')
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8')
+        let feedbackGuidance = ''
+        if (feedbackPatterns.issues.length > 0) {
+            feedbackGuidance += `\n\nIMPORTANT: Based on user feedback, avoid these common issues:\n${feedbackPatterns.issues.map(i => `- ${i}`).join('\n')}`
+        }
+        if (feedbackPatterns.strengths.length > 0) {
+            feedbackGuidance += `\n\nUsers especially appreciate these qualities (keep doing these):\n${feedbackPatterns.strengths.map(s => `- ${s}`).join('\n')}`
+        }
         const userPrompt = `Generate a vocabulary entry for "${word}".
-                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}
+                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}${feedbackGuidance}
                             Follow the format exactly. Make the mnemonic memorable.`;
 
         let response = await llm.generateCompletion({
@@ -108,10 +118,28 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
         const w = word.trim().toUpperCase()
         const negativeContent = `NEGATIVE FEEDBACK FOR ${w}:\nIssue: ${reason} — ${specificIssue}\nAvoid: ${improvements}`
         await supabase.from('rag_feedback_examples').insert({ word: w, type: "negative", content: negativeContent })
-        const similar = await rag.retrieveSimilar(w, 3);
+        const [similar, feedbackPatterns, wordFeedback] = await Promise.all([
+            rag.retrieveSimilar(w, 3),
+            rag.getFeedbackPatterns(),
+            rag.getFeedbackContext(w)
+        ])
         const contextExamples = similar.map(s => `${s.word} — ${s.definition}`).join('\n');
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8');
-        const userPrompt = `Generate a vocabulary entry for "${w}".\nAvoid these issues from previous attempt:\n- ${reason}: ${specificIssue || improvements || 'improve quality'}\n\n${similar.length > 0 ? `Style reference:\n${contextExamples}\n` : ''}\nFollow the format exactly.`;
+        let feedbackGuidance = `\nAvoid these issues from the previous attempt:\n- ${reason}: ${specificIssue || improvements || 'improve quality'}`
+        if (wordFeedback.length > 0) {
+            const avgSat = Math.round(wordFeedback.reduce((s, f) => s + (f.satisfaction_score || 0), 0) / wordFeedback.length)
+            const pastIssues = wordFeedback.flatMap(f => f.problematic_components || []).filter(Boolean)
+            if (pastIssues.length > 0) {
+                feedbackGuidance += `\nHistorical issues with this word (avg satisfaction: ${avgSat}/10):\n${[...new Set(pastIssues)].map(i => `- ${i}`).join('\n')}`
+            }
+        }
+        if (feedbackPatterns.issues.length > 0) {
+            feedbackGuidance += `\nCommon issues across all words to avoid:\n${feedbackPatterns.issues.map(i => `- ${i}`).join('\n')}`
+        }
+        if (feedbackPatterns.strengths.length > 0) {
+            feedbackGuidance += `\nQualities users love (keep doing these):\n${feedbackPatterns.strengths.map(s => `- ${s}`).join('\n')}`
+        }
+        const userPrompt = `Generate a vocabulary entry for "${w}".\n${feedbackGuidance}\n\n${similar.length > 0 ? `Style reference:\n${contextExamples}\n` : ''}\nFollow the format exactly.`;
 
         let response = await llm.generateCompletion({
             messages: [{ role: 'user', content: userPrompt }],

@@ -60,7 +60,7 @@
           <td><%= e.name %></td>
           <td><%= e.grade %></td>
           <td class="lb-correct"><%= e.correct %>/<%= e.total %></td>
-          <td style="text-align:center; color:<%= e.accuracy >= 70 ? 'var(--success)' : e.accuracy >= 40 ? 'var(--warning)' : 'var(--error)' %>;">
+          <td style="text-align:center; color:<%= e.accuracy >= 70 ? 'var(--color-success)' : e.accuracy >= 40 ? 'var(--color-warning)' : 'var(--color-error)' %>;">
             <%= e.accuracy %>%
           </td>
           <td class="lb-score"><%= e.score %></td>

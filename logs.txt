@@ -1,0 +1,15 @@
+
+SAT Study Buddy running on http://localhost:3000
+LLM raw response: {
+  "question_type": "mcq",
+  "subject": "writing",
+  "topic": "Standard English Conventions",
+  "subtopic": "Boundaries",
+  "difficulty": "hard",
+  "difficulty_band": 7,
+  "question_text": "<p>Which choice completes the text so that it conforms to the conventions of Standard English?</p>",
+  "stem
+Error: No JSON in LLM response
+    at RAGEngine.generateSATQuestion (I:\satbudd\src\lib\rag.js:307:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async I:\satbudd\src\routes\practice.js:57:31

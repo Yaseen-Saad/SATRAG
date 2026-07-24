@@ -115,7 +115,7 @@
         color: #fff !important;
 
         &:hover {
-            background: #dc2626;
+            background: var(--color-error-hover, #dc2626);
             color: #fff !important;
         }
     }

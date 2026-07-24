@@ -1,6 +1,6 @@
 <% title = 'Adaptive Practice'; %>
 <h1>Adaptive Practice</h1>
-<p style="color:var(--text-muted);margin-bottom:1.5rem;">Questions personalized to your weak areas</p>
+<p style="color:var(--color-text-muted);margin-bottom:1.5rem;">Questions personalized to your weak areas</p>
 
 <% if (typeof error !== 'undefined' && error) { %>
 <div class="flash flash-error"><%= error %></div>
@@ -10,7 +10,7 @@
   <div class="adaptive-sidebar">
     <h3>Your Weak Topics</h3>
     <% if (weakTopics.length === 0) { %>
-    <p style="color:var(--text-muted);font-size:0.9rem;">Answer more questions to unlock personalized recommendations.</p>
+    <p style="color:var(--color-text-muted);font-size:0.9rem;">Answer more questions to unlock personalized recommendations.</p>
     <% } %>
     <% weakTopics.forEach(function(t) { %>
     <div class="topic-stat-card">
@@ -47,7 +47,7 @@
       </div>
       <div style="margin-bottom:1rem;"><%- question.question_text || question.stem_plain_text || '' %></div>
       <% if (question.passage_text) { %>
-      <div style="padding:0.75rem;background:var(--surface-2);border-radius:var(--radius-sm);margin-bottom:1rem;max-height:200px;overflow-y:auto;">
+      <div style="padding:0.75rem;background:var(--color-elevated);border-radius:var(--radius-sm);margin-bottom:1rem;max-height:200px;overflow-y:auto;">
         <%- question.passage_text %>
       </div>
       <% } %>

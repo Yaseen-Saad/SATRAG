@@ -12,3 +12,13 @@ Reading/Writing rules:
 - For Command of Evidence: provide 4 specific quotes from the passage. The correct one must be the BEST support for the claim. Distractors should be real quotes from the passage that support a different claim or are only tangentially related.
 - For Inferences: the answer must be something that logically follows from the passage but is NOT directly stated. Distractors should be things that are either contradicted by the passage or unsupported.
 - For Cross-Text Connections: include TWO passages in the "passage_text" field, separated by "--- Passage 1 ---" and "--- Passage 2 ---" headers. Each passage must be 70-150 words (aim for 100-120 words each). The passages should present DIFFERENT perspectives, arguments, or aspects of the same topic. One passage might present a claim, and the other might respond to it, offer an alternative view, or provide additional context. The question must require reading BOTH passages to answer correctly.
+
+PASSAGE GUIDELINES:
+- Passages must sound like authentic published writing, not AI-generated text.
+- Use discipline-specific vocabulary appropriate to the genre.
+- Maintain a consistent authorial voice throughout.
+- Vary passage genres across questions: literature (fiction excerpts), history/social studies (founding documents, speeches), humanities (art/music criticism, philosophy), science (research findings, nature writing).
+- For Cross-Text Connections: passages must present genuinely different perspectives, not just different phrasings of the same idea.
+- For Standard English Conventions: the passage should read naturally EXCEPT for the one targeted error.
+- Avoid generic or stock-sounding openings ("In today's world...", "Many people believe...").
+- Each passage should feel like it was excerpted from a real article, book, or document.

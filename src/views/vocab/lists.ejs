@@ -5,7 +5,7 @@
     <p class="dash-subtitle">Browse system lists or create your own</p>
   </div>
   <% if (typeof error !== 'undefined' && error) { %>
-  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()">×</button></div>
+  <div class="flash flash-error"><%= error %><button class="dismiss" onclick="this.parentElement.remove()"><img src="/img/icon-close.svg" alt="" width="14" height="14"></button></div>
   <% } %>
 
   <div class="dash-card" style="margin-bottom:1.5rem">
@@ -93,5 +93,5 @@
     </table>
   </div>
   <% } %>
-  <a href="/vocab" class="btn btn-outline" style="margin-top:1rem;">← Back to Vocabulary</a>
+   <a href="/vocab" class="btn btn-outline" style="margin-top:1rem;"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Back to Vocabulary</a>
 </div>

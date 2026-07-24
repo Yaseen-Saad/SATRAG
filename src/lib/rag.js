@@ -1,7 +1,8 @@
 const { service: supabase } = require('./supabase')
 const llm = require('./llm')
 const fs = require("fs")
-const path = require("path")
+const path = require("path");
+const { match } = require('assert');
 
 const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question_prompts/generate_sat_question.txt'), 'utf-8');
 const SAT_PROMPTS = path.join(__dirname, '../prompts/generate_sat_question_prompts')
@@ -76,13 +77,12 @@ class RAGEngine {
 
         }
     }
+
     buildPrompt(subject, topic, subtopic) {
         const parts = [];
         parts.push(readFile('core.txt'));
-        parts.push(readFile('difficulty.txt'));
-        parts.push(readFile('general_rules.txt'));
         const wantMath = !subject || subject === 'math'
-        const wantRW = !subject || isRW(subject)
+        const wantRW = !subject || subject === 'reading_writing'
 
         if (wantMath) {
             parts.push(readFile('math/core.txt'))
@@ -214,6 +214,50 @@ class RAGEngine {
         return feedback || []
     }
 
+    async getFeedbackPatterns() {
+        const { data: negatives } = await supabase
+            .from('rag_feedback_examples')
+            .select('content')
+            .eq('type', 'negative')
+            .order('created_at', { ascending: false })
+            .limit(20)
+        const { data: positives } = await supabase
+            .from('rag_feedback_examples')
+            .select('content')
+            .eq('type', 'positive')
+            .order('created_at', { ascending: false })
+            .limit(20)
+
+        const patterns = { issues: [], strengths: [] }
+        if (negatives && negatives.length > 0) {
+            const issueLines = negatives.map(n => n.content).join('\n')
+            const commonIssues = []
+            const issueMap = { 'mnemonic': 0, 'picture': 0, 'definition': 0, 'sentence': 0, 'boring': 0, 'confusing': 0, 'incorrect': 0, 'short': 0, 'long': 0 }
+            for (const key of Object.keys(issueMap)) {
+                const count = (issueLines.toLowerCase().match(new RegExp(key, 'g')) || []).length
+                if (count >= 2) issueMap[key] = count
+            }
+            for (const [issue, count] of Object.entries(issueMap)) {
+                if (count >= 2) commonIssues.push(`${issue} (mentioned ${count} times)`)
+            }
+            patterns.issues = commonIssues.slice(0, 5)
+        }
+        if (positives && positives.length > 0) {
+            const posLines = positives.map(p => p.content).join('\n')
+            const strengths = []
+            const strengthMap = { 'mnemonic': 0, 'picture': 0, 'sentence': 0, 'creative': 0, 'memorable': 0, 'vivid': 0 }
+            for (const key of Object.keys(strengthMap)) {
+                const count = (posLines.toLowerCase().match(new RegExp(key, 'g')) || []).length
+                if (count >= 2) strengthMap[key] = count
+            }
+            for (const [strength, count] of Object.entries(strengthMap)) {
+                if (count >= 2) strengths.push(`${strength} (praised ${count} times)`)
+            }
+            patterns.strengths = strengths.slice(0, 5)
+        }
+        return patterns
+    }
+
     async addEntry(entry) {
         try {
             const embedding = await llm.generateEmbedding(`${entry.word} ${entry.definition} ${entry.example_sentence}`);
@@ -253,31 +297,59 @@ class RAGEngine {
     }
 
     async findSATExamples({ subject, topic, subtopic, difficulty, count = 5 }) {
-        const limit = count + 3;
+        const limit = count + 6;
 
-        async function tryQuery(filters) {
-            let q = supabase.from('sat_questions').select('*').eq('source', 'collegeboard');
-            if (filters.subject) q = q.eq('subject', filters.subject);
-            if (filters.topic) q = q.eq('topic', filters.topic);
-            if (filters.subtopic) q = q.eq('subtopic', filters.subtopic);
-            if (filters.difficulty) q = q.eq('difficulty', filters.difficulty);
-            const { data } = await q.limit(limit);
-            return data || [];
+        const isRW = subject === 'reading' || subject === 'writing' || subject === 'reading_writing';
+        const querySubject = subject === 'reading_writing' ? null : subject;
+
+        let candidates = [];
+        try {
+            const queryText = [subtopic, topic, subject, difficulty].filter(Boolean).join(' ')
+            const embedding = await llm.generateEmbedding(queryText)
+            const { data } = await supabase.rpc('match_sat_questions', {
+                query_embedding: embedding,
+                match_subject: querySubject || null,
+                match_topic: topic || null,
+                match_difficulty: difficulty || null,
+                match_threshold: 0.3,
+                match_count: limit
+            })
+            if (data && data.length) candidates = data
+        } catch (e) {
+            console.error('Embedding search failed:', e.message)
+        }
+        if (candidates.length < count) {
+            async function tryQuery(filters) {
+                let q = supabase.from('sat_questions').select('*').eq('source', 'collegeboard').eq('is_active', true);
+                if (filters.subject) {
+                    if (isRW) q = q.in('subject', ['reading', 'writing']);
+                    else q = q.eq('subject', filters.subject);
+                }
+                if (filters.topic) q = q.eq('topic', filters.topic);
+                if (filters.subtopic) q = q.eq('subtopic', filters.subtopic);
+                if (filters.difficulty) q = q.eq('difficulty', filters.difficulty);
+                const { data } = await q.limit(limit);
+                return data || [];
+            }
+            let metaResults = [];
+            if (subtopic) metaResults = await tryQuery({ subject, topic, subtopic, difficulty });
+            if (metaResults.length < 2 && subtopic) metaResults = await tryQuery({ subject, topic, subtopic });
+            if (metaResults.length < 2) metaResults = await tryQuery({ subject, topic });
+            if (metaResults.length < 2) metaResults = await tryQuery({ subject });
+            if (metaResults.length < 2) metaResults = await tryQuery({});
+            const existingIds = new Set(candidates.map(c => c.id));
+            for (const r of metaResults) {
+                if (!existingIds.has(r.id)) candidates.push(r);
+            }
         }
 
-        let results = await tryQuery({ subject, topic, subtopic, difficulty });
-        if (results.length < 2) results = await tryQuery({ subject, topic, subtopic });
-        if (results.length < 2) results = await tryQuery({ subject, topic });
-        if (results.length < 2) results = await tryQuery({ subject });
-        if (results.length < 2) results = await tryQuery({});
-
-        const shuffled = results.length <= 1 ? [...results] : results.map((v, i) => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(([_, v]) => v);
-        return shuffled.slice(0, Math.min(count, shuffled.length));
     }
+
+
 
     async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
         const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 });
-        const prompt = buildPrompt(subject, topic, subtopic)
+        const prompt = this.buildPrompt(subject, topic, subtopic)
         const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
             let opts;
             try {
@@ -285,23 +357,33 @@ class RAGEngine {
             } catch (error) {
                 console.error("Failed to parse RAG example options", error.message);
             }
-            const passage = (ex.passage_text || '').substring(0, 300);
+            const passage = (ex.passage_text || '').substring(0, 600);
             return {
                 role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
                     question_type: ex.question_type, passage_text: passage || null,
-                    question_text: (ex.question_text || '').substring(0, 300),
+                    question_text: (ex.question_text || '').substring(0, 500),
                     options: opts, correct_answer: ex.correct_answer,
-                    explanation: (ex.explanation || '').substring(0, 200),
+                    explanation: (ex.explanation || '').substring(0, 400),
                     subject: ex.subject, topic: ex.topic, subtopic: ex.subtopic || ex.skill_description,
                     difficulty: ex.difficulty, difficulty_band: ex.difficulty_band
                 }, null, 2)}`
-            };
+            }
         }), { role: 'user', content: `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.` }];
         const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 8000, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
-        const match = raw.match(/\{[\s\S]*\}/);
-        if (!match) {
+        let rawClean = raw;
+        if (response.finishReason === "length") {
+            const openBraces = (rawClean.match(/{/g) || []).length;
+            const closeBraces = (rawClean.match(/}/g) || []).length;
+            const openBrackets = (rawClean.match(/\[/g) || []).length;
+            const closeBrackets = (rawClean.match(/\]/g) || []).length;
+            rawClean = rawClean.replace(/,\s*"[^"]*$/, '');
+            for (let i = 0; i < openBraces - closeBraces; i++) rawClean += '}';
+            for (let i = 0; i < openBrackets - closeBrackets; i++) rawClean += ']';
+            console.warn('LLM response was truncated. Attempting to fix JSON structure. Open braces:', openBraces, 'Close braces:', closeBraces, 'Open brackets:', openBrackets, 'Close brackets:', closeBrackets);
+        }
+        const match = rawClean.match(/\{[\s\S]*\}/); if (!match) {
             console.error('LLM raw response:', raw.slice(0, 500))
             throw new Error('No JSON in LLM response');
         }
