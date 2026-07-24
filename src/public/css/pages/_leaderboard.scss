@@ -1,3 +1,85 @@
+@use '../utils/mixins' as *;
+
+.lb {
+    &-filter {
+        display: flex;
+        gap: var(--sp-3);
+        align-items: center;
+        flex-wrap: wrap;
+        padding: var(--sp-4) var(--sp-6);
+
+        label {
+            font-size: var(--sp-6);
+            color: var(--color-text-muted)
+        }
+
+        select {
+            padding: var(--sp-2) var(--sp-3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            font-size: var(--text-sm);
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            transition: border-color var(--duration) var(--ease),
+                box-shadow var(--duration) var(--ease),
+                background-color var(--duration) var(--ease);
+
+            &:focus {
+                border-color: var(--color-accent);
+                box-shadow: 0 0 0 3px var(--color-accent-muted);
+                background-color: var(--color-surface-hover);
+            }
+        }
+    }
+
+    &-empty {
+        text-align: center;
+        padding: var(--sp-12);
+
+        p {
+            font-size: var(--text-xl);
+            color: var(--color-text-muted);
+        }
+
+        .btn {
+            margin-top: var(--sp-4)
+        }
+    }
+
+    &-rank {
+        text-align: center;
+        width: 50px;
+    }
+
+    &-header-cell {
+        text-align: center;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--color-accent)
+        }
+    }
+
+    &-user-row {
+        background: var(--color-accent-muted);
+        font-weight: var(--weight-semi);
+    }
+
+    &-name {
+        font-weight: var(--weight-semi);
+    }
+
+    &-score {
+        text-align: center;
+        font-weight: var(--weight-bold);
+        color: var(--color-info);
+    }
+
+    &-correct {
+        text-align: center;
+    }
+}
+
 .medal {
     &-gold {
         background-color: #F59E0B;

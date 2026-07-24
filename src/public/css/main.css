@@ -2738,6 +2738,115 @@ label {
   text-align: right;
 }
 
+.settings-form-row {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.settings-form-row {
+  margin-top: auto;
+}
+.settings-readonly {
+  background-color: var(--color-elevated);
+  cursor: not-allowed;
+}
+.settings-avatar-wrap {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.settings-avatar-main {
+  text-align: center;
+}
+.settings-avatar-upload {
+  flex: 1;
+  min-width: 250px;
+}
+.settings-upload-row {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+}
+.settings-upload-status {
+  font-size: var(--text-xs);
+  margin-top: var(--sp-1);
+}
+.settings-info-block {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.settings-submit {
+  margin-top: var(--sp-6);
+  text-align: right;
+}
+
+.lb-filter {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--sp-4) var(--sp-6);
+}
+.lb-filter label {
+  font-size: var(--sp-6);
+  color: var(--color-text-muted);
+}
+.lb-filter select {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), background-color var(--duration) var(--ease);
+}
+.lb-filter select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-muted);
+  background-color: var(--color-surface-hover);
+}
+.lb-empty {
+  text-align: center;
+  padding: var(--sp-12);
+}
+.lb-empty p {
+  font-size: var(--text-xl);
+  color: var(--color-text-muted);
+}
+.lb-empty .btn {
+  margin-top: var(--sp-4);
+}
+.lb-rank {
+  text-align: center;
+  width: 50px;
+}
+.lb-header-cell {
+  text-align: center;
+  cursor: pointer;
+}
+.lb-header-cell:hover {
+  color: var(--color-accent);
+}
+.lb-user-row {
+  background: var(--color-accent-muted);
+  font-weight: var(--weight-semi);
+}
+.lb-name {
+  font-weight: var(--weight-semi);
+}
+.lb-score {
+  text-align: center;
+  font-weight: var(--weight-bold);
+  color: var(--color-info);
+}
+.lb-correct {
+  text-align: center;
+}
+
 .medal-gold {
   background-color: #F59E0B;
 }

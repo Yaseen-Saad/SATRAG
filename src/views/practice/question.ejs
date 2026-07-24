@@ -70,13 +70,13 @@
   <!-- BOTTOM BAR -->
   <footer class="bb-bottombar">
     <div class="bb-bottombar-left">
-      <% if (prevId) { %><a href="/practice/question/<%= prevId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn">◀ Previous</a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn">◀ Back</a><% } %>
+      <% if (prevId) { %><a href="/practice/question/<%= prevId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Previous</a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Back</a><% } %>
     </div>
     <div class="bb-bottombar-center">
-      <button class="bb-palette-toggle" onclick="openPalette()">☰ Questions</button>
+      <button class="bb-palette-toggle" onclick="openPalette()"><img src="/img/icon-grid.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Questions</button>
     </div>
     <div class="bb-bottombar-right">
-      <% if (nextId) { %><a href="/practice/question/<%= nextId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn">Next ▶</a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn">Done</a><% } %>
+      <% if (nextId) { %><a href="/practice/question/<%= nextId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn">Next <img src="/img/icon-chevron-right.svg" alt="" width="14" height="14" style="vertical-align:-2px"></a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn">Done</a><% } %>
     </div>
   </footer>
 </div>

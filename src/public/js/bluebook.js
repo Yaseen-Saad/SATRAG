@@ -178,7 +178,7 @@
                 const btn = document.getElementById('mark-btn');
                 if (btn) {
                     const isMarked = btn.classList.toggle('marked');
-                    btn.textContent = isMarked ? '★ Marked' : '☆ Mark for Review';
+                    btn.innerHTML = isMarked ? '<img src="/img/icon-star.svg" alt="" width="14" height="14" style="vertical-align:-3px"> Marked' : '<img src="/img/icon-star-outline.svg" alt="" width="14" height="14" style="vertical-align:-3px"> Mark for Review';
                 }
                 document.getElementById('feedback-overlay')?.classList.remove('open');
             } catch (e) {
@@ -191,7 +191,7 @@
                 const option = this.closest('.bb-option')
                 if (option) {
                     option.classList.toggle('eliminated')
-                    this.textContent = option.classList.contains('eliminated') ? '✕' : '−'
+                    this.innerHTML = option.classList.contains('eliminated') ? '<img src="/img/icon-x.svg" alt="" width="14" height="14">' : '<img src="/img/icon-minus.svg" alt="" width="14" height="14">'
                 }
             })
         })

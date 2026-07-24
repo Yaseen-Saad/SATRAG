@@ -22,7 +22,7 @@
         <h2>Profile</h2>
       </div>
       <div class="dash-card-body">
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <div class="settings-form-row">
           <div class="form-group" style="flex:1;min-width:200px;">
             <label for="firstName">First Name</label>
             <input type="text" id="firstName" name="firstName" value="<%= (profile && profile.first_name) || '' %>" required maxlength="100">
@@ -32,17 +32,17 @@
             <input type="text" id="lastName" name="lastName" value="<%= (profile && profile.last_name) || '' %>" required maxlength="100">
           </div>
         </div>
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.75rem;">
+        <div class="settings-form-row">
           <div class="form-group" style="flex:1;min-width:200px;">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="<%= (profile && profile.email) || '' %>" readonly style="background:var(--surface-2);cursor:not-allowed;">
+            <input type="email" id="email" name="email" value="<%= (profile && profile.email) || '' %>" readonly class="settings-readonly">
           </div>
           <div class="form-group" style="flex:1;min-width:200px;">
             <label for="school">School</label>
             <input type="text" id="school" name="school" value="<%= (profile && profile.school) || '' %>" required maxlength="200">
           </div>
         </div>
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:0.75rem;">
+        <div class="settings-form-row">
           <div class="form-group" style="flex:1;min-width:150px;">
             <label for="grade">Grade Level</label>
             <select id="grade" name="grade">
@@ -73,7 +73,7 @@
         <h2>API Keys</h2>
       </div>
       <div class="dash-card-body">
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <div class="settings-form-row">
           <div class="form-group" style="flex:1;min-width:250px;">
             <label for="llmKey">LLM API Key</label>
             <input type="password" id="llmKey" name="llmKey" autocomplete="off" placeholder="<%= (profile && profile.llm_apikey) ? '••••••••••••' : 'Enter your API key' %>">
@@ -91,18 +91,18 @@
         <h2>Avatar</h2>
       </div>
       <div class="dash-card-body">
-        <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
-          <div style="text-align:center;">
-            <img src="<%= (profile && profile.avatar_url) || '/img/auth.svg' %>" alt="Avatar" id="avatar-preview" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:var(--surface-3);" onerror="this.src='/img/auth.svg'">
+        <div class="settings-avatar-wrap">
+          <div class="settings-avatar-main">
+            <img src="<%= (profile && profile.avatar_url) || '/img/auth.svg' %>" alt="Avatar" id="avatar-preview" class="setting-avatar-img" onerror="this.src='/img/auth.svg'">
           </div>
-          <div style="flex:1;min-width:250px;">
+          <div class="settings-avatar-upload">
             <div class="form-group" style="margin:0 0 0.5rem;">
               <label>Upload Image</label>
-              <div style="display:flex;gap:0.5rem;align-items:center;">
+              <div class="settings-upload-row">
                 <input type="file" name="avatar" accept="image/png,image/jpeg,image/gif,image/webp" id="avatar-file-input" style="flex:1;font-size:0.85rem;">
                 <button type="button" class="btn-primary btn-sm" id="avatar-upload-btn" onclick="uploadAvatar()">Upload</button>
               </div>
-              <div id="avatar-upload-status" style="font-size:0.8rem;margin-top:0.3rem;"></div>
+              <div id="avatar-upload-status" class="settings-upload-status"></div>
             </div>
             <div class="form-group" style="margin:0;">
               <label for="avatarUrl">Or paste image URL</label>
@@ -118,7 +118,7 @@
         <h2>Preferences</h2>
       </div>
       <div class="dash-card-body">
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:end;">
+        <div class="settings-form-row">
           <div class="form-group" style="flex:1;min-width:200px;">
             <label for="leaderboardstatus">Leaderboard</label>
             <select id="leaderboardstatus" name="leaderboardstatus">
@@ -145,7 +145,7 @@
             <div class="mini-stat-label">Last Login</div>
           </div>
         </div>
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.9rem;color:var(--text-muted);">
+        <div class="settings-info-block">
           <strong>Model:</strong> Default <br>
           <strong>LLM Key:</strong> <%= (profile && profile.llm_apikey) ? '<img src="/img/icon-check.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Set' : '<img src="/img/icon-x.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Not set' %><br>
           <strong>Embed Key:</strong> <%= (profile && profile.embedding_apikey) ? '<img src="/img/icon-check.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Set' : '<img src="/img/icon-x.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Not set' %>
@@ -153,7 +153,7 @@
       </div>
     </div>
 
-    <div style="margin-top:1.5rem; text-align:right;">
+    <div class="settings-submit">
       <button type="submit" class="btn-primary btn-lg">Save All Settings</button>
     </div>
   </form>
