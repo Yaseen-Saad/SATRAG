@@ -52,48 +52,61 @@
     <a href="/vocab" class="btn-primary">New Word</a>
     <a href="/vocab/generate/<%= entry.word %>" class="btn-warning">Regenerate</a>
     <a href="/vocab/lists" class="btn-secondary">My Lists</a>
- <form method="POST" action="/flashcards/word/<%= entry.id %>/add" style="display:inline;" class="flashcard-add-form">
-  <button type="submit" class="btn btn-outline btn-sm">Add to Flashcards</button>
-</form>
-<script>
-  document.querySelector('.flashcard-add-form')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    var btn = this.querySelector('button');
-    btn.textContent = 'Adding...';
-    fetch(this.action, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
-      .then(function(r) { return r.json(); })
-      .then(function(d) { btn.textContent = d.success ? 'Added!' : 'Error'; })
-      .catch(function() { btn.textContent = 'Error'; });
-  });
-</script>
+    <form method="POST" action="/flashcards/word/<%= entry.id %>/add" style="display:inline;" class="flashcard-add-form">
+      <button type="submit" class="btn btn-outline btn-sm">Add to Flashcards</button>
+    </form>
+    <script>
+      document.querySelector('.flashcard-add-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = this.querySelector('button');
+        btn.textContent = 'Adding...';
+        fetch(this.action, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(function(r) {
+            return r.json();
+          })
+          .then(function(d) {
+            btn.textContent = d.success ? 'Added!' : 'Error';
+          })
+          .catch(function() {
+            btn.textContent = 'Error';
+          });
+      });
+    </script>
   </div>
-  <div style="margin-top:1rem; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
-    <form method="POST" action="/vocab/lists/add" style="display:flex; gap:0.5rem; align-items:center;">
+
+  <div class="vocab-add-to-list">
+    <form method="POST" action="/vocab/lists/add">
       <input type="hidden" name="wordId" value="<%= entry.id %>">
-      <select name="listId" style="flex:1; padding:0.4rem; border:1px solid var(--border); border-radius:4px;">
+      <select name="listId">
         <option value="new">Add to List...</option>
         <% if (typeof lists !== 'undefined' && lists) {lists.forEach(l=>{ %>
         <option value="<%= l.id %>"><%= l.name %> (<%= l.word_count?.[0]?.count ?? l.word_count ?? 0 %>)</option>
         <% })}%>
       </select>
       <button type="submit" class="btn-primary" onclick="const sel=this.form.listId; if(sel.value==='new'||!sel.value){window.location='/vocab/lists';return false;} this.form.action='/vocab/lists/'+sel.value+'/add'">Add</button>
-      <a href="/vocab/lists" style="font-size:0.85rem" class="btn-secondary">New List</a>
+      <a href="/vocab/lists" class="btn-secondary">New List</a>
     </form>
   </div>
+
   <% if (typeof isGenerated !== 'undefined' && isGenerated) { %>
-  <div class="entry-section" style="margin-top:1.5rem;">
+  <div class="entry-section vocab-feedback-form" style="margin-top:1.5rem;">
     <div class="section-label">How was this entry?</div>
-    <form action="/feedback/submit" method="POST" style="margin-top:0.5rem;">
+    <form action="/feedback/submit" method="POST">
       <input type="hidden" name="wordId" value="<%= entry.id %>">
-      <div style="display:flex; gap:0.25rem; align-items:center; flex-wrap:wrap;">
+      <div class="vocab-feedback-opts">
         <% for (let i = 1; i <= 10; i++) { %>
-        <label style="cursor:pointer; padding:0.25rem 0.5rem; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
-          <input type="radio" name="satisfaction" value="<%= i %>" <%= i === 7 ? 'checked' : '' %> style="margin:0;"> <%= i %>
+        <label class="vocab-feedback-opt">
+          <input type="radio" name="satisfaction" value="<%= i %>" <%= i === 7 ? 'checked' : '' %>> <%= i %>
         </label>
         <% } %>
       </div>
-      <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
-        <button type="submit" class="btn-primary" style="font-size:0.85rem;">Submit Rating</button>
+      <div class="vocab-feedback-actions">
+        <button type="submit" class="btn-primary btn-sm">Submit Rating</button>
       </div>
     </form>
   </div>

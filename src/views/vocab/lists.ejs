@@ -13,10 +13,10 @@
       <h2>Create New List</h2>
     </div>
     <div class="dash-card-body">
-      <form method="POST" action="/vocab/lists" style="display:flex; gap:0.5rem; align-items:end; flex-wrap:wrap;">
-        <div class="form-group" style="flex:2;min-width:200px;margin:0;"><input type="text" name="name" placeholder="List name" required style="width:100%"></div>
-        <div class="form-group" style="flex:2;min-width:200px;margin:0;"><input type="text" name="description" placeholder="Description" style="width:100%"></div>
-        <div class="form-group" style="flex:1;min-width:120px;margin:0;">
+      <form method="POST" action="/vocab/lists" class="vocab-create-form">
+        <div class="form-group"><input type="text" name="name" placeholder="List name" required></div>
+        <div class="form-group"><input type="text" name="description" placeholder="Description"></div>
+        <div class="form-group">
           <select name="visibility">
             <option value="private">Private</option>
             <option value="public">Public</option>
@@ -28,9 +28,9 @@
   </div>
 
   <!-- Tabs -->
-  <div style="display:flex; gap:0; margin-bottom:1rem; border-bottom:2px solid var(--border);">
+  <div class="vocab-list-tabs">
     <% ['mine','system','public','shared'].forEach(function(t) { %>
-    <a href="/vocab/lists?tab=<%= t %>" style="padding:0.5rem 1rem; text-decoration:none; border-bottom:2px solid <%= tab === t ? 'var(--primary)' : 'transparent' %>; color:<%= tab === t ? 'var(--primary)' : 'var(--text-muted)' %>; font-weight:<%= tab === t ? 'bold' : 'normal' %>; margin-bottom:-2px;">
+    <a href="/vocab/lists?tab=<%= t %>" class="vocab-list-tab <%= tab === t ? 'active' : '' %>">
       <%= {mine:'My Lists', system:'System', public:'Public', shared:'Shared With Me'}[t] %>
     </a>
     <% }) %>
@@ -46,9 +46,9 @@
   %>
 
   <% if (currentLists.length === 0) { %>
-  <div class="card" style="text-align:center;padding:3rem">
-    <p style="color:var(--text-muted);"><%= emptyMsg %></p>
-    <% if (tab === 'mine') { %><p style="font-size:0.9rem;color:var(--text-muted);">Go to any word page to start building.</p><% } %>
+  <div class="card vocab-list-empty">
+    <p><%= emptyMsg %></p>
+    <% if (tab === 'mine') { %><p style="font-size:0.9rem;">Go to any word page to start building.</p><% } %>
   </div>
   <% } else { %>
   <div class="dash-card">

@@ -28,7 +28,7 @@
   <% } %>
 
   <% if (isOwner) { %>
-  <div style="display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; align-items:end;">
+  <div class="vocab-list-header">
     <form method="POST" action="/vocab/lists/<%= list.id %>/visibility" style="display:flex; gap:0.5rem; align-items:end;">
       <div class="form-group" style="margin:0;">
         <label style="font-size:0.85rem;">Visibility</label>
@@ -66,23 +66,23 @@
   <% } %>
 
   <% if (words.length === 0) { %>
-  <div class="card" style="text-align:center;padding:3rem;">
-    <p style="color:var(--text-muted);">This list is empty.</p>
+  <div class="card vocab-list-empty">
+    <p>This list is empty.</p>
     <a href="/vocab" class="btn btn-outline btn-sm">Find words to add</a>
   </div>
   <% } else { %>
   <div class="dash-card">
     <div style="display:grid; gap:0.5rem;">
       <% words.forEach(function(w) { %>
-      <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
-        <div style="flex:1;">
-          <a href="/vocab/<%= w.word %>" style="font-weight:bold;font-size:1.1rem;"><%= w.word %></a>
-          <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem;"><%= w.part_of_speech %></span>
-          <p style="margin:0.25rem 0 0;font-size:0.9rem;"><%= w.definition %></p>
+      <div class="vocab-list-row">
+        <div class="vocab-list-row-info">
+          <a href="/vocab/<%= w.word %>" class="vocab-list-row-word"><%= w.word %></a>
+          <span class="vocab-list-row-pos"><%= w.part_of_speech %></span>
+          <p class="vocab-list-row-def"><%= w.definition %></p>
         </div>
         <% if (isOwner) { %>
         <form method="POST" action="/vocab/lists/<%= list.id %>/remove/<%= w.id %>" onsubmit="return confirm('Remove this word from this list?')">
-          <button type="submit" class="btn btn-sm" style="color:var(--error);background:none;border:1px solid var(--error);padding:0.25rem 0.6rem;font-size:0.8rem;">Remove</button>
+          <button type="submit" class="vocab-remove-btn">Remove</button>
         </form>
         <% } %>
       </div>

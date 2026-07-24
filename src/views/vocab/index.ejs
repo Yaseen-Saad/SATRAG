@@ -1,25 +1,25 @@
 <% title = 'SAT Vocabulary Generator'; %>
 <h1>SAT Study Buddy</h1>
-<p style="color:var(--text-muted); margin-bottom:2rem;">Enter any word to get a Gulotta-style vocabulary entry, or chose an existing word and add it to your dashboard.</p>
+<p class="vocab-page-subtitle">Enter any word to get a Gulotta-style vocabulary entry, or chose an existing word and add it to your dashboard.</p>
 
 <% if (error) { %>
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<div class="card" style="margin-bottom:2rem;">
+<div class="card vocab-form-card">
   <form method="POST" action="/vocab/generate" style="display:flex; gap:0.5rem;" data-loading>
     <input type="text" name="word" placeholder="Enter a word (e.g., perspicacious)" required class="form-input" style="flex:1;">
     <button type="submit" class="btn-primary">Generate</button>
   </form>
 </div>
 
-<div style="display:flex; gap:1rem; margin-bottom:2rem;">
-  <a href="/vocab/lists" class="btn-secondary" style="flex:1; text-align:center;">Word Lists</a>
-  <a href="/flashcards" class="btn-secondary" style="flex:1; text-align:center;">Flashcards</a>
+<div class="vocab-quick-links">
+  <a href="/vocab/lists" class="btn-secondary">Word Lists</a>
+  <a href="/flashcards" class="btn-secondary">Flashcards</a>
 </div>
 <% if (recent && recent.length > 0) { %>
 <h2>Recent Words</h2>
-<div style="display:grid; gap:0.5rem;">
+<div class="vocab-recent-grid">
   <% recent.forEach(entry => { %>
   <a href="/vocab/<%= entry.word %>" class="word-list-item">
     <strong><%= entry.word %></strong> — <%= entry.definition?.substring(0, 80) %><%= entry.definition?.length > 80 ? '...' : '' %>
