@@ -7,3 +7,5 @@ Math rules:
 - Never include "all of the above" or "none of the above".
 - Formulas the SAT provides (don't include in question): area/volume formulas, Pythagorean theorem, special right triangles, circle equations, quadratic formula.
 - If the question is SPR, the answer must be a numeric value (not an expression or equation).
+- SPR answers must be simplified: integers, simplified fractions, or decimals. No unsimplified expressions.
+- When a question references a figure or graph, but it as SVG code.

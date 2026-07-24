@@ -8,10 +8,7 @@ Include line numbers in passage text using <sup> tags: <sup>1</sup> at each para
 Reading/Writing rules:
 - DISTRACTORS must be plausible but wrong: common misreadings or over-generalizations.
 - The correct answer must be DIRECTLY supported by the passage text.
-Reading/Writing rules:
 - Do NOT reference real people or copyrighted works.
-- For Standard English Conventions: the passage should have exactly ONE error that the question targets. Wrong answers should test knowledge of other grammar rules.
 - For Command of Evidence: provide 4 specific quotes from the passage. The correct one must be the BEST support for the claim. Distractors should be real quotes from the passage that support a different claim or are only tangentially related.
 - For Inferences: the answer must be something that logically follows from the passage but is NOT directly stated. Distractors should be things that are either contradicted by the passage or unsupported.
-- For Expression of Ideas / Transitions: the question presents a passage with a blank and asks which transition best completes it.
 - For Cross-Text Connections: include TWO passages in the "passage_text" field, separated by "--- Passage 1 ---" and "--- Passage 2 ---" headers. Each passage must be 70-150 words (aim for 100-120 words each). The passages should present DIFFERENT perspectives, arguments, or aspects of the same topic. One passage might present a claim, and the other might respond to it, offer an alternative view, or provide additional context. The question must require reading BOTH passages to answer correctly.

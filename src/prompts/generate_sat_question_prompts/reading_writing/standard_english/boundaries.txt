@@ -1,1 +1,3 @@
 - "Boundaries": Correct punctuation and sentence boundaries — commas, semicolons, colons, periods, and dashes used to join or separate clauses. The passage will have exactly ONE punctuation error at a boundary. Easy: missing period between two independent clauses (run-on). Medium: incorrect comma splice or missing semicolon. Hard: complex sentence with multiple clauses where the boundary error is subtle (e.g., missing colon before a list after an independent clause).
+- The passage should contain 2-4 sentences with exactly ONE boundary error. Wrong answers should test knowledge of other punctuation rules or place the error elsewhere.
+- Common boundary errors: run-on sentences, comma splices, semicolons used where commas belong, missing colons before lists.

@@ -61,7 +61,7 @@ const SUBTOPIC_FILES = {
     'Transitions': 'transitions.txt'
 }
 
-function readFile(relativePath){
+function readFile(relativePath) {
     return fs.readFileSync(path.join(SAT_PROMPTS, relativePath), 'utf-8').trim()
 }
 
@@ -77,8 +77,69 @@ class RAGEngine {
         }
     }
     buildPrompt(subject, topic, subtopic) {
-        if (!topic && !subtopic && !subject) return;
+        const parts = [];
+        parts.push(readFile('core.txt'));
+        parts.push(readFile('difficulty.txt'));
+        parts.push(readFile('general_rules.txt'));
+        const wantMath = !subject || subject === 'math'
+        const wantRW = !subject || isRW(subject)
 
+        if (wantMath) {
+            parts.push(readFile('math/core.txt'))
+
+            if (topic) {
+                const topicDirName = MATH_TOPIC_DIRS[topic]
+                if (topicDirName) {
+                    if (subtopic) {
+                        const dirPath = path.join(SAT_PROMPTS, 'math/' + topicDirName, SUBTOPIC_FILES[subtopic])
+                        parts.push(readFile(dirPath));
+                    } else {
+                        const dirPath = path.join(SAT_PROMPTS, 'math', topicDirName)
+                        const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
+                        for (const file of files) {
+                            parts.push(fs.readFileSync(path.join(dirPath, file), 'utf-8').trim())
+                        }
+                    }
+                }
+            } else {
+                for (const dirName of Object.values(MATH_TOPIC_DIRS)) {
+                    const dirPath = path.join(SAT_PROMPTS, 'math', dirName)
+                    const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
+                    for (const file of files) {
+                        parts.push(fs.readFileSync(path.join(dirPath, file), 'utf-8').trim())
+                    }
+                }
+            }
+        }
+        if (wantRW) {
+            parts.push(readFile('reading_writing/core.txt'))
+
+            if (topic) {
+                const topicDirName = RW_TOPIC_DIRS[topic]
+                if (topicDirName) {
+                    if (subtopic) {
+                        const dirPath = path.join(SAT_PROMPTS, 'reading_writing/' + topicDirName, SUBTOPIC_FILES[subtopic])
+                        parts.push(readFile(dirPath));
+                    } else {
+                        const dirPath = path.join(SAT_PROMPTS, 'reading_writing', topicDirName)
+                        const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
+                        for (const file of files) {
+                            parts.push(fs.readFileSync(path.join(dirPath, file), 'utf-8').trim())
+                        }
+                    }
+                }
+            } else {
+                for (const dirName of Object.values(RW_TOPIC_DIRS)) {
+                    const dirPath = path.join(SAT_PROMPTS, 'reading_writing', dirName)
+                    const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
+                    for (const file of files) {
+                        parts.push(fs.readFileSync(path.join(dirPath, file), 'utf-8').trim())
+                    }
+                }
+            }
+        }
+        const result = parts.join("\n\n")
+        return result || SAT_QUESTION_PROMPT
     }
 
     async retrieveSimilar(word, topK = 3) {
@@ -216,7 +277,7 @@ class RAGEngine {
 
     async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
         const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 });
-        const prompt = SAT_QUESTION_PROMPT
+        const prompt = buildPrompt(subject, topic, subtopic)
         const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
             let opts;
             try {

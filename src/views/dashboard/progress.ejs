@@ -111,7 +111,7 @@
       <a href="/vocab/<%= dailyWord.word %>" class="btn btn-ghost btn-sm">View</a>
     </div>
     <div class="dash-card-body">
-      <div style="font-size:1.5rem;font-weight:bold;color:var(--primary);"><%= dailyWord.word %> <span style="font-size:0.9rem;font-weight:normal;color:var(--text-muted);"><%= dailyWord.part_of_speech %></span></div>
+      <div style="font-size:1.5rem;font-weight:bold;color:var(--color-accent);"><%= dailyWord.word %> <span style="font-size:0.9rem;font-weight:normal;color:var(--color-text-muted);"><%= dailyWord.part_of_speech %></span></div>
       <p style="margin:0.5rem 0 0;"><%= dailyWord.definition %></p>
       <% if (dailyWord.example_sentence) { %><p style="margin:0.5rem 0 0;font-style:italic;font-size:0.9rem;color:var(--text-muted);"><%= dailyWord.example_sentence %></p><% } %>
     </div>
