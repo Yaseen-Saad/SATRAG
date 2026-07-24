@@ -1,0 +1,1 @@
+- "Linear functions": Evaluate f(x) for given inputs, interpret function notation, and understand domain/range. Easy: f(x) = 2x + 3, find f(5). Medium: given f(x) = ax + b, find x when f(x) = k. Hard: piecewise linear contexts, comparing two linear function models.

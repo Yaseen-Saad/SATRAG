@@ -1,0 +1,9 @@
+--- MATH ---
+Calculator is allowed on all questions. A built-in graphing calculator is available.
+
+Math rules:
+- WRONG ANSWERS MUST test real student mistakes: sign errors, order of operations, misapplied formulas, unit errors, rounding errors.
+- Include realistic contexts: money, rates, population growth, measurements, data from tables/charts.
+- Never include "all of the above" or "none of the above".
+- Formulas the SAT provides (don't include in question): area/volume formulas, Pythagorean theorem, special right triangles, circle equations, quadratic formula.
+- If the question is SPR, the answer must be a numeric value (not an expression or equation).

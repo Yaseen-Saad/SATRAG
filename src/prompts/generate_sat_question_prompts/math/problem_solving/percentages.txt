@@ -1,0 +1,1 @@
+- "Percentages": Calculate percent increase/decrease, find part/whole/percent, compound percent. Easy: what is 20% of 50? Medium: if a price increases from $80 to $100, what is percent increase? Hard: successive percent changes (10% increase then 20% decrease), or percent of a percent.

@@ -1,0 +1,1 @@
+- "Two-variable data: models and scatterplots": Interpret scatterplots, lines of best fit, correlation vs. causation. Easy: identify positive/negative correlation from a scatterplot. Medium: interpret slope of a line of best fit in context. Hard: interpolate or extrapolate, identify influential points, or distinguish correlation from causation.

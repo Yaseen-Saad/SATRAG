@@ -1,0 +1,1 @@
+- "Area and volume": Calculate area of triangles, parallelograms, circles; volume of prisms, cylinders, spheres, cones, pyramids. Easy: area of a rectangle with length 8 and width 5. Medium: volume of a cylinder with radius 3 and height 10. Hard: composite solids, or volume problems requiring subtraction of inner shapes.

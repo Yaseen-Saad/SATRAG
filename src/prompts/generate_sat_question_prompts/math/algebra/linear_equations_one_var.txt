@@ -1,0 +1,1 @@
+- "Linear equations in one variable": Solve for x in equations like 3x + 7 = 22 or (2x-5)/3 = 4. Test isolating variables, combining like terms, and distributing. Easy: one-step or two-step with integers. Medium: variables on both sides, fractions/decimals. Hard: equations with nested parentheses or requiring clearing denominators.

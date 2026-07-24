@@ -1,0 +1,1 @@
+- "Linear inequalities in one or two variables": Solve and graph inequalities, interpret inequality solutions on number lines or coordinate planes. Easy: solve x + 3 > 7. Medium: compound inequalities, graphing on number line. Hard: system of inequalities, shaded region interpretation, or word problem setup.

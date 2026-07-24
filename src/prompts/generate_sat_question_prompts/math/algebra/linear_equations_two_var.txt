@@ -1,0 +1,1 @@
+- "Linear equations in two variables": Work with y = mx + b, ax + by = c, and slope-intercept/standard forms. Find slope, intercepts, or convert between forms. Easy: identify slope or y-intercept directly. Medium: find equation from two points or a graph. Hard: interpret slope and intercepts in context (cost models, rates of change).

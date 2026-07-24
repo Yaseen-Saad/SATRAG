@@ -1,0 +1,1 @@
+- "Inference from sample statistics and margin of error": Understand sampling methods, margin of error, confidence intervals. Easy: identify a biased sample. Medium: given margin of error, construct a confidence interval. Hard: determine how sample size affects margin of error, or identify sampling bias in study descriptions.

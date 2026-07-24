@@ -1,0 +1,1 @@
+- "Right triangles and trigonometry": Apply Pythagorean theorem, SOH-CAH-TOA, 30-60-90 and 45-45-90 triangles. Easy: find hypotenuse of a 3-4-5 triangle. Medium: sin(θ) = 3/5, find cos(θ). Hard: angle of elevation/depression problems, or multi-step problems combining trig with Pythagorean theorem.

@@ -4,6 +4,66 @@ const fs = require("fs")
 const path = require("path")
 
 const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question_prompts/generate_sat_question.txt'), 'utf-8');
+const SAT_PROMPTS = path.join(__dirname, '../prompts/generate_sat_question_prompts')
+
+const MATH_TOPIC_DIRS = {
+    'Algebra': 'algebra',
+    'Advanced Math': 'advanced_math',
+    'Problem-Solving and Data Analysis': 'problem_solving',
+    'Geometry and Trigonometry': 'geometry_trig'
+}
+
+const RW_TOPIC_DIRS = {
+    'Craft and Structure': 'craft_and_structure',
+    'Information and Ideas': 'information_and_ideas',
+    'Standard English Conventions': 'standard_english',
+    'Expression of Ideas': 'expression_of_ideas'
+}
+
+const SUBTOPIC_FILES = {
+    // Math - Algebra
+    'Linear equations in one variable': 'linear_equations_one_var.txt',
+    'Linear equations in two variables': 'linear_equations_two_var.txt',
+    'Linear functions': 'linear_functions.txt',
+    'Systems of two linear equations in two variables': 'systems_linear.txt',
+    'Linear inequalities in one or two variables': 'linear_inequalities.txt',
+    // Math - Advanced Math
+    'Equivalent expressions': 'equivalent_expressions.txt',
+    'Nonlinear equations in one variable and systems of equations in two variables': 'nonlinear_equations.txt',
+    'Nonlinear functions': 'nonlinear_functions.txt',
+    // Math - Problem-Solving
+    'Ratios, rates, proportional relationships, and units': 'ratios_rates.txt',
+    'Percentages': 'percentages.txt',
+    'One-variable data: distributions and measures of center and spread': 'one_variable_data.txt',
+    'Two-variable data: models and scatterplots': 'two_variable_data.txt',
+    'Probability and conditional probability': 'probability.txt',
+    'Inference from sample statistics and margin of error': 'sample_statistics.txt',
+    'Evaluating statistical claims: observational studies and experiments': 'statistical_claims.txt',
+    // Math - Geometry & Trig
+    'Area and volume': 'area_volume.txt',
+    'Lines, angles, and triangles': 'lines_angles_triangles.txt',
+    'Right triangles and trigonometry': 'right_triangles_trig.txt',
+    'Circles': 'circles.txt',
+    // Reading/Writing - Craft and Structure
+    'Words in Context': 'words_in_context.txt',
+    'Text Structure and Purpose': 'text_structure_purpose.txt',
+    'Cross-Text Connections': 'cross_text_connections.txt',
+    // Reading/Writing - Information and Ideas
+    'Central Ideas and Details': 'centeral_ideas_details.txt',
+    'Command of Evidence — Textual': 'command_of_evidence_textual.txt',
+    'Command of Evidence — Quantitative': 'command_of_evidence_quantitative.txt',
+    'Inferences': 'inferences.txt',
+    // Reading/Writing - Standard English Conventions
+    'Boundaries': 'boundaries.txt',
+    'Form, Structure, and Sense': 'form_structure_sense.txt',
+    // Reading/Writing - Expression of Ideas
+    'Rhetorical Synthesis': 'rhetorical_synthesis.txt',
+    'Transitions': 'transitions.txt'
+}
+
+function readFile(relativePath){
+    return fs.readFileSync(path.join(SAT_PROMPTS, relativePath), 'utf-8').trim()
+}
 
 class RAGEngine {
     //This needs work
@@ -176,7 +236,7 @@ class RAGEngine {
                 }, null, 2)}`
             };
         }), { role: 'user', content: `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.` }];
-        const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 4096, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
+        const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 8000, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
         if (!response.success) throw new Error(response.error)
         const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
         const match = raw.match(/\{[\s\S]*\}/);
@@ -186,7 +246,7 @@ class RAGEngine {
         }
         const result = JSON.parse(match[0].trim());
         if (result.question_text) {
-            result.question_text = result.question_text.replace(/_{2,}\s*(?:blank)?\s*/gi, '<span style="text-decoration: underline;">   </span>');
+            result.question_text = result.question_text.replace(/_{2,}\s*(?:blank)?\s*/gi, '<span style="text-decoration: underline;"> </span>');
         }
         let opts = result.options;
         if (opts && typeof opts === 'object' && !Array.isArray(opts)) {

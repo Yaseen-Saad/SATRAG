@@ -1,0 +1,1 @@
+- "Probability and conditional probability": Calculate basic probabilities, use two-way tables for joint/conditional probability. Easy: P(rolling a 3 on a die) = 1/6. Medium: from a two-way table, find P(A | B). Hard: independent vs. dependent events, P(A and B) with conditional probability.

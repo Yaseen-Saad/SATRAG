@@ -1,0 +1,16 @@
+GENERAL RULES:
+- MCQ questions MUST have exactly 4 options (A, B, C, D).
+- SPR (Student-produced response) questions are numeric answers only (math section only).
+- Reading/Writing questions MUST include passage_text.
+- Math questions should NOT include passage_text.
+- Make the question realistic and similar to actual digital SAT questions.
+- Questions must be answerable without external knowledge.
+- The correct answer must be DEFINITIVELY, UNAMBIGUOUSLY correct; distractors should be plausible.
+- STRICT LENGTH LIMITS:
+  - Passage (reading/writing single): 25-150 words MAXIMUM.
+  - Passage (cross-text connections): TWO passages, each 70-150 words (combined max ~300 words).
+  - Question stem: 1-3 short sentences MAXIMUM. Never paragraph-length stems.
+  - Each answer choice: 1 short sentence or phrase MAXIMUM (under 15 words).
+  - Explanation: 1-2 sentences only.
+  - The entire question (stem + all options) should be under 120 words for reading/writing (except cross-text passages), under 80 words for math.
+  - Keep word problem contexts concise — the digital SAT specifically reduced average problem length.

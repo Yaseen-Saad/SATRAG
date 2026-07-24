@@ -1,0 +1,1 @@
+- "Nonlinear functions": Evaluate and interpret quadratic, exponential, and other nonlinear functions. Understand vertex, axis of symmetry, growth/decay rates. Easy: evaluate f(x) = x^2 at x = 4. Medium: find vertex of f(x) = x^2 - 6x + 8. Hard: compare exponential growth models, interpret rate of change in nonlinear contexts.

@@ -1,0 +1,1 @@
+- "Circles": Use circle equations (x-h)^2 + (y-k)^2 = r^2, arc length, sector area, central/inscribed angles. Easy: find radius from circle equation. Medium: arc length = (θ/360) × 2πr. Hard: inscribed angle theorems, or combined circle + triangle problems.

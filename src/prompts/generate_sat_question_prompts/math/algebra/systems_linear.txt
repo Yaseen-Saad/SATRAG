@@ -1,0 +1,1 @@
+- "Systems of two linear equations in two variables": Solve systems using substitution, elimination, or graphing. Easy: systems with integer solutions. Medium: systems requiring multiplication before elimination. Hard: systems with no solution or infinitely many solutions, or word problems requiring setup.

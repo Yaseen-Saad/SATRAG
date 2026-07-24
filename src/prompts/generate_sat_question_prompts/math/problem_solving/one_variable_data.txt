@@ -1,0 +1,1 @@
+- "One-variable data: distributions and measures of center and spread": Read histograms, box plots, dot plots. Calculate/interpret mean, median, mode, range, IQR, standard deviation. Easy: find the mean of {2, 4, 6, 8}. Medium: interpret a box plot to find median and IQR. Hard: compare distributions, identify outliers, or determine which measure of center is most appropriate.
