@@ -231,14 +231,16 @@ class VocabEngine {
     }
 
     async getDailyWord() {
-        const { data, count } = await supabase.from('vocab_entries').select('id, word, definition, part_of_speech, example_sentence, pronunciation, mnemonic_phrase', { count: 'exact' });
+        const { count } = await supabase.from('vocab_entries').select('*', { count: 'exact', head: true })
         if (!count || count === 0) return null;
         const start = new Date(new Date().getFullYear(), 0, 0);
         const diff = Date.now() - start
         const dayOfYear = Math.floor(diff / 86400000)
-        return data[dayOfYear % count]
+        const offset = dayOfYear % count
+        const { data } = await supabase.from('vocab_entries').select('id, word, definition, part_of_speech, example_sentence, pronunciation, mnemonic_phrase').range(offset, offset)
+        return data?.[0] || null
     }
-
+    
     async getVocabStats(userId) {
         const [totalResult, listResult, sourcesResult, recentResult] = await Promise.all([
             supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),

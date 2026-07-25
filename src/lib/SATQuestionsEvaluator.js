@@ -36,7 +36,7 @@ class SATqEvaluator {
             if (!match) throw new Error('No JSON in critic response')
 
             const result = JSON.parse(match[0])
-            if (typeof +result?.overallScore !== 'number') console.error('Invalid response')
+            if (typeof +result?.overallScore !== 'number') console.error('Invalid overallScore')
             result.scores = result.scores || {}
             result.criticalIssues = result.criticalIssues || []
             result.suggestions = result.suggestions || []

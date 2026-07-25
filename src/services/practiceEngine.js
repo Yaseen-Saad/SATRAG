@@ -96,9 +96,9 @@ class PracticeEngine {
         let uState = null;
         let attempts = []
         if (userId) {
-            const [state, atemptsresults] = await Promise.all([supabase.from('user_question_state').select('*').eq('user_id', userId).eq('question_id', questionId).single(), supabase.from("user_question_attempts").select("*").eq('user_id', userId).eq('question_id', questionId).order('attempt_time', { ascending: false })])
+            const [state, attemptsResults] = await Promise.all([supabase.from('user_question_state').select('*').eq('user_id', userId).eq('question_id', questionId).single(), supabase.from("user_question_attempts").select("*").eq('user_id', userId).eq('question_id', questionId).order('attempt_time', { ascending: false })])
             if (!state.error) uState = state.data;
-            if (!atemptsresults.error) attempts = atemptsresults.data || [];
+            if (!attemptsResults.error) attempts = attemptsResults.data || [];
         }
         return { question, uState, attempts };
     }
@@ -375,7 +375,7 @@ class PracticeEngine {
             const attemptedIds = (attempted || []).map(a => a.question_id)
 
             if (attemptedIds.length > 0) {
-                query = query.not('id', 'in', `(${attemptedIds.join(',')})`)
+                query = query.not('id', 'in', attemptedIds)
             }
         }
         const { data: questions } = await query.order('created_at', { ascending: false }).limit(5)

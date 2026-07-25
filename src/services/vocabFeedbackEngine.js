@@ -14,7 +14,7 @@ class FeedbackEngine {
         }).select().single();
         if (error) {
             console.error(error)
-            return null
+            throw new Error('Failed to record feedback')
         }
 
         try {

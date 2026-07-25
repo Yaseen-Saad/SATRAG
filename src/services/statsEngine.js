@@ -17,10 +17,10 @@ class StatsEngine {
         ]);
 
         console.log({ totalWords, totalUsers, totalQuestions, totalQuestionAttempts, totalLists });
-        if (totalWordsError || totalUsersError || totalQuestionsError) {
+        if (totalWordsError || totalUsersError || totalQuestionsError || totalQuestionAttemptsError || totalListsError) {
             return {
                 error: 'Error fetching stats',
-                details: { totalWordsError, totalUsersError, totalQuestionsError }
+                details: { totalWordsError, totalUsersError, totalQuestionsError, totalQuestionAttemptsError, totalListsError }
             };
         }
 
