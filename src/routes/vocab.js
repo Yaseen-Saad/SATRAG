@@ -3,7 +3,6 @@ const path = require('path')
 const fs = require('fs')
 const { requireAuth, optionalAuth } = require('../middleware/auth')
 const supabase = require('../lib/supabase').service
-const config = require('../config')
 const rag = require('../lib/rag')
 const llm = require('../lib/llm')
 const qualityChecker = require('../lib/qualityChecker')

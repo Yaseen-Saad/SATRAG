@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const supabase = require('../lib/supabase.js')
+const { service: supabase } = require('../lib/supabase.js')
 const router = Router();
 
 router.get('/totalWords', async (req, res) => {

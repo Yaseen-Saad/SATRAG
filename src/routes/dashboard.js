@@ -60,19 +60,19 @@ router.get('/leaderboard', optionalAuth, async (req, res) => {
       userId: req.user?.id, sortBy, sortDir, gradeFilter: grade
     })
     res.render('dashboard/leaderboard', { user: req.user, entries: result.entries || [], totalCount: result.totalCount || 0, userRank: result.userRank, page: parseInt(page), limit: parseInt(limit), sortBy, sortDir, grade, error: null });
-  } catch (Err) {
-    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, sortBy: 'score', sortDir: 'desc', grade: '', error: Err.message })
+  } catch (err) {
+    res.render('dashboard/leaderboard', { user: req.user, entries: [], totalCount: 0, userRank: null, page: 1, limit: 50, sortBy: 'score', sortDir: 'desc', grade: '', error: err.message })
   }
 })
 
 router.get('/analytics', requireAuth, async (req, res) => {
   try {
-    const [sessions, trend, timeANalytics] = await Promise.all([
+    const [sessions, trend, timeAnalytics] = await Promise.all([
       dashboardEngine.getSessionAnalytics(req.user.id),
       dashboardEngine.getPerformanceTrend(req.user.id),
       dashboardEngine.getTimeAnalytics(req.user.id)
     ])
-    res.render('dashboard/analytics', { user: req.user, sessions, trend, timeAnalytics: timeANalytics, error: null });
+    res.render('dashboard/analytics', { user: req.user, sessions, trend, timeAnalytics, error: null });
   } catch (error) {
     res.render('dashboard/analytics', { user: req.user, sessions: [], trend: [], timeAnalytics: [], error: error.message });
   }

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const multer = require('multer');
 const path = require('path');
-
+const config = require('../config');
 const { requireAuth } = require('../middleware/auth');
 const { sanitize } = require('../lib/utils')
 const settingsEngine = require('../services/settingsEngine');
@@ -67,8 +67,12 @@ router.post('/update-all', requireAuth, async (req, res) => {
         if (embeddingKey) updates.embedding_apikey = embeddingKey;
 
         const avatarUrl = (req.body.avatarUrl || '').trim();
-        if (avatarUrl && /^https?:\/\//.test(avatarUrl)) updates.avatar_url = avatarUrl;
-
+        if (avatarUrl) {
+            const supabaseUrl = config.SUPABASE_URL || "";
+            if (avatarUrl.startsWith(supabaseUrl) && avatarUrl.includes('/storage/v1/object/public/avatars/')) {
+                updates.avatar_url = avatarUrl;
+            }
+        }
         const leaderboardEnabled = req.body.leaderboardstatus === 'enabled';
         updates.participate_in_leaderboard = leaderboardEnabled;
 
@@ -108,7 +112,10 @@ router.get('/avatar/:user', requireAuth, async (req, res) => {
     try {
         const { data: profile } = await supabase.from('public_profiles').select('avatar_url').eq('id', req.params.user).single();
         if (!profile) return res.status(404).send('Not found');
-        if (profile.avatar_url && /^https?:\/\//.test(profile.avatar_url)) return res.redirect(profile.avatar_url);
+        const supabaseUrl = (config.SUPABASE_URL || '').replace(/\/$/, '');
+        if (profile.avatar_url && profile.avatar_url.startsWith(supabaseUrl + '/storage/')) {
+            return res.redirect(profile.avatar_url);
+        }
         res.status(404).send('No avatar');
     } catch (err) {
         console.error('Avatar redirect error:', err)
