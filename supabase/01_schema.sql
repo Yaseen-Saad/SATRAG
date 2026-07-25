@@ -310,7 +310,7 @@ ALTER TABLE feedback_events ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "feedback_events owner all" ON feedback_events;
 CREATE POLICY "feedback_events owner all" ON feedback_events
-    FOR ALL USING (auth.uid() = created_by) WITH CHECK (auth.uid() = created_by);
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- RLS: tickets
 ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
@@ -319,7 +319,7 @@ DROP POLICY IF EXISTS "tickets owner all" ON tickets;
 CREATE POLICY "tickets owner all" ON tickets
     FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
--- RLS: ticket_messagesg
+-- RLS: ticket_messages
 ALTER TABLE ticket_messages ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "ticket_messages owner all" ON ticket_messages;
@@ -344,10 +344,6 @@ DROP POLICY IF EXISTS "list_shares viewable" ON list_shares;
 CREATE POLICY "list_shares viewable" ON list_shares
     FOR SELECT USING (auth.uid() = shared_with_user_id OR auth.uid() = shared_by_user_id);
 
-DROP POLICY IF EXISTS "ticket_messages owner all" ON ticket_messages;
-CREATE POLICY "ticket_messages owner all" ON ticket_messages
-    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
-
 -- RLS: public_profiles
 ALTER TABLE public_profiles ENABLE ROW LEVEL SECURITY;
 
@@ -363,13 +359,38 @@ CREATE POLICY "Users can update their own public profile only" ON public_profile
 -- RLS: question_feedback
 ALTER TABLE question_feedback ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can insert own feedback" ON questions_feedback
-    FOR INSERT WITH CHECK (auth.uid() = user_id)
+DROP POLICY IF EXISTS "question_feedback insert" ON question_feedback;
+CREATE POLICY "question_feedback insert" ON question_feedback
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update own feedback" ON question_feedback
+DROP POLICY IF EXISTS "question_feedback update" ON question_feedback;
+CREATE POLICY "question_feedback update" ON question_feedback
     FOR UPDATE USING (auth.uid() = user_id);
 
-CREATE POLICY "Authenticated users can read feedback" ON question_feedback
+DROP POLICY IF EXISTS "question_feedback select" ON question_feedback;
+CREATE POLICY "question_feedback select" ON question_feedback
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+-- RLS: rag_feedback_examples
+ALTER TABLE rag_feedback_examples ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "rag_feedback_examples service all" ON rag_feedback_examples;
+CREATE POLICY "rag_feedback_examples service all" ON rag_feedback_examples
+    FOR ALL USING (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "rag_feedback_examples auth read" ON rag_feedback_examples;
+CREATE POLICY "rag_feedback_examples auth read" ON rag_feedback_examples
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+-- RLS: rag_feedback_question
+ALTER TABLE rag_feedback_question ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "rag_feedback_question service all" ON rag_feedback_question;
+CREATE POLICY "rag_feedback_question service all" ON rag_feedback_question
+    FOR ALL USING (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "rag_feedback_question auth read" ON rag_feedback_question;
+CREATE POLICY "rag_feedback_question auth read" ON rag_feedback_question
     FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
@@ -385,6 +406,14 @@ CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_stats(user_id, ac
 CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_stats(user_id, subject);
 CREATE INDEX IF NOT EXISTS idx_vocab_entries_embedding ON vocab_entries USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS idx_sat_questions_embedding ON sat_questions USING hnsw (embedding vector_cosine_ops);
-CREATE INDEX idx_question_feedback_question ON question_feedback(question_id);
-CREATE INDEX idx_question_feedback_user ON question_feedback(user_id);
-CREATE INDEX idx_sat_questions_tier ON sat_questions(quality_tier);
+CREATE INDEX IF NOT EXISTS idx_question_feedback_question ON question_feedback(question_id);
+CREATE INDEX IF NOT EXISTS idx_question_feedback_user ON question_feedback(user_id);
+CREATE INDEX IF NOT EXISTS idx_sat_questions_tier ON sat_questions(quality_tier);
+CREATE INDEX IF NOT EXISTS idx_feedback_events_user ON feedback_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_events_word ON feedback_events(word_id);
+CREATE INDEX IF NOT EXISTS idx_uqa_user ON user_question_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_ufp_user ON user_flashcard_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_ufp_next_review ON user_flashcard_progress(next_review);
+CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(user_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_active ON tickets(active);
+CREATE INDEX IF NOT EXISTS idx_sq_is_active ON sat_questions(is_active);
