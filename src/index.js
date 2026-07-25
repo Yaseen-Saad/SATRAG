@@ -1,4 +1,4 @@
-require('dotenv').config();
+const config = require('config');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -21,21 +21,22 @@ const ticketsRoutes = require('./routes/ticket');
 const statsRoutes = require('./routes/stats');
 const { requireAuth, optionalAuth } = require('./middleware/auth');
 const { requireProfileComplete } = require('./middleware/profile');
-const { statfs } = require('fs/promises');
 
 const app = express();
 
 app.use(cookieParser());
-if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
+if (config.NODE_ENV === 'production') app.set('trust proxy', 1)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' }, referrerPolicy: { policy: 'stricti-origin-when-cross-origin' } }));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
+}));
 
 app.use(rateLimiter());
 
@@ -59,8 +60,8 @@ app.use((req, res, next) => {
   requireProfileComplete(req, res, next);
 });
 
-app.use('/vocab', vocabRoutes);
 app.use('/vocab/feedback', vocabFeedbackRoutes);
+app.use('/vocab', vocabRoutes);
 app.use('/question-feedback', questionFeedbackRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/practice', practiceRoutes);
@@ -73,14 +74,16 @@ app.use(errorHandler);
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason);
+  process.exit(1);
 });
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
   process.exit(1);
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.error(`SAT Study Buddy running on http://localhost:${PORT}`));
+if (config.NODE_ENV !== 'production') {
+  const PORT = config.PORT;
+  app.listen(PORT, () => console.log(`SAT Study Buddy running on http://localhost:${PORT}`));
 }
-module.exports = app;
+
+mdodule.exports = app;
