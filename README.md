@@ -346,64 +346,100 @@ satbudd/
 │   │       ├── leaderboard.ejs                # EJS templates
 │   │       └── progress.ejs                # EJS templates
 │   └── public/
-│       ├── css/                # SCSS source + compiled CSS
-│       │    ├── bluebook.scss                # EJS templates
-│       │    ├── main.scss                # EJS templates
-│       │    ├── components/                # EJS templates
-│       │    │    ├── _badges.scss                # EJS templates
-│       │    │    ├── _buttons.scss                # EJS templates
-│       │    │    ├── _cards.scss                # EJS templates
-│       │    │    ├── _empty-states.scss         # EJS templates
-│       │    │    ├── _flash.scss                # EJS templates
-│       │    │    ├── _forms.scss                # EJS templates
-│       │    │    ├── _nav.scss                # EJS templates
-│       │    │    └── _tables.scss               # EJS templates
-│       │    ├── pages/                # EJS templates
-│       │    │    ├── _auth.scss                # EJS templates
-│       │    │    ├── _dashboard.scss           # EJS templates
-│       │    │    ├── _feedback.scss                # EJS templates
-│       │    │    ├── _flashcards.scss         # EJS templates
-│       │    │    ├── _landing.scss                # EJS templates
-│       │    │    ├── _leaderboard.scss        # EJS templates
-│       │    │    ├── _practice.scss                # EJS templates
-│       │    │    ├── _settings.scss             # EJS templates
-│       │    │    ├── _tickets.scss                # EJS templates
-│       │    │    └── _vocab.scss               # EJS templates
-│       │    └── utils/                # EJS templates
-│       │         ├── _base.scss             # EJS templates
-│       │         ├── _mixins.scss                # EJS templates
-│       │         └── variables.scss               # EJS templates
-│       ├── img/                # SCSS source + compiled CSS
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           ├── app.svg              # EJS templates
-│           ├── bluebook.svg                # EJS templates
-│           ├── components.svg                # EJS templates
-│           └── landing.svg                # EJS templates
-│       └── js/                 # Client-side JavaScript
-│           ├── app.js                # EJS templates
-│           ├── bluebook.js                # EJS templates
-│           ├── components.js                # EJS templates
-│           └── landing.js                # EJS templates
+│       ├── css/                            # SCSS source
+│       │    ├── bluebook.scss              # Bluebook SCSS
+│       │    ├── main.scss                  # Main SCSS
+│       │    ├── components/                # Components Templates
+│       │    │    ├── _badges.scss          # Components Templates
+│       │    │    ├── _buttons.scss         # Components Templates
+│       │    │    ├── _cards.scss           # Components Templates
+│       │    │    ├── _empty-states.scss    # Components Templates
+│       │    │    ├── _flash.scss           # Components Templates
+│       │    │    ├── _forms.scss           # Components Templates
+│       │    │    ├── _nav.scss             # Components Templates
+│       │    │    └── _tables.scss          # Components Templates
+│       │    ├── pages/                     # SCSS Pages Templates
+│       │    │    ├── _auth.scss            # SCSS Pages Templates
+│       │    │    ├── _dashboard.scss       # SCSS Pages Templates
+│       │    │    ├── _feedback.scss        # SCSS Pages Templates
+│       │    │    ├── _flashcards.scss      # SCSS Pages Templates
+│       │    │    ├── _landing.scss         # SCSS Pages Templates
+│       │    │    ├── _leaderboard.scss     # SCSS Pages Templates
+│       │    │    ├── _practice.scss        # SCSS Pages Templates
+│       │    │    ├── _settings.scss        # SCSS Pages Templates
+│       │    │    ├── _tickets.scss         # SCSS Pages Templates
+│       │    │    └── _vocab.scss           # SCSS Pages Templates
+│       │    └── utils/                     # SCSS templates
+│       │         ├── _base.scss            # SCSS templates
+│       │         ├── _mixins.scss          # SCSS templates
+│       │         └── variables.scss        # SCSS templates
+│       ├── img/                            # Images 
+│           ├── analytics.svg               # An Image of
+│           ├── auth.svg                    # An Image of
+│           ├── book-open.svg               # An Image of
+│           ├── celebrate.svg               # An Image of
+│           ├── correct.svg                 # An Image of
+│           ├── dark.svg                    # An Image of
+│           ├── dashboard.svg               # An Image of
+│           ├── empty.svg                   # An Image of
+│           ├── eyeclosed.svg               # An Image of
+│           ├── eyeopen.svg                 # An Image of
+│           ├── favicon.svg                 # An Image of
+│           ├── flashcards.svg              # An Image of
+│           ├── graphbg.svg                 # An Image of
+│           ├── hiw-1-input.svg             # An Image of
+│           ├── hiw-2-tokens.svg            # An Image of
+│           ├── hiw-3-vectors.svg           # An Image of
+│           ├── hiw-4-index.svg             # An Image of
+│           ├── hiw-5-vectorspace.svg       # An Image of
+│           ├── hiw-6-similarity.svg        # An Image of      
+│           ├── hiw-7-search.svg            # An Image of
+│           ├── hiw-8-generate.svg          # An Image of    
+│           ├── hiw-9-quality.svg           # An Image of
+│           ├── hiw-10-entry.svg            # An Image of 
+│           ├── hiw-11-feedback.svg         # An Image of
+│           ├── howitworks.svg              # An Image of
+│           ├── icon-arrow-up.svg           # An Image of
+│           ├── icon-arrow-down.svg         # An Image of
+│           ├── icon-check.svg              # An Image of
+│           ├── icon-chevron-down.svg       # An Image of     
+│           ├── icon-chevron-up.svg         # An Image of
+│           ├── icon-chevron-right.svg      # An Image of      
+│           ├── icon-chevron-left.svg       # An Image of
+│           ├── icon-close.svg              # An Image of
+│           ├── icon-dot.svg                # An Image of
+│           ├── icon-dashboard.svg          # An Image of
+│           ├── icon-flashcards-nav.svg     # An Image of
+│           ├── icon-grid.svg               # An Image of
+│           ├── icon-home.svg               # An Image of
+│           ├── icon-login.svg              # An Image of
+│           ├── icon-logout.svg             # An Image of
+│           ├── icon-minus.svg              # An Image of
+│           ├── icon-podium.svg             # An Image of
+│           ├── icon-practice-nav.svg       # An Image of  
+│           ├── icon-settings-nav.svg       # An Image of
+│           ├── icon-star-outline.svg       # An Image of
+│           ├── icon-star.svg               # An Image of
+│           ├── icon-words.svg              # An Image of
+│           ├── icon-x.svg                  # An Image of
+│           ├── leaderboard.svg             # An Image of
+│           ├── light.svg                   # An Image of
+│           ├── loader.svg                  # An Image of
+│           ├── markForReview.svg           # An Image of
+│           ├── nav-light.svg               # An Image of
+│           ├── nav.svg                     # An Image of
+│           ├── practice.svg                # An Image of
+│           ├── settings.svg                # An Image of
+│           ├── streak.svg                  # An Image of
+│           ├── strikethrough.svg           # An Image of
+│           ├── timer.svg                   # An Image of
+│           ├── vocab.svg                   # An Image of
+│           └── wrong.svg                   # An Image of
+│       └── js/                             # Client-side JS
+│           ├── app.js                      # EJS templates
+│           ├── bluebook.js                 # EJS templates
+│           ├── components.js               # EJS templates
+│           └── landing.js                  # EJS templates
 ├── package.json
 ├── vercel.json
 └── .env.example
