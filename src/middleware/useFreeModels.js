@@ -29,7 +29,7 @@ async function checkAPIKeys(req, res, next) {
         if (genMonth !== currentMonth) {
             genCount = 0
             genMonth = currentMonth
-            await supabase.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id).catch((e) => {console.error('Failed to reset monthly_gen_count', e)})
+            await supabase.from('public_profiles').update({ monthly_gen_count: 0, monthly_gen_month: currentMonth }).eq('id', req.user.id).catch((e) => { console.error('Failed to reset monthly_gen_count', e) })
         }
         req.user.genCount = genCount
         req.user.genMonth = genMonth
@@ -47,26 +47,29 @@ async function checkAPIKeys(req, res, next) {
         }
         req.user.llm_apikey = profile.llm_apikey
         req.user.embedding_apikey = profile.embedding_apikey
+        req.user.embed_apikey = profile.embedding_apikey
         req.user.useFreeModels = false;
         next();
     } catch (err) {
         console.error('Error in checkAPIKeys middleware', err)
-        req.user.useFreeModels = true
-        next()
+        return res.status(500).json({ error: 'Failed to verify API keys. Please try again.' })
     }
 }
 
 async function incrementGenCount(user) {
-    try {
-        const currentMonth = new Date().toISOString().slice(0, 7)
-        const newCount = (user.genCount || 0) + 1
-        await supabase.from('public_profiles').update({
-            monthly_gen_count: newCount,
-            monthly_gen_month: currentMonth
-        }).eq('id', user.id)
-    } catch (err) {
-        console.error('Failed to increment gen count', err)
-    }
+    const currentMonth = new Date().toISOString().slice(0, 7)
+    await supabase.rpc('increment_monthly_gen_count', {
+        user_id: user.id,
+        new_month: currentMonth
+    }).then(({ error }) => {
+        if (error) {
+            const newCount = (user.genCount || 0) + 1
+            return supabase.from('public_profiles').update({
+                monthly_gen_count: newCount,
+                monthly_gen_month: currentMonth
+            }).eq('id', user.id)
+        }
+    }).catch(e => { console.error('Failed to increment monthly_gen_count', e) })
 }
 
 module.exports = { checkAPIKeys, incrementGenCount }

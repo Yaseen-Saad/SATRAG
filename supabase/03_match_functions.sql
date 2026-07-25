@@ -153,3 +153,17 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE PROCEDURE public_profile_new_users()
+
+
+CREATE OR REPLACE FUNCTION increment_monthly_gen_count(user_id UUID,new_month TEXT)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE public_profiles
+    SET monthly_gen_count = CASE
+        WHEN monthly_gen_month = new_month THEN monthly_gen_count + 1
+        ELSE 1
+    END,
+    monthly_gen_month = new_month
+    WHERE id = user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

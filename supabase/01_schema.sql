@@ -169,6 +169,7 @@ CREATE TABLE IF NOT EXISTS public_profiles (
     last_name TEXT NOT NULL DEFAULT '',
     school TEXT NOT NULL DEFAULT '',
     grade TEXT,
+    monthly_tokens INT NOT NULL DEFAULT 0,
     monthly_gen_count INT DEFAULT 0,
     monthly_gen_month TEXT,
     avatar_url TEXT,

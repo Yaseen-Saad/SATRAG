@@ -28,14 +28,14 @@ app.use(cookieParser());
 if (config.NODE_ENV === 'production') app.set('trust proxy', 1)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: process.env.APP_DOMAIN, credentials: true }));
+app.use(cors({ origin: config.APP_DOMAIN, credentials: true }));
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' }, referrerPolicy: { policy: 'stricti-origin-when-cross-origin' } }));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0
+  maxAge: config.NODE_ENV === 'production' ? '1d' : 0
 }));
 
 app.use(rateLimiter());

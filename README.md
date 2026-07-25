@@ -526,3 +526,4 @@ Built with late nights and too much caffeine by a high schooler who got tired of
 1. on scroll counter for numbers in home
 2. Loader for all API calls
 LOL i didn't add an interface to the tickets system yet.
+3. Add tokens usage for users in settings

@@ -38,7 +38,9 @@ async function requireAuth(req, res, next) {
                 return res.redirect('/auth/login');
             }
         } else {
-            setAuthCookies(res, { access_token: token, refresh_token: req.cookies?.sb_refresh_token || '' }, rememberMe);
+            if (req.method === 'POST' && rememberMe) {
+                setAuthCookies(res, { access_token: token, refresh_token: req.cookies?.sb_refresh_token || '' }, rememberMe);
+            }
         }
 
         req.user = user;
@@ -51,7 +53,7 @@ async function requireAuth(req, res, next) {
 
 async function optionalAuth(req, res, next) {
     try {
-        const token = req.cookies?.sb_access_token || req.headers.authorization?.replace('Bearer ', '');
+        const token = req.cookies?.sb_access_token || req.headers.authorization?.split(' ')[1];
         if (token) {
             let { data: { user } } = await supabase.auth.getUser(token);
             if (!user && req.cookies?.sb_refresh_token) {

@@ -26,6 +26,7 @@ setInterval(() => {
 
 function rateLimiter() {
     return (req, res, next) => {
+        if (req.path.match((/\.(css|js|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)$/))) return next();
         const ip = req.ip || req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.connection?.remoteAddress;
         const now = Date.now();
 
