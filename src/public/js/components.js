@@ -27,7 +27,7 @@ document.addEventListener("alpine:init", () => {
         },
         close() {
             this.open = false;
-            document.getElementById('overlay').classList.remove('visible')
+            document.getElementById('overlay')?.classList.remove('visible')
         }
     }))
     Alpine.data('loadingForm', () => ({

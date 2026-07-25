@@ -125,4 +125,10 @@ function parseGeneratedEntry(text, word) {
     return entry
 }
 
-module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry }
+function sanitizeForPrompt(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[`'"]/g, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, 500);
+}
+
+
+module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry, sanitizeForPrompt }

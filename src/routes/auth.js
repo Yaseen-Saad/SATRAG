@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const supabase = require('../lib/supabase')
 const config = require('../config')
-const { normalizeEmail } = require('../lib/utils')
+const { normalizeEmail, sanitize } = require('../lib/utils')
 
 const router = Router();
 
@@ -13,10 +13,6 @@ const disposableDomains = (() => {
     }
 })();
 
-function sanitize(str) {
-    if (typeof str !== 'string') return '';
-    return str.replace(/[<>]/g, '').trim();
-}
 
 function validatePassword(password) {
     const errors = [];
@@ -69,11 +65,11 @@ router.post('/signup', async (req, res) => {
         school = sanitize(school);
         referral = (referral || '').trim();
 
-        const ALLOWED_REFERALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other']);
+        const ALLOWED_REFERRALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other']);
         if (!email || !password || !firstName || !lastName || !school || !referral) {
             return res.render('auth/signup', { error: 'All fields are required' })
         }
-        if (!ALLOWED_REFERALS.has(referral)) {
+        if (!ALLOWED_REFERRALS.has(referral)) {
             return res.render('auth/signup', { error: 'Invalid referral source' })
         }
 

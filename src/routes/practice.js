@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { requireAuth, optionalAuth } = require('../middleware/auth')
+const { requireAuth } = require('../middleware/auth')
 const supabase = require('../lib/supabase').service
 const practice = require('../services/practiceEngine')
 const vocabEngine = require('../services/vocabEngine')
@@ -79,7 +79,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
     try {
         const { subject, topic, subtopic, difficulty, count = 1 } = req.body
         const genSubject = subject === 'reading_writing' ? (Math.random() > 0.5 ? 'reading' : 'writing') : subject;
-        let maxIter = Math.min(parseInt(count), 5);
+        let maxIter = Math.min(parseInt(count, 10) || 1, 5);
         if (req.user.useFreeModels) {
             maxIter = Math.min(maxIter, 5 - (req.user.genCount || 0));
         }

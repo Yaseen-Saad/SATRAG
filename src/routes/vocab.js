@@ -8,7 +8,7 @@ const llm = require('../lib/llm')
 const qualityChecker = require('../lib/qualityChecker')
 const evaluator = require('../lib/vocabularyEvaluator')
 const vocabEngine = require('../services/vocabEngine')
-const { parseGeneratedEntry } = require('../lib/utils')
+const { sanitizeForPrompt, parseGeneratedEntry } = require('../lib/utils')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const router = Router();
 
@@ -53,8 +53,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         if (feedbackPatterns.strengths.length > 0) {
             feedbackGuidance += `\n\nUsers especially appreciate these qualities (keep doing these):\n${feedbackPatterns.strengths.map(s => `- ${s}`).join('\n')}`
         }
-        const userPrompt = `Generate a vocabulary entry for "${word}".
-                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}${feedbackGuidance}
+        const userPrompt = `Generate a vocabulary entry for "${sanitizeForPrompt(word)}".                            ${similar.length > 0 ? `Here are similar entries for style reference:\n${similarText}\n` : ''}${feedbackGuidance}
                             Follow the format exactly. Make the mnemonic memorable.`;
 
         let response = await llm.generateCompletion({
@@ -115,7 +114,7 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
         const { word, reason, specificIssue, improvements, partOfSpeech } = req.body
         if (!word) return res.redirect('/vocab');
         const w = word.trim().toUpperCase()
-        const negativeContent = `NEGATIVE FEEDBACK FOR ${w}:\nIssue: ${reason} — ${specificIssue}\nAvoid: ${improvements}`
+        const negativeContent = `NEGATIVE FEEDBACK FOR ${sanitizeForPrompt(w)}:\nIssue: ${sanitizeForPrompt(reason)} — ${sanitizeForPrompt(specificIssue)}\nAvoid: ${sanitizeForPrompt(improvements)}`
         await supabase.from('rag_feedback_examples').insert({ word: w, type: "negative", content: negativeContent })
         const [similar, feedbackPatterns, wordFeedback] = await Promise.all([
             rag.retrieveSimilar(w, 3),
@@ -124,7 +123,7 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
         ])
         const contextExamples = similar.map(s => `${s.word} — ${s.definition}`).join('\n');
         const systemPrompt = fs.readFileSync(path.join(__dirname, '../prompts/generate_vocab_entry.txt'), 'utf-8');
-        let feedbackGuidance = `\nAvoid these issues from the previous attempt:\n- ${reason}: ${specificIssue || improvements || 'improve quality'}`
+        let feedbackGuidance = `\nAvoid these issues from the previous attempt:\n- ${sanitizeForPrompt(reason)}: ${sanitizeForPrompt(specificIssue) || sanitizeForPrompt(improvements) || 'improve quality'}`
         if (wordFeedback.length > 0) {
             const avgSat = Math.round(wordFeedback.reduce((s, f) => s + (f.satisfaction_score || 0), 0) / wordFeedback.length)
             const pastIssues = wordFeedback.flatMap(f => f.problematic_components || []).filter(Boolean)
@@ -323,7 +322,7 @@ router.get('/lists/:id/export', requireAuth, async (req, res) => {
             res.setHeader('Content-Disposition', `attachment; filename="${list.name.replace(/[^a-z0-9]/gi, '_')}.csv"`)
             return res.send(csv)
         }
-        res.render('vocab/print', { layout:false, user: req.user, list, words })
+        res.render('vocab/print', { layout: false, user: req.user, list, words })
     } catch (error) {
         console.error('Export error:', error)
         res.redirect('/vocab/lists')
