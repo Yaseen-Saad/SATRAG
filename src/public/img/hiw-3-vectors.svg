@@ -1,0 +1,24 @@
+<svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vectors">
+  <text x="160" y="24" fill="#64748B" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" text-anchor="middle" letter-spacing="1">CONVERTING TO NUMBERS</text>
+  <rect x="16" y="34" width="64" height="28" rx="6" fill="#0C4A6E" stroke="#38BDF8" stroke-width="1"/>
+  <text x="48" y="53" fill="#7DD3FC" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">per</text>
+  <path d="M48 62 L48 78" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 2"/>
+  <polygon points="48,80 45,74 51,74" fill="#38BDF8"/>
+  <rect x="88" y="34" width="64" height="28" rx="6" fill="#064E3B" stroke="#3FCF8E" stroke-width="1"/>
+  <text x="120" y="53" fill="#6EE7B7" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">spi</text>
+  <path d="M120 62 L120 78" stroke="#3FCF8E" stroke-width="1" stroke-dasharray="2 2"/>
+  <polygon points="120,80 117,74 123,74" fill="#3FCF8E"/>
+  <rect x="160" y="34" width="52" height="28" rx="6" fill="#3B0764" stroke="#A78BFA" stroke-width="1"/>
+  <text x="186" y="53" fill="#C4B5FD" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">ca</text>
+  <path d="M186 62 L186 78" stroke="#A78BFA" stroke-width="1" stroke-dasharray="2 2"/>
+  <polygon points="186,80 183,74 189,74" fill="#A78BFA"/>
+  <rect x="220" y="34" width="84" height="28" rx="6" fill="#78350F" stroke="#FBBF24" stroke-width="1"/>
+  <text x="262" y="53" fill="#FDE68A" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">cious</text>
+  <path d="M262 62 L262 78" stroke="#FBBF24" stroke-width="1" stroke-dasharray="2 2"/>
+  <polygon points="262,80 259,74 265,74" fill="#FBBF24"/>
+  <rect x="16" y="84" width="288" height="80" rx="10" fill="#0F172A" stroke="#334155" stroke-width="1.2"/>
+  <text x="32" y="106" fill="#7DD3FC" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">per  →  [0.12, -0.84, 0.47, 0.03, ...]</text>
+  <text x="32" y="122" fill="#6EE7B7" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">spi  →  [0.44, 0.31, -0.22, 0.91, ...]</text>
+  <text x="32" y="138" fill="#C4B5FD" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">ca   →  [-0.20, 0.91, 0.55, -0.14, ...]</text>
+  <text x="32" y="154" fill="#FDE68A" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">cious →  [0.71, 0.08, -0.33, 0.62, ...]</text>
+</svg>

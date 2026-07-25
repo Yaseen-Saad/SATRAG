@@ -39,7 +39,7 @@
 
 <section class="sample-entries" id="sample-entries">
   <h2 class="section-title">See What SATrack Generates</h2>
-  <p class="seciton-sub">Every word gets a mnemoinic, a picture story, and an example sentence, all AI-generated with retrival-augmented generation for quality.</p>
+  <p class="seciton-sub">Every word gets a mnemonic, a picture story, and an example sentence, all shaped by real user feedback to get better over time.</p>
 
   <div class="sample-entries-grid">
     <a href="/vocab/ACCOLADE" class="sample-entry">
@@ -81,7 +81,8 @@
       <div class="entry-example">Her sagacious investment advice saved the company from a disastrous market crash.</div>
       <span class="entry-link"> See Full Entry</span>
     </a>
-    <a href="/vocab/PERNICIOUS">
+
+    <a href="/vocab/PERNICIOUS" class="sample-entry">
       <div class="entry-word"> PERNICIOUS </div>
       <div class="entry-pos"> Adjective </div>
       <div class="entry-def"> having a harmful effect, especially in a gradual or subtle way </div>
@@ -97,155 +98,132 @@
 
 <section class="how-it-works" id="how-it-works">
   <div class="hiw-header">
-    <h2 class="section-title">How SATrack Works Under the Hood</h2>
-    <p class="section-sub">From raw text to intelligent retrieval — here's the AI pipeline in five steps.</p>
+    <h2 class="section-title">How SATrack Works</h2>
+    <p class="section-sub">From typing a word to getting smarter with every review — here's the full loop.</p>
   </div>
 
   <div class="hiw-steps">
 
     <div class="hiw-step">
       <div class="hiw-step-visual">
-        <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Query input">
-          <rect x="20" y="40" width="280" height="60" rx="12" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
-          <text x="40" y="77" fill="#E2E8F0" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="18">perspicacious</text>
-          <line x1="170" y1="60" x2="170" y2="80" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" class="hiw-cursor"/>
-          <text x="40" y="125" fill="#64748B" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">Your query enters as plain text</text>
-        </svg>
+        <img src="/img/hiw-1-input.svg" alt="You type a word" width="320" height="180">
       </div>
       <div class="hiw-step-text">
         <span class="hiw-step-num">1</span>
         <h3>You type a word</h3>
-        <p>Your query enters as raw text — just a string of characters like <strong>"perspicacious"</strong></p>
+        <p>Type any SAT vocabulary word — <strong>"perspicacious"</strong>, <strong>"ephemeral"</strong>, whatever you're studying.</p>
       </div>
     </div>
 
     <div class="hiw-step">
       <div class="hiw-step-visual">
-        <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tokenization">
-          <text x="160" y="28" fill="#64748B" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" text-anchor="middle">tokenizer</text>
-          <rect x="22" y="42" width="68" height="36" rx="8" fill="#0C4A6E" stroke="#38BDF8" stroke-width="1.2"/>
-          <text x="56" y="65" fill="#7DD3FC" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" text-anchor="middle">per</text>
-          <rect x="100" y="42" width="60" height="36" rx="8" fill="#064E3B" stroke="#3FCF8E" stroke-width="1.2"/>
-          <text x="130" y="65" fill="#6EE7B7" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" text-anchor="middle">spi</text>
-          <rect x="168" y="42" width="56" height="36" rx="8" fill="#3B0764" stroke="#A78BFA" stroke-width="1.2"/>
-          <text x="196" y="65" fill="#C4B5FD" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" text-anchor="middle">ca</text>
-          <rect x="232" y="42" width="68" height="36" rx="8" fill="#78350F" stroke="#FBBF24" stroke-width="1.2"/>
-          <text x="266" y="65" fill="#FDE68A" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" text-anchor="middle">cious</text>
-          <line x1="92" y1="60" x2="100" y2="60" stroke="#475569" stroke-width="1.2"/>
-          <line x1="162" y1="60" x2="168" y2="60" stroke="#475569" stroke-width="1.2"/>
-          <line x1="226" y1="60" x2="232" y2="60" stroke="#475569" stroke-width="1.2"/>
-          <text x="160" y="112" fill="#E2E8F0" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" text-anchor="middle">↓ each token maps to a 1024-dim vector</text>
-          <rect x="32" y="130" width="58" height="22" rx="4" fill="#0C4A6E" opacity="0.5"/>
-          <text x="61" y="145" fill="#7DD3FC" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" text-anchor="middle">[0.12,-0.8]</text>
-          <rect x="98" y="130" width="58" height="22" rx="4" fill="#064E3B" opacity="0.5"/>
-          <text x="127" y="145" fill="#6EE7B7" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" text-anchor="middle">[0.44,0.3]</text>
-          <rect x="164" y="130" width="58" height="22" rx="4" fill="#3B0764" opacity="0.5"/>
-          <text x="193" y="145" fill="#C4B5FD" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" text-anchor="middle">[-0.2,0.9]</text>
-          <rect x="230" y="130" width="58" height="22" rx="4" fill="#78350F" opacity="0.5"/>
-          <text x="259" y="145" fill="#FDE68A" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" text-anchor="middle">[0.71,0.1]</text>
-        </svg>
+        <img src="/img/hiw-2-tokens.svg" alt="Word gets split into chunks" width="320" height="180">
       </div>
       <div class="hiw-step-text">
         <span class="hiw-step-num">2</span>
-        <h3>Tokens become vectors</h3>
-        <p>Our embedding model converts your word into a <strong>1024-dimensional vector</strong> — a precise numerical fingerprint that captures its meaning</p>
+        <h3>The word gets split into chunks</h3>
+        <p>The AI breaks <strong>"perspicacious"</strong> into smaller pieces — <strong>per</strong>, <strong>spi</strong>, <strong>ca</strong>, <strong>cious</strong>. Each piece gets a unique ID number from the model's vocabulary. This is how language models read — not as whole words, but as meaningful tokens.</p>
       </div>
     </div>
 
     <div class="hiw-step">
       <div class="hiw-step-visual">
-        <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vector space">
-          <line x1="60" y1="150" x2="280" y2="150" stroke="#475569" stroke-width="1.2"/>
-          <line x1="60" y1="150" x2="60" y2="30" stroke="#475569" stroke-width="1.2"/>
-          <line x1="60" y1="150" x2="120" y2="100" stroke="#475569" stroke-width="1.2" stroke-dasharray="4 3"/>
-          <polygon points="280,150 272,146 272,154" fill="#475569"/>
-          <polygon points="60,30 56,38 64,38" fill="#475569"/>
-          <polygon points="120,100 114,104 118,108" fill="#475569"/>
-          <text x="288" y="154" fill="#EF4444" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">x</text>
-          <text x="50" y="24" fill="#22C55E" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">z</text>
-          <text x="128" y="96" fill="#3B82F6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">y</text>
-          <circle cx="185" cy="90" r="7" fill="#38BDF8" opacity="0.3"/>
-          <circle cx="185" cy="90" r="4" fill="#38BDF8"/>
-          <line x1="60" y1="150" x2="185" y2="90" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.5"/>
-          <rect x="196" y="78" width="110" height="24" rx="6" fill="#1E293B" stroke="#38BDF8" stroke-width="1"/>
-          <text x="204" y="94" fill="#7DD3FC" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">(0.12, -0.84, 0.47…)</text>
-          <circle cx="140" cy="110" r="3" fill="#64748B" opacity="0.4"/>
-          <circle cx="220" cy="120" r="3" fill="#64748B" opacity="0.4"/>
-          <circle cx="100" cy="85" r="3" fill="#64748B" opacity="0.4"/>
-          <circle cx="250" cy="70" r="3" fill="#64748B" opacity="0.4"/>
-          <circle cx="170" cy="130" r="3" fill="#64748B" opacity="0.4"/>
-        </svg>
+        <img src="/img/hiw-3-vectors.svg" alt="Tokens become numbers" width="320" height="180">
       </div>
       <div class="hiw-step-text">
         <span class="hiw-step-num">3</span>
-        <h3>Mapped into vector space</h3>
-        <p>Every word becomes a point in a <strong>high-dimensional space</strong> where position encodes meaning — similar words land near each other</p>
+        <h3>Each token becomes a list of numbers</h3>
+        <p>Every token gets converted into a long list of numbers — like a <strong>digital fingerprint</strong> that captures its meaning. Words with similar meanings end up with similar numbers. That's how the system knows "perspicacious" is related to "sagacious" — their numbers are close together, we can, thus, represent the word as a <strong>Vector</strong>.</p>
       </div>
     </div>
 
     <div class="hiw-step">
       <div class="hiw-step-visual">
-        <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vector database">
-          <rect x="30" y="20" width="260" height="140" rx="14" fill="#0F172A" stroke="#334155" stroke-width="1.2"/>
-          <text x="160" y="42" fill="#64748B" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" text-anchor="middle" letter-spacing="2">PGVECTOR INDEX</text>
-          <circle cx="75" cy="72" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="115" cy="80" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="95" cy="105" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="135" cy="65" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="175" cy="88" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="155" cy="115" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="210" cy="75" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="245" cy="95" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="225" cy="120" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="80" cy="130" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="200" cy="135" r="4" fill="#64748B" opacity="0.35"/>
-          <circle cx="260" cy="125" r="4" fill="#64748B" opacity="0.35"/>
-          <path d="M 280 10 L 200 70" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
-          <polygon points="200,70 206,64 208,72" fill="#38BDF8" opacity="0.7"/>
-          <circle cx="195" cy="72" r="7" fill="#38BDF8" opacity="0.25"/>
-          <circle cx="195" cy="72" r="4.5" fill="#38BDF8"/>
-          <text x="246" y="18" fill="#38BDF8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">your word</text>
-        </svg>
+        <img src="/img/hiw-4-index.svg" alt="Vectors stored in database" width="320" height="180">
       </div>
       <div class="hiw-step-text">
         <span class="hiw-step-num">4</span>
-        <h3>Stored in pgvector</h3>
-        <p>Your vector is inserted into a <strong>pgvector index</strong> alongside thousands of existing entries for instant similarity search</p>
+        <h3>Vectors get stored in a fast-lookup index</h3>
+        <p>Every word's numbers are saved in a special database that's built for one thing: <strong>finding similar vectors fast</strong>. Thousands of existing entries live here, each with their own numerical fingerprint, ready to be compared.</p>
       </div>
     </div>
 
     <div class="hiw-step">
       <div class="hiw-step-visual">
-        <svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Similarity retrieval">
-          <circle cx="100" cy="90" r="4.5" fill="#38BDF8"/>
-          <circle cx="100" cy="90" r="10" fill="#38BDF8" opacity="0.12"/>
-          <circle cx="100" cy="90" r="18" fill="#38BDF8" opacity="0.05"/>
-          <text x="100" y="125" fill="#7DD3FC" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" text-anchor="middle">query</text>
-          <line x1="110" y1="87" x2="190" y2="78" stroke="#FBBF24" stroke-width="1.5" stroke-dasharray="5 3"/>
-          <circle cx="195" cy="76" r="4.5" fill="#FBBF24"/>
-          <circle cx="195" cy="76" r="10" fill="#FBBF24" opacity="0.12"/>
-          <circle cx="195" cy="76" r="18" fill="#FBBF24" opacity="0.05"/>
-          <text x="195" y="110" fill="#FDE68A" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" text-anchor="middle">best match</text>
-          <rect x="122" y="60" width="58" height="22" rx="6" fill="#1E293B" stroke="#FBBF24" stroke-width="1"/>
-          <text x="151" y="75" fill="#FBBF24" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" text-anchor="middle">0.94 sim</text>
-          <circle cx="250" cy="60" r="3.5" fill="#64748B" opacity="0.3"/>
-          <circle cx="265" cy="100" r="3.5" fill="#64748B" opacity="0.3"/>
-          <circle cx="230" cy="115" r="3.5" fill="#64748B" opacity="0.3"/>
-          <circle cx="60" cy="55" r="3.5" fill="#64748B" opacity="0.3"/>
-          <circle cx="50" cy="110" r="3.5" fill="#64748B" opacity="0.3"/>
-          <circle cx="155" cy="140" r="3.5" fill="#64748B" opacity="0.3"/>
-        </svg>
+        <img src="/img/hiw-5-vectorspace.svg" alt="Words live in a 3D space" width="320" height="180">
       </div>
       <div class="hiw-step-text">
         <span class="hiw-step-num">5</span>
-        <h3>Retrieved by similarity</h3>
-        <p>Your query vector finds its nearest neighbors — the most <strong>semantically similar entries</strong> surface automatically via cosine similarity</p>
+        <h3>Every word lives in a 3D space</h3>
+        <p>Imagine every word sitting as a dot in a 3D space — <strong>words with similar meanings cluster together</strong>. "Perspicacious" lands near "sagacious" and "shrewd", while "ephemeral" sits far away in its own neighborhood.</p>
       </div>
     </div>
 
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-6-similarity.svg" alt="Dot product finds nearest neighbors" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">6</span>
+        <h3>A math operation finds the nearest neighbors</h3>
+        <p>The system multiplies your word's numbers against every stored word's numbers — a <strong>dot product</strong>. The higher the result, the closer the two words sit in the space. The three closest dots are your word's nearest neighbors.</p>
+      </div>
+    </div>
 
-    
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-7-search.svg" alt="Best matches extracted" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">7</span>
+        <h3>The best matches become style references</h3>
+        <p>The top 3 nearest neighbors get pulled out of the space. These aren't just similar words — they're <strong>entries that were already written well</strong>. The AI uses them as a style guide to match the tone, format, and quality of what worked before.</p>
+      </div>
+    </div>
 
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-8-generate.svg" alt="AI generates the entry" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">8</span>
+        <h3>AI writes the entry</h3>
+        <p>Using the style references as a guide, the AI writes a <strong>mnemonic</strong>, a <strong>picture story</strong>, and an <strong>example sentence</strong>. It also looks at past feedback — if users have been saying mnemonics are too long, it adjusts.</p>
+      </div>
+    </div>
+
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-9-quality.svg" alt="Quality check" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">9</span>
+        <h3>Quality is verified</h3>
+        <p>Before you see the entry, it goes through two checks: a <strong>rule check</strong> (does the definition exist? does the sentence actually use the word?) and an <strong>AI judge</strong> (is the mnemonic clever? is the picture vivid?). Only entries that pass both make it through.</p>
+      </div>
+    </div>
+
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-10-entry.svg" alt="You get a polished entry" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">10</span>
+        <h3>You get a polished entry</h3>
+        <p>A complete vocabulary card: pronunciation, definition, mnemonic, picture story, other forms, and a sentence. <strong>Copy it, add it to flashcards, or save it to a list.</strong></p>
+      </div>
+    </div>
+
+    <div class="hiw-step">
+      <div class="hiw-step-visual">
+        <img src="/img/hiw-11-feedback.svg" alt="Feedback makes it smarter" width="320" height="180">
+      </div>
+      <div class="hiw-step-text">
+        <span class="hiw-step-num">11</span>
+        <h3>Your feedback makes it smarter</h3>
+        <p>Rate each entry from 1–10. The system tracks what users love (vivid stories? clever mnemonics?) and what falls flat. <strong>Every rating shapes future generations</strong> — so SATrack literally gets better the more people use it.</p>
+      </div>
+    </div>
 
   </div>
 </section>
@@ -260,7 +238,7 @@
   <div class="feature-section">
     <div class="feature-text">
       <h3>Vocabulary That Stays With You</h3>
-      <p>Every word gets a mnemonic device, a picture story, and an example sentence. Generated with AI + RAG so each entry feels authentic, not robotic. Rate entries and the system learns from your feedback.</p>
+      <p>Every word gets a mnemonic device, a picture story, and an example sentence. Rate entries 1–10 and the system learns what works — getting sharper the more you use it.</p>
     </div>
     <div class="feature-visual"><img src="/img/vocab.svg" alt="Vocabulary" width="96" height="96"></div>
   </div>
@@ -287,9 +265,9 @@
       I was studying for the SAT, frustrated. Every vocabulary app felt like flashcards with extra steps, every practice tool either had stale questions or wanted $5000/month. None of them <em>adapted</em> to what I actually didn't know.
     </p>
     <p>
-      So I built SATrack: a tool that uses retrieval-augmented generation (RAG) to create vocabulary entries that actually stick. When you look up a word, the system searches its database for the most relevant existing entries, feeds them to an AI as context, and generates a mnemonic, picture, story and example scentence that are grounded in real quality examples.
+      So I built SATrack: a tool that finds similar entries in its database, feeds them to an AI as style references, and generates a mnemonic, picture story, and example sentence that feel authentic, not robotic.
     </p>
-    <p>This isn't a company. It's a student project built with Supabase, OpenAI-compitable APIs, and a lot of late nights. Every feature exists because I needed it myself. If it helps you too, that's enough for me.</p>
+    <p>This isn't a company. It's a student project built with Supabase, OpenAI-compatible APIs, and a lot of late nights. Every feature exists because I needed it myself. If it helps you too, that's enough for me.</p>
     <!-- Will edit this section, I want the story to be like why I built it and what was the motive, what was te thought process and how it helps -->
   </div>
 </section>

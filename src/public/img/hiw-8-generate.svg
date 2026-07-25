@@ -1,0 +1,12 @@
+<svg viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI generation">
+  <rect x="20" y="14" width="280" height="152" rx="12" fill="#0F172A" stroke="#334155" stroke-width="1.2"/>
+  <rect x="36" y="28" width="120" height="20" rx="4" fill="#1E293B"/>
+  <text x="44" y="42" fill="#64748B" font-family="ui-sans-serif,system-ui,sans-serif" font-size="9">STYLE REFERENCES</text>
+  <rect x="36" y="54" width="248" height="48" rx="6" fill="#1E293B" stroke="#38BDF8" stroke-width="1"/>
+  <text x="48" y="72" fill="#7DD3FC" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">AI generates a mnemonic, picture story,</text>
+  <text x="48" y="86" fill="#7DD3FC" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">and example sentence using the references</text>
+  <path d="M160 104 L160 120" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="3 2"/>
+  <polygon points="160,122 156,116 164,116" fill="#38BDF8"/>
+  <rect x="36" y="126" width="248" height="32" rx="6" fill="#064E3B" stroke="#3FCF8E" stroke-width="1"/>
+  <text x="48" y="146" fill="#6EE7B7" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">Quality scored + evaluated before saving</text>
+</svg>
