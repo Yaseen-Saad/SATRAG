@@ -217,6 +217,7 @@ satbudd/
 │   └── sat_questions_with_active.json  # SAT question bank
 ├── scripts/
 │   ├── seed.js                 # Seeds vocabulary + questions into Supabase
+│   ├── parser.js           # Vocabulary entry parser
 │   └── generate_embeddings.js  # Batch-generates embeddings for questions
 ├── supabase/
 │   ├── 01_schema.sql           # Database schema + RLS policies
@@ -228,40 +229,185 @@ satbudd/
 │   ├── lib/
 │   │   ├── supabase.js         # Supabase client
 │   │   ├── llm.js              # LLM service (chat + embeddings, with caching)
+│   │   ├── utils.js            # The most used functions across files
 │   │   ├── rag.js              # RAG engine (vector search + keyword fallback)
-│   │   ├── parser.js           # Vocabulary entry parser
-│   │   ├── qualityChecker.js   # Rule-based quality assessment
-│   │   └── vocabularyEvaluator.js  # LLM-based evaluation
+│   │   ├── qualityChecker.js   # Rule-based quality assessment for Vocabulary entries
+│   │   ├── SATQuestionsEvaluator.js   # LLM-based evaluation for SAT Questions
+│   │   └── vocabularyEvaluator.js  # LLM-based evaluation for Vocabulary entries
 │   ├── middleware/
 │   │   ├── auth.js             # Authentication middleware
 │   │   ├── profile.js          # Profile completion check
 │   │   ├── rateLimiter.js      # Burst detection + route-specific limits
+│   │   ├── errorHandler.js     # Handles 404 and related errors
 │   │   └── useFreeModels.js    # Free tier generation tracking
 │   ├── routes/
 │   │   ├── auth.js             # Login, signup, logout, password reset
 │   │   ├── vocab.js            # Vocab generation, lists, sharing, export
 │   │   ├── practice.js         # Questions, generation, adaptive mode
 │   │   ├── dashboard.js        # Dashboard, leaderboard, analytics
+│   │   ├── stats.js            # Server Analytics (e.g. number of generated questions)
 │   │   ├── flashcards.js       # Flashcard sessions, SM-2 review
-│   │   ├── feedback.js         # Entry feedback submission
+│   │   ├── vocabFeedback.js    # Vocab entries feedback submission
+│   │   ├── questionFedback.js  # SAT Questions feedback submission
 │   │   ├── settings.js         # Profile settings, API key management
 │   │   └── ticket.js           # Bug report tickets
-│   ├── services/               # Business logic engines
-│   ├── prompts/                # LLM system prompts
+│   ├── services/               # Logic engines
+│   │   ├── dashboardengine.js         # Logi
+│   │   ├── practiceEngine.js         # Voc
+│   │   ├── flashcardsEngine.js       # Question
+│   │   ├── questionFeedbackEngine.js   # Questions, 
+│   │   ├── settingsEngine.js        #ions, generation, ada
+│   │   ├── statsEngine.js         # Qus, generation, adaptive mode
+│   │   ├── vocabEngine.js         # Qus, generation, adaptive mode
+│   │   └── vocabFeedbackEngine.js    # Bug report tickets
+│   ├── prompts/          # LLM sprompts
+│   │   ├── generate_vocab_entry.txt   # Questions, gene
+│   │   ├── evaluate_vocab_entry.txt      # Vocab
+│   │   ├── evaluate_sat_question.txt       # Login, sinup
+│   │   ├── regenerate_sat_question.txt   # Questi
+│   │   └── generate_sat_question_prompts/
+│   │       ├── core.txt         # Questions
+│   │       ├── generate_sat_question.txt         # Questions, g
+│   │       ├── reading_writing/         # Questions, g
+│   │       │   ├── core.txt   # Queti
+│   │       │   ├── craft_and_structure/   # Queti
+│   │       │   │   ├── cross_text_connections.txt   # Queti
+│   │       │   │   ├── text_structure_purpose.txt   # Queti
+│   │       │   │   └── words_in_context.txt   # Queti
+│   │       │   ├── expression_of_ideas/   # Queti
+│   │       │   │   ├── rhetorical_synthesis.txt   # Queti
+│   │       │   │   └── transisions.txt   # Queti
+│   │       │   ├── information_and_ideas/   # Queti
+│   │       │   │   ├── centeral_ideas_details.txt   # Queti
+│   │       │   │   ├── inferences.txt   # Que
+│   │       │   │   ├── command_of_evidence_quantitive.txt   # Que
+│   │       │   │   └── command_of_evidence_textual.txt   # Queti
+│   │       │   └── standard_english/   # Queti
+│   │       │       ├── boundaries.txt   # Queti
+│   │       │       └── form_structure_sense.txt   # Queti
+│   │       └── math/           # Bug repo
+│   │           ├── core.txt   # Queti
+│   │           ├── advanced_math/   # Queti
+│   │           │   ├── equivalent_expressions.txt   # Queti
+│   │           │   ├── nonlinear_equations.txt   # Queti
+│   │           │   └── nonlinear_functions.txt   # Queti
+│   │           ├── algebra/   # Queti
+│   │           │   ├── linear_equations_one_variable.txt   # Queti
+│   │           │   ├── linear_equations_two_variable.txt   # Queti
+│   │           │   ├── linear_functions.txt   # Queti
+│   │           │   ├── linear_inequalities.txt   # Queti
+│   │           │   └── system_linear.txt   # Queti
+│   │           ├── geometry_trig/   # Queti
+│   │           │   ├── area_volume.txt   # Queti
+│   │           │   ├── circile.txt   # Que
+│   │           │   ├── lines_angles_triangles.txt   # Que
+│   │           │   └── right_triangles_trig.txt   # Queti
+│   │           └── problem_solving/   # Queti
+│   │               ├── one_variable_data.txt   # Queti
+│   │               ├── percentages.txt   # Queti
+│   │               ├── probability.txt   # Queti
+│   │               ├── ratios_rates.txt   # Queti
+│   │               ├── sample_statistics.txt   # Queti
+│   │               ├── statistical_claims.txt   # Queti
+│   │               └── two_variable_data.txt   # Queti
 │   ├── views/                  # EJS templates
+│   │   ├── auth/                  # EJS templates
+│   │   │   ├── login.ejs                # EJS templates
+│   │   │   ├── signup.ejs                # EJS templates
+│   │   │   ├── forgot-password.ejs                # EJS templates
+│   │   │   └── reset-password.ejs                # EJS templates
+│   │   ├── flashcards/                  # EJS templates
+│   │   │   ├── index.ejs                # EJS templates
+│   │   │   └── session.ejs                # EJS templates
+│   │   ├── layouts/                  # EJS templates
+│   │   │   └── main.ejs                # EJS templates
+│   │   ├── partials/                  # EJS templates
+│   │   │   ├── head.ejs                # EJS templates
+│   │   │   ├── nav.ejs                # EJS templates
+│   │   │   ├── flash.ejs                # EJS templates
+│   │   │   └── footer.ejs                # EJS templates
+│   │   ├── practice/                  # EJS templates
+│   │   │   ├── adaptive.ejs                # EJS templates
+│   │   │   ├── generate.ejs                # EJS templates
+│   │   │   ├── history.ejs                # EJS templates
+│   │   │   ├── index.ejs                # EJS templates
+│   │   │   └── question.ejs                # EJS templates
+│   │   ├── vocab/                  # EJS templates
+│   │   │   ├── index.ejs                # EJS templates
+│   │   │   ├── list.ejs                # EJS templates
+│   │   │   ├── lists.ejs                # EJS templates
+│   │   │   ├── print.ejs                # EJS templates
+│   │   │   ├── regenerate.ejs                # EJS templates
+│   │   │   └── word.ejs                # EJS templates
+│   │   ├── settings/                  # EJS templates
+│   │   │   └── index.ejs                # EJS templates
+│   │   └── dashboard/             # EJS templates
+│   │       ├── analytics.ejs                # EJS templates
+│   │       ├── leaderboard.ejs                # EJS templates
+│   │       └── progress.ejs                # EJS templates
 │   └── public/
 │       ├── css/                # SCSS source + compiled CSS
+│       │    ├── bluebook.scss                # EJS templates
+│       │    ├── main.scss                # EJS templates
+│       │    ├── components/                # EJS templates
+│       │    │    ├── _badges.scss                # EJS templates
+│       │    │    ├── _buttons.scss                # EJS templates
+│       │    │    ├── _cards.scss                # EJS templates
+│       │    │    ├── _empty-states.scss         # EJS templates
+│       │    │    ├── _flash.scss                # EJS templates
+│       │    │    ├── _forms.scss                # EJS templates
+│       │    │    ├── _nav.scss                # EJS templates
+│       │    │    └── _tables.scss               # EJS templates
+│       │    ├── pages/                # EJS templates
+│       │    │    ├── _auth.scss                # EJS templates
+│       │    │    ├── _dashboard.scss           # EJS templates
+│       │    │    ├── _feedback.scss                # EJS templates
+│       │    │    ├── _flashcards.scss         # EJS templates
+│       │    │    ├── _landing.scss                # EJS templates
+│       │    │    ├── _leaderboard.scss        # EJS templates
+│       │    │    ├── _practice.scss                # EJS templates
+│       │    │    ├── _settings.scss             # EJS templates
+│       │    │    ├── _tickets.scss                # EJS templates
+│       │    │    └── _vocab.scss               # EJS templates
+│       │    └── utils/                # EJS templates
+│       │         ├── _base.scss             # EJS templates
+│       │         ├── _mixins.scss                # EJS templates
+│       │         └── variables.scss               # EJS templates
+│       ├── img/                # SCSS source + compiled CSS
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           ├── app.svg              # EJS templates
+│           ├── bluebook.svg                # EJS templates
+│           ├── components.svg                # EJS templates
+│           └── landing.svg                # EJS templates
 │       └── js/                 # Client-side JavaScript
+│           ├── app.js                # EJS templates
+│           ├── bluebook.js                # EJS templates
+│           ├── components.js                # EJS templates
+│           └── landing.js                # EJS templates
 ├── package.json
 ├── vercel.json
 └── .env.example
 ```
-
-
-
-
-
-
 
 ## Contributing
 Contributions are very welcome! — whether it's a bug fix, a new feature, or better documentation.
@@ -288,8 +434,8 @@ git push origin feature/your-feature-name
 7. **Open** a Pull Request with a description of what you changed and why
 
 ### Ideas for Contributions:
+- Add a feature
 - Fix bugs or improve existing features
-- Add new question types or topics
 - Improve the UI/UX
 - Write tests
 - Improve documentation (or create it lol)
@@ -300,7 +446,6 @@ git push origin feature/your-feature-name
 ## Project Timeline:
 | Feature | Status | Description |
 |:----|:---------|:-----|
-| Question Evaluator | In Progress | LLM-based evaluation of practice questions (mirrors te vocab evaluatpr) |
 | SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
 | More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
 | Improved Streaks | In Progress | Better strak tracking and motivational system |
@@ -331,5 +476,4 @@ Built with late nights and too much caffeine by a high schooler who got tired of
 # features to add later
 1. on scroll counter for numbers in home
 2. Loader for all API calls
-3. better feedback section for AI genersed questions giving them tiers (bronze, silver, gold, plat, diamond) 
 LOL i didn't add an interface to the tickets system yet.

@@ -3,5 +3,7 @@ node_modules/
 .env.local
 .env.production
 src/public/css/main.css
+src/public/css/main.css.map
 src/public/css/bluebook.css
+src/public/css/bluebook.css.map
 .vercel/

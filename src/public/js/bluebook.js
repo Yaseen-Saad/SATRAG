@@ -159,7 +159,7 @@
                         if (thumbsEl) thumbsEl.style.display = 'none'
                     }
                 }
-            }).catch((e) => {console.log(e)})
+            }).catch((e) => { console.log(e) })
 
         }
 
