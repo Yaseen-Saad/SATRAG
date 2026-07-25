@@ -20,3 +20,26 @@ function computeTier(avgSat, posRatio, feedbackCount) {
     if (posRatio > TIER_THRESHOLDS.bronze * 10 || avgSat >= TIER_THRESHOLDS.bronze) return 'bronze'
     return "trash"
 }
+
+
+class QuestionFeedbackEngine {
+    async recordFeedback(userId, questionId, feedback) { }
+
+    async getUserFeedback(userId, questionId) { }
+
+    async getQuestionFeedbackSummary(questionId) { }
+
+    async updateQuestionTier(questionId) { }
+
+    async getTrashQuestions() { }
+
+    async getTrashFeedbackSummary(questionId) { }
+
+    async improveTrashQuestion(questionId) { }
+
+    async getTierDistribution() { }
+    
+}
+
+
+module.exports = new QuestionFeedbackEngine()

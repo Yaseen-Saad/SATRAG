@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { requireAuth } = require('../middleware/auth')
-const feedback = require('../services/feedbackEngine')
+const feedback = require('../services/vocabFeedbackEngine')
 
 const router = Router();
 
