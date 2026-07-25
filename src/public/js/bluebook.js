@@ -116,6 +116,53 @@
             overlay.classList.add('open');
         }
 
+        const qFeedbackData = document.getElementById('question-feedback-data')
+        if (qFeedbackData) {
+            const fbQuestionId = qFeedbackData.dataset.questionId
+            const fbTier = qFeedbackData.dataset.tier
+            const fbScore = qFeedbackData.dataset.score
+            const fbCount = qFeedbackData.dataset.count
+
+            const tierColors = { diamond: '#B9F2FF', platinum: '#E5E7EB', gold: '#FBBF24', silver: '#94A3B8', bronze: '#D97706', trash: '#EF4444', unranked: '#475569' }
+            const tierLabels = { diamond: 'Diamond', platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze', trash: 'Trash', unranked: 'Unranked' }
+            const tierIcon = { diamond: '💎', platinum: '⬡', gold: '★', silver: '●', bronze: '●', trash: '🗑', unranked: '○' } // USING EMOJIES TILL I CREEATE ICONS FOR THEM
+            // AI generated HTML
+            const tierBadge = `<span class="qf-tier-badge" style="background:${tierColors[fbTier] || tierColors.unranked};color:#0f172a;padding:2px 8px;border-radius:999px;font-size:0.75rem;font-weight:600;margin-left:0.5rem;">${tierIcon[fbTier] || tierIcon.unranked} ${tierLabels[fbTier] || 'Unranked'}${parseInt(fbCount) >= 3 ? ` (${parseFloat(fbScore).toFixed(1)}/10)` : ` (${fbCount}/${3} reviews)`}</span>`
+            const fbHtml = `
+            <div class="qf-section" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border,#334155);">
+              <p style="margin:0 0 0.5rem;color:var(--text-muted,#94a3b8);font-size:0.85rem;">Rate this question's quality ${tierBadge}</p>
+              <div class="qf-thumbs" style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
+                <button class="qf-btn qf-up" onclick="window.submitQuestionFeedback(true)" style="padding:0.4rem 1.2rem;border:1px solid var(--border,#334155);border-radius:8px;background:transparent;color:var(--text,#e2e8f0);cursor:pointer;font-size:0.9rem;transition:all 0.15s;">👍 Good</button>
+                <button class="qf-btn qf-down" onclick="window.submitQuestionFeedback(false)" style="padding:0.4rem 1.2rem;border:1px solid var(--border,#334155);border-radius:8px;background:transparent;color:var(--text,#e2e8f0);cursor:pointer;font-size:0.9rem;transition:all 0.15s;">👎 Bad</button>
+              </div>
+              <div id="qf-detail" style="display:none;">
+                <label style="display:block;margin-bottom:0.35rem;color:var(--text-muted,#94a3b8);font-size:0.8rem;">Satisfaction (1-10)</label>
+                <input type="range" id="qf-slider" min="1" max="10" value="5" style="width:100%;accent-color:var(--color-accent,#38bdf8);" oninput="document.getElementById('qf-slider-val').textContent=this.value">
+                <span id="qf-slider-val" style="font-size:0.8rem;color:var(--text-muted,#94a3b8);">5</span>
+                <label style="display:block;margin-top:0.5rem;margin-bottom:0.25rem;color:var(--text-muted,#94a3b8);font-size:0.8rem;">Comment (optional)</label>
+                <textarea id="qf-comment" rows="2" style="width:100%;padding:0.4rem;border:1px solid var(--border,#334155);border-radius:6px;background:var(--surface,#1e293b);color:var(--text,#e2e8f0);font-size:0.85rem;resize:vertical;" placeholder="What could be improved?"></textarea>
+                <button class="qf-submit-btn" onclick="window.submitQuestionFeedbackDetail()" style="margin-top:0.5rem;padding:0.35rem 1rem;border:none;border-radius:6px;background:var(--color-accent,#38bdf8);color:#0f172a;font-size:0.85rem;font-weight:600;cursor:pointer;">Submit</button>
+              </div>
+              <p id="qf-status" style="margin:0.35rem 0 0;font-size:0.8rem;color:var(--text-muted,#94a3b8);"></p>
+            </div>`
+
+
+            content.insertAdjacentHTML('beforeend', fbHtml)
+
+            fetch(`/question-feedback/${fbQuestionId}`).then(r => r.json()).then(data => {
+                if (data.success & data.userFeedback) {
+
+                    if (d.success && d.userFeedback) {
+                        const statusEl = document.getElementById('qf-status')
+                        const thumbsEl = content.querySelector('.qf-thumbs')
+                        if (statusEl) statusEl.textContent = `You rated this ${d.userFeedback.satisfaction}/10 (${d.userFeedback.is_positive ? '👍' : '👎'})`
+                        if (thumbsEl) thumbsEl.style.display = 'none'
+                    }
+                }
+            }).catch((e) => {console.log(e)})
+
+        }
+
         window.addToMistakes = async function () {
             const btn = document.getElementById('add-mistakes-btn')
             const status = document.getElementById('mistakes-status')

@@ -8,7 +8,7 @@ const rag = require('../lib/rag')
 const router = Router()
 
 router.get('/', requireAuth, async (req, res) => {
-    let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, page = 1, limit = 20 } = req.query;
+    let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, tier, page = 1, limit = 20 } = req.query;
     try {
         const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined;
         const topicTree = practice.getTopicTree();
@@ -21,16 +21,47 @@ router.get('/', requireAuth, async (req, res) => {
         if (topic && subtopic && !subtopics.includes(subtopic)) {
             subtopic = undefined;
         }
-        const result = await practice.getQuestions({ subject, source, active: activeFilter, topic, subtopic, difficulty, difficultyBand, status, marked, search, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
+        const result = await practice.getQuestions({ subject, source, active: activeFilter, topic, subtopic, difficulty, difficultyBand, status, marked, search, tier, page: parseInt(page), limit: parseInt(limit), userId: req.user.id });
         res.render('practice/index', {
-            user: req.user, error: null, questions: result.questions, total: result.total,
-            page: result.page, limit: result.limit, topicTree, active, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search,
-            filters: { subject, topic, subtopic, source, activeFilter, active, difficulty, difficultyBand, status, marked, search, subtopics }
-            , currentUrl: req.originalUrl
+            user: req.user,
+            error: null,
+            questions: result.questions,
+            total: result.total,
+            page: result.page,
+            limit: result.limit,
+            topicTree,
+            active,
+            subject,
+            topic,
+            subtopic,
+            source,
+            difficulty,
+            difficultyBand,
+            status,
+            marked,
+            search,
+            tier,
+            filters: {
+                subject,
+                topic,
+                subtopic,
+                source,
+                activeFilter,
+                active,
+                difficulty,
+                difficultyBand,
+                status,
+                marked,
+                search,
+                subtopics,
+                tier
+            },
+            currentUrl: req.originalUrl
         })
+
     } catch (err) {
         console.error(err)
-        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {}, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search, currentUrl: req.originalUrl })
+        res.status(500).render('practice/index', { user: req.user, error: 'Error fetching questions', questions: [], total: 0, page: 1, limit: 20, topicTree: [], filters: {}, subject, topic, subtopic, source, difficulty, difficultyBand, status, marked, search, tier, currentUrl: req.originalUrl })
     }
 })
 

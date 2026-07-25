@@ -10,7 +10,8 @@ function applySubjectFilter(query, subject) {
 }
 
 class PracticeEngine {
-    async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, page = 1, limit = 20, userId }) {
+
+    async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, tier, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
         if (active === true)
             query = query.eq('is_active', true);
@@ -29,7 +30,19 @@ class PracticeEngine {
             query = query.eq('source', source);
         if (search)
             query = query.ilike('stem_plain_text', `%${search}%`);
-
+        if (tier && source === 'ai_generated') {
+            const tierMap = {
+                'diamond': ['diamond'],
+                'platinum': ['platinum', 'diamond'],
+                'gold': ['gold', 'platinum', 'diamond'],
+                'silver': ['silver', 'gold', 'platinum', 'diamond'],
+                'bronze': ['bronze', 'silver', 'gold', 'platinum', 'diamond'],
+                'unranked': ['unranked'],
+                'trash': ['trash'],
+            }
+            const allowedTiers = tierMap[tier]
+            if (allowedTiers) query = query.in('quality_tier', allowedTiers)
+        }
         if (userId && (status || marked)) {
             const { data: userStates } = await supabase.from('user_question_state').select('question_id, status, marked_for_review').eq('user_id', userId);
             const stateMap = new Map((userStates || []).map(s => [s.question_id, s]));
@@ -50,7 +63,6 @@ class PracticeEngine {
             else if (status === "unsolved") {
 
                 if (stateMap.size === 0) {
-                    // No state yet → all questions are unsolved, no filter needed
                 } else {
                     const { data: all } = await supabase.from('sat_questions').select('id');
                     const solved = new Set([...stateMap].filter(([_, s]) => s.status !== 'unsolved').map(([id]) => id));

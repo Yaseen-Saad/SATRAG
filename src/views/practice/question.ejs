@@ -10,7 +10,6 @@
   <div style="display:none" id="question-data" data-id="<%= question.id %>" data-status="<%= uState?.status || 'unsolved'%>" data-answered="<%= (uState?.status && uState.status !== 'unsolved') ? 'true':'false'%>" data-correct="<%=uState?.status === 'solved_correct'?'true':'false'%>" data-attempts="<%=JSON.stringify(attempts || [])%>"></div>
   <div style="display:none" id="return-to" data-url="<%= returnTo || '/practice'%>"></div>
 
-  <!-- TOP BAR -->
   <header class="bb-topbar">
     <div class="bb-topbar-left">
       <a href="<%=returnTo || '/practice'%>" class="bb-back-link"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Back to Bank</a>
@@ -27,7 +26,6 @@
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
   <div class="bb-main <%= hasPassage ? '' : 'single-panel' %>">
     <% if (hasPassage) { %>
     <div class="bb-panel bb-panel-passage">
@@ -67,7 +65,6 @@
     </div>
   </div>
 
-  <!-- BOTTOM BAR -->
   <footer class="bb-bottombar">
     <div class="bb-bottombar-left">
       <% if (prevId) { %><a href="/practice/question/<%= prevId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Previous</a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Back</a><% } %>
@@ -81,12 +78,14 @@
   </footer>
 </div>
 
-<!-- FEEDBACK OVERLAY -->
 <div class="bb-feedback-overlay" id="feedback-overlay">
   <div class="bb-feedback"></div>
 </div>
 
-<!-- QUESTION PALETTE OVERLAY -->
+<% if (question.source === 'ai_generated') { %>
+<div id="question-feedback-data" style="display:none" data-question-id="<%= question.id %>" data-tier="<%= question.quality_tier || 'unranked' %>" data-score="<%= question.quality_score || 0 %>" data-count="<%= question.feedback_count || 0 %>"></div>
+<% } %>
+
 <div class="bb-palette-overlay" id="palette-overlay">
   <div class="bb-palette">
     <div class="bb-palette-header">

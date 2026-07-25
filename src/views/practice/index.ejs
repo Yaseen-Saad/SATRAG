@@ -9,7 +9,9 @@
 <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<script>const topicTree = <%- JSON.stringify(topicTree).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') %>;</script>
+<script>
+  const topicTree = <%- JSON.stringify(topicTree).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') %>;
+</script>
 
 <div class="practice-layout">
   <aside class="practice-filters">
@@ -61,6 +63,19 @@
           <option value="ai_generated" <%= filters.source === 'ai_generated' ? 'selected' : '' %>>AI Generated</option>
         </select>
       </div>
+      <div style="<%= filters.source === 'ai_generated' ? '' : 'display:none;' %>" class="form-group" id="tier-filter-group">
+        <label>Quality Tier</label>
+        <select name="tier" id="filter-tier">
+          <option value="">All Tiers</option>
+          <option value="diamond" <%= filters.tier === 'diamond' ? 'selected' : '' %>>💎 Diamond</option>
+          <option value="platinum" <%= filters.tier === 'platinum' ? 'selected' : '' %>>⬡ Platinum+</option>
+          <option value="gold" <%= filters.tier === 'gold' ? 'selected' : '' %>>★ Gold+</option>
+          <option value="silver" <%= filters.tier === 'silver' ? 'selected' : '' %>>● Silver+</option>
+          <option value="bronze" <%= filters.tier === 'bronze' ? 'selected' : '' %>>● Bronze+</option>
+          <option value="unranked" <%= filters.tier === 'unranked' ? 'selected' : '' %>>○ Unranked</option>
+          <option value="trash" <%= filters.tier === 'trash' ? 'selected' : '' %>>🗑 Trash</option>
+        </select>
+      </div>
 
       <div class="form-group">
         <label>Status</label>
@@ -108,6 +123,10 @@
           <span class="badge badge--<%= (q.subject === 'reading' || q.subject === 'writing') ? 'reading_writing' : q.subject %>"><%= (q.subject === 'reading' || q.subject === 'writing') ? 'Reading & Writing' : q.subject %></span>
           <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
           <small style="color:var(--color-text-faint);"><%= q.topic %> · <%= q.subtopic %></small>
+          <% if (q.source === "ai_generated" && q.quality_tier && quality_tier !== 'unranked') {%>
+          <% const tierColors = { diamond: '#B9F2FF', platinum: '#E5E7EB', gold: '#FBBF24', silver: '#94A3B8', bronze: '#D97706', trash: '#EF4444' } %>
+          <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;background:<%= tierColors[q.quality_tier] || '#475569' %>20;color:<%= tierColors[q.quality_tier] || '#475569' %>;"><%= tierIcons[q.quality_tier] || '○' %> <%= q.quality_tier.charAt(0).toUpperCase() + q.quality_tier.slice(1) %><% if (q.feedback_count >= 3) { %> (<%= parseFloat(q.quality_score).toFixed(1) %>)<% } %></span>
+          <% } %>
         </div>
         <p class="practice-item-text"><%= q.stem_plain_text?.substring(0, 150) %><%= (q.stem_plain_text?.length || 0) > 150 ? '...' : '' %></p>
         <div class="practice-item-footer">
@@ -128,7 +147,7 @@
     <% if (total > limit) { %>
     <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
       <% for (let p = 1; p <= Math.ceil(total / limit); p++) { %>
-      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + encodeURIComponent(filters.topic) : '' %><%= filters.subtopic ? '&subtopic=' + encodeURIComponent(filters.subtopic) : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.source ? '&source=' + filters.source : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%= filters.search ? '&search=' + encodeURIComponent(filters.search) : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
+      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + encodeURIComponent(filters.topic) : '' %><%= filters.subtopic ? '&subtopic=' + encodeURIComponent(filters.subtopic) : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.source ? '&source=' + filters.source : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%=filters.tier? '&tier=' + filters.tier : "" %></a><%= filters.search ? '&search=' + encodeURIComponent(filters.search) : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
       <% } %>
     </div>
     <% } %>
@@ -136,66 +155,80 @@
 </div>
 
 <script>
-(function() {
-  const subjectEl = document.getElementById('filter-subject');
-  const topicEl = document.getElementById('filter-topic');
-  const subtopicEl = document.getElementById('filter-subtopic');
-  const initialTopic = <%- JSON.stringify(filters.topic || '') %>;
-  const initialSubtopic = <%- JSON.stringify(filters.subtopic || '') %>;
-  const initialSubject = <%- JSON.stringify(filters.subject || '') %>;
+  (function() {
+    const subjectEl = document.getElementById('filter-subject');
+    const topicEl = document.getElementById('filter-topic');
+    const subtopicEl = document.getElementById('filter-subtopic');
+    const sourceEl = document.querySelector('select[name="source"]');
+    const tierGroup = document.getElementById('tier-filter-group');
+    const initialTopic = <%- JSON.stringify(filters.topic || '') %>;
+    const initialSubtopic = <%- JSON.stringify(filters.subtopic || '') %>;
+    const initialSubject = <%- JSON.stringify(filters.subject || '') %>;
 
-  function populateTopics() {
-    const subject = subjectEl.value;
-    const prev = topicEl.value;
-    topicEl.innerHTML = '<option value="">All</option>';
-    topicTree.forEach(t => {
-      if (subject && t.subject !== subject) return;
-      const opt = document.createElement('option');
-      opt.value = t.topic;
-      opt.textContent = t.topic;
-      topicEl.appendChild(opt);
-    });
-    if (prev && [...topicEl.options].some(o => o.value === prev)) {
-      topicEl.value = prev;
+    if (sourceEl && tierGroup) {
+      function checkTierVisibility() {
+        tierGroup.style.display = sourceEl.value === 'ai_generated' ? '' : 'none';
+        if (sourceEl.value !== 'ai_generated') {
+          const tierEl = document.getElementById('filter-tier');
+          if (tierEl) tierEl.value = '';
+        }
+      }
+      sourceEl.addEventListener('change', checkTierVisibility);
+      checkTierVisibility();
     }
-  }
 
-  function populateSubtopics() {
-    const topic = topicEl.value;
-    const prev = subtopicEl.value;
-    subtopicEl.innerHTML = '<option value="">All</option>';
-    const entry = topicTree.find(t => t.topic === topic);
-    (entry?.subtopics || []).forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s;
-      subtopicEl.appendChild(opt);
-    });
-    if (prev && [...subtopicEl.options].some(o => o.value === prev)) {
-      subtopicEl.value = prev;
+    function populateTopics() {
+      const subject = subjectEl.value;
+      const prev = topicEl.value;
+      topicEl.innerHTML = '<option value="">All</option>';
+      topicTree.forEach(t => {
+        if (subject && t.subject !== subject) return;
+        const opt = document.createElement('option');
+        opt.value = t.topic;
+        opt.textContent = t.topic;
+        topicEl.appendChild(opt);
+      });
+      if (prev && [...topicEl.options].some(o => o.value === prev)) {
+        topicEl.value = prev;
+      }
     }
-  }
 
-  subjectEl.addEventListener('change', () => {
-    populateTopics();
-    populateSubtopics();
-  });
+    function populateSubtopics() {
+      const topic = topicEl.value;
+      const prev = subtopicEl.value;
+      subtopicEl.innerHTML = '<option value="">All</option>';
+      const entry = topicTree.find(t => t.topic === topic);
+      (entry?.subtopics || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        subtopicEl.appendChild(opt);
+      });
+      if (prev && [...subtopicEl.options].some(o => o.value === prev)) {
+        subtopicEl.value = prev;
+      }
+    }
 
-  topicEl.addEventListener('change', () => {
-    const topic = topicEl.value;
-    const entry = topicTree.find(t => t.topic === topic);
-    if (entry && subjectEl.value !== entry.subject) {
-      subjectEl.value = entry.subject;
+    subjectEl.addEventListener('change', () => {
       populateTopics();
-      topicEl.value = topic;
-    }
-    populateSubtopics();
-  });
+      populateSubtopics();
+    });
 
-  populateTopics();
-  if (initialTopic) topicEl.value = initialTopic;
-  populateSubtopics();
-  if (initialSubtopic) subtopicEl.value = initialSubtopic;
-  if (initialSubject) subjectEl.value = initialSubject;
-})();
+    topicEl.addEventListener('change', () => {
+      const topic = topicEl.value;
+      const entry = topicTree.find(t => t.topic === topic);
+      if (entry && subjectEl.value !== entry.subject) {
+        subjectEl.value = entry.subject;
+        populateTopics();
+        topicEl.value = topic;
+      }
+      populateSubtopics();
+    });
+
+    populateTopics();
+    if (initialTopic) topicEl.value = initialTopic;
+    populateSubtopics();
+    if (initialSubtopic) subtopicEl.value = initialSubtopic;
+    if (initialSubject) subjectEl.value = initialSubject;
+  })();
 </script>
