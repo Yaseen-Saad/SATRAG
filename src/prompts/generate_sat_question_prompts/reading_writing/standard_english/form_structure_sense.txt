@@ -1,3 +1,7 @@
 - "Form, Structure, and Sense": Subject-verb agreement, pronoun-antecedent agreement, verb tense consistency, parallel structure, modifier placement, pronoun case, comparative/superlative forms, and commonly confused words (there/their/they're, its/it's, who/whom).
+  - Easy (band 1-2): subject-verb agreement with a simple subject (e.g., "The group of students were/was"). Question stem: "Which choice completes the text with the correct form of the word in capitals?"
+  - Medium (band 3-5): verb tense consistency across sentences, or parallel structure in a list. Question stem: "Which choice completes the text with the correct form of the word in capitals?"
+  - Hard (band 6-7): modifier placement (dangling/misplaced modifiers), pronoun-antecedent agreement with compound antecedents, or subtle tense shifts. Question stem: "Which choice completes the text with the correct form of the word in capitals?"
 - The passage should contain 2-4 sentences with exactly ONE form/structure/sense error. Wrong answers should test knowledge of different grammar rules or place the error in a different part of the sentence.
-- Common error types: subject-verb disagreement with intervening phrases, ambiguous pronoun reference, faulty parallelism in lists, misplaced/dangling modifiers, inconsistent verb tense across sentences.
+- Common error types: subject-verb disagreement with intervening phrases ("The list of items ARE"), ambiguous pronoun reference, faulty parallelism in lists ("She likes hiking, swimming, and TO RUN"), misplaced/dangling modifiers ("Running quickly, the finish line was reached"), inconsistent verb tense across sentences.
+- Distractors should each introduce a different type of error or fix the original error but create a new one.

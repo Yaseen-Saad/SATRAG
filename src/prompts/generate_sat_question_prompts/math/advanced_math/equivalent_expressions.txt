@@ -1,2 +1,6 @@
-- "Equivalent expressions": Factor, expand, and simplify algebraic expressions. Factor trinomials, factor out GCF, difference of squares, perfect square trinomials. Easy: factor x^2 + 5x + 6 = (x+2)(x+3). Medium: factor 2x^2 - 8 = 2(x^2-4) = 2(x+2)(x-2) or expand (x+3)(x-5). Hard: factor by grouping, recognize equivalent forms like (x+1)^2 vs x^2+2x+1.
-- Wrong answers should test common mistakes: incorrect signs when factoring, forgetting to factor out GCF, wrong factor pairs, expanding incorrectly.
+- "Equivalent expressions": Factor, expand, and simplify algebraic expressions. Factor trinomials, factor out GCF, difference of squares, perfect square trinomials.
+  - Easy (band 1-2): factor x^2 + 5x + 6 = (x+2)(x+3) or expand (x+3)(x-2). Question stem: "Which expression is equivalent to x^2 + 5x + 6?"
+  - Medium (band 3-5): factor 2x^2 - 8 = 2(x^2-4) = 2(x+2)(x-2) or expand (x+3)(x-5). May require GCF first. Question stem: "Which expression is equivalent to 2x^2 - 8?"
+  - Hard (band 6-7): factor by grouping, recognize equivalent forms like (x+1)^2 vs x^2+2x+1, or expressions with multiple variables. Question stem: "Which expression is equivalent to (2x+3)(x-4) - (2x+3)?"
+- Wrong answers should test common mistakes: incorrect signs when factoring (especially the constant term), forgetting to factor out GCF, wrong factor pairs, expanding incorrectly (FOIL errors), forgetting that (x+a)(x+b) ≠ x^2 + ab.
+- All questions are MCQ with four expression options. No SPR for this subtopic.

@@ -1,3 +1,6 @@
-- "One-variable data: distributions and measures of center and spread": Read histograms, box plots, dot plots. Calculate/interpret mean, median, mode, range, IQR, standard deviation. Easy: find the mean of {2, 4, 6, 8}. Medium: interpret a box plot to find median and IQR. Hard: compare distributions, identify outliers, or determine which measure of center is most appropriate given a skewed distribution.
-- When describing data displays, include the actual values in the question text (e.g., "The box plot shows: minimum = 12, Q1 = 18, median = 24, Q3 = 30, maximum = 42").
-- Wrong answers should test common mistakes: confusing mean and median, miscalculating IQR, using range instead of IQR for spread.
+- "One-variable data: distributions and measures of center and spread": Read histograms, box plots, dot plots. Calculate/interpret mean, median, mode, range, IQR, standard deviation.
+  - Easy (band 1-2): find the mean of {2, 4, 6, 8}. Direct calculation. Question stem: "What is the mean of the data set {2, 4, 6, 8}?"
+  - Medium (band 3-5): interpret a box plot to find median and IQR. Question stem: "The box plot shows test scores. What is the IQR?" Include actual values in the question text (e.g., "minimum = 12, Q1 = 18, median = 24, Q3 = 30, maximum = 42").
+  - Hard (band 6-7): compare distributions, identify outliers, or determine which measure of center is most appropriate given a skewed distribution. Question stem: "A data set is skewed right. Which measure of center best represents the typical value?"
+- Wrong answers should test common mistakes: confusing mean and median (especially for skewed data), miscalculating IQR (Q3 - Q1, not Q3 + Q1), using range instead of IQR for spread, confusing standard deviation with variance, thinking the median is the average of the extremes.
+- For SPR: numeric answer. For MCQ: four numeric options or four descriptive options.

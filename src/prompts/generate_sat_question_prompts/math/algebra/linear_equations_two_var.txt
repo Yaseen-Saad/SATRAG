@@ -1,2 +1,6 @@
-- "Linear equations in two variables": Work with y = mx + b, ax + by = c, and slope-intercept/standard forms. Find slope, intercepts, or convert between forms. Easy: identify slope or y-intercept directly from y = 3x + 7. Medium: find equation from two points or a graph. Hard: interpret slope and intercepts in context (cost models, rates of change, e.g., "A phone plan charges a $30 base fee plus $0.10 per text. Write an equation for the monthly cost").
-- Wrong answers should test common mistakes: confusing slope and y-intercept, wrong sign on slope, using x-intercept formula incorrectly.
+- "Linear equations in two variables": Work with y = mx + b, ax + by = c, and slope-intercept/standard forms. Find slope, intercepts, or convert between forms.
+  - Easy (band 1-2): identify slope or y-intercept directly from y = 3x + 7. Question stem: "In the equation y = 3x + 7, what is the slope?" or "What is the y-intercept?"
+  - Medium (band 3-5): find equation from two points or a graph. Question stem: "A line passes through (2, 5) and (4, 9). What is the equation of the line in slope-intercept form?"
+  - Hard (band 6-7): interpret slope and intercepts in context (cost models, rates of change, e.g., "A phone plan charges a $30 base fee plus $0.10 per text. Which equation represents the monthly cost C in terms of texts t?")
+- Wrong answers should test common mistakes: confusing slope and y-intercept, wrong sign on slope, using x-intercept formula incorrectly, swapping x and y when calculating slope, forgetting to convert from standard to slope-intercept form.
+- For SPR questions: ask for the slope or y-intercept as a numeric value. For MCQ: present four equations or four numeric values.

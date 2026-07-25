@@ -1,2 +1,6 @@
-- "Linear functions": Evaluate f(x) for given inputs, interpret function notation, and understand domain/range. Easy: f(x) = 2x + 3, find f(5). Medium: given f(x) = ax + b, find x when f(x) = k. Hard: piecewise linear contexts, comparing two linear function models (e.g., "Plan A costs $5/month plus $1/GB. Plan B costs $0 flat plus $3/GB. After how many GB do the plans cost the same?").
-- Wrong answers should test common mistakes: confusing f(a) with a·f(x), evaluating at wrong input, misinterpreting function notation.
+- "Linear functions": Evaluate f(x) for given inputs, interpret function notation, and understand domain/range.
+  - Easy (band 1-2): f(x) = 2x + 3, find f(5). Straightforward substitution. Question stem: "If f(x) = 2x + 3, what is f(5)?"
+  - Medium (band 3-5): given f(x) = ax + b, find x when f(x) = k. Requires solving a linear equation. Question stem: "If f(x) = 3x - 7, what is the value of x when f(x) = 14?"
+  - Hard (band 6-7): piecewise linear contexts, comparing two linear function models (e.g., "Plan A costs $5/month plus $1/GB. Plan B costs $0 flat plus $3/GB. After how many GB do the plans cost the same?")
+- Wrong answers should test common mistakes: confusing f(a) with a·f(x), evaluating at wrong input, misinterpreting function notation (thinking f(5) means "f times 5"), arithmetic errors in substitution.
+- For SPR: the answer is a numeric value (the output or input). For MCQ: four numeric options.

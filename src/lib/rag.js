@@ -2,10 +2,11 @@ const { service: supabase } = require('./supabase')
 const llm = require('./llm')
 const fs = require("fs")
 const path = require("path");
-const { match } = require('assert');
+const evaluator = require('./SATQuestionsEvaluator');
 
-const SAT_QUESTION_PROMPT = require('fs').readFileSync(require('path').join(__dirname, '../prompts/generate_sat_question_prompts/generate_sat_question.txt'), 'utf-8');
 const SAT_PROMPTS = path.join(__dirname, '../prompts/generate_sat_question_prompts')
+
+const MAX_REGENERATION_ATTEMPTS = 3
 
 const MATH_TOPIC_DIRS = {
     'Algebra': 'algebra',
@@ -67,8 +68,8 @@ function readFile(relativePath) {
 }
 
 class RAGEngine {
-    //This needs work
-    getRandom(subject, topic, subtopic) {
+    // I want to use this function to get a random question (like till subptopic and diff) when the user do not provide any preferences, GENERALLY in all of this project I do not want the llm to guess which question it should generate, instead It MUST get the exact everything, if the user didn't specify a diff I will get a random one, if no subtopic get a random one and so on, but hte llm must have a speicifc thing to search for and the rag overall (lol why am i yapping) must retrive very simmilar questions to the one that will be generated
+    getRandom(subject, topic, subtopic, difficulty) {
         if (subject && !topic && !subtopic) {
             return ["math", "reading_writing"][Math.floor(Math.random() * 2)]
         } if (!subject && topic && !subtopic) {
@@ -77,10 +78,13 @@ class RAGEngine {
 
         }
     }
-
-    buildPrompt(subject, topic, subtopic) {
+    buildPrompt(subject, topic, subtopic, difficulty) {
         const parts = [];
         parts.push(readFile('core.txt'));
+        parts.push(readFile('general_rules.txt'));
+        if (difficulty) {
+            parts.push(readFile('difficulty.txt'));
+        }
         const wantMath = !subject || subject === 'math'
         const wantRW = !subject || subject === 'reading_writing'
 
@@ -91,8 +95,10 @@ class RAGEngine {
                 const topicDirName = MATH_TOPIC_DIRS[topic]
                 if (topicDirName) {
                     if (subtopic) {
-                        const dirPath = path.join(SAT_PROMPTS, 'math/' + topicDirName, SUBTOPIC_FILES[subtopic])
-                        parts.push(readFile(dirPath));
+                        const subtopicFile = SUBTOPIC_FILES[subtopic]
+                        if (subtopicFile) {
+                            parts.push(readFile('math/' + topicDirName + '/' + subtopicFile));
+                        }
                     } else {
                         const dirPath = path.join(SAT_PROMPTS, 'math', topicDirName)
                         const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
@@ -118,8 +124,10 @@ class RAGEngine {
                 const topicDirName = RW_TOPIC_DIRS[topic]
                 if (topicDirName) {
                     if (subtopic) {
-                        const dirPath = path.join(SAT_PROMPTS, 'reading_writing/' + topicDirName, SUBTOPIC_FILES[subtopic])
-                        parts.push(readFile(dirPath));
+                        const subtopicFile = SUBTOPIC_FILES[subtopic]
+                        if (subtopicFile) {
+                            parts.push(readFile('reading_writing/' + topicDirName + '/' + subtopicFile));
+                        }
                     } else {
                         const dirPath = path.join(SAT_PROMPTS, 'reading_writing', topicDirName)
                         const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.txt')).sort()
@@ -139,7 +147,7 @@ class RAGEngine {
             }
         }
         const result = parts.join("\n\n")
-        return result || SAT_QUESTION_PROMPT
+        return result
     }
 
     async retrieveSimilar(word, topK = 3) {
@@ -342,60 +350,116 @@ class RAGEngine {
                 if (!existingIds.has(r.id)) candidates.push(r);
             }
         }
-
+        return candidates.slice(0, count);
     }
 
-
-
     async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
-        const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 });
-        const prompt = this.buildPrompt(subject, topic, subtopic)
-        const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
-            let opts;
+        let bestQuestion = null
+        let bestScore = -1
+        for (let attempt = 1; attempt <= MAX_REGENERATION_ATTEMPTS; attempt++) {
             try {
-                opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options;
+                const examples = await this.findSATExamples({ subject, topic, subtopic, difficulty, count: 4 })
+                const prompt = this.buildPrompt(subject, topic, subtopic, difficulty)
+                const messages = [{ role: 'system', content: prompt }, ...examples.map((ex, i) => {
+                    let opts
+                    try { opts = typeof ex.options === 'string' ? JSON.parse(ex.options) : ex.options } catch (e) { }
+                    return {
+                        role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
+                            question_type: ex.question_type,
+                            passage_text: (ex.passage_text || '').substring(0, 600) || null,
+                            question_text: (ex.question_text || '').substring(0, 500),
+                            options: opts, correct_answer: ex.correct_answer,
+                            explanation: (ex.explanation || '').substring(0, 400),
+                            subject: ex.subject, topic: ex.topic,
+                            subtopic: ex.subtopic || ex.skill_description,
+                            difficulty: ex.difficulty, difficulty_band: ex.difficulty_band
+                        }, null, 2)}`
+                    }
+                })]
+                let instruction = `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.\n- Make distractors plausible — they should test real common mistakes.\n- The correct answer must be unambiguously correct.`
+                if (attempt > 1 && bestQuestion && bestQuestion._evaluationFeedback) {
+                    instruction += `\n\nPREVIOUS ATTEMPT HAD ISSUES:\n${bestQuestion._evaluationFeedback}\n\nFix these issues in your new question.`
+                }
+
+                messages.push({ role: 'user', content: instruction })
+                const response = await llm.generateCompletion({
+                    messages, temperature: 0.4, maxTokens: 8000,
+                    apiKey, embedApiKey, skipCache: true
+                })
+                let raw = response.content.replace(/```json/g, '').replace(/```/g, '').trim()
+                if (response.finishReason === 'length') {
+                    const openBraces = (raw.match(/{/g) || []).length
+                    const closeBraces = (raw.match(/}/g) || []).length
+                    const openBrackets = (raw.match(/\[/g) || []).length
+                    const closeBrackets = (raw.match(/]/g) || []).length
+                    raw = raw.replace(/,\s*"[^"]*$/, '')
+                    for (let i = 0; i < openBrackets - closeBrackets; i++) raw += ']'
+                    for (let i = 0; i < openBraces - closeBraces; i++) raw += '}'
+                    console.warn(`Attempt ${attempt}: LLM response truncated, salvaged JSON`)
+                }
+
+                const match = raw.match(/\{[\s\S]*\}/)
+                if (!match) {
+                    console.error(`Attempt ${attempt}: No JSON in response`)
+                    continue
+                }
+
+                const result = JSON.parse(match[0].trim())
+                if (result.question_text) {
+                    result.question_text = result.question_text.replace(/_{2,}\s*(?:blank)?\s*/gi, '<span style="text-decoration: underline;"> </span>')
+                }
+                let opts = result.options
+                if (opts && typeof opts === 'object' && !Array.isArray(opts)) {
+                    opts = Object.entries(opts).map(([label, content]) => ({ label, content }))
+                }
+                const question = { ...result, options: opts ? JSON.stringify(opts) : null }
+
+                const evaluation = await evaluator.evaluate(question, apiKey, embedApiKey)
+                console.log(`Attempt ${attempt}: score=${evaluation.overallScore} format_valid=${evaluation.scores?.format_valid} feedback: ${evaluation.feedback}`)
+
+                const formatOK = evaluation.scores?.format_valid !== false
+                const combinedScore = evaluation.overallScore * (formatOK ? 1 : 0.5)
+
+                if (combinedScore > bestScore) {
+                    bestScore = combinedScore
+                    bestQuestion = {
+                        ...question,
+                        _overallScore: evaluation.overallScore,
+                        _evaluationFeedback: evaluation.criticalIssues.length > 0
+                            ? evaluation.criticalIssues.join('; ')
+                            : evaluation.suggestions.join('; ')
+                    }
+                }
+
+                if (evaluation.overallScore >= 0.80 && evaluation.scores?.correctness >= 0.9 && formatOK) {
+                    break
+                }
+                if (evaluation.revisedQuestion) {
+                    bestQuestion = {
+                        ...evaluation.revisedQuestion,
+                        options: typeof evaluation.revisedQuestion.options === 'object'
+                            ? JSON.stringify(evaluation.revisedQuestion.options)
+                            : evaluation.revisedQuestion.options,
+                        _evaluationScore: evaluation.overallScore,
+                        _evaluationFeedback: null
+                    }
+                    break
+                }
             } catch (error) {
-                console.error("Failed to parse RAG example options", error.message);
+                console.error(`Attempt ${attempt} error:`, error.message)
             }
-            const passage = (ex.passage_text || '').substring(0, 600);
-            return {
-                role: 'user', content: `Example ${i + 1}:\n${JSON.stringify({
-                    question_type: ex.question_type, passage_text: passage || null,
-                    question_text: (ex.question_text || '').substring(0, 500),
-                    options: opts, correct_answer: ex.correct_answer,
-                    explanation: (ex.explanation || '').substring(0, 400),
-                    subject: ex.subject, topic: ex.topic, subtopic: ex.subtopic || ex.skill_description,
-                    difficulty: ex.difficulty, difficulty_band: ex.difficulty_band
-                }, null, 2)}`
-            }
-        }), { role: 'user', content: `Generate 1 new SAT question in JSON format.\n\nSubject: ${subject || 'any'}\nTopic: ${topic || 'any'}\nSubtopic/Skill: ${subtopic || 'any'}\nDifficulty: ${difficulty || 'any'}\n\nIMPORTANT:\n- Match the difficulty of the examples shown above.\n- If difficulty is "hard", the question must be genuinely challenging (difficulty_band 6-7).\n- If difficulty is "easy", the question must be straightforward (difficulty_band 1-2).\n- For Reading/Writing blanks, use <u>word</u> format, NOT underscores.\n- NO MARKDOWN. Output ONLY the single JSON object.` }];
-        const response = await llm.generateCompletion({ messages, temperature: 0.4, maxTokens: 8000, apiKey: apiKey, embedApiKey: embedApiKey, skipCache: true });
-        if (!response.success) throw new Error(response.error)
-        const raw = response.content.replace(/```json/g, '').replace(/```/g, "").trim();
-        let rawClean = raw;
-        if (response.finishReason === "length") {
-            const openBraces = (rawClean.match(/{/g) || []).length;
-            const closeBraces = (rawClean.match(/}/g) || []).length;
-            const openBrackets = (rawClean.match(/\[/g) || []).length;
-            const closeBrackets = (rawClean.match(/\]/g) || []).length;
-            rawClean = rawClean.replace(/,\s*"[^"]*$/, '');
-            for (let i = 0; i < openBraces - closeBraces; i++) rawClean += '}';
-            for (let i = 0; i < openBrackets - closeBrackets; i++) rawClean += ']';
-            console.warn('LLM response was truncated. Attempting to fix JSON structure. Open braces:', openBraces, 'Close braces:', closeBraces, 'Open brackets:', openBrackets, 'Close brackets:', closeBrackets);
         }
-        const match = rawClean.match(/\{[\s\S]*\}/); if (!match) {
-            console.error('LLM raw response:', raw.slice(0, 500))
-            throw new Error('No JSON in LLM response');
+
+        if (!bestQuestion) {
+            throw new Error('Failed to generate a valid question after all attempts')
         }
-        const result = JSON.parse(match[0].trim());
-        if (result.question_text) {
-            result.question_text = result.question_text.replace(/_{2,}\s*(?:blank)?\s*/gi, '<span style="text-decoration: underline;"> </span>');
+
+        return {
+            ...bestQuestion,
+            source: 'ai_generated',
+            is_active: false,
+            tags: JSON.stringify([bestQuestion.skill_code || '', bestQuestion.subject])
         }
-        let opts = result.options;
-        if (opts && typeof opts === 'object' && !Array.isArray(opts)) {
-            opts = Object.entries(opts).map(([label, content]) => ({ label, content }));
-        }
-        return { ...result, options: opts ? JSON.stringify(opts) : null, tags: JSON.stringify([result.skill_code || "", result.subject]), source: "ai_generated", is_active: false };
     }
 
     async saveGeneratedQuestion(question) {

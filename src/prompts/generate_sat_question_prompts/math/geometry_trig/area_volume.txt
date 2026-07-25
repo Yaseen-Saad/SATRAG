@@ -1,2 +1,6 @@
-- "Area and volume": Calculate area of triangles, parallelograms, circles; volume of prisms, cylinders, spheres, cones, pyramids. Easy: area of a rectangle with length 8 and width 5. Medium: volume of a cylinder with radius 3 and height 10. Hard: composite solids, or volume problems requiring subtraction of inner shapes (e.g., "A cylindrical pipe has inner radius 4 cm and outer radius 5 cm. What is the volume of the material in a 20 cm length?").
-- Wrong answers should test common mistakes: using diameter instead of radius, wrong formula for sphere vs. cylinder, forgetting to account for hollow shapes.
+- "Area and volume": Calculate area of triangles, parallelograms, circles; volume of prisms, cylinders, spheres, cones, pyramids.
+  - Easy (band 1-2): area of a rectangle with length 8 and width 5. Direct formula application. Question stem: "What is the area of a rectangle with length 8 and width 5?"
+  - Medium (band 3-5): volume of a cylinder with radius 3 and height 10. Question stem: "What is the volume of a cylinder with radius 3 cm and height 10 cm?"
+  - Hard (band 6-7): composite solids, or volume problems requiring subtraction of inner shapes (e.g., "A cylindrical pipe has inner radius 4 cm and outer radius 5 cm. What is the volume of the material in a 20 cm length?")
+- Wrong answers should test common mistakes: using diameter instead of radius (the #1 error), wrong formula for sphere vs. cylinder, forgetting to account for hollow shapes, using πr² for sphere volume instead of (4/3)πr³, forgetting to square the radius, confusing lateral area with total surface area.
+- For SPR: numeric answer (exact value using π or rounded decimal). For MCQ: four numeric options.

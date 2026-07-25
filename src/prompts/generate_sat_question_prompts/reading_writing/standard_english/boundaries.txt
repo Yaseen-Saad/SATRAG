@@ -1,3 +1,7 @@
-- "Boundaries": Correct punctuation and sentence boundaries — commas, semicolons, colons, periods, and dashes used to join or separate clauses. The passage will have exactly ONE punctuation error at a boundary. Easy: missing period between two independent clauses (run-on). Medium: incorrect comma splice or missing semicolon. Hard: complex sentence with multiple clauses where the boundary error is subtle (e.g., missing colon before a list after an independent clause).
+- "Boundaries": Correct punctuation and sentence boundaries — commas, semicolons, colons, periods, and dashes used to join or separate clauses. The passage will have exactly ONE punctuation error at a boundary.
+  - Easy (band 1-2): missing period between two independent clauses (run-on). Question stem: "Which choice completes the text with the correct punctuation?"
+  - Medium (band 3-5): incorrect comma splice or missing semicolon. Question stem: "Which choice completes the text with the correct punctuation?"
+  - Hard (band 6-7): complex sentence with multiple clauses where the boundary error is subtle (e.g., missing colon before a list after an independent clause). Question stem: "Which choice completes the text with the correct punctuation?"
 - The passage should contain 2-4 sentences with exactly ONE boundary error. Wrong answers should test knowledge of other punctuation rules or place the error elsewhere.
-- Common boundary errors: run-on sentences, comma splices, semicolons used where commas belong, missing colons before lists.
+- Common boundary errors: run-on sentences (missing punctuation between independent clauses), comma splices (using comma where semicolon/period needed), semicolons used where commas belong, missing colons before lists after independent clauses.
+- Distractors should each use a different punctuation mark — one correct, three incorrect. The incorrect ones should each make a different punctuation error.

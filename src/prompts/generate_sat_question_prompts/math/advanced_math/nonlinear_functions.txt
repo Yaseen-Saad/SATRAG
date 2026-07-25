@@ -1,2 +1,6 @@
-- "Nonlinear functions": Evaluate and interpret quadratic, exponential, and other nonlinear functions. Understand vertex, axis of symmetry, growth/decay rates. Easy: evaluate f(x) = x^2 at x = 4. Medium: find vertex of f(x) = x^2 - 6x + 8. Hard: compare exponential growth models, interpret rate of change in nonlinear contexts (e.g., "A population doubles every 5 years. If the initial population is 1000, what is the population after 15 years?").
-- Wrong answers should test common mistakes: wrong vertex formula, confusing growth and decay, incorrect exponent calculation.
+- "Nonlinear functions": Evaluate and interpret quadratic, exponential, and other nonlinear functions. Understand vertex, axis of symmetry, growth/decay rates.
+  - Easy (band 1-2): evaluate f(x) = x^2 at x = 4. Question stem: "If f(x) = x^2, what is f(4)?"
+  - Medium (band 3-5): find vertex of f(x) = x^2 - 6x + 8. Question stem: "What is the x-coordinate of the vertex of the parabola f(x) = x^2 - 6x + 8?"
+  - Hard (band 6-7): compare exponential growth models, interpret rate of change in nonlinear contexts (e.g., "A population doubles every 5 years. If the initial population is 1000, what is the population after 15 years?")
+- Wrong answers should test common mistakes: wrong vertex formula (using -b/2a incorrectly), confusing growth and decay (using exponent > 1 for decay), incorrect exponent calculation, forgetting that exponential growth is multiplicative not additive, using the wrong base for exponential functions.
+- For SPR: numeric answer. For MCQ: four numeric options or four function expressions.

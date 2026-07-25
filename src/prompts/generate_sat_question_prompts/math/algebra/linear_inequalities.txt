@@ -1,2 +1,6 @@
-- "Linear inequalities in one or two variables": Solve and graph inequalities, interpret inequality solutions on number lines or coordinate planes. Easy: solve x + 3 > 7. Medium: compound inequalities, graphing on number line. Hard: system of inequalities, shaded region interpretation, or word problem setup (e.g., "A company must produce at least 200 units but no more than 500. Write and solve an inequality for the valid production range").
-- Wrong answers should test common mistakes: flipping the inequality sign when multiplying by a negative, using wrong endpoint type (open vs. closed), misidentifying the shaded region.
+- "Linear inequalities in one or two variables": Solve and graph inequalities, interpret inequality solutions on number lines or coordinate planes.
+  - Easy (band 1-2): solve x + 3 > 7. One step. Question stem: "What is the solution set for x + 3 > 7?"
+  - Medium (band 3-5): compound inequalities, graphing on number line. Question stem: "Which inequality represents the solution set 2 < 3x - 1 ≤ 11?"
+  - Hard (band 6-7): system of inequalities, shaded region interpretation, or word problem setup (e.g., "A company must produce at least 200 units but no more than 500. Which inequality represents this constraint?")
+- Wrong answers should test common mistakes: flipping the inequality sign when multiplying by a negative (the #1 error), using wrong endpoint type (open vs. closed circle), misidentifying the shaded region, forgetting to flip the sign when dividing by a negative.
+- For MCQ: four inequality expressions or four number-line descriptions. For SPR: the solution value or boundary number.

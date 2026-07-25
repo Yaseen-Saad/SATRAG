@@ -1,2 +1,6 @@
-- "Nonlinear equations in one variable and systems of equations in two variables": Solve quadratics by factoring, completing the square, or quadratic formula. Solve |x - 3| = 7 type absolute value equations. Easy: x^2 = 25 (take square roots). Medium: x^2 + 5x + 6 = 0 (factor). Hard: use quadratic formula, or set up quadratic from context. For systems: one linear + one nonlinear (e.g., y = x^2 and y = 2x + 3).
-- Wrong answers should test common mistakes: sign errors in quadratic formula, forgetting ±, incorrect factoring, not checking for extraneous solutions.
+- "Nonlinear equations in one variable and systems of equations in two variables": Solve quadratics by factoring, completing the square, or quadratic formula. Solve |x - 3| = 7 type absolute value equations.
+  - Easy (band 1-2): x^2 = 25 (take square roots) or |x - 3| = 7. Question stem: "What are the solutions to x^2 = 25?" or "What is the solution to |x - 3| = 7?"
+  - Medium (band 3-5): x^2 + 5x + 6 = 0 (factor). Question stem: "What are the solutions to x^2 + 5x + 6 = 0?"
+  - Hard (band 6-7): use quadratic formula, or set up quadratic from context. For systems: one linear + one nonlinear (e.g., y = x^2 and y = 2x + 3). Question stem: "What is the value of x in the system: y = x^2, y = 2x + 3?"
+- Wrong answers should test common mistakes: sign errors in quadratic formula, forgetting ± (listing only one solution), incorrect factoring (wrong factor pairs), not checking for extraneous solutions in absolute value equations, distributing the square incorrectly (e.g., (x+3)^2 ≠ x^2 + 9).
+- For SPR: numeric answer (one value or a comma-separated pair). For MCQ: four option sets.

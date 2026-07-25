@@ -1,2 +1,6 @@
-- "Right triangles and trigonometry": Apply Pythagorean theorem, SOH-CAH-TOA, 30-60-90 and 45-45-90 triangles. Easy: find hypotenuse of a 3-4-5 triangle. Medium: sin(θ) = 3/5, find cos(θ). Hard: angle of elevation/depression problems, or multi-step problems combining trig with Pythagorean theorem (e.g., "A ladder leans against a wall at a 65° angle. If the ladder is 20 feet long, how high up the wall does it reach? Round to the nearest tenth.").
-- Wrong answers should test common mistakes: using wrong trig ratio (sin vs cos vs tan), incorrect Pythagorean calculation, confusing angle of elevation with angle of depression.
+- "Right triangles and trigonometry": Apply Pythagorean theorem, SOH-CAH-TOA, 30-60-90 and 45-45-90 triangles.
+  - Easy (band 1-2): find hypotenuse of a 3-4-5 triangle. Question stem: "What is the length of the hypotenuse of a right triangle with legs 3 and 4?"
+  - Medium (band 3-5): sin(θ) = 3/5, find cos(θ). Question stem: "In a right triangle, sin(θ) = 3/5. What is cos(θ)?"
+  - Hard (band 6-7): angle of elevation/depression problems, or multi-step problems combining trig with Pythagorean theorem (e.g., "A ladder leans against a wall at a 65° angle. If the ladder is 20 feet long, how high up the wall does it reach? Round to the nearest tenth.")
+- Wrong answers should test common mistakes: using wrong trig ratio (sin vs cos vs tan — SOH-CAH-TOA mixup), incorrect Pythagorean calculation (squaring wrong side), confusing angle of elevation (from horizontal up) with angle of depression (from horizontal down), using degrees instead of radians, forgetting to take square root.
+- For SPR: numeric answer (length or angle, rounded appropriately). For MCQ: four numeric options.

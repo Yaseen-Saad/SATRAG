@@ -1,3 +1,7 @@
-- "Command of Evidence — Quantitative": The passage includes a table, bar graph, line graph, or scatterplot. The student must interpret the data to answer the question. The data should be clear and readable. Easy: read a value directly from a bar graph or table. Medium: compare two data points or calculate a simple difference. Hard: identify a trend, interpret a rate of change, or determine which data point best supports or contradicts a claim.
+- "Command of Evidence — Quantitative": The passage includes a table, bar graph, line graph, or scatterplot. The student must interpret the data to answer the question. The data should be clear and readable.
+  - Easy (band 1-2): read a value directly from a bar graph or table. Question stem: "According to the table, what was the value of X in year Y?"
+  - Medium (band 3-5): compare two data points or calculate a simple difference. Question stem: "Based on the graph, which year showed the greatest increase in X?"
+  - Hard (band 6-7): identify a trend, interpret a rate of change, or determine which data point best supports or contradicts a claim. Question stem: "Based on the data, which statement is best supported by the scatterplot?"
 - When including data, describe it clearly in the passage_text field using simple HTML tables or structured text. The data must be complete enough to answer the question without external context.
 - Avoid data that requires complex calculations — the SAT tests interpretation, not arithmetic.
+- The passage should include a brief text context (1-2 sentences) plus the data display. The question must require reading both the text and the data.

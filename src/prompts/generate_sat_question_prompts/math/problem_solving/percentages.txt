@@ -1,2 +1,6 @@
-- "Percentages": Calculate percent increase/decrease, find part/whole/percent, compound percent. Easy: what is 20% of 50? Medium: if a price increases from $80 to $100, what is percent increase? Hard: successive percent changes (10% increase then 20% decrease), or percent of a percent (e.g., "A shirt originally $40 is on sale for 30% off. An additional 10% discount is applied to the sale price. What is the final price?").
-- Wrong answers should test common mistakes: applying both percentages to the original price, calculating percent change with wrong base, using the percent as a decimal incorrectly.
+- "Percentages": Calculate percent increase/decrease, find part/whole/percent, compound percent.
+  - Easy (band 1-2): what is 20% of 50? Direct calculation. Question stem: "What is 20% of 50?"
+  - Medium (band 3-5): if a price increases from $80 to $100, what is percent increase? Question stem: "A shirt originally costs $40. After a 30% discount, what is the sale price?"
+  - Hard (band 6-7): successive percent changes (10% increase then 20% decrease), or percent of a percent (e.g., "A shirt originally $40 is on sale for 30% off. An additional 10% discount is applied to the sale price. What is the final price?")
+- Wrong answers should test common mistakes: applying both percentages to the original price (instead of chaining), calculating percent change with wrong base (using new/old instead of difference/old), using the percent as a decimal incorrectly (20% as 0.02 instead of 0.20), adding percentages directly (30% off + 10% off = 40% off, which is wrong).
+- For SPR: numeric answer (dollar amount, percentage, or quantity). For MCQ: four numeric options.

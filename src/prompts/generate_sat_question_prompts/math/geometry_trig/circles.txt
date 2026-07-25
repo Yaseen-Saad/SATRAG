@@ -1,2 +1,6 @@
-- "Circles": Use circle equations (x-h)^2 + (y-k)^2 = r^2, arc length, sector area, central/inscribed angles. Easy: find radius from circle equation. Medium: arc length = (θ/360) × 2πr. Hard: inscribed angle theorems, or combined circle + triangle problems (e.g., "A circle has center (2, -3) and passes through the point (5, 1). What is the equation of the circle?").
-- Wrong answers should test common mistakes: confusing radius and diameter, using wrong arc length formula, misidentifying center from equation, confusing central and inscribed angles.
+- "Circles": Use circle equations (x-h)^2 + (y-k)^2 = r^2, arc length, sector area, central/inscribed angles.
+  - Easy (band 1-2): find radius from circle equation. Question stem: "What is the radius of the circle with equation (x-2)^2 + (y+3)^2 = 16?"
+  - Medium (band 3-5): arc length = (θ/360) × 2πr or sector area. Question stem: "A circle has radius 12. What is the arc length intercepted by a central angle of 60°?"
+  - Hard (band 6-7): inscribed angle theorems, or combined circle + triangle problems (e.g., "A circle has center (2, -3) and passes through the point (5, 1). What is the equation of the circle?")
+- Wrong answers should test common mistakes: confusing radius and diameter (using 2r where r is needed), using wrong arc length formula (using θ × r instead of (θ/360) × 2πr), misidentifying center from equation (sign errors), confusing central and inscribed angles (inscribed angle = half central angle), confusing area and circumference formulas.
+- For SPR: numeric answer. For MCQ: four equations or four numeric values.

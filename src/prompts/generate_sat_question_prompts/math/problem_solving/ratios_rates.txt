@@ -1,2 +1,6 @@
-- "Ratios, rates, proportional relationships, and units": Set up and solve proportions, convert units, interpret rates. Easy: if 3 apples cost $2, how much for 9? Medium: unit conversion with multiple steps (mph to ft/sec). Hard: rates involving density, work rates, or multi-step proportional reasoning (e.g., "A car travels 150 miles in 2.5 hours. At this rate, how far will it travel in 4 hours?").
-- Wrong answers should test common mistakes: inverting proportions, wrong unit conversion factor, forgetting to convert both numerator and denominator.
+- "Ratios, rates, proportional relationships, and units": Set up and solve proportions, convert units, interpret rates.
+  - Easy (band 1-2): if 3 apples cost $2, how much for 9? Direct proportion. Question stem: "If 3 apples cost $2, how much do 9 apples cost?"
+  - Medium (band 3-5): unit conversion with multiple steps (mph to ft/sec). Question stem: "A car travels 150 miles in 2.5 hours. At this rate, how far will it travel in 4 hours?"
+  - Hard (band 6-7): rates involving density, work rates, or multi-step proportional reasoning. Question stem: "A tank is being filled at a rate of 3 gallons every 2 minutes. If the tank already has 5 gallons, how many gallons will it contain after 10 minutes?"
+- Wrong answers should test common mistakes: inverting proportions (setting up x/3 = 9/2 instead of x/9 = 2/3), wrong unit conversion factor, forgetting to convert both numerator and denominator, using additive instead of multiplicative reasoning for rates.
+- For SPR: numeric answer with appropriate units implied. For MCQ: four numeric options.

@@ -1,2 +1,6 @@
-- "Systems of two linear equations in two variables": Solve systems using substitution, elimination, or graphing. Easy: systems with integer solutions (e.g., x + y = 10, x - y = 4). Medium: systems requiring multiplication before elimination. Hard: systems with no solution or infinitely many solutions, or word problems requiring setup (e.g., "A store sells pens for $2 and notebooks for $5. A student buys 7 items for $23. How many pens did the student buy?").
-- Wrong answers should test common mistakes: adding equations incorrectly, substituting wrong variable, ignoring the "no solution" case.
+- "Systems of two linear equations in two variables": Solve systems using substitution, elimination, or graphing.
+  - Easy (band 1-2): systems with integer solutions (e.g., x + y = 10, x - y = 4). Question stem: "What is the value of x in the system: x + y = 10, x - y = 4?"
+  - Medium (band 3-5): systems requiring multiplication before elimination. Question stem: "What is the value of x in the system: 2x + 3y = 12, x - y = 1?"
+  - Hard (band 6-7): systems with no solution or infinitely many solutions, or word problems requiring setup (e.g., "A store sells pens for $2 and notebooks for $5. A student buys 7 items for $23. How many pens did the student buy?")
+- Wrong answers should test common mistakes: adding equations incorrectly, substituting wrong variable, ignoring the "no solution" case, arithmetic errors when multiplying equations, forgetting to substitute back to find the second variable.
+- For SPR: the answer is a numeric value (x, y, or a quantity from the word problem). For MCQ: four numeric options.

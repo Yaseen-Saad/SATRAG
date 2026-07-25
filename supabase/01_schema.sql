@@ -75,6 +75,10 @@ CREATE TABLE IF NOT EXISTS sat_questions (
     explanation TEXT,
     source TEXT DEFAULT 'collegeboard' CHECK (source IN ('collegeboard', 'ai_generated')),
     tags JSONB DEFAULT '[]',
+    quality_tier TEXT DEFAULT 'unranked' CHECK (quality_tier IN ('unranked', 'trash', 'fixed-trash','bronze', 'silver', 'gold', 'platinum', 'diamond')),
+    quality_score NUMERIC(5,2) DEFAULT 0,
+    feedback_count INT DEFAULT 0,
+    positive_ratio NUMERIC(5,2) DEFAULT 0,
     is_active BOOLEAN,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -193,6 +197,18 @@ CREATE TABLE IF NOT EXISTS user_topic_stats (
     last_attempt TIMESTAMP DEFAULT NOW(),
     current_difficulty_band INT DEFAULT 3,
     UNIQUE(user_id, subject, topic, subtopic)
+);
+
+-- Questions Feedback
+CREATE TABLE IF NOT EXISTS question_feedback (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL ON DELETE CASCADE,
+    question_id UUID REFERENCES sat_questions(id) NOT NULL ON DELETE CASCADE,
+    satisfaction INT CHECK (satisfaction BETWEEN 1 AND 10),
+    is_positive BOOLEAN NOT NULL,
+    feedback TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(user_id, question_id)
 );
 
 -- Avatar Images Bucket
@@ -342,6 +358,16 @@ DROP POLICY IF EXISTS "Users can update their own public profile only" ON public
 CREATE POLICY "Users can update their own public profile only" ON public_profiles
     FOR UPDATE USING (auth.uid() = id);
 
+-- RLS: question_feedback
+ALTER TABLE question_feedback ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can insert own feedback" ON questions_feedback
+    FOR INSERT WITH CHECK (auth.uid() = user_id)
+
+CREATE POLICY "Users can update own feedback" ON question_feedback
+    FOR UPDATE USING (auth.uid() = user_id);
+
+
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);
 CREATE INDEX IF NOT EXISTS idx_practice_subtopic ON sat_questions(subtopic);
@@ -355,3 +381,6 @@ CREATE INDEX IF NOT EXISTS idx_uts_user_accuracy ON user_topic_stats(user_id, ac
 CREATE INDEX IF NOT EXISTS idx_uts_user_subject ON user_topic_stats(user_id, subject);
 CREATE INDEX IF NOT EXISTS idx_vocab_entries_embedding ON vocab_entries USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS idx_sat_questions_embedding ON sat_questions USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX idx_question_feedback_question ON question_feedback(question_id);
+CREATE INDEX idx_question_feedback_user ON question_feedback(user_id);
+CREATE INDEX idx_sat_questions_tier ON sat_questions(quality_tier);
