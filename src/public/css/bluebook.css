@@ -26,6 +26,13 @@
   --color-border: #E2E8F0;
   --color-border-strong: #CBD5E1;
   --color-border-focus: #38BDF8;
+  --tier-diamond: #B9F2FF;
+  --tier-platinum: #E5E7EB;
+  --tier-gold: #FBBF24;
+  --tier-silver: #94A3B8;
+  --tier-bronze: #D97706;
+  --tier-unranked: #475569;
+  --tier-trash: #EF4444;
   --gradient: linear-gradient(135deg, #38BDF8, #3FCF8E);
   --gradient-subtle: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(63, 207, 142, 0.1));
   --gradient-text: linear-gradient(135deg, #0EA5E9, #22C55E);
@@ -923,6 +930,4 @@
 
 .bb-spr-input button:hover {
   background: var(--bb-accent);
-}
-
-/*# sourceMappingURL=bluebook.css.map */
+}/*# sourceMappingURL=bluebook.css.map */

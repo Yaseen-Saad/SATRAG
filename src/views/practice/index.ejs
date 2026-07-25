@@ -67,13 +67,13 @@
         <label>Quality Tier</label>
         <select name="tier" id="filter-tier">
           <option value="">All Tiers</option>
-          <option value="diamond" <%= filters.tier === 'diamond' ? 'selected' : '' %>>💎 Diamond</option>
-          <option value="platinum" <%= filters.tier === 'platinum' ? 'selected' : '' %>>⬡ Platinum+</option>
-          <option value="gold" <%= filters.tier === 'gold' ? 'selected' : '' %>>★ Gold+</option>
-          <option value="silver" <%= filters.tier === 'silver' ? 'selected' : '' %>>● Silver+</option>
-          <option value="bronze" <%= filters.tier === 'bronze' ? 'selected' : '' %>>● Bronze+</option>
-          <option value="unranked" <%= filters.tier === 'unranked' ? 'selected' : '' %>>○ Unranked</option>
-          <option value="trash" <%= filters.tier === 'trash' ? 'selected' : '' %>>🗑 Trash</option>
+          <option value="diamond" <%= filters.tier === 'diamond' ? 'selected' : '' %>>Diamond</option>
+          <option value="platinum" <%= filters.tier === 'platinum' ? 'selected' : '' %>>Platinum+</option>
+          <option value="gold" <%= filters.tier === 'gold' ? 'selected' : '' %>>Gold+</option>
+          <option value="silver" <%= filters.tier === 'silver' ? 'selected' : '' %>>Silver+</option>
+          <option value="bronze" <%= filters.tier === 'bronze' ? 'selected' : '' %>>Bronze+</option>
+          <option value="unranked" <%= filters.tier === 'unranked' ? 'selected' : '' %>>Unranked</option>
+          <option value="trash" <%= filters.tier === 'trash' ? 'selected' : '' %>>Trash</option>
         </select>
       </div>
 
@@ -123,8 +123,9 @@
           <span class="badge badge--<%= (q.subject === 'reading' || q.subject === 'writing') ? 'reading_writing' : q.subject %>"><%= (q.subject === 'reading' || q.subject === 'writing') ? 'Reading & Writing' : q.subject %></span>
           <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
           <small style="color:var(--color-text-faint);"><%= q.topic %> · <%= q.subtopic %></small>
-          <% if (q.source === "ai_generated" && q.quality_tier && quality_tier !== 'unranked') {%>
+          <% if (q.source === "ai_generated" && q.quality_tier && q.quality_tier !== 'unranked') {%>
           <% const tierColors = { diamond: '#B9F2FF', platinum: '#E5E7EB', gold: '#FBBF24', silver: '#94A3B8', bronze: '#D97706', trash: '#EF4444' } %>
+          <% const tierIcons = { diamond: '💎', platinum: '⬡', gold: '★', silver: '●', bronze: '●', trash: '🗑' } %>
           <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;background:<%= tierColors[q.quality_tier] || '#475569' %>20;color:<%= tierColors[q.quality_tier] || '#475569' %>;"><%= tierIcons[q.quality_tier] || '○' %> <%= q.quality_tier.charAt(0).toUpperCase() + q.quality_tier.slice(1) %><% if (q.feedback_count >= 3) { %> (<%= parseFloat(q.quality_score).toFixed(1) %>)<% } %></span>
           <% } %>
         </div>
@@ -147,7 +148,7 @@
     <% if (total > limit) { %>
     <div class="pagination" style="margin-top:1.5rem; display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
       <% for (let p = 1; p <= Math.ceil(total / limit); p++) { %>
-      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + encodeURIComponent(filters.topic) : '' %><%= filters.subtopic ? '&subtopic=' + encodeURIComponent(filters.subtopic) : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.source ? '&source=' + filters.source : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%=filters.tier? '&tier=' + filters.tier : "" %></a><%= filters.search ? '&search=' + encodeURIComponent(filters.search) : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
+      <a href="?page=<%= p %><%= filters.subject ? '&subject=' + filters.subject : '' %><%= filters.active ? '&active=' + filters.active : '' %><%= filters.topic ? '&topic=' + encodeURIComponent(filters.topic) : '' %><%= filters.subtopic ? '&subtopic=' + encodeURIComponent(filters.subtopic) : '' %><%= filters.difficulty ? '&difficulty=' + filters.difficulty : '' %><%= filters.source ? '&source=' + filters.source : '' %><%= filters.status ? '&status=' + filters.status : '' %><%= filters.marked ? '&marked=' + filters.marked : '' %><%= filters.tier ? '&tier=' + filters.tier : '' %><%= filters.search ? '&search=' + encodeURIComponent(filters.search) : '' %>" class="btn <%= p === page ? 'btn--primary' : 'btn--ghost' %> btn--sm"><%= p %></a>
       <% } %>
     </div>
     <% } %>

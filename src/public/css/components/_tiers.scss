@@ -1,0 +1,52 @@
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+
+  img {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  &--diamond {
+    color: var(--tier-diamond);
+    background: rgba(185, 242, 255, 0.12);
+  }
+
+  &--platinum {
+    color: var(--tier-platinum);
+    background: rgba(229, 231, 235, 0.12);
+  }
+
+  &--gold {
+    color: var(--tier-gold);
+    background: rgba(251, 191, 36, 0.12);
+  }
+
+  &--silver {
+    color: var(--tier-silver);
+    background: rgba(148, 163, 184, 0.12);
+  }
+
+  &--bronze {
+    color: var(--tier-bronze);
+    background: rgba(217, 119, 6, 0.12);
+  }
+
+  &--unranked {
+    color: var(--tier-unranked);
+    background: rgba(71, 85, 105, 0.12);
+  }
+
+  &--trash {
+    color: var(--tier-trash);
+    background: rgba(239, 68, 68, 0.12);
+  }
+}

@@ -86,7 +86,7 @@ class RAGEngine {
             parts.push(readFile('difficulty.txt'));
         }
         const wantMath = !subject || subject === 'math'
-        const wantRW = !subject || subject === 'reading_writing'
+        const wantRW = !subject || subject === 'reading' || subject === 'writing' || subject === 'reading_writing'
 
         if (wantMath) {
             parts.push(readFile('math/core.txt'))

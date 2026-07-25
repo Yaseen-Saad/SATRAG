@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS question_feedback (
     question_id UUID REFERENCES sat_questions(id) NOT NULL ON DELETE CASCADE,
     satisfaction INT CHECK (satisfaction BETWEEN 1 AND 10),
     is_positive BOOLEAN NOT NULL,
-    feedback TEXT NOT NULL,
+    comment TEXT NOT NULL,
     enhanced BOOLEAN NOT NULL,
     enhanced_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW(),

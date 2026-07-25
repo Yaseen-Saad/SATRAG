@@ -150,17 +150,57 @@
             content.insertAdjacentHTML('beforeend', fbHtml)
 
             fetch(`/question-feedback/${fbQuestionId}`).then(r => r.json()).then(data => {
-                if (data.success & data.userFeedback) {
-
-                    if (d.success && d.userFeedback) {
-                        const statusEl = document.getElementById('qf-status')
-                        const thumbsEl = content.querySelector('.qf-thumbs')
-                        if (statusEl) statusEl.textContent = `You rated this ${d.userFeedback.satisfaction}/10 (${d.userFeedback.is_positive ? '👍' : '👎'})`
-                        if (thumbsEl) thumbsEl.style.display = 'none'
-                    }
+                if (data.success && data.userFeedback) {
+                    const statusEl = document.getElementById('qf-status')
+                    const thumbsEl = content.querySelector('.qf-thumbs')
+                    if (statusEl) statusEl.textContent = `You rated this ${data.userFeedback.satisfaction}/10 (${data.userFeedback.is_positive ? '👍' : '👎'})`
+                    if (thumbsEl) thumbsEl.style.display = 'none'
                 }
             }).catch((e) => { console.log(e) })
 
+            window.submitQuestionFeedback = function (isPositive) {
+                const detail = document.getElementById('qf-detail')
+                if (detail) detail.style.display = 'block'
+                window._qfIsPositive = isPositive
+                const btns = document.querySelectorAll('.qf-thumbs .qf-btn')
+                btns.forEach(b => {
+                    b.style.opacity = '0.4'
+                    b.style.pointerEvents = 'none'
+                })
+                const activeBtn = isPositive
+                    ? document.querySelector('.qf-up')
+                    : document.querySelector('.qf-down')
+                if (activeBtn) { activeBtn.style.opacity = '1'; activeBtn.style.borderColor = 'var(--color-accent,#38bdf8)' }
+            }
+
+            window.submitQuestionFeedbackDetail = async function () {
+                const slider = document.getElementById('qf-slider')
+                const comment = document.getElementById('qf-comment')
+                const status = document.getElementById('qf-status')
+                const satisfaction = slider ? parseInt(slider.value) : 5
+                const commentText = comment ? comment.value.trim() : ''
+                const isPositive = window._qfIsPositive !== undefined ? window._qfIsPositive : satisfaction >= 6
+
+                if (status) status.textContent = 'Submitting...'
+                try {
+                    const res = await fetch(`/question-feedback/${fbQuestionId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ satisfaction, isPositive, comment: commentText })
+                    })
+                    const data = await res.json()
+                    if (data.success) {
+                        const tierLabels = { diamond: 'Diamond', platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze', trash: 'Trash', unranked: 'Unranked' }
+                        if (status) status.textContent = `Thanks! This question is now ${tierLabels[data.tier] || 'Unranked'} (${data.avgSatisfaction}/10, ${data.positiveRatio}% positive)`
+                        const detail = document.getElementById('qf-detail')
+                        if (detail) detail.style.display = 'none'
+                    } else {
+                        if (status) status.textContent = 'Error: ' + (data.error || 'Unknown error')
+                    }
+                } catch (e) {
+                    if (status) status.textContent = 'Network error — please try again'
+                }
+            }
         }
 
         window.addToMistakes = async function () {

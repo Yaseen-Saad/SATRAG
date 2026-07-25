@@ -1,45 +1,54 @@
 const { service: supabase } = require('../lib/supabase')
-const llm = require("../ lib / llm")
-const path = require('path')
-const fs = require('fs')
-const { interpolate } = require('../lib/utils')
+const llm = require('../lib/llm')
 
 const TIER_THRESHOLDS = {
-    diamond: 9,
-    platinum: 8,
-    gold: 65,
-    silver: 5,
-    bronze: 3,
+    diamond: 9.0,
+    platinum: 8.0,
+    gold: 7.0,
+    silver: 6.0,
+    bronze: 5.0,
 }
 const MIN_REVIEWS_FOR_TIER = 3
 
-function computeTier(avgSat, posRatio, feedbackCount) {
+function computeTier(avgSatisfaction, positiveRatio, feedbackCount) {
     if (feedbackCount < MIN_REVIEWS_FOR_TIER) return 'unranked'
-    if (posRatio > TIER_THRESHOLDS.diamond * 10 || avgSat >= TIER_THRESHOLDS.diamond) return 'diamond'
-    if (posRatio > TIER_THRESHOLDS.platinum * 10 || avgSat >= TIER_THRESHOLDS.platinum) return 'platinum'
-    if (posRatio > TIER_THRESHOLDS.gold * 10 || avgSat >= TIER_THRESHOLDS.gold) return 'gold'
-    if (posRatio > TIER_THRESHOLDS.silver * 10 || avgSat >= TIER_THRESHOLDS.silver) return 'silver'
-    if (posRatio > TIER_THRESHOLDS.bronze * 10 || avgSat >= TIER_THRESHOLDS.bronze) return 'bronze'
-    return "trash"
+    if (positiveRatio < 50 || avgSatisfaction < 5.0) return 'trash'
+    if (avgSatisfaction >= TIER_THRESHOLDS.diamond) return 'diamond'
+    if (avgSatisfaction >= TIER_THRESHOLDS.platinum) return 'platinum'
+    if (avgSatisfaction >= TIER_THRESHOLDS.gold) return 'gold'
+    if (avgSatisfaction >= TIER_THRESHOLDS.silver) return 'silver'
+    return 'bronze'
 }
 
-
 class QuestionFeedbackEngine {
-    async recordFeedback(userId, questionId, { satisfaction, isPositive, feedback }) {
-        const { data: existing } = await supabase.from('question_feedback').select('id').eq('user_id', userId).eq('question_id', questionId).neq('enhanced', true).single()
+    async recordFeedback(userId, questionId, { satisfaction, isPositive, comment }) {
+        const { data: existing } = await supabase
+            .from('question_feedback')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('question_id', questionId)
+            .single()
 
-        let data;
+        let data
         if (existing) {
-            const { data: updated, error } = await supabase.update(({ satisfaction, is_positive: isPositive, feedback: feedback || null })).eq('id', existing.id).select().single()
-            if (error) console.error('Failed to update feedback:', error.message)
+            const { data: updated, error } = await supabase
+                .from('question_feedback')
+                .update({ satisfaction, is_positive: isPositive, comment: comment || null })
+                .eq('id', existing.id)
+                .select()
+                .single()
+            if (error) throw new Error(`Failed to update feedback: ${error.message}`)
             data = updated
         } else {
             const { data: inserted, error } = await supabase
                 .from('question_feedback')
-                .insert({ user_id: userId, question_id: questionId, satisfaction, is_positive: isPositive, feedback: feedback || null }).select().single()
-            if (error) console.error('Failed to insert feedback:', error.message)
+                .insert({ user_id: userId, question_id: questionId, satisfaction, is_positive: isPositive, comment: comment || null })
+                .select()
+                .single()
+            if (error) throw new Error(`Failed to insert feedback: ${error.message}`)
             data = inserted
         }
+
         await this.updateQuestionTier(questionId)
         return data
     }
@@ -56,15 +65,23 @@ class QuestionFeedbackEngine {
     }
 
     async getQuestionFeedbackSummary(questionId) {
-        const { data, error } = await supabase.from('question_feedback').select('satisfaction, is_positive, feedback, user_id, created_at').eq('question_id', questionId).order('created_at', { ascending: false })
+        const { data, error } = await supabase
+            .from('question_feedback')
+            .select('satisfaction, is_positive, comment, user_id, created_at')
+            .eq('question_id', questionId)
+            .order('created_at', { ascending: false })
         if (error) throw error
 
         const feedback = data || []
         if (feedback.length === 0) {
             return { avgSatisfaction: 0, positiveRatio: 0, feedbackCount: 0, tier: 'unranked', feedback: [] }
         }
+
         const scores = feedback.filter(f => f.satisfaction != null).map(f => f.satisfaction)
-        const avgSatisfaction = scores.length > 0 ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10 : 0
+        const avgSatisfaction = scores.length > 0
+            ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10
+            : 0
+
         const positiveCount = feedback.filter(f => f.is_positive).length
         const positiveRatio = Math.round((positiveCount / feedback.length) * 100)
 
@@ -79,29 +96,37 @@ class QuestionFeedbackEngine {
     }
 
     async updateQuestionTier(questionId) {
-        const { data: feedbacks, error } = await supabase.from('question_feedback').select('satisfaction, is_positive').eq('question_id', questionId).neq('enhanced', true)
-        if (error) console.error('Failed to get Question data', error.message)
-        if (feedbacks.length) {
-            const feedbacksCount = feedbacks.length
-            const scores = feedbacks.filter(feedback => feedback.satisfaction !== null).map(feedback => feedback.satisfaction)
-            const avgSat = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 100) / 100 : 0
-            const posCount = feedbacks.filter(feed => feed.is_positive).length
-            const positiveRatio = posCount ? Math.round((posCount / feedbacksCount) * 10000) / 100 : 0
+        const { data: feedbacks, error } = await supabase
+            .from('question_feedback')
+            .select('satisfaction, is_positive')
+            .eq('question_id', questionId)
+        if (error) throw error
 
-            const tier = computeTier(avgSat, positiveRatio, feedbacksCount)
+        const fb = feedbacks || []
+        const feedbackCount = fb.length
+        const scores = fb.filter(f => f.satisfaction != null).map(f => f.satisfaction)
+        const avgSatisfaction = scores.length > 0
+            ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100) / 100
+            : 0
+        const positiveCount = fb.filter(f => f.is_positive).length
+        const positiveRatio = feedbackCount > 0
+            ? Math.round((positiveCount / feedbackCount) * 10000) / 100
+            : 0
 
-            const { error: updateErr } = await supabase
-                .from('sat_questions')
-                .update({
-                    quality_tier: tier,
-                    quality_score: avgSat,
-                    feedback_count: feedbacksCount,
-                    positive_ratio: positiveRatio,
-                })
-                .eq('id', questionId)
-            if (updateErr) throw new Error(`Failed to update question tier: ${updateErr.message}`)
-            return { tier, avgSat, positiveRatio, feedbacksCount }
-        }
+        const tier = computeTier(avgSatisfaction, positiveRatio, feedbackCount)
+
+        const { error: updateErr } = await supabase
+            .from('sat_questions')
+            .update({
+                quality_tier: tier,
+                quality_score: avgSatisfaction,
+                feedback_count: feedbackCount,
+                positive_ratio: positiveRatio,
+            })
+            .eq('id', questionId)
+        if (updateErr) throw new Error(`Failed to update question tier: ${updateErr.message}`)
+
+        return { tier, avgSatisfaction, positiveRatio, feedbackCount }
     }
 
     async getTrashQuestions() {
@@ -123,7 +148,6 @@ class QuestionFeedbackEngine {
             .order('created_at', { ascending: false })
         if (error) throw error
         return data || []
-
     }
 
     async improveTrashQuestion(questionId) {
@@ -138,6 +162,7 @@ class QuestionFeedbackEngine {
         const avgScore = feedbackList.length > 0
             ? (feedbackList.reduce((a, f) => a + (f.satisfaction || 5), 0) / feedbackList.length).toFixed(1)
             : 'N/A'
+
         const negativeComments = feedbackList.filter(f => !f.is_positive && f.comment).map(f => `- ${f.comment}`).join('\n') || 'None'
         const positiveComments = feedbackList.filter(f => f.is_positive && f.comment).map(f => `- ${f.comment}`).join('\n') || 'None'
         const issues = feedbackList.filter(f => !f.is_positive).map(f => {
@@ -145,8 +170,43 @@ class QuestionFeedbackEngine {
             return 'Thumbs down'
         }).join(', ') || 'General dissatisfaction'
 
-        const systemPrompt = 'You are an expert SAT question writer and quality reviewer. Your job is to improve ta poorly rated SAT question based on user feedback. Return ONLY a valid JSON object with the same structure as the input question (NO MARKDOWN, NO CODE FENCES).'
-        const userPrormpt = interpolate(fs.readFileSync(path.join(__dirname, '../prompts/regenerate_sat_question.txt'), 'utf-8'), question)
+        let opts
+        try { opts = typeof question.options === 'string' ? JSON.parse(question.options) : question.options } catch (e) { opts = [] }
+
+        const systemPrompt = 'You are an expert SAT question writer and quality reviewer. Your job is to improve a poorly-rated SAT practice question based on user feedback. Return ONLY a valid JSON object with the same structure as the input question — no markdown, no code fences.'
+
+        const userMessage = `Improve this SAT question based on user feedback.
+
+ORIGINAL QUESTION:
+${question.question_text}
+
+${question.passage_text ? `PASSAGE:\n${question.passage_text}\n\n` : ''}OPTIONS:
+${JSON.stringify(opts, null, 2)}
+
+CORRECT ANSWER: ${question.correct_answer}
+EXPLANATION: ${question.explanation || 'None provided'}
+SUBJECT: ${question.subject}
+TOPIC: ${question.topic}
+SUBTOPIC: ${question.subtopic}
+DIFFICULTY: ${question.difficulty}
+
+USER FEEDBACK (avg satisfaction: ${avgScore}/10, ${feedbackList.length} reviews):
+Negative feedback:
+${negativeComments}
+Positive feedback:
+${positiveComments}
+
+Common issues reported: ${issues}
+
+INSTRUCTIONS:
+1. Fix the issues reported by users while keeping the question SAT-appropriate
+2. Ensure the correct answer is unambiguously correct
+3. Make distractors more plausible if they were confusing
+4. Improve the explanation if it was unclear
+5. Keep the same subject, topic, subtopic, and difficulty level
+6. Return the full improved question as a JSON object with these fields:
+   question_text, passage_text (if any), options (array of {label, content}), correct_answer, explanation, subject, topic, subtopic, difficulty, difficulty_band, question_type`
+
         const response = await llm.generateCompletion({
             messages: [{ role: 'user', content: userMessage }],
             system: systemPrompt,
@@ -182,10 +242,18 @@ class QuestionFeedbackEngine {
             feedback_count: 0,
             positive_ratio: 0,
         }
-        const { error: upErr } = await supabase.from('sat_questions').update(updateData).eq('id', questionId)
+
+        const { error: upErr } = await supabase
+            .from('sat_questions')
+            .update(updateData)
+            .eq('id', questionId)
         if (upErr) throw new Error(`Failed to update question: ${upErr.message}`)
-        await supabase.from('question_feedback').update({ enhanced: true, enhanced_at: Date.now().toLocaleString() })
-        // I don't want to delete the feedback after enhancing, I want to keep it but ignore it everywhere in the code, just keep it for further tests and keep the database rich
+
+        await supabase
+            .from('question_feedback')
+            .delete()
+            .eq('question_id', questionId)
+
         const textForEmbed = improved.stem_plain_text || improved.question_text || ''
         if (textForEmbed) {
             try {
@@ -198,12 +266,36 @@ class QuestionFeedbackEngine {
                 console.error('Re-embedding failed:', e.message)
             }
         }
+
         return { questionId, previousTier: 'trash', newTier: 'unranked' }
     }
 
+    async batchImproveTrash() {
+        const trash = await this.getTrashQuestions()
+        const results = []
+        for (const q of trash) {
+            try {
+                const result = await this.improveTrashQuestion(q.id)
+                results.push({ ...result, success: true })
+            } catch (e) {
+                results.push({ questionId: q.id, success: false, error: e.message })
+            }
+        }
+        return {
+            total: trash.length,
+            improved: results.filter(r => r.success).length,
+            failed: results.filter(r => !r.success).length,
+            results
+        }
+    }
+
     async getTierDistribution() {
-        const { data, error } = await supabase.from('sat_questions').select('quality_tier').eq('source', 'ai_generated')
+        const { data, error } = await supabase
+            .from('sat_questions')
+            .select('quality_tier')
+            .eq('source', 'ai_generated')
         if (error) throw error
+
         const dist = { diamond: 0, platinum: 0, gold: 0, silver: 0, bronze: 0, trash: 0, unranked: 0 }
         for (const row of (data || [])) {
             const tier = row.quality_tier || 'unranked'
@@ -213,6 +305,5 @@ class QuestionFeedbackEngine {
         return dist
     }
 }
-
 
 module.exports = new QuestionFeedbackEngine()

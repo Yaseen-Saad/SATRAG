@@ -61,7 +61,7 @@ app.use((req, res, next) => {
 
 app.use('/vocab', vocabRoutes);
 app.use('/vocab/feedback', vocabFeedbackRoutes);
-app.use('/question/feedback', questionFeedbackRoutes);
+app.use('/question-feedback', questionFeedbackRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/practice', practiceRoutes);
 app.use('/flashcards', flashcardsRoutes)

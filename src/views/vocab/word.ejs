@@ -96,7 +96,7 @@
   <% if (typeof isGenerated !== 'undefined' && isGenerated) { %>
   <div class="entry-section vocab-feedback-form" style="margin-top:1.5rem;">
     <div class="section-label">How was this entry?</div>
-    <form action="/feedback/submit" method="POST">
+    <form action="/vocab/feedback/submit" method="POST">
       <input type="hidden" name="wordId" value="<%= entry.id %>">
       <div class="vocab-feedback-opts">
         <% for (let i = 1; i <= 10; i++) { %>

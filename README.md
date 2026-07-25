@@ -211,238 +211,251 @@ The app will be running at [http://localhost:3000](http://localhost:3000)
 
 ```text
 satbudd/
-├── api/                        # Vercel serverless function entry
-├── data/
-│   ├── sample.txt              # Vocabulary dataset (Gulotta-style entries)
-│   └── sat_questions_with_active.json  # SAT question bank
-├── scripts/
-│   ├── seed.js                 # Seeds vocabulary + questions into Supabase
-│   ├── parser.js           # Vocabulary entry parser
-│   └── generate_embeddings.js  # Batch-generates embeddings for questions
-├── supabase/
-│   ├── 01_schema.sql           # Database schema + RLS policies
-│   ├── 02_rag.sql              # RAG feedback tables
-│   └── 03_match_functions.sql  # pgvector match functions
+├── api/                                # Vercel serverless function entry
+│   └── index.js
+├── data/                               # Seed data and reference files
+│   ├── digital-sat-test-spec-overview.pdf  # Official SAT test specification
+│   ├── pdf_extract.txt                 # Extracted text from the PDF spec
+│   ├── sample.txt                      # Vocabulary dataset (Gulotta-style entries)
+│   ├── sat_questions_missing_ids.json  # SAT questions with missing IDs
+│   ├── sat_questions_with_active.json  # College Board SAT question bank
+│   └── The_1000_Most_Common_SAT_Words.apkg  # Anki flashcard deck
+├── scripts/                            # Utility scripts
+│   ├── generate_embeddings.js          # Batch-generates Jina AI embeddings for questions
+│   ├── parser.js                       # Vocabulary entry parser (sample.txt → structured data)
+│   └── seed.js                         # Seeds vocabulary + questions into Supabase
+├── supabase/                           # Database setup SQL files (run in order)
+│   ├── 01_schema.sql                   # Tables, RLS policies, indexes
+│   ├── 02_rag.sql                      # RAG feedback tables
+│   └── 03_match_functions.sql          # pgvector match functions + auth trigger
 ├── src/
-│   ├── index.js                # Express app entry point
-│   ├── config.js               # Zod-validated env config
-│   ├── lib/
-│   │   ├── supabase.js         # Supabase client
-│   │   ├── llm.js              # LLM service (chat + embeddings, with caching)
-│   │   ├── utils.js            # The most used functions across files
-│   │   ├── rag.js              # RAG engine (vector search + keyword fallback)
-│   │   ├── qualityChecker.js   # Rule-based quality assessment for Vocabulary entries
-│   │   ├── SATQuestionsEvaluator.js   # LLM-based evaluation for SAT Questions
-│   │   └── vocabularyEvaluator.js  # LLM-based evaluation for Vocabulary entries
-│   ├── middleware/
-│   │   ├── auth.js             # Authentication middleware
-│   │   ├── profile.js          # Profile completion check
-│   │   ├── rateLimiter.js      # Burst detection + route-specific limits
-│   │   ├── errorHandler.js     # Handles 404 and related errors
-│   │   └── useFreeModels.js    # Free tier generation tracking
-│   ├── routes/
-│   │   ├── auth.js             # Login, signup, logout, password reset
-│   │   ├── vocab.js            # Vocab generation, lists, sharing, export
-│   │   ├── practice.js         # Questions, generation, adaptive mode
-│   │   ├── dashboard.js        # Dashboard, leaderboard, analytics
-│   │   ├── stats.js            # Server Analytics (e.g. number of generated questions)
-│   │   ├── flashcards.js       # Flashcard sessions, SM-2 review
-│   │   ├── vocabFeedback.js    # Vocab entries feedback submission
-│   │   ├── questionFedback.js  # SAT Questions feedback submission
-│   │   ├── settings.js         # Profile settings, API key management
-│   │   └── ticket.js           # Bug report tickets
-│   ├── services/               # Logic engines
-│   │   ├── dashboardengine.js         # Logi
-│   │   ├── practiceEngine.js         # Voc
-│   │   ├── flashcardsEngine.js       # Question
-│   │   ├── questionFeedbackEngine.js   # Questions, 
-│   │   ├── settingsEngine.js        #ions, generation, ada
-│   │   ├── statsEngine.js         # Qus, generation, adaptive mode
-│   │   ├── vocabEngine.js         # Qus, generation, adaptive mode
-│   │   └── vocabFeedbackEngine.js    # Bug report tickets
-│   ├── prompts/          # LLM sprompts
-│   │   ├── generate_vocab_entry.txt   # Questions, gene
-│   │   ├── evaluate_vocab_entry.txt      # Vocab
-│   │   ├── evaluate_sat_question.txt       # Login, sinup
-│   │   ├── regenerate_sat_question.txt   # Questi
-│   │   └── generate_sat_question_prompts/
-│   │       ├── core.txt         # Questions
-│   │       ├── generate_sat_question.txt         # Questions, g
-│   │       ├── reading_writing/         # Questions, g
-│   │       │   ├── core.txt   # Queti
-│   │       │   ├── craft_and_structure/   # Queti
-│   │       │   │   ├── cross_text_connections.txt   # Queti
-│   │       │   │   ├── text_structure_purpose.txt   # Queti
-│   │       │   │   └── words_in_context.txt   # Queti
-│   │       │   ├── expression_of_ideas/   # Queti
-│   │       │   │   ├── rhetorical_synthesis.txt   # Queti
-│   │       │   │   └── transisions.txt   # Queti
-│   │       │   ├── information_and_ideas/   # Queti
-│   │       │   │   ├── centeral_ideas_details.txt   # Queti
-│   │       │   │   ├── inferences.txt   # Que
-│   │       │   │   ├── command_of_evidence_quantitive.txt   # Que
-│   │       │   │   └── command_of_evidence_textual.txt   # Queti
-│   │       │   └── standard_english/   # Queti
-│   │       │       ├── boundaries.txt   # Queti
-│   │       │       └── form_structure_sense.txt   # Queti
-│   │       └── math/           # Bug repo
-│   │           ├── core.txt   # Queti
-│   │           ├── advanced_math/   # Queti
-│   │           │   ├── equivalent_expressions.txt   # Queti
-│   │           │   ├── nonlinear_equations.txt   # Queti
-│   │           │   └── nonlinear_functions.txt   # Queti
-│   │           ├── algebra/   # Queti
-│   │           │   ├── linear_equations_one_variable.txt   # Queti
-│   │           │   ├── linear_equations_two_variable.txt   # Queti
-│   │           │   ├── linear_functions.txt   # Queti
-│   │           │   ├── linear_inequalities.txt   # Queti
-│   │           │   └── system_linear.txt   # Queti
-│   │           ├── geometry_trig/   # Queti
-│   │           │   ├── area_volume.txt   # Queti
-│   │           │   ├── circile.txt   # Que
-│   │           │   ├── lines_angles_triangles.txt   # Que
-│   │           │   └── right_triangles_trig.txt   # Queti
-│   │           └── problem_solving/   # Queti
-│   │               ├── one_variable_data.txt   # Queti
-│   │               ├── percentages.txt   # Queti
-│   │               ├── probability.txt   # Queti
-│   │               ├── ratios_rates.txt   # Queti
-│   │               ├── sample_statistics.txt   # Queti
-│   │               ├── statistical_claims.txt   # Queti
-│   │               └── two_variable_data.txt   # Queti
-│   ├── views/                  # EJS templates
-│   │   ├── auth/                  # EJS templates
-│   │   │   ├── login.ejs                # EJS templates
-│   │   │   ├── signup.ejs                # EJS templates
-│   │   │   ├── forgot-password.ejs                # EJS templates
-│   │   │   └── reset-password.ejs                # EJS templates
-│   │   ├── flashcards/                  # EJS templates
-│   │   │   ├── index.ejs                # EJS templates
-│   │   │   └── session.ejs                # EJS templates
-│   │   ├── layouts/                  # EJS templates
-│   │   │   └── main.ejs                # EJS templates
-│   │   ├── partials/                  # EJS templates
-│   │   │   ├── head.ejs                # EJS templates
-│   │   │   ├── nav.ejs                # EJS templates
-│   │   │   ├── flash.ejs                # EJS templates
-│   │   │   └── footer.ejs                # EJS templates
-│   │   ├── practice/                  # EJS templates
-│   │   │   ├── adaptive.ejs                # EJS templates
-│   │   │   ├── generate.ejs                # EJS templates
-│   │   │   ├── history.ejs                # EJS templates
-│   │   │   ├── index.ejs                # EJS templates
-│   │   │   └── question.ejs                # EJS templates
-│   │   ├── vocab/                  # EJS templates
-│   │   │   ├── index.ejs                # EJS templates
-│   │   │   ├── list.ejs                # EJS templates
-│   │   │   ├── lists.ejs                # EJS templates
-│   │   │   ├── print.ejs                # EJS templates
-│   │   │   ├── regenerate.ejs                # EJS templates
-│   │   │   └── word.ejs                # EJS templates
-│   │   ├── settings/                  # EJS templates
-│   │   │   └── index.ejs                # EJS templates
-│   │   └── dashboard/             # EJS templates
-│   │       ├── analytics.ejs                # EJS templates
-│   │       ├── leaderboard.ejs                # EJS templates
-│   │       └── progress.ejs                # EJS templates
-│   └── public/
-│       ├── css/                            # SCSS source
-│       │    ├── bluebook.scss              # Bluebook SCSS
-│       │    ├── main.scss                  # Main SCSS
-│       │    ├── components/                # Components Templates
-│       │    │    ├── _badges.scss          # Components Templates
-│       │    │    ├── _buttons.scss         # Components Templates
-│       │    │    ├── _cards.scss           # Components Templates
-│       │    │    ├── _empty-states.scss    # Components Templates
-│       │    │    ├── _flash.scss           # Components Templates
-│       │    │    ├── _forms.scss           # Components Templates
-│       │    │    ├── _nav.scss             # Components Templates
-│       │    │    └── _tables.scss          # Components Templates
-│       │    ├── pages/                     # SCSS Pages Templates
-│       │    │    ├── _auth.scss            # SCSS Pages Templates
-│       │    │    ├── _dashboard.scss       # SCSS Pages Templates
-│       │    │    ├── _feedback.scss        # SCSS Pages Templates
-│       │    │    ├── _flashcards.scss      # SCSS Pages Templates
-│       │    │    ├── _landing.scss         # SCSS Pages Templates
-│       │    │    ├── _leaderboard.scss     # SCSS Pages Templates
-│       │    │    ├── _practice.scss        # SCSS Pages Templates
-│       │    │    ├── _settings.scss        # SCSS Pages Templates
-│       │    │    ├── _tickets.scss         # SCSS Pages Templates
-│       │    │    └── _vocab.scss           # SCSS Pages Templates
-│       │    └── utils/                     # SCSS templates
-│       │         ├── _base.scss            # SCSS templates
-│       │         ├── _mixins.scss          # SCSS templates
-│       │         └── variables.scss        # SCSS templates
-│       ├── img/                            # Images 
-│           ├── analytics.svg               # An Image of
-│           ├── auth.svg                    # An Image of
-│           ├── book-open.svg               # An Image of
-│           ├── celebrate.svg               # An Image of
-│           ├── correct.svg                 # An Image of
-│           ├── dark.svg                    # An Image of
-│           ├── dashboard.svg               # An Image of
-│           ├── empty.svg                   # An Image of
-│           ├── eyeclosed.svg               # An Image of
-│           ├── eyeopen.svg                 # An Image of
-│           ├── favicon.svg                 # An Image of
-│           ├── flashcards.svg              # An Image of
-│           ├── graphbg.svg                 # An Image of
-│           ├── hiw-1-input.svg             # An Image of
-│           ├── hiw-2-tokens.svg            # An Image of
-│           ├── hiw-3-vectors.svg           # An Image of
-│           ├── hiw-4-index.svg             # An Image of
-│           ├── hiw-5-vectorspace.svg       # An Image of
-│           ├── hiw-6-similarity.svg        # An Image of      
-│           ├── hiw-7-search.svg            # An Image of
-│           ├── hiw-8-generate.svg          # An Image of    
-│           ├── hiw-9-quality.svg           # An Image of
-│           ├── hiw-10-entry.svg            # An Image of 
-│           ├── hiw-11-feedback.svg         # An Image of
-│           ├── howitworks.svg              # An Image of
-│           ├── icon-arrow-up.svg           # An Image of
-│           ├── icon-arrow-down.svg         # An Image of
-│           ├── icon-check.svg              # An Image of
-│           ├── icon-chevron-down.svg       # An Image of     
-│           ├── icon-chevron-up.svg         # An Image of
-│           ├── icon-chevron-right.svg      # An Image of      
-│           ├── icon-chevron-left.svg       # An Image of
-│           ├── icon-close.svg              # An Image of
-│           ├── icon-dot.svg                # An Image of
-│           ├── icon-dashboard.svg          # An Image of
-│           ├── icon-flashcards-nav.svg     # An Image of
-│           ├── icon-grid.svg               # An Image of
-│           ├── icon-home.svg               # An Image of
-│           ├── icon-login.svg              # An Image of
-│           ├── icon-logout.svg             # An Image of
-│           ├── icon-minus.svg              # An Image of
-│           ├── icon-podium.svg             # An Image of
-│           ├── icon-practice-nav.svg       # An Image of  
-│           ├── icon-settings-nav.svg       # An Image of
-│           ├── icon-star-outline.svg       # An Image of
-│           ├── icon-star.svg               # An Image of
-│           ├── icon-words.svg              # An Image of
-│           ├── icon-x.svg                  # An Image of
-│           ├── leaderboard.svg             # An Image of
-│           ├── light.svg                   # An Image of
-│           ├── loader.svg                  # An Image of
-│           ├── markForReview.svg           # An Image of
-│           ├── nav-light.svg               # An Image of
-│           ├── nav.svg                     # An Image of
-│           ├── practice.svg                # An Image of
-│           ├── settings.svg                # An Image of
-│           ├── streak.svg                  # An Image of
-│           ├── strikethrough.svg           # An Image of
-│           ├── timer.svg                   # An Image of
-│           ├── vocab.svg                   # An Image of
-│           └── wrong.svg                   # An Image of
-│       └── js/                             # Client-side JS
-│           ├── app.js                      # EJS templates
-│           ├── bluebook.js                 # EJS templates
-│           ├── components.js               # EJS templates
-│           └── landing.js                  # EJS templates
-├── package.json
-├── vercel.json
-└── .env.example
+│   ├── config.js                       # Zod-validated environment config
+│   ├── index.js                        # Express app entry point (middleware, routes, views)
+│   ├── lib/                            # Core libraries
+│   │   ├── llm.js                      # LLM service (chat + embeddings, with caching)
+│   │   ├── qualityChecker.js           # Rule-based quality assessment for vocabulary entries
+│   │   ├── rag.js                      # RAG engine (vector search + keyword fallback)
+│   │   ├── SATQuestionsEvaluator.js    # LLM-based evaluation for generated SAT questions
+│   │   ├── supabase.js                 # Supabase client singleton
+│   │   ├── utils.js                    # Shared utility functions across the app
+│   │   └── vocabularyEvaluator.js      # LLM-based evaluation for generated vocab entries
+│   ├── middleware/                      # Express middleware
+│   │   ├── auth.js                     # Authentication check middleware
+│   │   ├── errorHandler.js             # 404 and error handling
+│   │   ├── profile.js                  # Profile completion check
+│   │   ├── rateLimiter.js              # Burst detection + route-specific rate limits
+│   │   └── useFreeModels.js            # Free tier generation tracking (5/month)
+│   ├── prompts/                        # LLM prompt templates
+│   │   ├── evaluate_sat_question.txt   # Prompt for evaluating generated SAT questions
+│   │   ├── evaluate_vocab_entry.txt    # Prompt for evaluating generated vocab entries
+│   │   ├── generate_vocab_entry.txt    # Prompt for generating vocab entries with mnemonics
+│   │   ├── regenerate_sat_question.txt # Prompt for regenerating SAT questions from feedback
+│   │   └── generate_sat_question_prompts/  # Domain-specific question generation prompts
+│   │       ├── core.txt                # Shared question generation instructions
+│   │       ├── generate_sat_question.txt   # Main question generation orchestration prompt
+│   │       ├── math/                   # Math domain prompts
+│   │       │   ├── core.txt            # Math-specific core instructions
+│   │       │   ├── advanced_math/
+│   │       │   │   ├── equivalent_expressions.txt
+│   │       │   │   ├── nonlinear_equations.txt
+│   │       │   │   └── nonlinear_functions.txt
+│   │       │   ├── algebra/
+│   │       │   │   ├── linear_equations_one_var.txt
+│   │       │   │   ├── linear_equations_two_var.txt
+│   │       │   │   ├── linear_functions.txt
+│   │       │   │   ├── linear_inequalities.txt
+│   │       │   │   └── systems_linear.txt
+│   │       │   ├── geometry_trig/
+│   │       │   │   ├── area_volume.txt
+│   │       │   │   ├── circles.txt
+│   │       │   │   ├── lines_angles_triangles.txt
+│   │       │   │   └── right_triangles_trig.txt
+│   │       │   └── problem_solving/
+│   │       │       ├── one_variable_data.txt
+│   │       │       ├── percentages.txt
+│   │       │       ├── probability.txt
+│   │       │       ├── ratios_rates.txt
+│   │       │       ├── sample_statistics.txt
+│   │       │       ├── statistical_claims.txt
+│   │       │       └── two_variable_data.txt
+│   │       └── reading_writing/        # Reading & Writing domain prompts
+│   │           ├── core.txt            # R&W-specific core instructions
+│   │           ├── craft_and_structure/
+│   │           │   ├── cross_text_connections.txt
+│   │           │   ├── text_structure_purpose.txt
+│   │           │   └── words_in_context.txt
+│   │           ├── expression_of_ideas/
+│   │           │   ├── rhetorical_synthesis.txt
+│   │           │   └── transitions.txt
+│   │           ├── information_and_ideas/
+│   │           │   ├── centeral_ideas_details.txt
+│   │           │   ├── command_of_evidence_quantitative.txt
+│   │           │   ├── command_of_evidence_textual.txt
+│   │           │   └── inferences.txt
+│   │           └── standard_english/
+│   │               ├── boundaries.txt
+│   │               └── form_structure_sense.txt
+│   ├── public/                         # Static frontend assets
+│   │   ├── css/
+│   │   │   ├── bluebook.css            # Compiled Bluebook practice interface styles
+│   │   │   ├── bluebook.scss           # Bluebook SCSS source
+│   │   │   ├── main.css                # Compiled main app styles
+│   │   │   ├── main.scss               # Main SCSS entry point
+│   │   │   ├── components/             # Reusable UI component styles
+│   │   │   │   ├── _badges.scss
+│   │   │   │   ├── _buttons.scss
+│   │   │   │   ├── _cards.scss
+│   │   │   │   ├── _empty-states.scss
+│   │   │   │   ├── _flash.scss
+│   │   │   │   ├── _forms.scss
+│   │   │   │   ├── _nav.scss
+│   │   │   │   └── _tables.scss
+│   │   │   ├── pages/                  # Page-specific styles
+│   │   │   │   ├── _auth.scss
+│   │   │   │   ├── _dashboard.scss
+│   │   │   │   ├── _feedback.scss
+│   │   │   │   ├── _flashcards.scss
+│   │   │   │   ├── _landing.scss
+│   │   │   │   ├── _leaderboard.scss
+│   │   │   │   ├── _practice.scss
+│   │   │   │   ├── _settings.scss
+│   │   │   │   ├── _tickets.scss
+│   │   │   │   └── _vocab.scss
+│   │   │   └── utils/                  # SCSS utilities and variables
+│   │   │       ├── _base.scss
+│   │   │       ├── _mixins.scss
+│   │   │       └── _variables.scss
+│   │   ├── img/                        # SVG icons and illustrations
+│   │   │   ├── analytics.svg           # Analytics page illustration
+│   │   │   ├── auth.svg                # Auth page illustration
+│   │   │   ├── book-open.svg           # Open book icon
+│   │   │   ├── celebrate.svg           # Celebration illustration
+│   │   │   ├── complete.svg            # Completion/checkmark illustration
+│   │   │   ├── correct.svg             # Correct answer icon
+│   │   │   ├── dark.svg                # Dark mode toggle icon
+│   │   │   ├── dashboard.svg           # Dashboard illustration
+│   │   │   ├── empty.svg               # Empty state illustration
+│   │   │   ├── eyeclosed.svg           # Password hidden icon
+│   │   │   ├── eyeopen.svg             # Password visible icon
+│   │   │   ├── favicon.svg             # App favicon
+│   │   │   ├── flashcards.svg          # Flashcards illustration
+│   │   │   ├── graphbg.svg             # Dashboard graph background
+│   │   │   ├── hiw-1-input.svg         # How It Works step 1: Input
+│   │   │   ├── hiw-2-tokens.svg        # How It Works step 2: Tokenization
+│   │   │   ├── hiw-3-vectors.svg       # How It Works step 3: Embeddings
+│   │   │   ├── hiw-4-index.svg         # How It Works step 4: Indexing
+│   │   │   ├── hiw-5-vectorspace.svg   # How It Works step 5: Vector space
+│   │   │   ├── hiw-6-similarity.svg    # How It Works step 6: Similarity search
+│   │   │   ├── hiw-7-search.svg        # How It Works step 7: Retrieval
+│   │   │   ├── hiw-8-generate.svg      # How It Works step 8: Generation
+│   │   │   ├── hiw-9-quality.svg       # How It Works step 9: Quality check
+│   │   │   ├── hiw-10-entry.svg        # How It Works step 10: Final entry
+│   │   │   ├── hiw-11-feedback.svg     # How It Works step 11: User feedback
+│   │   │   ├── howitworks.svg          # How It Works section header
+│   │   │   ├── icon-analytics.svg      # Analytics nav icon
+│   │   │   ├── icon-arrow-down.svg     # Arrow down icon
+│   │   │   ├── icon-arrow-up.svg       # Arrow up icon
+│   │   │   ├── icon-check.svg          # Checkmark icon
+│   │   │   ├── icon-chevron-down.svg   # Chevron down icon
+│   │   │   ├── icon-chevron-left.svg   # Chevron left icon
+│   │   │   ├── icon-chevron-right.svg  # Chevron right icon
+│   │   │   ├── icon-chevron-up.svg     # Chevron up icon
+│   │   │   ├── icon-close.svg          # Close/X icon
+│   │   │   ├── icon-dashboard.svg      # Dashboard nav icon
+│   │   │   ├── icon-dot.svg            # Dot indicator icon
+│   │   │   ├── icon-flashcards-nav.svg # Flashcards nav icon
+│   │   │   ├── icon-grid.svg           # Grid/layout icon
+│   │   │   ├── icon-home.svg           # Home nav icon
+│   │   │   ├── icon-login.svg          # Login icon
+│   │   │   ├── icon-logout.svg         # Logout icon
+│   │   │   ├── icon-minus.svg          # Minus icon
+│   │   │   ├── icon-podium.svg         # Leaderboard/podium icon
+│   │   │   ├── icon-practice-nav.svg   # Practice nav icon
+│   │   │   ├── icon-settings-nav.svg   # Settings nav icon
+│   │   │   ├── icon-star-outline.svg   # Star outline icon
+│   │   │   ├── icon-star.svg           # Star filled icon
+│   │   │   ├── icon-words.svg          # Words/vocab icon
+│   │   │   ├── icon-x.svg              # X/close icon
+│   │   │   ├── leaderboard.svg         # Leaderboard illustration
+│   │   │   ├── light.svg               # Light mode toggle icon
+│   │   │   ├── loader.svg              # Loading spinner
+│   │   │   ├── markForReview.svg       # Mark for review flag icon
+│   │   │   ├── nav-light.svg           # Light theme nav background
+│   │   │   ├── nav.svg                 # Dark theme nav background
+│   │   │   ├── practice.svg            # Practice page illustration
+│   │   │   ├── settings.svg            # Settings illustration
+│   │   │   ├── streak.svg              # Study streak icon
+│   │   │   ├── striketrhough.svg       # Strikethrough/elimination icon
+│   │   │   ├── timer.svg               # Timer icon
+│   │   │   ├── vocab.svg               # Vocabulary illustration
+│   │   │   └── wrong.svg               # Wrong answer icon
+│   │   └── js/                         # Client-side JavaScript
+│   │       ├── app.js                  # Global app logic (theme toggle, shortcuts, flash)
+│   │       ├── bluebook.js             # Bluebook practice interface (timer, palette, nav)
+│   │       ├── components.js           # Shared UI components (modals, dropdowns, etc.)
+│   │       └── landing.js              # Landing page scroll animations and interactions
+│   ├── routes/                         # Express route handlers
+│   │   ├── auth.js                     # Login, signup, logout, password reset
+│   │   ├── dashboard.js                # Dashboard, leaderboard, analytics pages
+│   │   ├── flashcards.js               # Flashcard sessions, SM-2 review
+│   │   ├── practice.js                 # Question browsing, AI generation, adaptive mode
+│   │   ├── questionFeedback.js         # SAT question feedback submission
+│   │   ├── settings.js                 # Profile settings, API key management
+│   │   ├── stats.js                    # Server-side analytics stats
+│   │   ├── ticket.js                   # Bug report ticket system
+│   │   ├── vocab.js                    # Vocab generation, lists, sharing, export
+│   │   └── vocabFeedback.js            # Vocabulary entry feedback submission
+│   ├── services/                       # Business logic engines
+│   │   ├── dashboardEngine.js          # Dashboard data aggregation (stats, streaks, activity)
+│   │   ├── flashcardsEngine.js         # Flashcard session logic + SM-2 algorithm
+│   │   ├── practiceEngine.js           # Practice session management + adaptive engine
+│   │   ├── questionFeedbackEngine.js   # Question feedback processing + RAG learning
+│   │   ├── settingsEngine.js           # Settings + API key management logic
+│   │   ├── statsEngine.js              # Analytics stats computation
+│   │   ├── vocabEngine.js              # Vocabulary generation + list management logic
+│   │   └── vocabFeedbackEngine.js      # Vocab feedback processing + RAG learning
+│   └── views/                          # EJS templates
+│       ├── error.ejs                   # Error page template
+│       ├── index.ejs                   # Landing/home page template
+│       ├── auth/
+│       │   ├── forgot-password.ejs     # Forgot password form
+│       │   ├── login.ejs               # Login form
+│       │   ├── reset-password.ejs      # Reset password form
+│       │   └── signup.ejs              # Signup form
+│       ├── dashboard/
+│       │   ├── analytics.ejs           # Session-by-session performance breakdown
+│       │   ├── leaderboard.ejs         # Public leaderboard ranked by accuracy
+│       │   └── progress.ejs            # Progress dashboard with stats and charts
+│       ├── flashcards/
+│       │   ├── index.ejs               # Flashcard list selection page
+│       │   └── session.ejs             # Active flashcard review session
+│       ├── layouts/
+│       │   └── main.ejs                # Main layout (head, nav, footer wrapper)
+│       ├── partials/
+│       │   ├── flash.ejs               # Flash message component (success/error)
+│       │   ├── footer.ejs              # Footer partial
+│       │   ├── head.ejs                # HTML head partial (meta, styles)
+│       │   └── nav.ejs                 # Navigation bar partial
+│       ├── practice/
+│       │   ├── adaptive.ejs            # Adaptive practice session
+│       │   ├── generate.ejs            # AI question generation page
+│       │   ├── history.ejs             # Practice history page
+│       │   ├── index.ejs               # Practice question bank browser
+│       │   └── question.ejs            # Bluebook-style question interface
+│       ├── settings/
+│       │   └── index.ejs               # User settings (profile, API keys, theme)
+│       └── vocab/
+│           ├── index.ejs               # Vocabulary generation page
+│           ├── list.ejs                # Single vocabulary list view
+│           ├── lists.ejs               # All vocabulary lists page
+│           ├── print.ejs               # Print-friendly vocabulary export
+│           ├── regenerate.ejs          # Vocabulary entry regeneration with feedback
+│           └── word.ejs                # Individual vocabulary word detail page
+├── .env.example                        # Environment variable template
+├── package.json                        # Node.js dependencies and scripts
+├── package-lock.json                   # Dependency lock file
+├── README.md                           # Project documentation
+└── vercel.json                         # Vercel deployment config
 ```
 
 ## Contributing

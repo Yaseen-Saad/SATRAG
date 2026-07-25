@@ -1,0 +1,6 @@
+<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diamond tier">
+  <path d="M8 1L14.5 6.5L8 15L1.5 6.5L8 1Z" fill="#B9F2FF" fill-opacity="0.25" stroke="#B9F2FF" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M1.5 6.5H14.5" stroke="#B9F2FF" stroke-width="0.8" opacity="0.5"/>
+  <path d="M8 1L5.5 6.5L8 15" stroke="#B9F2FF" stroke-width="0.6" opacity="0.3"/>
+  <path d="M8 1L10.5 6.5L8 15" stroke="#B9F2FF" stroke-width="0.6" opacity="0.3"/>
+</svg>
