@@ -367,6 +367,8 @@ CREATE POLICY "Users can insert own feedback" ON questions_feedback
 CREATE POLICY "Users can update own feedback" ON question_feedback
     FOR UPDATE USING (auth.uid() = user_id);
 
+CREATE POLICY "Authenticated users can read feedback" ON question_feedback
+    FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);
