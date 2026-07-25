@@ -207,6 +207,8 @@ CREATE TABLE IF NOT EXISTS question_feedback (
     satisfaction INT CHECK (satisfaction BETWEEN 1 AND 10),
     is_positive BOOLEAN NOT NULL,
     feedback TEXT NOT NULL,
+    enhanced BOOLEAN NOT NULL,
+    enhanced_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(user_id, question_id)
 );

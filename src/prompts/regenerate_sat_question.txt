@@ -1,0 +1,30 @@
+Improve this SAT question based on user feedback.
+
+ORIGINAL QUESTION
+{{question.question_text}}
+
+{{question.passage_text? `PASSAGE\n {{question.passage_text}}\n\n`:''}}
+
+OPTIONS: {{JSON.stringify(question.options, null, 2)}}
+
+CORRECT ANSWER: {{question.correct_answer}}
+EXPLANATION: {{question.explanation || 'None provided'}}
+SUBJECT: {{question.subject}}
+TOPIC: {{question.topic}}
+SUBTOPIC: {{question.subtopic}}
+DIFFICULTY: {{question.difficulty}}
+
+USER FEEDBACK (avg satisfaction: {{avgScore}}/10, {{feedbackList.length}} reviews):
+Negative feedback: {{negativeComments}}
+Positive feedback: {{positiveComments}}
+
+Common Issues reported: {{issues}}
+
+INSTRUCTIONS:
+1. Fix the issues reported by users wile keeping the question SAT-appropriate
+2. Ensure the correct answer is unambiguously correct.
+3. Make distractors more plausible if they were confusing.
+4. Improve the explanation if it was unclear
+5. Keep the same subject, topic, subtopic, and difficulty level
+6. If the question is too easy for this difficulty make the passage longer (150 words maximum) withh stronger distractors.
+7. Return the full imrpoved question as a JSON object with these fields: question_text, passage_text (if any), options (array of {label, content}), correct_answer, explanation, subject, topic, subtopic, difficulty, difficulty_band, question_type
