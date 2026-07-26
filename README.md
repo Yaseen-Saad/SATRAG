@@ -144,10 +144,10 @@ Flashcard scheduling follows the **SuperMemo SM-2 Algorithm**:
 
 | Rating | Meaning | Effect on Schedule |
 |-----|------|--------|
-|** Again** | Didn't know it | Reset interval, review soon | 
-|** Hard **| Knew it with difficulty | Short interval increase |
-|** Good **| Knew it correctly | Standard interval increase |
-|** Easy **| Knew it instantly | Large interval increase |
+|**Again** | Didn't know it | Reset interval, review soon | 
+|**Hard**| Knew it with difficulty | Short interval increase |
+|**Good**| Knew it correctly | Standard interval increase |
+|**Easy**| Knew it instantly | Large interval increase |
 
 Each card tracks its own ease factor, interval, and review count — cards you struggle with appear more often and cards you know well fade into the background.
 
