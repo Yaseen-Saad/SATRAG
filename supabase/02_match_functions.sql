@@ -173,3 +173,23 @@ RETURNS INT AS $$
     WHERE user_id = p_user_id
       AND created_at >= date_trunc('month', NOW())
 $$ LANGUAGE sql SECURITY DEFINER;
+
+
+CREATE OR REPLACE FUNCTION get_total_tokens()
+RETURNS bigint
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+    SELECT COALESCE(SUM(total_tokens), 0)
+    FROM token_usage_log;
+$$;
+
+CREATE OR REPLACE FUNCTION get_total_tokens_this_month()
+RETURNS bigint
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+    SELECT COALESCE(SUM(total_tokens), 0)
+    FROM token_usage_log
+    WHERE created_at >= date_trunc('month', CURRENT_DATE);
+$$;

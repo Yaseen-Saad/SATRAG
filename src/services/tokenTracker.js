@@ -45,5 +45,21 @@ class tokenTracker {
             return {}
         }
     }
+    async allTokens() {
+        const { data: totalTokens, error } = await supabase.rpc('get_total_tokens');
+
+        if (error) {
+            console.error('Failed to fetch total tokens:', error);
+        }
+        return totalTokens || 0
+    }
+
+    async monthlyTokens() {
+        const { data: monthlyTotalTokens, error } = await supabase.rpc('get_total_tokens_this_month');
+        if (error) {
+            console.error('Failed to fetch monthly total tokens:', error);
+        }
+        return monthlyTotalTokens || 0;
+    }
 }
 module.exports = new tokenTracker()
