@@ -264,11 +264,11 @@
         window.toggleMarkBtn = async () => {
             try {
                 await fetch(`/practice/question/${questionId}/mark`, { method: 'POST' });
-                    const btn = document.getElementById('mark-btn');
-                    if (btn) {
-                        const isMarked = btn.classList.toggle('marked');
-                        btn.innerHTML = isMarked ? '<img src="/img/icon-star.svg" alt="" width="14" height="14"> Marked' : '<img src="/img/icon-star-outline.svg" alt="" width="14" height="14"> Mark for Review';
-                    }
+                const btn = document.getElementById('mark-btn');
+                if (btn) {
+                    const isMarked = btn.classList.toggle('marked');
+                    btn.innerHTML = isMarked ? '<img src="/img/icon-star.svg" alt="" width="14" height="14"> Marked' : '<img src="/img/icon-star-outline.svg" alt="" width="14" height="14"> Mark for Review';
+                }
                 document.getElementById('feedback-overlay')?.classList.remove('open');
             } catch (e) {
                 console.error('Failed to toggle mark:', e);

@@ -12,12 +12,13 @@
     <%- body %>
   </main>
   <%- include('../partials/footer') %>
+
   <script src="/js/app.js"></script>
-  <% if (typeof pageClass !== 'undefined' && pageClass && pageClass.includes('practice')) { %>
+  <% if (typeof pageClass !== 'undefined' && pageClass){ if(pageClass.includes('practice')) { %>
   <script src="/js/bluebook.js"></script>
-  <% } %>
-
-
+  <% } if (pageClass.includes('landing')) { %>
+  <script src="/js/landing.js"></script>
+  <% }} %>
 </body>
 
 </html>

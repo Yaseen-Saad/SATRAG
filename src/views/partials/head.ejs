@@ -1,6 +1,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090D16">
+<meta name="theme-color" content="#090D16" id="theme-color-meta">
+<script>
+  (function() {
+    const saved = localStorage.getItem('theme')
+    const theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    document.documentElement.setAttribute('data-theme', theme)
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.content = theme === 'dark' ? '#090D16' : '#F8FAFC';
+  })()
+</script>
 <title><%= typeof title !== 'undefined' && title ? title : 'SATrack' %></title>
 <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">

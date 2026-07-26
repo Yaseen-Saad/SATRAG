@@ -1,14 +1,13 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store('theme', {
         dark: true, init() {
-            const saved = localStorage.getItem('theme')
+            const saved = localStorage.getItem('theme');
             if (saved) {
-                this.dark = saved == "dark"
+                this.dark = saved === 'dark';
+            } else {
+                this.dark = !window.matchMedia('(prefers-color-scheme: light)').matches;
             }
-            else {
-                this.dark = true
-            }
-            this.apply()
+            this.apply();
         },
         toggle() {
             this.dark = !this.dark
@@ -16,7 +15,9 @@ document.addEventListener("alpine:init", () => {
             this.apply()
         },
         apply() {
-            document.documentElement.setAttribute('data-theme', this.dark ? "dark" : "light")
+            document.documentElement.setAttribute('data-theme', this.dark ? 'dark' : 'light');
+            const meta = document.getElementById('theme-color-meta');
+            if (meta) meta.content = this.dark ? '#090D16' : '#F8FAFC';
         }
     })
 
@@ -30,7 +31,7 @@ document.addEventListener("alpine:init", () => {
             document.getElementById('overlay')?.classList.remove('visible')
         }
     }))
-    
+
     Alpine.data('loadingForm', () => ({
         loading: false,
         submit() {

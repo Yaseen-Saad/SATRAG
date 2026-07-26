@@ -122,8 +122,6 @@ END;
 $$;
 
 
-
-
 CREATE OR REPLACE FUNCTION public_profile_new_users()
 RETURNS TRIGGER AS $$
 BEGIN 
