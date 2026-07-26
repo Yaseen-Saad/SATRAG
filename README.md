@@ -28,10 +28,12 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 ### SAT Practice:
 1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math, I mean we all know that the College Board's Website's format sucks.
 2. **AI Question Generation**: If you haven't finish the College Board's Bank then you are not training well, and when you does you will be desperate in getting new questions that is *similar* to the actuall test bank, and guess what? this is exactly why RAG was made. You can generate new questions by subject, topic, subtopic, and difficulty using RAG.
-3. **Bluebook-Style UI**: A custom practice interface that mimics the official College Board Bluebook testing app with a: passage panel, question panel, option elimination, timer, question palette, and mark-for-review.
-4. **Adaptive Practice**: Analyzes your weakest topics and automatically serves questions at the appropriate difficulty, avoiding already-solved questions and already-mastered topics.
-5. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
-6. **Answer Tracking**: Tracks correct/incorrect answers, time spent, attempt count, best time, and speed percentile.
+3. **Modular Prompt System**: Question generation prompts are split into composable modules — core instructions, difficulty rubrics, general rules, and per-subtopic guidance (19 math subtopics, 12 R/W subtopics). The system loads only the relevant modules for the requested subject/topic/subtopic, keeping prompts focused while reducing token usage.
+4. **Iterative Quality Loop**: Generated questions go through an LLM evaluator that scores correctness, difficulty accuracy, distractor quality, authenticity, clarity, and format validity. Questions scoring below threshold are automatically regenerated (up to 3 attempts) with feedback injected into the next attempt.
+5. **Bluebook-Style UI**: A custom practice interface that mimics the official College Board Bluebook testing app with a: passage panel, question panel, option elimination, timer, question palette, and mark-for-review.
+6. **Adaptive Practice**: Analyzes your weakest topics and automatically serves questions at the appropriate difficulty, avoiding already-solved questions and already-mastered topics.
+7. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
+8. **Answer Tracking**: Tracks correct/incorrect answers, time spent, attempt count, best time, and speed percentile.
 
 ## Flashcards:
 1. **Spaced Repetition**: Implements the SuperMemo SM-2 algorithm (Again/Hard/Good/Easy ratings), just like Anki's Algorithms for optimal review scheduling.
@@ -49,9 +51,10 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 1. **Authentication**: Email/password sign up (by google soon) and login with *remember me* and password reset.
 2. **Profiles**: Edit name, school, grade, gender, birthdate, and avatar.
 3. **API Key Management**: Bring your own LLM and embedding API keys (5 free generations/month included)
-4. **Dark Mode** (not very technical lol): Toggle between dark and light themes.
-5. **Keyboard Shortcuts**: Number keys for navigation, T for theme toggle, Space/Enter to flip flashcards.
-6. **Bug Reports**: Built in ticket system for reporting issues.
+4. **Token Usage Tracking**: Every LLM call logs prompt/completion tokens. Settings page shows monthly usage, per-operation breakdown, and a progress bar against the free tier limit.
+5. **Dark Mode** (not very technical lol): Toggle between dark and light themes.
+6. **Keyboard Shortcuts**: Number keys for navigation, T for theme toggle, Space/Enter to flip flashcards.
+7. **Bug Reports**: Built in ticket system for reporting issues.
 
 ## Try the Demo:
 > the app is currently deployed at  **[satbudd.vercel.app](https://satbudd.vercel.app)** — no setup required.
@@ -85,12 +88,13 @@ If you find SATrack helpful, consider giving it a star, it helps other students 
 | **Templating** | EJS + Express-ejs-layouts |
 | **Database** | Supabase (SQL DB + Vector DB) |
 | **Authentication** | Supabase built in Auth |
-| **AI / LLM** | OpenAI-compitible |
+| **AI / LLM** | OpenAI-compatible with iterative evaluation loop |
 | **Embeddings** | Jina AI Embeddings v3 (1024-dim vectors) |
 | **Styling** | SCSS |
 | **Frontend** | Vanilla JavaScript |
 | **Validation** | Zod |
 | **Security** | Helmet, CORS, and custom rate limiter middleware |
+| **Token Tracking** | Per-user LLM token usage logging with monthly breakdown |
 | **Deployment** | Vercel | 
 | **Dev Tools** | Nodemon, Sass |
 ---
@@ -102,6 +106,32 @@ If you find SATrack helpful, consider giving it a star, it helps other students 
 ![image](https://cdn.hackclub.com/019f7f9f-6dd5-7328-b28d-528f7bc0a8a4/image.png)
 
 Each piece of user feedback is stored and used as context for future generations, creating a continuous improvement loop — the more the community uses SATrack, the better it gets.
+
+### Modular Question Generation
+
+Question generation uses a composable prompt system instead of one monolithic prompt:
+
+```
+core.txt  +  general_rules.txt  +  difficulty.txt
+    +  math/core.txt  +  math/algebra/linear_equations_one_var.txt
+```
+
+Only the modules relevant to the requested subject/topic/subtopic are loaded. This keeps prompts focused, saves tokens, and allows independent tuning of each component.
+
+### Iterative Quality Loop
+
+Generated questions pass through an LLM evaluator that scores 6 dimensions:
+
+| Dimension | What It Checks |
+|-----------|---------------|
+| **Correctness** | Is the answer definitively correct? |
+| **Difficulty Accuracy** | Does it match the stated difficulty band? |
+| **Distractor Quality** | Are wrong answers plausible? |
+| **Authenticity** | Does it sound like a real College Board question? |
+| **Clarity** | Is the question unambiguous? |
+| **Format Valid** | Does the JSON follow all required format rules? |
+
+Questions scoring below 0.80 overall or below 0.9 on correctness are automatically regenerated (up to 3 attempts). The evaluator's feedback is injected into the next attempt so the LLM can fix the issues. If the evaluator returns a `revisedQuestion`, that version is used directly.
 
 ### Adaptive Practice Engine
 
@@ -226,17 +256,16 @@ satbudd/
 │   └── seed.js                         # Seeds vocabulary + questions into Supabase
 ├── supabase/                           # Database setup SQL files (run in order)
 │   ├── 01_schema.sql                   # Tables, RLS policies, indexes
-│   ├── 02_rag.sql                      # RAG feedback tables
-│   └── 03_match_functions.sql          # pgvector match functions + auth trigger
+│   └── 02_match_functions.sql          # pgvector match functions + auth trigger
 ├── src/
 │   ├── config.js                       # Zod-validated environment config
 │   ├── index.js                        # Express app entry point (middleware, routes, views)
 │   ├── lib/                            # Core libraries
-│   │   ├── llm.js                      # LLM service (chat + embeddings, with caching)
+│   │   ├── llm.js                      # LLM service (chat + embeddings, with caching + token tracking)
 │   │   ├── qualityChecker.js           # Rule-based quality assessment for vocabulary entries
-│   │   ├── rag.js                      # RAG engine (vector search + keyword fallback)
+│   │   ├── rag.js                      # RAG engine (vector search, modular prompt builder, question generation loop)
 │   │   ├── SATQuestionsEvaluator.js    # LLM-based evaluation for generated SAT questions
-│   │   ├── supabase.js                 # Supabase client singleton
+│   │   ├── supabase.js                 # Supabase client singleton (anon + service role)
 │   │   ├── utils.js                    # Shared utility functions across the app
 │   │   └── vocabularyEvaluator.js      # LLM-based evaluation for generated vocab entries
 │   ├── middleware/                      # Express middleware
@@ -246,15 +275,17 @@ satbudd/
 │   │   ├── rateLimiter.js              # Burst detection + route-specific rate limits
 │   │   └── useFreeModels.js            # Free tier generation tracking (5/month)
 │   ├── prompts/                        # LLM prompt templates
-│   │   ├── evaluate_sat_question.txt   # Prompt for evaluating generated SAT questions
+│   │   ├── evaluate_sat_question.txt   # Prompt for evaluating generated SAT questions (6 dimensions)
 │   │   ├── evaluate_vocab_entry.txt    # Prompt for evaluating generated vocab entries
 │   │   ├── generate_vocab_entry.txt    # Prompt for generating vocab entries with mnemonics
 │   │   ├── regenerate_sat_question.txt # Prompt for regenerating SAT questions from feedback
-│   │   └── generate_sat_question_prompts/  # Domain-specific question generation prompts
-│   │       ├── core.txt                # Shared question generation instructions
-│   │       ├── generate_sat_question.txt   # Main question generation orchestration prompt
+│   │   └── generate_sat_question_prompts/  # Modular question generation prompts
+│   │       ├── core.txt                # Shared question format + output rules
+│   │       ├── general_rules.txt       # MCQ/SPR rules, length limits, answer quality
+│   │       ├── difficulty.txt          # Easy/Medium/Hard rubric for math and R/W
+│   │       ├── generate_sat_question.txt   # Legacy monolith prompt (fallback)
 │   │       ├── math/                   # Math domain prompts
-│   │       │   ├── core.txt            # Math-specific core instructions
+│   │       │   ├── core.txt            # Math-specific rules (calculator, SPR, SVG)
 │   │       │   ├── advanced_math/
 │   │       │   │   ├── equivalent_expressions.txt
 │   │       │   │   ├── nonlinear_equations.txt
@@ -279,7 +310,7 @@ satbudd/
 │   │       │       ├── statistical_claims.txt
 │   │       │       └── two_variable_data.txt
 │   │       └── reading_writing/        # Reading & Writing domain prompts
-│   │           ├── core.txt            # R&W-specific core instructions
+│   │           ├── core.txt            # R&W-specific rules (passages, evidence, cross-text)
 │   │           ├── craft_and_structure/
 │   │           │   ├── cross_text_connections.txt
 │   │           │   ├── text_structure_purpose.txt
@@ -326,6 +357,7 @@ satbudd/
 │   │   │       ├── _mixins.scss
 │   │   │       └── _variables.scss
 │   │   ├── img/                        # SVG icons and illustrations
+│   │   │   ├── favicon.svg             # App favicon
 │   │   │   ├── analytics.svg           # Analytics page illustration
 │   │   │   ├── auth.svg                # Auth page illustration
 │   │   │   ├── book-open.svg           # Open book icon
@@ -337,7 +369,6 @@ satbudd/
 │   │   │   ├── empty.svg               # Empty state illustration
 │   │   │   ├── eyeclosed.svg           # Password hidden icon
 │   │   │   ├── eyeopen.svg             # Password visible icon
-│   │   │   ├── favicon.svg             # App favicon
 │   │   │   ├── flashcards.svg          # Flashcards illustration
 │   │   │   ├── graphbg.svg             # Dashboard graph background
 │   │   │   ├── hiw-1-input.svg         # How It Works step 1: Input
@@ -400,7 +431,7 @@ satbudd/
 │   │   ├── flashcards.js               # Flashcard sessions, SM-2 review
 │   │   ├── practice.js                 # Question browsing, AI generation, adaptive mode
 │   │   ├── questionFeedback.js         # SAT question feedback submission
-│   │   ├── settings.js                 # Profile settings, API key management
+│   │   ├── settings.js                 # Profile settings, API key management, token usage display
 │   │   ├── stats.js                    # Server-side analytics stats
 │   │   ├── ticket.js                   # Bug report ticket system
 │   │   ├── vocab.js                    # Vocab generation, lists, sharing, export
@@ -412,6 +443,7 @@ satbudd/
 │   │   ├── questionFeedbackEngine.js   # Question feedback processing + RAG learning
 │   │   ├── settingsEngine.js           # Settings + API key management logic
 │   │   ├── statsEngine.js              # Analytics stats computation
+│   │   ├── tokenTracker.js             # LLM token usage logging + monthly breakdown
 │   │   ├── vocabEngine.js              # Vocabulary generation + list management logic
 │   │   └── vocabFeedbackEngine.js      # Vocab feedback processing + RAG learning
 │   └── views/                          # EJS templates
@@ -443,7 +475,7 @@ satbudd/
 │       │   ├── index.ejs               # Practice question bank browser
 │       │   └── question.ejs            # Bluebook-style question interface
 │       ├── settings/
-│       │   └── index.ejs               # User settings (profile, API keys, theme)
+│       │   └── index.ejs               # User settings (profile, API keys, theme, token usage)
 │       └── vocab/
 │           ├── index.ejs               # Vocabulary generation page
 │           ├── list.ejs                # Single vocabulary list view
@@ -522,11 +554,3 @@ git push origin feature/your-feature-name
 <div align="center">
 Built with late nights and too much caffeine by a high schooler who got tired of making flashcards by hand.
 </div>
-
-
-# stuff
-I want to make once you join each question you just have an attempt, and if you want to see your previous attempts you can do this but the default is that you have an extra attempt.
-
-I want to make when i click on the question to practice I start practicing all questions in this filter in the order of how they where shown, and I want to create an analytic that shows like solved how many question by topic like the topic tree and by tier and difficulty everything, in a chart with no filters like solved x/y in the shape of a tree (not a real tree for sure lol)
-
-I wanna add the ticket system cause it has zero interface rn
