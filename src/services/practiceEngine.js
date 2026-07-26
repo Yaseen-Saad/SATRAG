@@ -277,6 +277,16 @@ class PracticeEngine {
         return tree;
     }
 
+    getFilterTopicTree(subject) {
+        const tree = this.getTopicTree(subject);
+        return tree.map(t => ({
+            ...t,
+            subtopics: t.subtopics.map(s =>
+                s.startsWith('Command of Evidence') ? 'Command of Evidence' : s
+            ).filter((s, i, arr) => arr.indexOf(s) === i)
+        }));
+    }
+
     async getAdjacentQuestions({ questionId, subject, topic, userId }) {
         const { data: current } = await supabase.from('sat_questions').select('id, created_at').eq('id', questionId).single()
         if (!current) return { prevId: null, nextId: null }

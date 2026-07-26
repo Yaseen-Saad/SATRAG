@@ -98,6 +98,7 @@ class VocabEngine {
                         Follow the format exactly. Make the mnemonic memorable.`;
 
                         let response = await llm.generateCompletion({
+                            userId: user.id,
                             messages: [{ role: 'user', content: userPrompt }],
                             system: systemPrompt,
                             temperature: 0.6,
@@ -108,6 +109,7 @@ class VocabEngine {
                         let entry = parseGeneratedEntry(response.content, word);
                         if (!entry.definition || !entry.definition.trim()) {
                             response = await llm.generateCompletion({
+                                userId: user.id,
                                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                                 system: systemPrompt,
                                 temperature: 0.7,
@@ -124,7 +126,7 @@ class VocabEngine {
                         const quality = qualityChecker.assessQuality(entry);
                         entry.quality_score = quality.overall
                         try {
-                            const evaluationResult = await evaluator.evaluateEntry(entry, word);
+                            const evaluationResult = await evaluator.evaluateEntry(entry, word, user.useFreeModels ? undefined : user.llm_apikey, user.useFreeModels ? undefined : user.embed_apikey, user.id);
                             entry.validation_passed = evaluationResult?.isValid ?? false;
                         } catch (e) {
                             entry.validation_passed = false;
@@ -240,7 +242,7 @@ class VocabEngine {
         const { data } = await supabase.from('vocab_entries').select('id, word, definition, part_of_speech, example_sentence, pronunciation, mnemonic_phrase').range(offset, offset)
         return data?.[0] || null
     }
-    
+
     async getVocabStats(userId) {
         const [totalResult, listResult, sourcesResult, recentResult] = await Promise.all([
             supabase.from('vocab_entries').select('*', { count: 'exact', head: true }),

@@ -4,6 +4,11 @@ const fs = require("fs")
 const path = require("path");
 const evaluator = require('./SATQuestionsEvaluator');
 
+
+function readFile(relativePath) {
+    return fs.readFileSync(path.join(SAT_PROMPTS, relativePath), 'utf-8').trim()
+}
+
 const SAT_PROMPTS = path.join(__dirname, '../prompts/generate_sat_question_prompts')
 
 const MAX_REGENERATION_ATTEMPTS = 3
@@ -63,9 +68,6 @@ const SUBTOPIC_FILES = {
     'Transitions': 'transitions.txt'
 }
 
-function readFile(relativePath) {
-    return fs.readFileSync(path.join(SAT_PROMPTS, relativePath), 'utf-8').trim()
-}
 
 class RAGEngine {
     // I want to use this function to get a random question (like till subptopic and diff) when the user do not provide any preferences, GENERALLY in all of this project I do not want the llm to guess which question it should generate, instead It MUST get the exact everything, if the user didn't specify a diff I will get a random one, if no subtopic get a random one and so on, but hte llm must have a speicifc thing to search for and the rag overall (lol why am i yapping) must retrive very simmilar questions to the one that will be generated
@@ -309,10 +311,11 @@ class RAGEngine {
 
         const isRW = subject === 'reading' || subject === 'writing' || subject === 'reading_writing';
         const querySubject = subject === 'reading_writing' ? null : subject;
+        const querySubtopic = subtopic && subtopic.startsWith('Command of Evidence') ? 'Command of Evidence' : subtopic;
 
         let candidates = [];
         try {
-            const queryText = [subtopic, topic, subject, difficulty].filter(Boolean).join(' ')
+            const queryText = [querySubtopic, topic, subject, difficulty].filter(Boolean).join(' ')
             const embedding = await llm.generateEmbedding(queryText)
             const { data } = await supabase.rpc('match_sat_questions', {
                 query_embedding: embedding,
@@ -340,8 +343,8 @@ class RAGEngine {
                 return data || [];
             }
             let metaResults = [];
-            if (subtopic) metaResults = await tryQuery({ subject, topic, subtopic, difficulty });
-            if (metaResults.length < 2 && subtopic) metaResults = await tryQuery({ subject, topic, subtopic });
+            if (querySubtopic) metaResults = await tryQuery({ subject, topic, subtopic: querySubtopic, difficulty });
+            if (metaResults.length < 2 && querySubtopic) metaResults = await tryQuery({ subject, topic, subtopic: querySubtopic });
             if (metaResults.length < 2) metaResults = await tryQuery({ subject, topic });
             if (metaResults.length < 2) metaResults = await tryQuery({ subject });
             if (metaResults.length < 2) metaResults = await tryQuery({});
@@ -353,7 +356,7 @@ class RAGEngine {
         return candidates.slice(0, count);
     }
 
-    async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey }) {
+    async generateSATQuestion({ subject, topic, subtopic, difficulty, apiKey, embedApiKey, userId }) {
         let bestQuestion = null
         let bestScore = -1
         for (let attempt = 1; attempt <= MAX_REGENERATION_ATTEMPTS; attempt++) {
@@ -383,9 +386,14 @@ class RAGEngine {
 
                 messages.push({ role: 'user', content: instruction })
                 const response = await llm.generateCompletion({
+                    userId,
                     messages, temperature: 0.4, maxTokens: 8000,
                     apiKey, embedApiKey, skipCache: true
                 })
+                if (!response.success || !response.content) {
+                    console.error(`Attempt ${attempt}: LLM returned no content:`, response.error || 'empty')
+                    continue
+                }
                 let raw = response.content.replace(/```json/g, '').replace(/```/g, '').trim()
                 if (response.finishReason === 'length') {
                     const openBraces = (raw.match(/{/g) || []).length
@@ -414,7 +422,7 @@ class RAGEngine {
                 }
                 const question = { ...result, options: opts ? JSON.stringify(opts) : null }
 
-                const evaluation = await evaluator.evaluate(question, apiKey, embedApiKey)
+                const evaluation = await evaluator.evaluate(question, apiKey, embedApiKey, userId)
                 console.log(`Attempt ${attempt}: score=${evaluation.overallScore} format_valid=${evaluation.scores?.format_valid} feedback: ${evaluation.feedback}`)
 
                 const formatOK = evaluation.scores?.format_valid !== false
@@ -462,10 +470,19 @@ class RAGEngine {
         }
     }
 
-    async saveGeneratedQuestion(question) {
+    async saveGeneratedQuestion(question, userId) {
         const text = question.stem_plain_text || question.question_text || ""
         const embedding = text ? await llm.generateEmbedding(text) : null
-        const { data, error } = await supabase.from('sat_questions').insert({ ...question, embedding }).select().single();
+        const clean = {}
+        for (const [k, v] of Object.entries(question)) {
+            if (k.startsWith('_')) continue
+            clean[k] = v
+        }
+        if (clean.subtopic && clean.subtopic.startsWith('Command of Evidence')) {
+            clean.subtopic = 'Command of Evidence'
+        }
+        clean.created_by = userId || null
+        const { data, error } = await supabase.from('sat_questions').insert({ ...clean, embedding }).select().single();
         if (error) throw error;
         return data;
     }

@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 function normalizeEmail(email) {
     if (!email || typeof email !== 'string') return '';
     let [local, domain] = email.toLowerCase().trim().split('@');
@@ -131,4 +134,8 @@ function sanitizeForPrompt(str) {
 }
 
 
-module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry, sanitizeForPrompt }
+function readFile(relativePath) {
+    return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf-8').trim()
+}
+
+module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry, sanitizeForPrompt, readFile }

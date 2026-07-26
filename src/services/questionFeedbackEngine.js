@@ -1,6 +1,6 @@
 const { service: supabase } = require('../lib/supabase')
 const llm = require('../lib/llm')
-
+const { readFile } = require('../lib/utils')
 const TIER_THRESHOLDS = {
     diamond: 9.0,
     platinum: 8.0,
@@ -175,39 +175,10 @@ class QuestionFeedbackEngine {
 
         const systemPrompt = 'You are an expert SAT question writer and quality reviewer. Your job is to improve a poorly-rated SAT practice question based on user feedback. Return ONLY a valid JSON object with the same structure as the input question — no markdown, no code fences.'
 
-        const userMessage = `Improve this SAT question based on user feedback.
-
-ORIGINAL QUESTION:
-${question.question_text}
-
-${question.passage_text ? `PASSAGE:\n${question.passage_text}\n\n` : ''}OPTIONS:
-${JSON.stringify(opts, null, 2)}
-
-CORRECT ANSWER: ${question.correct_answer}
-EXPLANATION: ${question.explanation || 'None provided'}
-SUBJECT: ${question.subject}
-TOPIC: ${question.topic}
-SUBTOPIC: ${question.subtopic}
-DIFFICULTY: ${question.difficulty}
-
-USER FEEDBACK (avg satisfaction: ${avgScore}/10, ${feedbackList.length} reviews):
-Negative feedback:
-${negativeComments}
-Positive feedback:
-${positiveComments}
-
-Common issues reported: ${issues}
-
-INSTRUCTIONS:
-1. Fix the issues reported by users while keeping the question SAT-appropriate
-2. Ensure the correct answer is unambiguously correct
-3. Make distractors more plausible if they were confusing
-4. Improve the explanation if it was unclear
-5. Keep the same subject, topic, subtopic, and difficulty level
-6. Return the full improved question as a JSON object with these fields:
-   question_text, passage_text (if any), options (array of {label, content}), correct_answer, explanation, subject, topic, subtopic, difficulty, difficulty_band, question_type`
+        const userMessage = readFile('../prompts/regenerate_sat_question.txt')
 
         const response = await llm.generateCompletion({
+            userId: req.user.id,
             messages: [{ role: 'user', content: userMessage }],
             system: systemPrompt,
             temperature: 0.5,

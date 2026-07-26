@@ -1,4 +1,5 @@
 const config = require('../config')
+const tokenTracker = require('../services/tokenTracker');
 
 class LLMResponse {
     constructor({ content, success, error, model, usage, finishReason }) {
@@ -23,7 +24,7 @@ class LLMService {
         this.cacheSize = 100;
     }
 
-    async generateCompletion({ messages, system, model, maxTokens = 4096, temperature = 0.7, retries = 2, apiKey, embedApiKey, skipCache = false }) {
+    async generateCompletion({ userId, messages, system, model, maxTokens = 4096, temperature = 0.7, retries = 2, apiKey, embedApiKey, skipCache = false }) {
         const cacheKey = skipCache ? null : JSON.stringify({ messages, system, model, maxTokens, temperature, apiKey: (apiKey || this.apiKey) });
         if (cacheKey && this.cache.has(cacheKey) && !skipCache) {
             return this.cache.get(cacheKey);
@@ -58,6 +59,9 @@ class LLMService {
                     throw new Error('Invalid LLM response structure: no choices returned');
                 }
                 const result = new LLMResponse({ content: data.choices[0].message.content, success: true, model: data.model, usage: data.usage, finishReason: data.choices[0].finish_reason });
+                if (userId && result.usage) {
+                    tokenTracker.logUsage(userId, { operation: 'llm', usage: result.usage, model: result.model });
+                }
                 if (cacheKey) {
                     this.cache.set(cacheKey, result);
                     if (this.cache.size > this.cacheSize) {

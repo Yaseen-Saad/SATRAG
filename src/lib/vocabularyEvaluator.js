@@ -1,12 +1,12 @@
 const fs = require("fs")
 const path = require("path")
 const llm = require('./llm')
-const { interpolate } = require('./utils')
+const { interpolate, readFile } = require('./utils')
 
 class VocabularyEvaluator {
-    async evaluateEntry(entry, targetWord, apiKey, embedApiKey) {
+    async evaluateEntry(entry, targetWord, apiKey, embedApiKey, userId) {
         try {
-            const prompt = fs.readFileSync(path.join(__dirname, '../prompts/evaluate_vocab_entry.txt'), 'utf-8');
+            const prompt = readFile('prompts/evaluate_vocab_entry.txt');
             const filled = interpolate(prompt, {
                 word: targetWord,
                 pronunciation: entry.pronunciation || '',
@@ -19,12 +19,24 @@ class VocabularyEvaluator {
                 example_sentence: entry.example_sentence || '',
             });
             const response = await llm.generateCompletion({
+                userId,
                 messages: [{ role: 'user', content: filled }],
                 temperature: 0.2,
                 maxTokens: 800,
                 apiKey: apiKey,
                 embedApiKey: embedApiKey
             })
+            if (!response.success || !response.content) {
+                return {
+                    isValid: false,
+                    overallScore: 0,
+                    score: 0,
+                    feedback: response.error || 'Empty LLM response',
+                    componentScores: {},
+                    issues: ['LLM returned empty response'],
+                    suggestions: []
+                }
+            }
             const jsonMatch = response.content.match(/\{[\s\S]*\}/);
             if (!jsonMatch) throw new Error('No JSON in LLM response');
             const result = JSON.parse(jsonMatch[0]);

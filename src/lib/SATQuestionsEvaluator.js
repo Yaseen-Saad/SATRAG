@@ -4,7 +4,7 @@ const llm = require('./llm')
 const { interpolate } = require('./utils')
 
 class SATqEvaluator {
-    async evaluate(q, apiKey, embedAPIKey) {
+    async evaluate(q, apiKey, embedAPIKey, userId) {
         try {
 
             const prompt = fs.readFileSync(path.join(__dirname, '../prompts/evaluate_sat_question.txt'), 'utf-8')
@@ -23,14 +23,16 @@ class SATqEvaluator {
             }, null, 2)
             const filled = interpolate(prompt, { question_json: questionJson })
             const response = await llm.generateCompletion({
+                userId,
                 messages: [{ role: 'user', content: filled }],
                 temperature: 0.2,
                 maxTokens: 3000,
                 apiKey,
-                embedApiKey,
+                embedApiKey: embedAPIKey,
                 skipCache: true
             })
             if (!response.success) throw new Error(response.error)
+            if (!response.content) throw new Error('Empty LLM response')
             const raw = response.content.replace(/```json/g, '').replace(/```/g, '').trim()
             const match = raw.match(/\{[\s\S]*\}/)
             if (!match) throw new Error('No JSON in critic response')

@@ -57,6 +57,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
                             Follow the format exactly. Make the mnemonic memorable.`;
 
         let response = await llm.generateCompletion({
+            userId: req.user.id,
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
@@ -67,6 +68,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         if (!entry.definition || !entry.definition.trim()) {
             console.error('Raw LLM response for', word, ':', response.content)
             response = await llm.generateCompletion({
+                userId: req.user.id,
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
@@ -80,7 +82,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
             throw new Error(`LLM returned an unparseable response for "${word}". Try again.`)
         }
         const quality = qualityChecker.assessQuality(entry);
-        const evaluationResult = await evaluator.evaluateEntry(entry, word);
+        const evaluationResult = await evaluator.evaluateEntry(entry, word, req.user.useFreeModels ? undefined : req.user.llm_apikey, req.user.useFreeModels ? undefined : req.user.embed_apikey, req.user.id);
         entry.quality_score = quality.overall
         entry.validation_passed = evaluationResult?.isValid ?? false;
         const saved = await rag.addEntry(entry);
@@ -140,6 +142,7 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
         const userPrompt = `Generate a vocabulary entry for "${w}".\n${feedbackGuidance}\n\n${similar.length > 0 ? `Style reference:\n${contextExamples}\n` : ''}\nFollow the format exactly.`;
 
         let response = await llm.generateCompletion({
+            userId: req.user.id,
             messages: [{ role: 'user', content: userPrompt }],
             system: systemPrompt,
             temperature: 0.8,
@@ -149,6 +152,7 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
         let entry = parseGeneratedEntry(response.content, w);
         if (!entry.definition || !entry.definition.trim()) {
             response = await llm.generateCompletion({
+                userId: req.user.id,
                 messages: [{ role: 'user', content: userPrompt + '\n\nIMPORTANT: Output ONLY the entry in the exact format, no extra text.' }],
                 system: systemPrompt,
                 temperature: 0.7,
@@ -160,7 +164,7 @@ router.post('/regenerate', requireAuth, checkAPIKeys, async (req, res) => {
             throw new Error(`LLM returned an unparseable response for "${w}". Try again.`)
         }
         const quality = qualityChecker.assessQuality(entry);
-        const evalResult = await evaluator.evaluateEntry(entry, w);
+        const evalResult = await evaluator.evaluateEntry(entry, w, req.user.llm_apikey, req.user.embed_apikey, req.user.id);
         entry.quality_score = quality.overall;
         entry.validation_passed = evalResult?.isValid ?? false;
 

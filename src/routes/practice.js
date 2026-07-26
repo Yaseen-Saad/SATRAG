@@ -11,7 +11,7 @@ router.get('/', requireAuth, async (req, res) => {
     let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, tier, page = 1, limit = 20 } = req.query;
     try {
         const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined;
-        const topicTree = practice.getTopicTree();
+        const topicTree = practice.getFilterTopicTree();
         const validTopics = topicTree.map(t => t.topic)
         if (topic && !validTopics.includes(topic)) {
             topic = undefined; subtopic = undefined;
@@ -85,7 +85,7 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
         }
         const questions = []
         for (let i = 0; i < maxIter; i++) {
-            const generated = await rag.generateSATQuestion({ subject: genSubject, topic, subtopic, difficulty })
+            const generated = await rag.generateSATQuestion({ subject: genSubject, topic, subtopic, difficulty, userId: req.user.id })
             if (generated) {
                 questions.push(generated)
                 await incrementGenCount(req.user)
@@ -103,9 +103,10 @@ router.post('/generate', requireAuth, checkAPIKeys, async (req, res) => {
 
 router.post('/generate/save', requireAuth, async (req, res) => {
     try {
-        const saved = await rag.saveGeneratedQuestion(req.body)
+        const saved = await rag.saveGeneratedQuestion(req.body, req.user.id)
         res.json({ success: true, questionId: saved.id })
     } catch (err) {
+        console.error('Save error:', err)
         res.status(500).json({ success: false, error: 'Error saving generated question' })
     }
 });

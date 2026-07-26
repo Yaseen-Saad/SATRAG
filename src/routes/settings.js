@@ -6,7 +6,7 @@ const { requireAuth } = require('../middleware/auth');
 const { sanitize } = require('../lib/utils')
 const settingsEngine = require('../services/settingsEngine');
 const supabase = require('../lib/supabase').service;
-
+const tokenTracker = require('../services/tokenTracker');
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 },
@@ -26,8 +26,12 @@ const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birth
 
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const { data: profile } = await supabase.from('public_profiles').select(PROFILE_COLUMNS).eq('id', req.user.id).single();
-        res.render('settings/index', { user: req.user, profile: profile || {}, error: null, success: null, prompt: req.query.prompt })
+        const [{ data: profileResult, error: profileResultError }, { data: monthlyTokens, error: monthlyTokensError }, { data: usageBreakdown, error: usageBreakdownError }] = await Promise.all([
+            supabase.from('public_profiles').select(PROFILE_COLUMNS).eq('id', req.user.id).single(),
+            tokenTracker.getMonthlyUsage(req.user.id),
+            tokenTracker.getUsageBreakdown(req.user.id)
+        ]);
+        res.render('settings/index', { user: req.user, profile: profileResult || {}, error: null, success: null, prompt: req.query.prompt, monthlyTokens, usageBreakdown })
     } catch (err) {
         console.error('Settings page error:', err.message);
         res.render('settings/index', { user: req.user, profile: {}, error: null, success: null, prompt: req.query.prompt })

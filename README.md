@@ -528,3 +528,5 @@ Built with late nights and too much caffeine by a high schooler who got tired of
 I want to make once you join each question you just have an attempt, and if you want to see your previous attempts you can do this but the default is that you have an extra attempt.
 
 I want to make when i click on the question to practice I start practicing all questions in this filter in the order of how they where shown, and I want to create an analytic that shows like solved how many question by topic like the topic tree and by tier and difficulty everything, in a chart with no filters like solved x/y in the shape of a tree (not a real tree for sure lol)
+
+I wanna add the ticket system cause it has zero interface rn
