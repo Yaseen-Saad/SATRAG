@@ -26,7 +26,7 @@ const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birth
 
 router.get('/', requireAuth, async (req, res) => {
     try {
-        const [{ data: profileResult, error: profileResultError }, { data: monthlyTokens, error: monthlyTokensError }, { data: usageBreakdown, error: usageBreakdownError }] = await Promise.all([
+        const [{ data: profileResult, error: profileResultError }, monthlyTokens, usageBreakdown] = await Promise.all([
             supabase.from('public_profiles').select(PROFILE_COLUMNS).eq('id', req.user.id).single(),
             tokenTracker.getMonthlyUsage(req.user.id),
             tokenTracker.getUsageBreakdown(req.user.id)

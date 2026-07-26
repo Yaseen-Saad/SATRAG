@@ -138,9 +138,9 @@
           <div class="token-usage-header"><span>This Month: </span><span class="token-usage-value"><%=(monthlyTokens||0).toLocaleString() %> tokens</span></div>
         </div>
         <div class="token-usage-bar">
-          <div class="token-usage-fill" style="width: <%= Math.min(100, ((monthlyTokens || 0) / 100000) * 100) %>%"></div>
+          <div class="token-usage-fill" style="width: <%= Math.min(100, ((monthlyTokens || 0) / 10000) * 100) %>%"></div>
         </div>
-        <p class="token-usage-hint">Free tier includes up to nearly 100,000 tokens/month</p>
+        <p class="token-usage-hint">Free tier includes up to nearly 10,000 tokens/month</p>
         <%if (usageBreakdown && Object.keys(usageBreakdown).length){%>
         <div class="token-breakdown">
           <% Object.entries(usageBreakdown).forEach(([op, tokens]) => { %>

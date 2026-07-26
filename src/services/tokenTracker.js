@@ -1,4 +1,4 @@
-const supabase = require('../lib/supabase');
+const { service: supabase } = require('../lib/supabase');
 
 class tokenTracker {
     async logUsage(userId, { operation, usage, model }) {
