@@ -10,21 +10,6 @@
     let answered = false;
     let selectedAnswer = null;
     let timerInterval = null;
-    if (alreadyAnswered && restoredAttempts.length) {
-        answered = true
-        if (timerInterval) clearInterval(timerInterval)
-        const lastAttempt = restoredAttempts[restoredAttempts.length - 1]
-        document.querySelectorAll('.bb-option').forEach(opt => {
-            if (opt.dataset.label === lastAttempt.selected_answer) {
-                opt.classList.add('selected')
-                opt.classList.add(wasCorrect ? 'correct' : 'incorrect')
-            }
-            if (!wasCorrect && opt.dataset.label !== lastAttempt.selected_answer) {
-                const correctLabel = questionData?.correctanswer
-                if (correctLabel && opt.dataset.label === correctLabel) opt.classList.add('correct')
-            }
-        })
-    }
 
     document.querySelectorAll('.bb-stem, .bb-passage-content').forEach(ele => {
         ele.querySelectorAll('.sr-only').forEach(span => span.remove())
@@ -33,15 +18,13 @@
     const timer = document.getElementById('timer');
 
     if (timer) {
-        if (!alreadyAnswered) {
-            timerInterval = setInterval(_ => {
-                if (answered) return;
-                const elapsed = Math.floor((Date.now() - startTime) / 1000)
-                const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
-                const s = String(elapsed % 60).padStart(2, "0")
-                timer.textContent = `${m}:${s}`
-            }, 1000)
-        }
+        timerInterval = setInterval(_ => {
+            if (answered) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000)
+            const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
+            const s = String(elapsed % 60).padStart(2, "0")
+            timer.textContent = `${m}:${s}`
+        }, 1000)
         document.querySelectorAll('.bb-option').forEach(opt => {
             opt.addEventListener('click', function (e) {
                 if (answered) return
@@ -284,6 +267,7 @@
                 }
             })
         })
+
         window.openPalette = function () {
             const paletteGrid = document.querySelector('.bb-palette-grid');
             if (paletteGrid) {
@@ -291,12 +275,15 @@
             }
             document.getElementById("palette-overlay")?.classList.add('open')
         }
+
         window.closePalette = function () {
             document.getElementById("palette-overlay")?.classList.remove('open')
         }
+
         document.getElementById("palette-overlay")?.addEventListener('click', e => {
             if (e.target === document.getElementById("palette-overlay")) closePalette();
         })
+
         document.getElementById('feedback-overlay')?.addEventListener('click', (e) => {
             if (e.target === document.getElementById('feedback-overlay')) document.getElementById('feedback-overlay')?.classList.remove('open')
         })

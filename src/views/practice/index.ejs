@@ -17,6 +17,7 @@
   <aside class="practice-filters">
     <h3>Filters</h3>
     <form method="GET" action="/practice" id="filter-form">
+
       <div class="form-group">
         <label>Subject</label>
         <select name="subject" id="filter-subject">
@@ -25,6 +26,7 @@
           <option value="math" <%= filters.subject === 'math' ? 'selected' : '' %>>Math</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Bluebook Status</label>
         <select name="active">
@@ -40,12 +42,14 @@
           <option value="">All</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Subtopic</label>
         <select name="subtopic" id="filter-subtopic">
           <option value="">All</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Difficulty</label>
         <select name="difficulty">
@@ -55,6 +59,7 @@
           <option value="hard" <%= filters.difficulty === 'hard' ? 'selected' : '' %>>Hard</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Source</label>
         <select name="source">
@@ -63,6 +68,7 @@
           <option value="ai_generated" <%= filters.source === 'ai_generated' ? 'selected' : '' %>>AI Generated</option>
         </select>
       </div>
+
       <div style="<%= filters.source === 'ai_generated' ? '' : 'display:none;' %>" class="form-group" id="tier-filter-group">
         <label>Quality Tier</label>
         <select name="tier" id="filter-tier">
@@ -125,9 +131,12 @@
           <small style="color:var(--color-text-faint);"><%= q.topic %> · <%= q.subtopic %></small>
           <% if (q.source === "ai_generated" && q.quality_tier && q.quality_tier !== 'unranked') {%>
           <span class="tier-badge tier-badge--<%= q.quality_tier %>">
-            <img src="/img/tier-<%= q.quality_tier %>.svg" alt="" width="12" height="12">
+            <img src="/img/tier-<%= q.quality_tier %>.svg" alt="<%= q.quality_tier %>" width="12" height="12">
             <%= q.quality_tier.charAt(0).toUpperCase() + q.quality_tier.slice(1) %><% if (q.feedback_count >= 3) { %> (<%= parseFloat(q.quality_score).toFixed(1) %>)<% } %>
           </span>
+          <% } %>
+          <% if (q.user_state && q.user_state.times_attempted > 0) { %>
+          <span class="attempt-badge"><%= q.user_state.times_attempted %>x</span>
           <% } %>
         </div>
         <p class="practice-item-text"><%= q.stem_plain_text?.substring(0, 150) %><%= (q.stem_plain_text?.length || 0) > 150 ? '...' : '' %></p>

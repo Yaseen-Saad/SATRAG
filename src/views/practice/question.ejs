@@ -22,6 +22,9 @@
       <button class="bb-mark-btn <%= uState?.marked_for_review ? 'marked' : '' %>" id="mark-btn" onclick="toggleMarkBtn()">
         <img src="<%= uState?.marked_for_review ? '/img/icon-star.svg' : '/img/icon-star-outline.svg' %>" alt="" width="16" height="16" style="vertical-align:-3px"> <%= uState?.marked_for_review ? 'Marked' : 'Mark for Review' %>
       </button>
+      <% if (attempts && attempts.length > 0) { %>
+      <a href="/practice/history/<%= question.id %>" class="btn btn-ghost btn-sm">History (<%= attempts.length %>)</a>
+      <% } %>
       <span class="bb-timer" id="timer">00:00</span>
     </div>
   </header>

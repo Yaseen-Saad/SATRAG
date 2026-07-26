@@ -214,6 +214,44 @@ CREATE TABLE IF NOT EXISTS question_feedback (
   UNIQUE(user_id, question_id)
 );
 
+-- Token Usage Log
+CREATE TABLE IF NOT EXISTS token_usage_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) NOT NULL ON DELETE CASCADE,
+    operation TEXT NOT NULL,
+    prompt_tokens INT DEFAULT 0,
+    completion_tokens INT DEFAULT 0,
+    total_tokens INT DEFAULT 0,
+    isFree BOOLEAN DEFAULT true,
+    model TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- RAG Feedback Examples
+CREATE TABLE IF NOT EXISTS rag_feedback_examples (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    word TEXT NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('positive', 'negative')),
+    content TEXT NOT NULL,
+    source TEXT DEFAULT 'user_feedback',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- RAG Feedback
+CREATE TABLE IF NOT EXISTS rag_feedback_question(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    question_id UUID REFERENCES sat_questions,
+    subject TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    subtopic TEXT NOT NULL,
+    difficulty TEXT NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('positive', 'negative')),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
 -- Avatar Images Bucket
 INSERT INTO storage.buckets
   (id, name, public, file_size_limit, allowed_mime_types, created_at, updated_at)
@@ -394,6 +432,17 @@ DROP POLICY IF EXISTS "rag_feedback_question auth read" ON rag_feedback_question
 CREATE POLICY "rag_feedback_question auth read" ON rag_feedback_question
     FOR SELECT USING (auth.role() = 'authenticated');
 
+-- RLS: token_usage_log
+ALTER TABLE token_usage_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "token_usage_log insert" ON token_usage_log
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "token_usage_log owner all" ON token_usage_log
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+
+CREATE INDEX IF NOT EXISTS idx_rag_feedback_word ON rag_feedback_examples(word);
 CREATE INDEX IF NOT EXISTS idx_practice_subject ON sat_questions(subject);
 CREATE INDEX IF NOT EXISTS idx_practice_topic ON sat_questions(topic);
 CREATE INDEX IF NOT EXISTS idx_practice_subtopic ON sat_questions(subtopic);
@@ -418,3 +467,5 @@ CREATE INDEX IF NOT EXISTS idx_ufp_next_review ON user_flashcard_progress(next_r
 CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(user_id);
 CREATE INDEX IF NOT EXISTS idx_tickets_active ON tickets(active);
 CREATE INDEX IF NOT EXISTS idx_sq_is_active ON sat_questions(is_active);
+CREATE INDEX IF NOT EXISTS idx_token_usage_user ON token_usage_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_token_usage_user_time ON token_usage_log(user_id, created_at);

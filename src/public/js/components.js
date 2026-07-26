@@ -38,4 +38,12 @@ document.addEventListener("alpine:init", () => {
             this.loading = true;
         }
     }));
+
+    Alpine.data('globalLoader', () => ({
+        loading: false,
+        init() {
+            window.showLoader = () => { this.loading = true }
+            window.hideLoader = () => { this.loading = false }
+        }
+    }))
 })

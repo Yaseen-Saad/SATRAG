@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 
 <head>
   <%- include('../partials/head') %>
@@ -19,6 +19,9 @@
   <% } if (pageClass.includes('landing')) { %>
   <script src="/js/landing.js"></script>
   <% }} %>
+  <div x-data="globalLoader" x-show="loading" x-cloak style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+    <div class="spinner-large"></div>
+  </div>
 </body>
 
 </html>

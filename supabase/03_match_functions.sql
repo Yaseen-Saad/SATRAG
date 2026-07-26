@@ -165,3 +165,11 @@ BEGIN
     WHERE id = user_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION get_monthly_token_usage(p_user_id UUID)
+RETURNS INT AS $$
+    SELECT COALESCE(SUM(total_tokens), 0)::INT
+    FROM token_usage_log
+    WHERE user_id = p_user_id
+      AND created_at >= date_trunc('month', NOW())
+$$ LANGUAGE sql SECURITY DEFINER;

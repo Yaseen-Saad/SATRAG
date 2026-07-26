@@ -74,3 +74,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+const originalFetch = window.fetch;
+window.fetch = function () {
+  let method = (arguments[1] && arguments[1].method) || 'GET';
+  if (method !== 'GET') {
+    if (window.showLoader) window.showLoader();
+  }
+  return originalFetch.apply(this, arguments).finally(function () {
+    if (window.hideLoader) window.hideLoader();
+  })
+}
