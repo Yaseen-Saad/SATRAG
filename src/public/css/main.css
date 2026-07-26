@@ -2064,11 +2064,19 @@ label {
 .practice-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
+  grid-template-areas: "sidebar main";
   gap: var(--sp-6);
+}
+.practice-layout > :first-child {
+  grid-area: sidebar;
+}
+.practice-layout > :last-child {
+  grid-area: main;
 }
 @media (max-width: 767px) {
   .practice-layout {
     grid-template-columns: 1fr;
+    grid-template-areas: "sidebar" "main";
   }
 }
 

@@ -3,10 +3,22 @@
 .practice-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
+    grid-template-areas: "sidebar main";
     gap: var(--sp-6);
+
+    >:first-child {
+        grid-area: sidebar;
+    }
+
+    >:last-child {
+        grid-area: main;
+    }
 
     @include respond-to(md-down) {
         grid-template-columns: 1fr;
+        grid-template-areas:
+            "sidebar"
+            "main";
     }
 }
 

@@ -13,31 +13,31 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" required>
+            <input type="text" id="firstName" name="firstName" required value="<%= typeof form !== 'undefined' && form ? form.firstName : '' %>">
           </div>
           <div class="form-group">
             <label class="form-label" for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" required>
+            <input type="text" id="lastName" name="lastName" required value="<%= typeof form !== 'undefined' && form ? form.lastName : '' %>">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="school">School</label>
-          <input type="text" id="school" name="school" required>
+          <input type="text" id="school" name="school" required value="<%= typeof form !== 'undefined' && form ? form.school : '' %>">
         </div>
         <div class="form-group">
           <label class="form-label" for="referral">How did you hear about us?</label>
           <select id="referral" name="referral">
             <option value="">Select...</option>
-            <option value="friend">Friend</option>
-            <option value="social">Social Media</option>
-            <option value="search">Search Engine</option>
-            <option value="hackclub">Hack Club</option>
-            <option value="other">Other</option>
+            <option value="friend" <%= typeof form !== 'undefined' && form && form.referral === 'friend' ? 'selected' : '' %>>Friend</option>
+            <option value="social" <%= typeof form !== 'undefined' && form && form.referral === 'social' ? 'selected' : '' %>>Social Media</option>
+            <option value="search" <%= typeof form !== 'undefined' && form && form.referral === 'search' ? 'selected' : '' %>>Search Engine</option>
+            <option value="hackclub" <%= typeof form !== 'undefined' && form && form.referral === 'hackclub' ? 'selected' : '' %>>Hack Club</option>
+            <option value="other" <%= typeof form !== 'undefined' && form && form.referral === 'other' ? 'selected' : '' %>>Other</option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label" for="email">Email</label>
-          <input type="email" id="email" name="email" required autocomplete="email">
+          <input type="email" id="email" name="email" required autocomplete="email" value="<%= typeof form !== 'undefined' && form ? form.email : '' %>">
         </div>
         <div class="form-group">
           <label class="form-label" for="password">Password</label>

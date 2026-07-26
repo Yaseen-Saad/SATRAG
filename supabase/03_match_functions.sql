@@ -140,11 +140,11 @@ BEGIN
         NOW()
     )
     ON CONFLICT (id) DO UPDATE SET
-        first_name = EXCLUDED.first_name,
-        last_name = EXCLUDED.last_name,
-        school = EXCLUDED.school,
-        email = EXCLUDED.email,
-        referral = EXCLUDED.referral;
+        first_name = COALESCE(EXCLUDED.first_name, public_profiles.first_name),
+        last_name = COALESCE(EXCLUDED.last_name, public_profiles.last_name),
+        school = COALESCE(EXCLUDED.school, public_profiles.school),
+        email = COALESCE(EXCLUDED.email, public_profiles.email),
+        referral = COALESCE(EXCLUDED.referral, public_profiles.referral);
     RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

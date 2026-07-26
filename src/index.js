@@ -1,4 +1,4 @@
-const config = require('config');
+const config = require('./config');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -29,7 +29,7 @@ if (config.NODE_ENV === 'production') app.set('trust proxy', 1)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: config.APP_DOMAIN, credentials: true }));
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' }, referrerPolicy: { policy: 'stricti-origin-when-cross-origin' } }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' }, referrerPolicy: { policy: 'strict-origin-when-cross-origin' } }));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('view engine', 'ejs');
@@ -86,4 +86,4 @@ if (config.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`SAT Study Buddy running on http://localhost:${PORT}`));
 }
 
-mdodule.exports = app;
+module.exports = app;

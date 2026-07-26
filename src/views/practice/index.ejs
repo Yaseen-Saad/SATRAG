@@ -124,9 +124,10 @@
           <span class="badge badge--<%= q.difficulty %>"><%= q.difficulty %></span>
           <small style="color:var(--color-text-faint);"><%= q.topic %> · <%= q.subtopic %></small>
           <% if (q.source === "ai_generated" && q.quality_tier && q.quality_tier !== 'unranked') {%>
-          <% const tierColors = { diamond: '#B9F2FF', platinum: '#E5E7EB', gold: '#FBBF24', silver: '#94A3B8', bronze: '#D97706', trash: '#EF4444' } %>
-          <% const tierIcons = { diamond: '💎', platinum: '⬡', gold: '★', silver: '●', bronze: '●', trash: '🗑' } %>
-          <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;background:<%= tierColors[q.quality_tier] || '#475569' %>20;color:<%= tierColors[q.quality_tier] || '#475569' %>;"><%= tierIcons[q.quality_tier] || '○' %> <%= q.quality_tier.charAt(0).toUpperCase() + q.quality_tier.slice(1) %><% if (q.feedback_count >= 3) { %> (<%= parseFloat(q.quality_score).toFixed(1) %>)<% } %></span>
+          <span class="tier-badge tier-badge--<%= q.quality_tier %>">
+            <img src="/img/tier-<%= q.quality_tier %>.svg" alt="" width="12" height="12">
+            <%= q.quality_tier.charAt(0).toUpperCase() + q.quality_tier.slice(1) %><% if (q.feedback_count >= 3) { %> (<%= parseFloat(q.quality_score).toFixed(1) %>)<% } %>
+          </span>
           <% } %>
         </div>
         <p class="practice-item-text"><%= q.stem_plain_text?.substring(0, 150) %><%= (q.stem_plain_text?.length || 0) > 150 ? '...' : '' %></p>

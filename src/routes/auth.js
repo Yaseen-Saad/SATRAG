@@ -59,33 +59,35 @@ router.post('/login', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try {
         let { email, password, firstName, lastName, school, referral } = req.body;
+        const rawEmail = (email || '').trim();
         email = normalizeEmail(sanitize(email));
         firstName = sanitize(firstName);
         lastName = sanitize(lastName);
         school = sanitize(school);
         referral = (referral || '').trim();
 
-        const ALLOWED_REFERRALS = new Set(['friend', 'socialmedia', 'school', 'teacher', 'other']);
+        const form = { firstName, lastName, school, email: rawEmail, referral };
+        const ALLOWED_REFERRALS = new Set(['friend', 'social', 'search', 'hackclub', 'other']);
         if (!email || !password || !firstName || !lastName || !school || !referral) {
-            return res.render('auth/signup', { error: 'All fields are required' })
+            return res.render('auth/signup', { error: 'All fields are required', form })
         }
         if (!ALLOWED_REFERRALS.has(referral)) {
-            return res.render('auth/signup', { error: 'Invalid referral source' })
+            return res.render('auth/signup', { error: 'Invalid referral source', form })
         }
 
         const pwErrors = validatePassword(password);
         if (pwErrors.length > 0) {
-            return res.render('auth/signup', { error: pwErrors.join('; ') })
+            return res.render('auth/signup', { error: pwErrors.join('; '), form })
         }
 
         const domain = email.split('@')[1]?.toLowerCase();
         if (domain && disposableDomains.includes(domain)) {
-            return res.render('auth/signup', { error: 'Disposable email addresses are not allowed. Please use a permanent email.' })
+            return res.render('auth/signup', { error: 'Disposable email addresses are not allowed. Please use a permanent email.', form })
         }
 
         const { data: existing } = await supabase.service.from('public_profiles').select('id').eq('email', email).maybeSingle();
         if (existing) {
-            return res.render('auth/signup', { error: 'An account with this email already exists.' })
+            return res.render('auth/signup', { error: 'An account with this email already exists.', form })
         }
 
         const { data, error } = await supabase.auth.signUp({
@@ -93,7 +95,7 @@ router.post('/signup', async (req, res) => {
                 data: { first_name: firstName, last_name: lastName, school }
             }
         })
-        if (error) return res.render('auth/signup', { error: error.message })
+        if (error) return res.render('auth/signup', { error: error.message, form })
         if (data.session) {
             const profileRow = {
                 id: data.user.id,

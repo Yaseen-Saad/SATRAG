@@ -128,18 +128,20 @@ router.post('/question/:id/answer', requireAuth, async (req, res) => {
         const { answer, timeMs } = req.body
         const result = await practice.submitAnswer({ questionId: req.params.id, userId: req.user.id, answer, timeMs: parseInt(timeMs) || 0 })
         let isWIC = false;
-        if (!result.isCorrect) {
-            const { data: questionData } = await supabase.from('sat_questions')
-                .select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description')
-                .eq('id', req.params.id)
-                .single()
-            if (questionData) {
+        let explanation = null;
+        const { data: questionData } = await supabase.from('sat_questions')
+            .select('passage_text, subject, topic, options, correct_answer, question_text, subtopic, skill_description, explanation')
+            .eq('id', req.params.id)
+            .single()
+        if (questionData) {
+            explanation = questionData.explanation || null;
+            if (!result.isCorrect) {
                 const isRW = questionData.subject === 'reading' || questionData.subject === 'writing' || questionData.subject === 'reading_writing'
                 const skill = (questionData.skill_description || questionData.subtopic || "").toLowerCase()
                 isWIC = isRW && skill.includes('words in context')
             }
         }
-        res.json({ success: true, ...result, isWIC })
+        res.json({ success: true, ...result, isWIC, explanation })
     } catch (err) {
         console.error('Answer error:', err)
         res.status(500).json({ success: false, error: err.message })

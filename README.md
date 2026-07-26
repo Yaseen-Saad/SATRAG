@@ -1,5 +1,5 @@
 # SATrack
-**Generate mnemonics. Practice questions. Track your proress. All in one place.**
+**Generate mnemonics. Practice questions. Track your progress. All in one place.**
 
 [![Built for Hack Club Macondo](https://img.shields.io/badge/Built%20for-Hack%20Club%20Macondo-blue?style=for-the-badge)](https://macondo.hackclub.com) [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org) [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com) [![AI Powered](https://img.shields.io/badge/AI%20Powered-RAG-blueviolet?style=for-the-badge)](#how-it-works) [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](#license) [![PRs Welcome](https://img.shields.io/badge/PRs%20Welcome-brightgreen?style=for-the-badge)](#contributing)
 ---
@@ -22,16 +22,16 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 2. **RAG-Enhanced Generation**: The system retrieves similar vocabulary entries from the database as style references before generating, so every entry feels much more authentic.
 3. **Quality Assurance**: Dual validation system with both rule-based quality checking (authenticity, creativity, accuracy, completeness, and format) and LLM-based evaluation (YESSS, LLMs Checking on LLMs).
 4. **Regeneration with Feedback**: Not happy with an entry? (tbh this will happen a lot as AI still sucks) Regenerate with specific instructions. Your feedback improves future generations, **the more you use the model, the smarter it becomes for you and the others**.
- 5. **Word Lists**: Create, manage, clone, share (via email or public links), and export (CSV or print format) vocabulary lists, autogenerate a *"your mistakes list"*.
- 6. **Daily Word**: A rotating vocabulary word each day to keep you sharp.
+5. **Word Lists**: Create, manage, clone, share (via email or public links), and export (CSV or print format) vocabulary lists, autogenerate a *"your mistakes list"*.
+6. **Daily Word**: A rotating vocabulary word each day to keep you sharp.
 
- ### SAT Practice:
- 1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math, I mean we all know that the College Board's Website's format sucks.
- 2. **AI Question Generation**: If you haven't finish the College Board's Bank then you are not training well, and when you does you will be desperate in getting new questions that is *similar* to the actuall test bank, and guess what? this is exactly why RAG was made. You can generate new questions by subject, topic, subtopic, and difficulty using RAG.
- 3. **Bluebook-Style UI**: A custom practice interface that mimics the official College Board Bluebook testing app with a: passage panel, question panel, option elimination, timer, question palette, and mark-for-review.
- 4. **Adaptive Practice**: Analyzes your weakest topics and automatically serves questions at the appropriate difficulty, avoiding already-solved questions and already-mastered topics.
- 5. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
- 6. **Answer Tracking**: Tracks correct/incorrect answers, time spent, attempt count, best time, and speed percentile.
+### SAT Practice:
+1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math, I mean we all know that the College Board's Website's format sucks.
+2. **AI Question Generation**: If you haven't finish the College Board's Bank then you are not training well, and when you does you will be desperate in getting new questions that is *similar* to the actuall test bank, and guess what? this is exactly why RAG was made. You can generate new questions by subject, topic, subtopic, and difficulty using RAG.
+3. **Bluebook-Style UI**: A custom practice interface that mimics the official College Board Bluebook testing app with a: passage panel, question panel, option elimination, timer, question palette, and mark-for-review.
+4. **Adaptive Practice**: Analyzes your weakest topics and automatically serves questions at the appropriate difficulty, avoiding already-solved questions and already-mastered topics.
+5. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
+6. **Answer Tracking**: Tracks correct/incorrect answers, time spent, attempt count, best time, and speed percentile.
 
 ## Flashcards:
 1. **Spaced Repetition**: Implements the SuperMemo SM-2 algorithm (Again/Hard/Good/Easy ratings), just like Anki's Algorithms for optimal review scheduling.
@@ -39,11 +39,11 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 3. **Progress Tracking**: Tracks stage, ease factor, interval, review count, and correct/incorrect counts per card.
 4. **Anki Compatible**: Export flashcards as CSV for Anki import; import words from CSV or plain text.
 
-### Dashboard \& Analytics:
+### Dashboard & Analytics:
 1. **Progress Dashboard**: Vocabulary stats, practice stats, weekly activity chart, study streak, daily word, flashcard stats.
 2. **Leaderboard**: Public leaderboard ranked by correct answers or accuracy, filterable by grade.
-3. **Analytics Page**: Session-by-session performance breakdown performance trends, time analytics.
-4. **Topic Breakdown**: Per-topic accuracy analysis to identify your weak areas
+3. **Analytics Page**: Session-by-session performance breakdown trends, time analytics.
+4. **Topic Breakdown**: Per-topic accuracy analysis to identify your weak areas.
 
 ### User System (Technical Stuff):
 1. **Authentication**: Email/password sign up (by google soon) and login with *remember me* and password reset.
@@ -75,7 +75,7 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 > Proceed only if you are comfortable with development setup.
 
 ## Star This Repo
-If you find SATrack helpful, consider giving it a start, it helps other students discover the project and keeps me motivated to build more features.
+If you find SATrack helpful, consider giving it a star, it helps other students discover the project and keeps me motivated to build more features.
 ## Tech Stack
 
 | Layer | Technology |
@@ -85,9 +85,9 @@ If you find SATrack helpful, consider giving it a start, it helps other students
 | **Templating** | EJS + Express-ejs-layouts |
 | **Database** | Supabase (SQL DB + Vector DB) |
 | **Authentication** | Supabase built in Auth |
-| **AI / LLM** | OpenAI-compitible (This is what OpenCode says) |
+| **AI / LLM** | OpenAI-compitible |
 | **Embeddings** | Jina AI Embeddings v3 (1024-dim vectors) |
-| **Styling** | SCSS (will change later) |
+| **Styling** | SCSS |
 | **Frontend** | Vanilla JavaScript |
 | **Validation** | Zod |
 | **Security** | Helmet, CORS, and custom rate limiter middleware |
@@ -119,13 +119,13 @@ Flashcard scheduling follows the **SuperMemo SM-2 Algorithm**:
 |** Good **| Knew it correctly | Standard interval increase |
 |** Easy **| Knew it instantly | Large interval increase |
 
-Each card tracks its own ease factor, itnerval, and review count — cards you struggle with appear more often and cards you know well fade into the background.
+Each card tracks its own ease factor, interval, and review count — cards you struggle with appear more often and cards you know well fade into the background.
 
 ### Embeddings & Vector Search
 
 Every vocabulary entry and SAT question gets a *1024-dimensional vector embedding* (via Jina AI) sorted in PostgreSQL with the *pgvector* extension. This enables:
 - **Semantic Search**: Find entries similar in meaning, not just keyword matching.
-- **RAG Context REtrieval**: Pull the most relevant examples before generating new content.
+- **RAG Context Retrieval**: Pull the most relevant examples before generating new content.
 - **Question Similarity**: Match generated questions to the style of real College Board questions.
 
 ## Setting Up the Environment:
@@ -148,7 +148,7 @@ npm install
 ```
 
 ### 3. Set Up Environment Variables
-Copy the ```example.env``` file and fill in your keys:
+Copy the ```.env.example``` file and fill in your keys:
 ```bash
 cp .env.example .env
 ```
@@ -497,15 +497,18 @@ git push origin feature/your-feature-name
 |:----|:---------|:-----|
 | SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
 | More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
-| Improved Streaks | In Progress | Better strak tracking and motivational system |
+| Improved Streaks | In Progress | Better streak tracking and motivational system |
 | Bluebook Full Exams | In Progress | Complete practice exams with automatic scoring and adaptive behavior |
-| Google Calender Integration | Planned | Daily practice reminders synced to your calendar |
+| On-Scroll Counter for Dashboard Numbers | Planned | Animated number counters on the home page |
+| Loader for All API Calls | Planned | Loading indicators for all API-driven actions |
+| Ticket System Interface | Planned | User-facing interface for the bug report ticket system |
+| Token Usage Display | Planned | Show API token usage stats in user settings |
+| Google Calendar Integration | Planned | Daily practice reminders synced to your calendar |
 | Study Resources Section | Planned | Curated collection of SAT study resources |
 | SAT Wrapped | Thinking | Monthly/Weekly personalized stats summary (think Spotify Wrapped, but for SAT) |
 | Google Sign-In | Planned | OAuth login with Google accounts to ease the process up |
 | 2FA Sign-In | Thinking | Configure 2-factor-authentication to secure the accounts|
 | Question Rush Mode | Thinking | Time rapid-fire practice to simulate test-day pressure |
-
 
 # Acknowledgments
 
@@ -521,9 +524,7 @@ Built with late nights and too much caffeine by a high schooler who got tired of
 </div>
 
 
+# stuff
+I want to make once you join each question you just have an attempt, and if you want to see your previous attempts you can do this but the default is that you have an extra attempt.
 
-# features to add later
-1. on scroll counter for numbers in home
-2. Loader for all API calls
-LOL i didn't add an interface to the tickets system yet.
-3. Add tokens usage for users in settings
+I want to make when i click on the question to practice I start practicing all questions in this filter in the order of how they where shown, and I want to create an analytic that shows like solved how many question by topic like the topic tree and by tier and difficulty everything, in a chart with no filters like solved x/y in the shape of a tree (not a real tree for sure lol)

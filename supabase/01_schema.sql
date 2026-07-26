@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS public_profiles (
     birthdate TEXT,
     participate_in_leaderboard BOOLEAN DEFAULT true,
     gender TEXT CHECK (gender IN ('male', 'female')),
-    referral TEXT CHECK (referral IN ('friend', 'socialmedia', 'school', 'teacher', 'other')),
+    referral TEXT CHECK (referral IN ('friend', 'social', 'search', 'hackclub', 'other')),
     llm_apikey TEXT,
     embedding_apikey TEXT,
     first_login TIMESTAMP DEFAULT NOW(),
