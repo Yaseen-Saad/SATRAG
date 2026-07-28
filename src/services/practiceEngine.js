@@ -11,7 +11,7 @@ function applySubjectFilter(query, subject) {
 
 class PracticeEngine {
 
-    async getQuestions({ subject, topic, subtopic, difficulty, active, source = "collegeboard", difficultyBand, status, marked, search, tier, page = 1, limit = 20, userId }) {
+    async getQuestions({ subject, topic, subtopic, difficulty, active, source, difficultyBand, status, marked, search, tier, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
         if (active === true)
             query = query.eq('is_active', true);
@@ -76,8 +76,8 @@ class PracticeEngine {
             }
         }
         const from = (page - 1) * limit
-        const { data, count, error } = await query.range(from, from + limit - 1).order('created_at', {
-            ascending: false
+        const { data, count, error } = await query.range(from, from + limit - 1).order('passage_text', {
+            ascending: true
         })
         if (error) throw error;
         let questions = data || [];

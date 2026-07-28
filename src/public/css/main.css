@@ -2100,6 +2100,18 @@ label {
   color: var(--color-text-sec);
 }
 
+.attempt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--border);
+}
+
 .practice-list {
   min-width: 0;
 }
@@ -2930,19 +2942,60 @@ label {
   margin-top: var(--sp-6);
   text-align: right;
 }
+.settings .token-usage-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+  font-size: var(--text-sm);
+}
+.settings .token-usage-value {
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+}
+.settings .token-usage-bar {
+  height: 8px;
+  background: var(--color-elevated);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.settings .token-usage-fill {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: var(--radius-sm);
+  transition: width var(--duration-md) var(--ease);
+}
+.settings .token-usage-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--sp-2);
+}
+.settings .token-breakdown {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--color-border);
+}
+.settings .token-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  padding: var(--sp-1) 0;
+}
 
-.lb-filter {
+table {
+  width: 100%;
+}
+table .lb-filter {
   display: flex;
   gap: var(--sp-3);
   align-items: center;
   flex-wrap: wrap;
   padding: var(--sp-4) var(--sp-6);
 }
-.lb-filter label {
+table .lb-filter label {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
-.lb-filter select {
+table .lb-filter select {
   padding: var(--sp-2) var(--sp-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -2951,56 +3004,75 @@ label {
   color: var(--color-text);
   transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), background-color var(--duration) var(--ease);
 }
-.lb-filter select:focus {
+table .lb-filter select:focus {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-muted);
   background-color: var(--color-elevated);
 }
-.lb-empty {
+table .lb-empty {
   text-align: center;
   padding: var(--sp-12);
 }
-.lb-empty p {
+table .lb-empty p {
   font-size: var(--text-xl);
   color: var(--color-text-muted);
 }
-.lb-empty .btn {
+table .lb-empty .btn {
   margin-top: var(--sp-4);
 }
-.lb-rank {
+table .lb-rank {
   text-align: center;
   width: 50px;
 }
-.lb-header-cell {
+table .lb-header-cell {
   text-align: center;
   cursor: pointer;
 }
-.lb-header-cell:hover {
+table .lb-header-cell:hover {
   color: var(--color-accent);
 }
-.lb-user-row {
+table .lb-streak {
+  display: flex;
+  font-weight: var(--weight-semi);
+  align-items: center;
+  justify-content: center;
+}
+table .lb-header-cell {
+  position: relative;
+  padding: 0.5rem;
+  padding-right: 10px;
+}
+table .lb-header-cell img {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  top: 50%;
+}
+table .lb-user-row {
   background: var(--color-accent-muted);
   font-weight: var(--weight-semi);
 }
-.lb-name {
+table .lb-name {
   font-weight: var(--weight-semi);
 }
-.lb-score {
+table .lb-score {
   text-align: center;
   font-weight: var(--weight-bold);
   color: var(--color-info);
 }
-.lb-correct {
+table .lb-correct {
   text-align: center;
 }
-
-.medal-gold {
+table td {
+  text-align: center;
+}
+table .medal-gold {
   background-color: var(--color-warning);
 }
-.medal-silver {
+table .medal-silver {
   background-color: var(--color-text-faint);
 }
-.medal-bronze {
+table .medal-bronze {
   background-color: #F97316;
 }
 
@@ -3045,4 +3117,19 @@ body main {
 }
 .site-footer a:hover {
   color: var(--color-accent);
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }/*# sourceMappingURL=main.css.map */

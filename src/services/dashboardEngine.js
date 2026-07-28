@@ -81,8 +81,24 @@ class DashboardEngine {
         if (!profiles || !profiles.length) return { entries: [], totalCount: 0, userRank: null }
         const userIds = profiles.map(p => p.id)
         const { data: attempts } = await supabase.from('user_question_attempts').select('user_id, is_correct').in('user_id', userIds);
-
+        const streaks = {}
+        for (const userId of userIds) {
+            const userAtt = (attempts || []).filter(att => att.user_id === userId)
+            const days = [...new Set(userAtt.map(att => att.attempt_time?.split('T')[0]))].filter(Boolean).sort()
+            let streak = 0;
+            const today = new Date().toISOString().split('T')[0]
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+            if (days.length && days[days.length - 1] === today || days[days.length - 1] === yesterday) {
+                for (let i = days.length - 1; i >= 0; i--) {
+                    const diff = (new Date(days[i]) - new Date(days[i - 1])) / (1000 * 60 * 60 * 24);
+                    if (diff === 1) streak++; else break;
+                }
+                streak++;
+            }
+            streaks[userId] = streak
+        }
         const stats = {}
+
         for (const a of attempts || []) {
             if (!stats[a.user_id]) stats[a.user_id] = { correct: 0, total: 0 }
             stats[a.user_id].total++;
@@ -102,7 +118,7 @@ class DashboardEngine {
             }
         })
 
-        const sortKey = sortBy === 'accuracy' ? 'accuracy' : sortBy === 'correct' ? 'correct' : 'score'
+        const sortKey = sortBy === 'accuracy' ? 'accuracy' : sortBy === 'correct' ? 'correct' : sortBy === 'streak' ? 'streak' : 'score';
         entries.sort((a, b) => sortDir === 'asc' ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey])
         entries.forEach((e, i) => e.rank = i + 1)
 

@@ -46,9 +46,10 @@
           <th class="lb-rank">Rank</th>
           <th>Name</th>
           <th>Grade</th>
-          <th class="lb-header-cell" onclick="toggleSort('correct')">Correct <%= sortBy === 'correct' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
-          <th class="lb-header-cell" onclick="toggleSort('accuracy')">Accuracy <%= sortBy === 'accuracy' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
-          <th class="lb-header-cell" onclick="toggleSort('score')">Score <%= sortBy === 'score' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
+          <th class="lb-header-cell" onclick="toggleSort('correct')">Correct <%- sortBy === 'correct' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
+          <th class="lb-header-cell" onclick="toggleSort('accuracy')">Accuracy <%- sortBy === 'accuracy' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
+          <th class="lb-header-cell" onclick="toggleSort('score')">Score <%- sortBy === 'score' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
+          <th class="lb-header-cell" onclick="toggleSort('streak')">Streak <%- sortBy === 'streak' ? (sortDir === 'desc' ? '<img src="/img/icon-arrow-down.svg" alt="" width="12" height="12">' : '<img src="/img/icon-arrow-up.svg" alt="" width="12" height="12">') : '' %></th>
         </tr>
       </thead>
       <tbody>
@@ -64,6 +65,7 @@
             <%= e.accuracy %>%
           </td>
           <td class="lb-score"><%= e.score %></td>
+          <td class="lb-streak"><%= e.streak || 0 %> <img src="/img/icon-fire.svg" alt="Streak" width="16" height="16"></td>
         </tr>
         <% }) %>
       </tbody>
