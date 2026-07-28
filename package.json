@@ -1,6 +1,14 @@
 {
   "name": "sat-rag-bud",
   "version": "1.0.0",
+  "description": "SAT prep tool with AI mnemonics, Bluebook-style practice, and spaced repetition flashcards",
+  "repository":{
+    "type": "git",
+    "url":"git+https://github.com/Yaseen-Saad/SATRAG.git"
+  },
+  "keywords":["sat","sat prep","sat study","sat flashcards","sat mnemonics","sat practice","sat questions","sat vocabulary", "ai", "rag", "supabase", "pgvector", "spaced-repetition", "flashcards", "bluebook", "mnemonics", "vocabulary"],
+  "author":"Yaseen Abdelal",
+  "license":"MIT",
   "main": "src/index.js",
   "engines": {
     "node": ">=18"
