@@ -105,35 +105,58 @@ If you find SATrack helpful, consider giving it a star, it helps other students 
 
 ### Vocabulary Generation Pipeline
 
-![image](https://cdn.hackclub.com/019f7f9f-6dd5-7328-b28d-528f7bc0a8a4/image.png)
+<p align="center">
+  <img src="src/public/img/hiw-1-input.svg" alt="Vocabulary Generation Pipeline" width="600">
+</p>
 
 Every vocabulary entry goes through a full RAG pipeline before you see it:
 
-1. **Input** — <img src="src/public/img/hiw-1-input.svg" alt="Vocabulary Generation Pipeline" width="600"> You type a word (e.g., "perspicacious").
+1. **Input** — You type a word (e.g., "perspicacious").
+2. **Embedding** — The word is converted into a 1024-dimensional vector using Jina AI embeddings. This vector is a numerical fingerprint that captures the word's meaning.
+3. **Vector Search** — The embedding is compared against thousands of stored entries using cosine similarity (pgvector). The top 3 most similar entries are retrieved.
 
-2. **Embedding** — <img src="src/public/img/hiw-3-vectors.svg" alt="Embedding" width="24" style="vertical-align:middle;"> The word is converted into a 1024-dimensional vector using Jina AI embeddings. This vector is a numerical fingerprint that captures the word's meaning.
+<p align="center">
+  <img src="src/public/img/hiw-5-vectorspace.svg" alt="Vector Space" width="500">
+</p>
 
-3. **Vector Search** — <img src="src/public/img/hiw-4-index.svg" alt="Vector Search" width="24" style="vertical-align:middle;"> The embedding is compared against thousands of stored entries using cosine similarity (pgvector). The top 3 most similar entries are retrieved.
+4. **Style References** — Those similar entries become style references for the LLM — they define the tone, format, and quality bar.
+5. **Generation** — The LLM generates a full entry: pronunciation, definition, mnemonic device, picture story, other forms, and example sentence. It also considers past user feedback (e.g., "mnemonics are too long").
 
-4. **Style References** — <img src="src/public/img/hiw-7-search.svg" alt="Style References" width="24" style="vertical-align:middle;"> Those similar entries become style references for the LLM — they define the tone, format, and quality bar.
+<p align="center">
+  <img src="src/public/img/hiw-8-generate.svg" alt="AI generates the entry" width="500">
+</p>
 
-5. **Generation** — <img src="src/public/img/hiw-8-generate.svg" alt="Generation" width="24" style="vertical-align:middle;"> The LLM generates a full entry: pronunciation, definition, mnemonic device, picture story, other forms, and example sentence. It also considers past user feedback (e.g., "mnemonics are too long").
-
-6. **Dual Quality Check** — <img src="src/public/img/hiw-9-quality.svg" alt="Quality Check" width="24" style="vertical-align:middle;"> Before you see the entry, it goes through two gates:
+6. **Dual Quality Check** — Before you see the entry, it goes through two gates:
    - **Rule-based checker** — scores authenticity, creativity, accuracy, completeness, and format compliance.
    - **LLM evaluator** — judges whether the mnemonic is clever, the picture story is vivid, and the example sentence actually uses the word correctly.
 
-7. **Output** — <img src="src/public/img/hiw-10-entry.svg" alt="Output" width="24" style="vertical-align:middle;"> You get a polished vocabulary card. Copy it, add it to flashcards, or save it to a list.
+<p align="center">
+  <img src="src/public/img/hiw-9-quality.svg" alt="Quality Check" width="500">
+</p>
 
-8. **Feedback Loop** — <img src="src/public/img/hiw-11-feedback.svg" alt="Feedback" width="24" style="vertical-align:middle;"> Rate each entry 1-10. The system tracks what users love (vivid stories? clever mnemonics?) and what falls flat. Every rating shapes future generations — SATrack literally gets better the more people use it.
+7. **Output** — You get a polished vocabulary card. Copy it, add it to flashcards, or save it to a list.
+
+<p align="center">
+  <img src="src/public/img/hiw-10-entry.svg" alt="Polished entry" width="500">
+</p>
+
+8. **Feedback Loop** — Rate each entry 1-10. The system tracks what users love (vivid stories? clever mnemonics?) and what falls flat. Every rating shapes future generations — SATrack literally gets better the more people use it.
+
+<p align="center">
+  <img src="src/public/img/hiw-11-feedback.svg" alt="Feedback loop" width="500">
+</p>
 
 ### Question Generation Pipeline
 
-Question generation uses a **modular prompt system** instead of one monolithic prompt:
+Question generation uses a **modular prompt system** instead of one monolithic prompt.
 
-For example for generating a linear equations with one variable question we combine these files:
+<p align="center">
+  <img src="src/public/img/hiw-8-generate.svg" alt="Question Generation" width="500">
+</p>
+
+For example, generating a linear equations question combines these files:
 ```
-core.txt +  math/core.txt  +  math/algebra/linear_equations_one_var.txt
+core.txt  +  math/core.txt  +  math/algebra/linear_equations_one_var.txt
 ```
 
 Only the modules relevant to the requested subject/topic/subtopic are loaded. This keeps prompts focused, saves tokens, and allows independent tuning of each component.
@@ -149,17 +172,22 @@ Generated questions then pass through an **LLM evaluator** that scores 6 dimensi
 | **Clarity** | Is the question unambiguous? |
 | **Format Valid** | Does the JSON follow all required format rules? |
 
+<p align="center">
+  <img src="src/public/img/hiw-9-quality.svg" alt="Quality Check" width="500">
+</p>
+
 Questions scoring below 0.80 overall or below 0.9 on correctness are automatically regenerated (up to 3 attempts). The evaluator's feedback is injected into the next attempt so the LLM can fix the issues. If the evaluator returns a `revisedQuestion`, that version is used directly.
 
 ### Adaptive Practice Engine
 
-![image](https://cdn.hackclub.com/019f7fa0-ff09-7ae9-876f-fbe343ce0731/image.png)
+<p align="center">
+  <img src="https://cdn.hackclub.com/019f7fa0-ff09-7ae9-876f-fbe343ce0731/image.png" alt="Adaptive Practice" width="600">
+</p>
 
-The adaptive engine analyzes your 'user_topic_stats' to find weak areas (topics below 70% accuracy), then serves questions at the appropriate difficulty band while skipping already-solved questions and mastered topics.
-
-Difficulty bands auto-adjust based on *your* performance, get 85% accuracy and the band goes up, drop below 50% and it goes down.
+The adaptive engine analyzes your `user_topic_stats` to find weak areas (topics below 70% accuracy), then serves questions at the appropriate difficulty band while skipping already-solved questions and mastered topics. Difficulty bands auto-adjust based on your performance — get 85%+ accuracy and the band goes up, drop below 50% and it goes down.
 
 ### Spaced Repetition (SM-2 Algorithm)
+
 Flashcard scheduling follows the **SuperMemo SM-2 Algorithm**:
 
 | Rating | Meaning | Effect on Schedule |
@@ -181,6 +209,10 @@ Every LLM API call logs prompt, completion, and total tokens to the `token_usage
 This uses the Supabase service role key to bypass RLS, ensuring logs are written reliably even for new users.
 
 ### Embeddings & Vector Search
+
+<p align="center">
+  <img src="src/public/img/hiw-3-vectors.svg" alt="Vector Embeddings" width="500">
+</p>
 
 Every vocabulary entry and SAT question gets a *1024-dimensional vector embedding* (via Jina AI) stored in PostgreSQL with the *pgvector* extension. This enables:
 - **Semantic Search**: Find entries similar in meaning, not just keyword matching.
@@ -556,6 +588,7 @@ git push origin feature/your-feature-name
 ## Project Timeline:
 | Feature | Status | Description |
 |:----|:---------|:-----|
+| Tiers system for words | In Progress | Divide words into tiers like the questions |
 | Sequential Practice Mode | In Progress | Click a question to practice all filtered questions in order, not just one |
 | Topic Tree Analytics Chart | In Progress | Visual breakdown of solved vs unsolved per topic and subtopic |
 | Bluebook Full Exams | In Progress | Complete practice exams with automatic scoring and adaptive behavior |
