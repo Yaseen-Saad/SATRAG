@@ -277,9 +277,8 @@ CLEANUP_INTERVAL=60000
 ### 4. Set Up the Database
 Run these SQL files in your *new* Supabase Database's SQL Editor **in order**:
 ```text
-supabase/01_schema.sql      # Tables, RLS policies, indexes
-supabase/02_rag.sql          # RAG feedback tables
-supabase/03_match_functions.sql  # Vector search functions + auth trigger
+supabase/01_schema.sql          # Tables, RLS policies, indexes
+supabase/02_match_functions.sql # pgvector match functions + auth trigger
 ```
 
 ### 5. Seed the data
@@ -342,8 +341,6 @@ satbudd/
 │   │   ├── regenerate_sat_question.txt # Prompt for regenerating SAT questions from feedback
 │   │   └── generate_sat_question_prompts/  # Modular question generation prompts
 │   │       ├── core.txt                # Shared question format + output rules
-│   │       ├── general_rules.txt       # MCQ/SPR rules, length limits, answer quality
-│   │       ├── difficulty.txt          # Easy/Medium/Hard rubric for math and R/W
 │   │       ├── generate_sat_question.txt   # Legacy monolith prompt (fallback)
 │   │       ├── math/                   # Math domain prompts
 │   │       │   ├── core.txt            # Math-specific rules (calculator, SPR, SVG)
@@ -401,7 +398,8 @@ satbudd/
 │   │   │   │   ├── _flash.scss
 │   │   │   │   ├── _forms.scss
 │   │   │   │   ├── _nav.scss
-│   │   │   │   └── _tables.scss
+│   │   │   │   ├── _tables.scss
+│   │   │   │   └── _tiers.scss
 │   │   │   ├── pages/                  # Page-specific styles
 │   │   │   │   ├── _auth.scss
 │   │   │   │   ├── _dashboard.scss
@@ -455,6 +453,7 @@ satbudd/
 │   │   │   ├── icon-close.svg          # Close/X icon
 │   │   │   ├── icon-dashboard.svg      # Dashboard nav icon
 │   │   │   ├── icon-dot.svg            # Dot indicator icon
+│   │   │   ├── icon-fire.svg           # Fire/streak icon
 │   │   │   ├── icon-flashcards-nav.svg # Flashcards nav icon
 │   │   │   ├── icon-grid.svg           # Grid/layout icon
 │   │   │   ├── icon-home.svg           # Home nav icon
@@ -466,6 +465,8 @@ satbudd/
 │   │   │   ├── icon-settings-nav.svg   # Settings nav icon
 │   │   │   ├── icon-star-outline.svg   # Star outline icon
 │   │   │   ├── icon-star.svg           # Star filled icon
+│   │   │   ├── icon-thumb-down.svg     # Thumb down icon
+│   │   │   ├── icon-thumb-up.svg       # Thumb up icon
 │   │   │   ├── icon-words.svg          # Words/vocab icon
 │   │   │   ├── icon-x.svg              # X/close icon
 │   │   │   ├── leaderboard.svg         # Leaderboard illustration
@@ -478,6 +479,13 @@ satbudd/
 │   │   │   ├── settings.svg            # Settings illustration
 │   │   │   ├── streak.svg              # Study streak icon
 │   │   │   ├── striketrhough.svg       # Strikethrough/elimination icon
+│   │   │   ├── tier-bronze.svg         # Bronze tier badge
+│   │   │   ├── tier-diamond.svg        # Diamond tier badge
+│   │   │   ├── tier-gold.svg           # Gold tier badge
+│   │   │   ├── tier-platinum.svg       # Platinum tier badge
+│   │   │   ├── tier-silver.svg         # Silver tier badge
+│   │   │   ├── tier-trash.svg          # Trash tier badge
+│   │   │   ├── tier-unranked.svg       # Unranked tier badge
 │   │   │   ├── timer.svg               # Timer icon
 │   │   │   ├── vocab.svg               # Vocabulary illustration
 │   │   │   └── wrong.svg               # Wrong answer icon

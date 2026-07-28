@@ -1,4 +1,16 @@
+window.formatBigNumber = function (num) {
+  num = Number(num);
+  if (isNaN(num)) return '0';
+  if (num < 1000000) return num.toLocaleString();
+  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(num);
+};
+
 document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-format-number]').forEach(function (el) {
+    var raw = parseInt(el.getAttribute('data-format-number'), 10);
+    if (!isNaN(raw)) el.textContent = window.formatBigNumber(raw);
+  });
+
   // Flash message auto-dismiss
   document.querySelectorAll('.flash').forEach(function (flash) {
     setTimeout(function () {

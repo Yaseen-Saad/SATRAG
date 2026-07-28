@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
         function step(now) {
             let progress = Math.min((now - start) / duration, 1);
             let eased = 1 - Math.pow(1 - progress, 3);
-            counter.textContent = Math.floor(eased * target).toLocaleString();
+            
+            counter.textContent = window.formatBigNumber(Math.floor(eased * target));
             if (progress < 1) requestAnimationFrame(step)
-            else counter.textContent = target.toLocaleString()
+            else counter.textContent = window.formatBigNumber(target)
         }
         requestAnimationFrame(step)
     }

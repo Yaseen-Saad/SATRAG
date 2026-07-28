@@ -135,7 +135,7 @@
       </div>
       <div class="dash-card-body">
         <div class="token-usage">
-          <div class="token-usage-header"><span>This Month: </span><span class="token-usage-value"><%=(monthlyTokens||0).toLocaleString() %> tokens</span></div>
+          <div class="token-usage-header"><span>This Month: </span><span class="token-usage-value"><span data-format-number="<%= monthlyTokens || 0 %>"><%= (monthlyTokens||0).toLocaleString() %></span> tokens</span></div>
         </div>
         <div class="token-usage-bar">
           <div class="token-usage-fill" style="width: <%= Math.min(100, ((monthlyTokens || 0) / 10000) * 100) %>%"></div>
@@ -146,7 +146,7 @@
           <% Object.entries(usageBreakdown).forEach(([op, tokens]) => { %>
           <div class="token-breakdown-row">
             <span><%= op.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %></span>
-            <span><%= tokens.toLocaleString() %></span>
+            <span data-format-number="<%= tokens %>"><%= tokens.toLocaleString() %></span>
           </div>
           <% }) %>
         </div>
