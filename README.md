@@ -6,7 +6,8 @@
 
 ## Story Time!! (Why I Built This?)
 
-As a gap year student, I struggled significantly with SAT prep last year (my senior year): the lack of free resources available for HALI students reduced my score significantly, and let's be real, SAT prep tools are either *expensive*, *boring*, or both. I went through this hard race and barely could make it, so I wanted to build something that actually helps — not just another question bank, but a full study companion that:
+As a gap year student, I struggled with SAT prep last year — the lack of free resources for HALI students tanked my score, and let's be real, SAT prep tools are either *expensive*, *boring*, or both. So I wanted to build something that actually helps — not just another question bank, but a full study companion that:
+
 
 1. Generates **mnemonic devices** for vocabulary words (yes, this damn section) so you can actually *remember* or *retrieve* ~~a nerdy joke~~ the words, inspired by Charles Gulotta's book: [500 Key Words for the SAT: And How To Remember Them Forever!](https://www.goodreads.com/book/show/656272.500_Key_Words_for_the_SAT).
 2. Uses **RAG (Retrieval-Augmented Generation)** to pull similar examples from a real question bank before generating new content.
@@ -26,14 +27,15 @@ As a gap year student, I struggled significantly with SAT prep last year (my sen
 6. **Daily Word**: A rotating vocabulary word each day to keep you sharp.
 
 ### SAT Practice:
-1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math, I mean we all know that the College Board's Website's format sucks.
-2. **AI Question Generation**: If you haven't finish the College Board's Bank then you are not training well, and when you does you will be desperate in getting new questions that is *similar* to the actuall test bank, and guess what? this is exactly why RAG was made. You can generate new questions by subject, topic, subtopic, and difficulty using RAG.
-3. **Modular Prompt System**: Question generation prompts are split into composable modules — core instructions, difficulty rubrics, general rules, and per-subtopic guidance (19 math subtopics, 12 R/W subtopics). The system loads only the relevant modules for the requested subject/topic/subtopic, keeping prompts focused while reducing token usage.
+1. **Real Question Bank**: Thousands of the **OFFICIAL College Board SAT questions** covering Reading, Writing, and Math — because we all know the College Board's website format sucks.
+2. **AI Question Generation**: When you finish the College Board bank (and you will), RAG generates new questions *similar* to the actual test bank. You can generate by subject, topic, subtopic, and difficulty.
+3. **Modular Prompt System**: Question generation prompts are split into composable modules — core instructions, difficulty rubrics, general rules, and per-subtopic guidance (19 math subtopics, 12 R/W subtopics). The system loads only the relevant modules, keeping prompts focused while reducing token usage.
 4. **Iterative Quality Loop**: Generated questions go through an LLM evaluator that scores correctness, difficulty accuracy, distractor quality, authenticity, clarity, and format validity. Questions scoring below threshold are automatically regenerated (up to 3 attempts) with feedback injected into the next attempt.
 5. **Bluebook-Style UI**: A custom practice interface that mimics the official College Board Bluebook testing app with a: passage panel, question panel, option elimination, timer, question palette, and mark-for-review.
 6. **Adaptive Practice**: Analyzes your weakest topics and automatically serves questions at the appropriate difficulty, avoiding already-solved questions and already-mastered topics.
-7. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs who know what's next?), status, and text search.
+7. **Extensive Filtering**: Filter by subject, topic, subtopic, difficulty, source (College Board vs AI vs and more to come), status, and text search.
 8. **Answer Tracking**: Tracks correct/incorrect answers, time spent, attempt count, best time, and speed percentile.
+---
 
 ## Flashcards:
 1. **Spaced Repetition**: Implements the SuperMemo SM-2 algorithm (Again/Hard/Good/Easy ratings), just like Anki's Algorithms for optimal review scheduling.
@@ -101,26 +103,42 @@ If you find SATrack helpful, consider giving it a star, it helps other students 
 
 ## How It Works:
 
-### RAG Pipeline
+### Vocabulary Generation Pipeline
 
 ![image](https://cdn.hackclub.com/019f7f9f-6dd5-7328-b28d-528f7bc0a8a4/image.png)
 
-Each piece of user feedback is stored and used as context for future generations, creating a continuous improvement loop — the more the community uses SATrack, the better it gets.
+Every vocabulary entry goes through a full RAG pipeline before you see it:
 
-### Modular Question Generation
+1. **Input** — <img src="src/public/img/hiw-1-input.svg" alt="Vocabulary Generation Pipeline" width="600"> You type a word (e.g., "perspicacious").
 
-Question generation uses a composable prompt system instead of one monolithic prompt:
+2. **Embedding** — <img src="src/public/img/hiw-3-vectors.svg" alt="Embedding" width="24" style="vertical-align:middle;"> The word is converted into a 1024-dimensional vector using Jina AI embeddings. This vector is a numerical fingerprint that captures the word's meaning.
 
+3. **Vector Search** — <img src="src/public/img/hiw-4-index.svg" alt="Vector Search" width="24" style="vertical-align:middle;"> The embedding is compared against thousands of stored entries using cosine similarity (pgvector). The top 3 most similar entries are retrieved.
+
+4. **Style References** — <img src="src/public/img/hiw-7-search.svg" alt="Style References" width="24" style="vertical-align:middle;"> Those similar entries become style references for the LLM — they define the tone, format, and quality bar.
+
+5. **Generation** — <img src="src/public/img/hiw-8-generate.svg" alt="Generation" width="24" style="vertical-align:middle;"> The LLM generates a full entry: pronunciation, definition, mnemonic device, picture story, other forms, and example sentence. It also considers past user feedback (e.g., "mnemonics are too long").
+
+6. **Dual Quality Check** — <img src="src/public/img/hiw-9-quality.svg" alt="Quality Check" width="24" style="vertical-align:middle;"> Before you see the entry, it goes through two gates:
+   - **Rule-based checker** — scores authenticity, creativity, accuracy, completeness, and format compliance.
+   - **LLM evaluator** — judges whether the mnemonic is clever, the picture story is vivid, and the example sentence actually uses the word correctly.
+
+7. **Output** — <img src="src/public/img/hiw-10-entry.svg" alt="Output" width="24" style="vertical-align:middle;"> You get a polished vocabulary card. Copy it, add it to flashcards, or save it to a list.
+
+8. **Feedback Loop** — <img src="src/public/img/hiw-11-feedback.svg" alt="Feedback" width="24" style="vertical-align:middle;"> Rate each entry 1-10. The system tracks what users love (vivid stories? clever mnemonics?) and what falls flat. Every rating shapes future generations — SATrack literally gets better the more people use it.
+
+### Question Generation Pipeline
+
+Question generation uses a **modular prompt system** instead of one monolithic prompt:
+
+For example for generating a linear equations with one variable question we combine these files:
 ```
-core.txt  +  general_rules.txt  +  difficulty.txt
-    +  math/core.txt  +  math/algebra/linear_equations_one_var.txt
+core.txt +  math/core.txt  +  math/algebra/linear_equations_one_var.txt
 ```
 
 Only the modules relevant to the requested subject/topic/subtopic are loaded. This keeps prompts focused, saves tokens, and allows independent tuning of each component.
 
-### Iterative Quality Loop
-
-Generated questions pass through an LLM evaluator that scores 6 dimensions:
+Generated questions then pass through an **LLM evaluator** that scores 6 dimensions:
 
 | Dimension | What It Checks |
 |-----------|---------------|
@@ -137,7 +155,9 @@ Questions scoring below 0.80 overall or below 0.9 on correctness are automatical
 
 ![image](https://cdn.hackclub.com/019f7fa0-ff09-7ae9-876f-fbe343ce0731/image.png)
 
-Already-solved questions and mastered topics skipped
+The adaptive engine analyzes your 'user_topic_stats' to find weak areas (topics below 70% accuracy), then serves questions at the appropriate difficulty band while skipping already-solved questions and mastered topics.
+
+Difficulty bands auto-adjust based on *your* performance, get 85% accuracy and the band goes up, drop below 50% and it goes down.
 
 ### Spaced Repetition (SM-2 Algorithm)
 Flashcard scheduling follows the **SuperMemo SM-2 Algorithm**:
@@ -151,9 +171,18 @@ Flashcard scheduling follows the **SuperMemo SM-2 Algorithm**:
 
 Each card tracks its own ease factor, interval, and review count — cards you struggle with appear more often and cards you know well fade into the background.
 
+### Token Usage Tracking
+
+Every LLM API call logs prompt, completion, and total tokens to the `token_usage_log` table with the user ID, operation type, and model name. The Settings page shows:
+- **Monthly usage** with a progress bar against the free tier limit (5 free generations/month)
+- **Per-operation breakdown** — how many tokens went to vocab generation vs. question generation vs. evaluation
+- **Usage history** — individual API calls with timestamps
+
+This uses the Supabase service role key to bypass RLS, ensuring logs are written reliably even for new users.
+
 ### Embeddings & Vector Search
 
-Every vocabulary entry and SAT question gets a *1024-dimensional vector embedding* (via Jina AI) sorted in PostgreSQL with the *pgvector* extension. This enables:
+Every vocabulary entry and SAT question gets a *1024-dimensional vector embedding* (via Jina AI) stored in PostgreSQL with the *pgvector* extension. This enables:
 - **Semantic Search**: Find entries similar in meaning, not just keyword matching.
 - **RAG Context Retrieval**: Pull the most relevant examples before generating new content.
 - **Question Similarity**: Match generated questions to the style of real College Board questions.
@@ -527,20 +556,21 @@ git push origin feature/your-feature-name
 ## Project Timeline:
 | Feature | Status | Description |
 |:----|:---------|:-----|
-| SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
-| More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
-| Improved Streaks | In Progress | Better streak tracking and motivational system |
+| Sequential Practice Mode | In Progress | Click a question to practice all filtered questions in order, not just one |
+| Topic Tree Analytics Chart | In Progress | Visual breakdown of solved vs unsolved per topic and subtopic |
 | Bluebook Full Exams | In Progress | Complete practice exams with automatic scoring and adaptive behavior |
-| On-Scroll Counter for Dashboard Numbers | Planned | Animated number counters on the home page |
-| Loader for All API Calls | Planned | Loading indicators for all API-driven actions |
+| SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
 | Ticket System Interface | Planned | User-facing interface for the bug report ticket system |
-| Token Usage Display | Planned | Show API token usage stats in user settings |
+| Google Sign-In | Planned | OAuth login with Google accounts to ease the sign-up process |
+| Spaced Repetition Reminders | Planned | In-app notifications when flashcards are due for review |
+| More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
 | Google Calendar Integration | Planned | Daily practice reminders synced to your calendar |
 | Study Resources Section | Planned | Curated collection of SAT study resources |
+| Import from Bluebook | Planned | Import official Bluebook practice test results directly into your SATrack progress dashboard |
 | SAT Wrapped | Thinking | Monthly/Weekly personalized stats summary (think Spotify Wrapped, but for SAT) |
-| Google Sign-In | Planned | OAuth login with Google accounts to ease the process up |
-| 2FA Sign-In | Thinking | Configure 2-factor-authentication to secure the accounts|
-| Question Rush Mode | Thinking | Time rapid-fire practice to simulate test-day pressure |
+| 2FA Sign-In | Thinking | Configure 2-factor-authentication to secure the accounts |
+| Question Rush Mode | Thinking | Timed rapid-fire practice to simulate test-day pressure |
+| Mistake Pattern Analysis | AI Suggestion | AI analyzes your incorrect answers across sessions to identify recurring patterns like "you tend to miss inference questions on long passages" |
 
 # Acknowledgments
 

@@ -83,10 +83,6 @@ class RAGEngine {
     buildPrompt(subject, topic, subtopic, difficulty) {
         const parts = [];
         parts.push(readFile('core.txt'));
-        parts.push(readFile('general_rules.txt'));
-        if (difficulty) {
-            parts.push(readFile('difficulty.txt'));
-        }
         const wantMath = !subject || subject === 'math'
         const wantRW = !subject || subject === 'reading' || subject === 'writing' || subject === 'reading_writing'
 
