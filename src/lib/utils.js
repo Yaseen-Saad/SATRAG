@@ -138,4 +138,12 @@ function readFile(relativePath) {
     return fs.readFileSync(path.join(__dirname, '..', relativePath), 'utf-8').trim()
 }
 
-module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry, sanitizeForPrompt, readFile }
+function wantsJSON(req) {
+    const ct = req.headers['content-type'] || ''
+    const accept = req.headers['accept'] || ''
+    return ct.includes('application/json') || (!accept.includes('html') && accept.includes('application/json'))
+}
+
+
+
+module.exports = { normalizeEmail, sanitize, interpolate, parseGeneratedEntry, sanitizeForPrompt, readFile, wantsJSON }

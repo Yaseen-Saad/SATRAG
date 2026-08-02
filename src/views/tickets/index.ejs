@@ -1,0 +1,41 @@
+<% title = 'Support Tickets'; %>
+<div class="dashboard">
+  <div>
+    <h1>Support Tickets</h1>
+    <p class="dash-subtitle">Questions about the app? Open a ticket.</p>
+  </div>
+  <div class="dash-header-actions">
+    <a href="/tickets/new" class="btn btn-primary">New Ticket</a>
+  </div>
+</div>
+
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<div class="dash-card">
+  <div class="dash-card-body">
+    <% if (tickets.length ===0 ) {%>
+    <p class="empty-state">No tickets yet. <a href="/tickets/new">Open one</a>.</p>
+    <% } else { %>
+    <div style="display:grid; gap:0.5rem;">
+      <% tickets.forEach(t => { %>
+      <a href="/tickets/<%= t.id %>" class="card card-link practice-item" style="padding:0.75rem 1rem;">
+        <div style="display:flex; justify-content:space-between; gap:1rem; align-items:center;">
+          <div>
+            <strong><%= t.subject %></strong>
+            <small style="color:var(--color-text-faint);"> <%= t.section || 'General' %> &middot; <%= new Date(t.created_at).toLocaleDateString() %></small>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center">
+            <% if (t.last_message && t.last_message.message) { %><small style="color:var(--color-text-muted); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><%= t.last_message.message %></small><% } %>
+            <span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:999px; color:var(--color-text-muted); background:var(--color-bg-card, #eee);"><%= t.active ? 'Open' : 'Closed' %></span>
+          </div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+</div>

@@ -1,0 +1,49 @@
+<% title = 'Ticket'; %>
+<div class="dashboard">
+  <% if (!ticket) { %>
+  <div class="flash flash-error"><%= error || 'Ticket not found' %></div>
+  <a href="/tickets" class="btn btn-primary btn-sm">Back to Tickets</a>
+  <% } else { %>
+  <div class="dash-header">
+    <div>
+      <h1><%= ticket.subject %></h1>
+      <p class="dash-subtitle"><%= ticket.section || 'General' %> &middot; <%= new Date(ticket.created_at).toLocaleString() %> &middot; <%= ticket.active ? 'Open' : 'Closed' %></p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/tickets" class="btn btn-outline btn-sm">All Tickets</a>
+      <% if (ticket.active) { %>
+      <form method="POST" action="/tickets/<%= ticket.id %>/close" style="display:inline;">
+        <button type="submit" class="btn btn-outline btn-sm" onclick="return confirm('Close this ticket?')">Close</button>
+      </form>
+      <% } else { %>
+      <form method="POST" action="/tickets/<%= ticket.id %>/reopen" style="display:inline;">
+        <button type="submit" class="btn btn-outline btn-sm">Reopen</button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+  <% if (typeof error !== 'undefined' && error) { %>
+  <div class="flash flash-error"><%= error %></div>
+  <% } %>
+  <div class="dash-card">
+    <div class="dash-card-body" style="display:grid; gap:1rem;">
+      <% if (comments.length === 0) { %>
+      <p class="empty-state">No messages yet.</p>
+      <% } %>
+      <% comments.forEach(c => { %>
+      <div style="border-left:3px solid var(--color-accent); padding-left:0.75rem;">
+        <small style="color:var(--color-text-faint);"><%= new Date(c.created_at).toLocaleString() %></small>
+        <p style="margin:0.25rem 0 0;"><%= c.message %></p>
+      </div>
+      <% }) %>
+      <form method="POST" action="/tickets/<%= ticket.id %>/comment" style="margin-top:0.5rem;">
+        <div class="form-group">
+          <label for="message">Add a message</label>
+          <textarea id="message" name="message" rows="3" required maxlength="2000"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Send</button>
+      </form>
+    </div>
+  </div>
+  <% } %>
+</div>
