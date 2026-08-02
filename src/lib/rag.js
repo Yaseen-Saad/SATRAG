@@ -70,14 +70,74 @@ const SUBTOPIC_FILES = {
 
 
 class RAGEngine {
-    // I want to use this function to get a random question (like till subptopic and diff) when the user do not provide any preferences, GENERALLY in all of this project I do not want the llm to guess which question it should generate, instead It MUST get the exact everything, if the user didn't specify a diff I will get a random one, if no subtopic get a random one and so on, but hte llm must have a speicifc thing to search for and the rag overall (lol why am i yapping) must retrive very simmilar questions to the one that will be generated
-    getRandom(subject, topic, subtopic, difficulty) {
-        if (subject && !topic && !subtopic) {
-            return ["math", "reading_writing"][Math.floor(Math.random() * 2)]
-        } if (!subject && topic && !subtopic) {
-            return ["math", "reading_writing"][Math.floor(Math.random() * 2)]
-        } if (topic == "subtopic") {
+    // Resolve any unspecified question parameters to concrete random values so the LLM
+    // never has to guess. The RAG retriever needs an exact subject/topic/subtopic/difficulty
+    // to pull the most similar examples for generation.
+    getSubtopicFiles(topic) {
+        const topicDirName = MATH_TOPIC_DIRS[topic] || RW_TOPIC_DIRS[topic]
+        if (!topicDirName) return []
+        const subjectDir = MATH_TOPIC_DIRS[topic] ? 'math' : 'reading_writing'
+        const dirPath = path.join(SAT_PROMPTS, subjectDir, topicDirName)
+        try {
+            return fs.readdirSync(dirPath).filter(f => f.endsWith('.txt'))
+        } catch {
+            return []
+        }
+    }
 
+    getTopicForSubtopic(subtopic) {
+        const file = SUBTOPIC_FILES[subtopic]
+        if (!file) return null
+        for (const topic of Object.keys({ ...MATH_TOPIC_DIRS, ...RW_TOPIC_DIRS })) {
+            if (this.getSubtopicFiles(topic).includes(file)) return topic
+        }
+        return null
+    }
+
+    getRandom(subject, topic, subtopic, difficulty) {
+        const subjects = ['math', 'reading_writing']
+        const difficulties = ['easy', 'medium', 'hard']
+
+        let resolvedSubject = subject
+        let resolvedTopic = topic
+
+        if (!resolvedSubject && resolvedTopic) {
+            resolvedSubject = MATH_TOPIC_DIRS[resolvedTopic] ? 'math' : 'reading_writing'
+        }
+        if (!resolvedTopic && subtopic) {
+            resolvedTopic = this.getTopicForSubtopic(subtopic)
+        }
+        if (!resolvedSubject && resolvedTopic) {
+            resolvedSubject = MATH_TOPIC_DIRS[resolvedTopic] ? 'math' : 'reading_writing'
+        }
+        if (!resolvedSubject) {
+            resolvedSubject = subjects[Math.floor(Math.random() * subjects.length)]
+        }
+        if (!resolvedTopic) {
+            const dirs = resolvedSubject === 'math' ? MATH_TOPIC_DIRS : RW_TOPIC_DIRS
+            resolvedTopic = Object.keys(dirs)[Math.floor(Math.random() * Object.keys(dirs).length)]
+        }
+        const topicSubject = MATH_TOPIC_DIRS[resolvedTopic] ? 'math' : 'reading_writing'
+        if ((resolvedSubject === 'math') !== (topicSubject === 'math')) {
+            resolvedSubject = topicSubject
+        }
+
+        let resolvedSubtopic = subtopic
+        if (!resolvedSubtopic) {
+            const files = this.getSubtopicFiles(resolvedTopic)
+            const subtopicNames = Object.entries(SUBTOPIC_FILES)
+                .filter(([, file]) => files.includes(file))
+                .map(([name]) => name)
+            resolvedSubtopic = subtopicNames[Math.floor(Math.random() * subtopicNames.length)] || null
+        }
+
+        const resolvedDifficulty = difficulty || difficulties[Math.floor(Math.random() * difficulties.length)]
+
+        return {
+            subject: resolvedSubject,
+            topic: resolvedTopic,
+            subtopic: resolvedSubtopic,
+            difficulty: resolvedDifficulty
         }
     }
     buildPrompt(subject, topic, subtopic, difficulty) {

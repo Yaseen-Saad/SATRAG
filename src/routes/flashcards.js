@@ -117,9 +117,9 @@ router.post('/import/anki', requireAuth, async (req, res) => {
         const firstLine = lines[0].toLowerCase()
         let entries;
         if (firstLine.includes('word') || firstLine.includes('definition') || firstLine.includes(',')) {
-            const headers = lines[0].split(',').map(h => h.trim());
+            const headers = flashcardsEngine.parseCSVRow(lines[0]);
             entries = lines.slice(1).map(line => {
-                const vals = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''))
+                const vals = flashcardsEngine.parseCSVRow(line)
                 const obj = {}
                 headers.forEach((h, i) => obj[h] = vals[i] || '')
                 return obj;

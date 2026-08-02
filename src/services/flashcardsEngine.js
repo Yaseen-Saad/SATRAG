@@ -1,5 +1,31 @@
 const { service: supabase } = require('../lib/supabase')
 
+function parseCSVRow(line) {
+    const cells = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQuotes) {
+            if (ch === '"') {
+                if (line[i + 1] === '"') { current += '"'; i++; }
+                else inQuotes = false;
+            } else {
+                current += ch;
+            }
+        } else if (ch === '"') {
+            inQuotes = true;
+        } else if (ch === ',') {
+            cells.push(current);
+            current = '';
+        } else {
+            current += ch;
+        }
+    }
+    cells.push(current);
+    return cells.map(cell => cell.trim());
+}
+
 class FlashcardsEngine {
     async exportAnki(userId) {
         const { data: cards } = await supabase.from('user_flashcard_progress').select('*, vocab_entries(*)').eq('user_id', userId)
@@ -13,8 +39,7 @@ class FlashcardsEngine {
             Stage: card.stage,
             "Ease Factor": card?.ease_factor?.toFixed(2) || 2.5,
             Interval: card.interval_days + 'd',
-            Mnemonic: card.vocab_entries?.mnemonic_phrase || '',
-            definition: card.vocab_entries?.definition || ''
+            Mnemonic: card.vocab_entries?.mnemonic_phrase || ''
         }))
     }
     async importAnki(userId, cards) {
@@ -132,3 +157,4 @@ class FlashcardsEngine {
 }
 
 module.exports = new FlashcardsEngine();
+module.exports.parseCSVRow = parseCSVRow;

@@ -24,7 +24,7 @@ router.get('/stats/distribution', requireAuth, async (req, res) => {
 
 router.post('/trash/improve', requireAuth, async (req, res) => {
     try {
-        const result = await engine.batchImproveTrash()
+        const result = await engine.batchImproveTrash(req.user.id)
         res.json({ success: true, ...result })
     } catch (err) {
         console.error('Trash improve error:', err)

@@ -183,6 +183,10 @@ class DashboardEngine {
         return sessions.slice(-30).map(session => ({ ...session, timeSec: Math.round(session.timeMs / 1000), accuracy: session.total ? Math.round(session.correct / session.total * 100) : 0 }))
     }
 
+    _isConsecutive(prevDay, day) {
+        return (new Date(day) - new Date(prevDay)) / (1000 * 60 * 60 * 24) === 1;
+    }
+
     async getStreak(userId) {
         const { data, error } = await supabase
             .from('user_question_attempts')
@@ -193,36 +197,19 @@ class DashboardEngine {
 
         const uniqueDays = [...new Set(data.map(d => d.attempt_date))].sort();
 
-        let currentStreak = 0;
         let longestStreak = 0;
-        let tempStreak = 0;
-        const todayStr = new Date().toISOString().split('T')[0]
-        const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-        const hasActivityRecently = uniqueDays[uniqueDays.length - 1] === todayStr || uniqueDays[uniqueDays.length - 1] === yesterdayStr
-
-        for (let i = 0; i < uniqueDays.length; i++) {
-            if (i === 0) {
-                tempStreak = 1;
-            } else {
-                const currentDay = new Date(uniqueDays[i]);
-                const previousDay = new Date(uniqueDays[i - 1]);
-                const diffTime = Math.abs(previousDay - currentDay);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays === 1) {
-                    tempStreak++;
-                } else {
-                    longestStreak = Math.max(longestStreak, tempStreak);
-                    tempStreak = 1;
-                }
-            }
+        let run = 0;
+        let prev = null;
+        for (const day of uniqueDays) {
+            run = prev && this._isConsecutive(prev, day) ? run + 1 : 1;
+            if (run > longestStreak) longestStreak = run;
+            prev = day;
         }
 
-        longestStreak = Math.max(longestStreak, tempStreak);
-        currentStreak = hasActivityRecently ? tempStreak : 0;
-        if (hasActivityRecently && uniqueDays[uniqueDays.length - 1] === todayStr && tempStreak === uniqueDays.length) {
-            currentStreak = tempStreak;
-        }
+        const todayStr = new Date().toISOString().split('T')[0];
+        const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        const lastDay = uniqueDays[uniqueDays.length - 1];
+        const currentStreak = (lastDay === todayStr || lastDay === yesterdayStr) ? run : 0;
 
         return { currentStreak, longestStreak };
     }

@@ -1,7 +1,9 @@
-const BURST_WINDOW = 10 * 1000;
-const BURST_MAX = 20;
-const BURST_BLOCK_MS = 15 * 60 * 1000;
-const CLEANUP_INTERVAL = 60 * 1000;
+const config = require('../config');
+
+const BURST_WINDOW = config.BURST_WINDOW;
+const BURST_MAX = config.BURST_MAX;
+const BURST_BLOCK_MS = config.BURST_BLOCK_MS;
+const CLEANUP_INTERVAL = config.CLEANUP_INTERVAL;
 
 const ROUTE_LIMITS = [
     { test: p => p === '/auth/login', requests: 5, windowSeconds: 60 },

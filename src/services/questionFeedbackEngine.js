@@ -150,7 +150,7 @@ class QuestionFeedbackEngine {
         return data || []
     }
 
-    async improveTrashQuestion(questionId) {
+    async improveTrashQuestion(questionId, userId) {
         const { data: question, error: qErr } = await supabase
             .from('sat_questions')
             .select('*')
@@ -178,7 +178,7 @@ class QuestionFeedbackEngine {
         const userMessage = readFile('../prompts/regenerate_sat_question.txt')
 
         const response = await llm.generateCompletion({
-            userId: req.user.id,
+            userId: userId,
             messages: [{ role: 'user', content: userMessage }],
             system: systemPrompt,
             temperature: 0.5,
@@ -241,12 +241,12 @@ class QuestionFeedbackEngine {
         return { questionId, previousTier: 'trash', newTier: 'unranked' }
     }
 
-    async batchImproveTrash() {
+    async batchImproveTrash(userId) {
         const trash = await this.getTrashQuestions()
         const results = []
         for (const q of trash) {
             try {
-                const result = await this.improveTrashQuestion(q.id)
+                const result = await this.improveTrashQuestion(q.id, userId)
                 results.push({ ...result, success: true })
             } catch (e) {
                 results.push({ questionId: q.id, success: false, error: e.message })
