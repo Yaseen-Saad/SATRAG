@@ -9,6 +9,14 @@
     <em><%= entry.pronunciation %></em> <strong><%= entry.part_of_speech %></strong>
   </div>
 
+  <% if (entry.quality_tier && entry.quality_tier !== 'unranked') { %>
+  <div style="margin:0.5rem 0 0;">
+    <span class="tier-badge tier-badge--<%= entry.quality_tier %>">
+      <%= entry.quality_tier.charAt(0).toUpperCase() + entry.quality_tier.slice(1) %><% if (entry.quality_score != null) { %> &middot; Quality <%= entry.quality_score %><% } %>
+    </span>
+  </div>
+  <% } %>
+
   <div class="entry-definition">
     <p style="margin:0;"><%= entry.definition %></p>
   </div>

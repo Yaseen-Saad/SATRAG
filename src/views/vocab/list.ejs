@@ -78,6 +78,11 @@
         <div class="vocab-list-row-info">
           <a href="/vocab/<%= w.word %>" class="vocab-list-row-word"><%= w.word %></a>
           <span class="vocab-list-row-pos"><%= w.part_of_speech %></span>
+          <% if (w.quality_tier && w.quality_tier !== 'unranked') { %>
+          <span class="tier-badge tier-badge--<%= w.quality_tier %>" style="margin-left:0.5rem; font-size:0.75rem;">
+            <%= w.quality_tier.charAt(0).toUpperCase() + w.quality_tier.slice(1) %><% if (w.quality_score != null) { %> (<%= w.quality_score %>)<% } %>
+          </span>
+          <% } %>
           <p class="vocab-list-row-def"><%= w.definition %></p>
         </div>
         <% if (isOwner) { %>
