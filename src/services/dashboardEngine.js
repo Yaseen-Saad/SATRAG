@@ -2,6 +2,40 @@ const supabase = require('../lib/supabase').service;
 
 class DashboardEngine {
 
+    async getTopicTreeAnalytics(userId) {
+        const { data: stats } = await supabase.from('user_topic_stats')
+            .select('subject, topic, subtopic, total_attempts, total_correct, accuracy_pct, current_difficulty_band, last_attempted')
+            .eq('user_id', userId)
+
+        if (!stats || !stats.length) return []
+        const subjects = {}
+        for (const stat of stats) {
+            const subject = stat.subject === 'reading' || stat.subject === 'writing' ? 'reading_writing' : stat.subject;
+            if (!subjects[subject]) subjects[subject] = [];
+            if (!subjects[subject][stat.topic]) subjects[subject][stat.topic] = [];
+            subjects[subject][stat.topic].push({
+                subtopic: s.subtopic || 'General',
+                total: s.total_attempts,
+                correct: s.total_correct,
+                accuracy: s.accuracy_pct,
+                band: s.current_difficulty_band,
+                last: s.last_attempted
+            })
+        }
+        return Object.entries(subjects).map(([subject, topics]) => ({
+            subject,
+            topics: Object.entries(topics).map(([topic, subtopics]) => {
+                const totals = subtopics.reduce((a, s) => ({ total: a.total + s.total, correct: a.correct + s.correct }), { total: 0, correct: 0 })
+                return {
+                    topic,
+                    subtopics,
+                    total: totals.total,
+                    accuracy: totals.total ? Math.round(totals.correct / totals.total * 100) : 0
+                }
+            })
+        }))
+    }
+
     async getUserDashboardData(userId) {
         try {
             const [vocabCountResult, qualityResult, feedbackData, practiceStates, recentAttempts] = await Promise.all([
