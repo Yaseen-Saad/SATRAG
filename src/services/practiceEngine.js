@@ -11,6 +11,14 @@ function applySubjectFilter(query, subject) {
 
 class PracticeEngine {
 
+    async countFilteredQuestions({ subject, topic, userId, ...filters }) {
+        const query = await this._buildFilteredQuery({ ...filters, subject, topic, userId })
+        if (!query) return { total: 0 }
+        const { count, error } = await query.select('id', { count: 'exact', head: true })
+        if (error) throw error
+        return { total: count || 0 }
+    }
+
     async getQuestions({ subject, topic, subtopic, difficulty, active, source, difficultyBand, status, marked, search, tier, page = 1, limit = 20, userId }) {
         let query = supabase.from('sat_questions').select("*", { count: 'exact' });
         if (active === true)
@@ -287,24 +295,59 @@ class PracticeEngine {
         }));
     }
 
-    async getAdjacentQuestions({ questionId, subject, topic, userId }) {
+    _buildFilteredQuery({ subject, topic, subtopic, difficulty, active, source, difficultyBand, status, marked, search, userId, tier }) {
+        let query = supabase.from('sat_questions').select("id, created_at")
+        if (active === true) query = query.eq('is_active', true);
+        else if (active === false) query = query.eq('is_active', false);
+        if (topic) query = query.eq('topic', topic)
+        if (subtopic) query = query.eq('subtopic', subtopic)
+        if (difficulty) query = query.eq('difficulty', difficulty)
+        if (difficultyBand) query = query.eq('difficulty_band', difficultyBand)
+        if (source) query = query.eq('source', source)
+        if (search) query = query.ilike('stem_plain_text', `%${search}%`)
+        if (tier && source === 'ai_generated') query = query.eq('tier', tier)
+        if (userId && (status || marked)) {
+            const { data: userStates } = await supabase.from('user_question_state').select('question_id, status, marked_for_review').eq('user_id', userId)
+            const stateMap = new Map((userStates || []).map(s => [s.question_id, s]))
+            let ids = null
+            if (status === "correct") ids = [...stateMap].filter(([, s]) => s.status === "solved_correct").map(([id]) => id)
+            else if (status === "incorrect") ids = [...stateMap].filter(([, s]) => s.status === "solved_incorrect").map(([id]) => id)
+            else if (status === "solved") ids = [...stateMap].filter(([, s]) => s.status === "solved_correct" || s.status === "solved_incorrect").map(([id]) => id)
+            else if (status === "unsolved") {
+                const solved = new Set([...stateMap].filter(([, s]) => s.status !== 'unsolved').map(([id]) => id))
+                const { data: all } = await supabase.from('sat_questions').select('id')
+                ids = (all || []).filter(q => !solved.has(q.id)).map(q => q.id)
+            }
+            if (status && status !== 'unsolved' && ids !== null) {
+                if (!ids.length) return null
+                query = query.in('id', ids)
+            } else if (status === 'unsolved') {
+                if (!ids.length) return null
+                query = query.in('id', ids)
+            }
+            if (marked === true || marked === 'true') {
+                const mIds = [...stateMap].filter(([, s]) => s.marked_for_review).map(([id]) => id)
+                if (!mIds.length) return null
+                query = query.in('id', mIds)
+            }
+        }
+        return query
+    }
+
+    async getAdjacentQuestions({ questionId, subject, topic, userId, ...filters }) {
         const { data: current } = await supabase.from('sat_questions').select('id, created_at').eq('id', questionId).single()
         if (!current) return { prevId: null, nextId: null }
-
-        let prevQuery = supabase.from('sat_questions').select('id').neq('id', questionId)
-        let nextQuery = supabase.from('sat_questions').select('id').neq('id', questionId)
-        if (subject) {
-            prevQuery = prevQuery.eq('subject', subject)
-            nextQuery = nextQuery.eq('subject', subject)
+        const filterQuery = await this._buildFilteredQuery({ subject, topic, userId, ...filters })
+        let prevId = null, nextId = null
+        if (filterQuery) {
+            const [prev, next] = await Promise.all([
+                filterQuery.lt('created_at', current.created_at).order('created_at', { ascending: false }).limit(1),
+                filterQuery.gt('created_at', current.created_at).order('created_at', { ascending: true }).limit(1)
+            ])
+            prevId = prev.data?.[0]?.id || null
+            nextId = next.data?.[0]?.id || null
         }
-        if (topic) {
-            prevQuery = prevQuery.eq('topic', topic)
-            nextQuery = nextQuery.eq('topic', topic)
-        }
-        const [prev, next] = await Promise.all([
-            prevQuery.lt('created_at', current.created_at).order('created_at', { ascending: false }).limit(1),
-            nextQuery.gt('created_at', current.created_at).order('created_at', { ascending: true }).limit(1)])
-        return { prevId: prev.data?.[0]?.id || null, nextId: next.data?.[0]?.id || null }
+        return { prevId, nextId }
     }
 
     async updateTopicStats(userId, subject, topic, subtopic, isCorrect, timeMs) {
@@ -360,6 +403,25 @@ class PracticeEngine {
     async getWeakTopics(userId, threshold = 70) {
         const { data } = await supabase.from('user_topic_stats').select("*").eq('user_id', userId).lt('accuracy_pct', threshold).order('accuracy_pct', { ascending: true })
         return data || []
+    }
+
+    async getQuestionPosition({ questionId, subject, topic, userId, ...filters }) {
+        const { data: current } = await supabase.from('sat_questions').select('id, created_at').eq('id', questionId).single()
+        if (!current) return { position: 1, total: 1 }
+        const query = await this._buildFilteredQuery({ ...filters, subject, topic, userId })
+        if (!query) return { position: 1, total: 1 }
+        const [before, total] = await Promise.all([
+            query.lt('created_at', current.created_at).select('id', { count: 'exact', head: true }),
+            query.select('id', { count: 'exact', head: true })
+        ])
+        return { position: (before.count || 0) + 1, total: total.count || 1 }
+    }
+
+    async getFirstQuestionId({ subject, topic, userId, ...filters }) {
+        const query = await this._buildFilteredQuery({ ...filters, subject, topic, userId })
+        if (!query) return null
+        const { data } = await query.order('created_at', { ascending: true }).limit(1)
+        return data?.[0]?.id || null
     }
 
     async getAdaptiveQuestion(userId, subject) {

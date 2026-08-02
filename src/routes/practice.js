@@ -6,6 +6,7 @@ const vocabEngine = require('../services/vocabEngine')
 const { checkAPIKeys, incrementGenCount } = require('../middleware/useFreeModels')
 const rag = require('../lib/rag')
 const router = Router()
+const { parse } = require('url')
 
 router.get('/', requireAuth, async (req, res) => {
     let { subject, topic, subtopic, active, source, difficulty, difficultyBand, status, marked, search, tier, page = 1, limit = 20 } = req.query;
@@ -115,12 +116,47 @@ router.get('/question/:id', requireAuth, async (req, res) => {
     try {
         const { question, uState, attempts } = await practice.getQuestion({ questionId: req.params.id, userId: req.user.id })
         if (!question) return res.status(404).render('practice/question', { user: req.user, error: 'Question not found', question: null, uState: null, attempts: [], pageClass: 'practice' })
-        const adjacent = await practice.getAdjacentQuestions({ questionId: req.params.id, subject: question.subject, topic: question.topic, userId: req.user.id })
+
         const returnTo = req.query.from || '/practice'
-        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, returnTo, pageClass: 'practice' })
+        const fromQuery = parse(returnTo, true).query || {}
+        const pick = (name) => req.query[name] || fromQuery[name]
+        const active = pick('active')
+        const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined
+        const filters = {
+            subject: pick('subject') || question.subject,
+            topic: pick('topic') || question.topic,
+            subtopic: pick('subtopic'),
+            active: activeFilter,
+            source: pick('source'),
+            difficulty: pick('difficulty'),
+            status: pick('status'),
+            marked: pick('marked'),
+            search: pick('search'),
+            tier: pick('tier')
+
+        }
+        const [adjacent, pos] = await Promise.all([
+            practice.getAdjacentQuestions({ questionId: req.params.id, userId: req.user.id, ...filters }),
+            practice.getQuestionPosition({ questionId: req.params.id, userId: req.user.id, ...filters })
+        ])
+        res.render('practice/question', { user: req.user, error: null, question, uState, attempts, prevId: adjacent.prevId, nextId: adjacent.nextId, seqPosition: pos.position, seqTotal: pos.total, returnTo, pageClass: 'practice' })
     } catch (err) {
         console.error(err)
         res.status(500).render('practice/question', { user: req.user, error: 'Error fetching question', question: null, uState: null, attempts: [], pageClass: 'practice' })
+    }
+})
+
+router.get('/sequential', requireAuth, async (req, res) => {
+    try {
+        const { subject, topic, subtopic, active, source, difficulty, status, marked, search, tier } = req.query
+        const activeFilter = active === 'active' ? true : active === 'inactive' ? false : undefined;
+        const firstId = await practice.getFirstQuestionId({ subject, topic, subtopic, active: activeFilter, source, difficulty, status, marked, search, tier, userId: req.user.id })
+        if (!firstId) return res.redirect('/practice?error=' + encodeURIComponent('No questions found for the selected filters'))
+        const listURL = req.originalUrl.replace(/^\/practice\/sequential/, '/practice')
+        res.redirect(`/practice/question/${firstId}?from=${encodeURIComponent(listURL)}`)
+    } catch (error) {
+        console.error('Sequential practice error:', error)
+        res.redirect('/practice?error=' + encodeURIComponent('Error starting sequential practice'))
     }
 })
 

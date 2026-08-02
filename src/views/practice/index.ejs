@@ -1,8 +1,8 @@
 <% title = 'Practice Bank'; %>
 <h1>SAT Practice Bank</h1>
 
-<a href="/practice/adaptive" class="btn btn-primary btn-sm" style="margin-bottom: 1rem;">
-  Adaptive Practice
+<a href="/practice/sequential<%= currentUrl.includes('?') ? '?' + currentUrl.split('?')[1] : '' %>" class="btn btn-outline btn-sm" style="margin-bottom:1rem; margin-left:0.5rem;">
+  Practice All (<%= total %>)
 </a>
 
 <% if (typeof error !== 'undefined' && error) { %>

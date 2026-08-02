@@ -73,6 +73,9 @@
       <% if (prevId) { %><a href="/practice/question/<%= prevId %><%returnTo? '?from='+encodeURIComponent(returnTo):''%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Previous</a><% } else { %><a href="<%=returnTo || '/practice'%>" class="bb-nav-btn"><img src="/img/icon-chevron-left.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Back</a><% } %>
     </div>
     <div class="bb-bottombar-center">
+      <% if (typeof seqTotal !== 'undefined' && seqTotal > 0) { %>
+      <span class="bb-question-label" style="margin-right:1rem;">Question <%= seqPosition %> of <%= seqTotal %></span>
+      <% } %>
       <button class="bb-palette-toggle" onclick="openPalette()"><img src="/img/icon-grid.svg" alt="" width="14" height="14" style="vertical-align:-2px"> Questions</button>
     </div>
     <div class="bb-bottombar-right">
