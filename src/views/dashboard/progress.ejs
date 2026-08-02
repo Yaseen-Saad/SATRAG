@@ -73,7 +73,13 @@
         </div>
         <% }) %>
       </div>
+    </div> <% if (flashcardStats && flashcardStats.dueToday > 0) { %>
+    <div class="flash flash-info" style="margin:1rem 0;">
+      You have <strong><%= flashcardStats.dueToday %></strong> flashcard<%= flashcardStats.dueToday === 1 ? '' : 's' %> due today.
+      <a href="/flashcards" class="btn btn-primary btn-sm" style="margin-left:0.5rem;">Review Now</a>
     </div>
+    <% } %>
+
   </div>
 
   <!-- Topic Weak Spots -->

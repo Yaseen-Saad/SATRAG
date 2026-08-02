@@ -22,7 +22,7 @@ const router = Router()
 const ALLOWED_GRADES = new Set(['9', '10', '11', '12', 'Gap Year', "I am not a student"])
 const ALLOWED_GENDERS = new Set(['male', 'female'])
 
-const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, grade';
+const PROFILE_COLUMNS = 'id, first_name, last_name, school, email, gender, birthdate, avatar_url, participate_in_leaderboard, referral, first_login, last_login, grade, reminder_enabled, reminder_digest_hour';
 
 router.get('/', requireAuth, async (req, res) => {
     try {
@@ -79,6 +79,14 @@ router.post('/update-all', requireAuth, async (req, res) => {
         }
         const leaderboardEnabled = req.body.leaderboardstatus === 'enabled';
         updates.participate_in_leaderboard = leaderboardEnabled;
+
+        const reminderEnabled = req.body.reminderEnabled === 'enabled';
+        updates.reminder_enabled = reminderEnabled;
+        const digestHour = parseInt(req.body.reminderDigestHour, 10);
+
+        if (!Number.isNaN(digestHour) && digestHour >= 0 && digestHour <= 23) {
+            updates.reminder_digest_hour = digestHour;
+        }
 
         if (errors.length > 0) {
             return res.redirect('/settings?error=' + encodeURIComponent(errors.join('; ')));
