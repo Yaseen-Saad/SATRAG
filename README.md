@@ -596,19 +596,16 @@ git push origin feature/your-feature-name
 ## Project Timeline:
 | Feature | Status | Description |
 |:----|:---------|:-----|
-| Tiers system for words | In Progress | Divide words into tiers like the questions |
-| Sequential Practice Mode | In Progress | Click a question to practice all filtered questions in order, not just one |
+| Spaced Repetition Reminders | In Progress | In-app notifications when flashcards are due for review |
 | Topic Tree Analytics Chart | In Progress | Visual breakdown of solved vs unsolved per topic and subtopic |
 | Bluebook Full Exams | In Progress | Complete practice exams with automatic scoring and adaptive behavior |
 | SAT Score Report Upload | In Progress | Upload your score report so adaptive mode targets your exact weak areas |
-| Ticket System Interface | Planned | User-facing interface for the bug report ticket system |
+| SAT Wrapped | Planned | Monthly/Weekly personalized stats summary (think Spotify Wrapped, but for SAT) |
 | Google Sign-In | Planned | OAuth login with Google accounts to ease the sign-up process |
-| Spaced Repetition Reminders | Planned | In-app notifications when flashcards are due for review |
 | More Word Parts (roots/prefixes/suffixes) | Planned | Morphological breakdown of vocabulary words |
 | Google Calendar Integration | Planned | Daily practice reminders synced to your calendar |
 | Study Resources Section | Planned | Curated collection of SAT study resources |
 | Import from Bluebook | Planned | Import official Bluebook practice test results directly into your SATrack progress dashboard |
-| SAT Wrapped | Thinking | Monthly/Weekly personalized stats summary (think Spotify Wrapped, but for SAT) |
 | 2FA Sign-In | Thinking | Configure 2-factor-authentication to secure the accounts |
 | Question Rush Mode | Thinking | Timed rapid-fire practice to simulate test-day pressure |
 | Mistake Pattern Analysis | AI Suggestion | AI analyzes your incorrect answers across sessions to identify recurring patterns like "you tend to miss inference questions on long passages" |
