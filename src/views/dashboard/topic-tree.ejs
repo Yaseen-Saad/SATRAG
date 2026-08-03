@@ -1,0 +1,58 @@
+<%title='Topic Tree';%>
+<div class="dashboard">
+  <div class="dash-header">
+    <div>
+      <h1>Topic Tree</h1>
+      <p class="dash-subtitle">Accuracy by subject &rarr; topic &rarr; subtopic</p>
+    </div>
+    <div class="dash-header-actions">
+      <a href="/dashboard/analytics" class="btn btn-outline btn-sm">Analytics</a>
+    </div>
+  </div>
+  <% if (!tree.length){%>
+  <div class="dash-card">
+    <div class="dash-card-body">
+      <p class="empty-state">No topic stats yet. Answer some practice questions to build your tree.</p>
+    </div>
+  </div>
+  <%}%>
+<%tree.forEach(function(s){%>
+  <div class="dash-card" style="margin-bottom:1rem;">
+    <div class="dash-card-header">
+      <h2>
+        <%= s.subject === 'reading_writing' ? 'Reading & Writing' : s.subject) %>
+      </h2>
+    </div>
+    <div class="dash-card-body">
+      <%s.topics.forEach(t=>{ %>
+      <details style="margin:0.5rem 0;">
+        <summary style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+          <span><%= t.topic%></span>
+          <span>
+            <span class="topic-accuracy" style="color:<%=t.accuracy >= 85 ? 'var(--color-success)' : t.accracy >=70 ? 'var(--color-warning)' : 'var(--color-error)'%>;">
+              <%t.accuracy%>%
+            </span>
+            <small style="color:var(--color-text-muted);"><%=t.total%> attempts</small>
+          </span>
+        </summary>
+        <div style="margin:0.5rem 0 0 1rem;">
+          <% t.subtopics.forEach(function(st) { %>
+          <div class="topic-row" style="padding:0.25rem 0;">
+            <div class="topic-info">
+              <span class="topic-name"><%= st.subtopic %></span>
+            </div>
+            <div class="topic-right">
+              <span class="topic-accuracy" style="color:<%= st.accuracy >= 85 ? 'var(--color-success)' : st.accuracy >= 70 ? 'var(--color-warning)' : 'var(--color-error)' %>;"><%= st.accuracy %>%</span>
+              <div class="topic-bar">
+                <div class="topic-bar-fill" style="width:<%= st.accuracy %>%"></div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </details>
+      <% }) %>
+    </div>
+  </div>
+  <% }) %>
+</div>

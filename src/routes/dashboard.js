@@ -78,4 +78,15 @@ router.get('/analytics', requireAuth, async (req, res) => {
   }
 })
 
+router.get('/topic-tree', requireAuth, async (req, res) => {
+  try {
+    const tree = await dashboardEngine.getTopicTreeAnalytics(req.user.id)
+    res.render('dashboard/topic-tree', { user: req.user, tree, error: null });
+  } catch (error) {
+    console.error('Topic tree error:', error);
+    res.render('/dashboard/topic-tree', { user: req.user, tree: [], error: error.message });
+  }
+
+})
+
 module.exports = router;
