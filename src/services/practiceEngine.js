@@ -295,7 +295,7 @@ class PracticeEngine {
         }));
     }
 
-    _buildFilteredQuery({ subject, topic, subtopic, difficulty, active, source, difficultyBand, status, marked, search, userId, tier }) {
+    async _buildFilteredQuery({ subject, topic, subtopic, difficulty, active, source, difficultyBand, status, marked, search, userId, tier }) {
         let query = supabase.from('sat_questions').select("id, created_at")
         if (active === true) query = query.eq('is_active', true);
         else if (active === false) query = query.eq('is_active', false);

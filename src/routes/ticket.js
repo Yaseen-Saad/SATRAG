@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { requireAuth } = require('../middleware/auth')
 const supabase = require('../lib/supabase').service
 const router = Router()
-const { wantJSON } = require('../lib/utils')
+const { wantsJSON } = require('../lib/utils')
 
 router.get('/', requireAuth, async (req, res) => {
     try {
@@ -67,7 +67,7 @@ router.post('/:ticketId/close', requireAuth, async (req, res) => {
     }
 })
 
-render.post(':ticketId/reopen', requireAuth, async (req, res) => {
+router.post('/:ticketId/reopen', requireAuth, async (req, res) => {
     try {
         const { error } = await supabase
             .from('tickets').update({ active: true })
